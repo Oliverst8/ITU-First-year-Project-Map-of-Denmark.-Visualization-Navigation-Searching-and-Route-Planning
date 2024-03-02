@@ -17,7 +17,7 @@ If a team member is unable to attend the primary work days, they are expected to
 
 ## Off days
 
-Every team member is allowed to work on the project on their own time. If a team member is working on the project on their own time. If disired, they span from 12:00 to 16:00 on mondays is a way to work together on the project.
+Every team member is allowed to work on the project on their own time. If disired, the span from 12:00 to 16:00 on mondays is a way to work together on the project.
 
 # Responsibilities
 
