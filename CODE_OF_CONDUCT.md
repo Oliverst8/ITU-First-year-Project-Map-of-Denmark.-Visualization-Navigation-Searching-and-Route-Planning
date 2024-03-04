@@ -75,3 +75,12 @@ If a decision is to be made, we will take it up in the group. Either at the next
 ## Conflict resolution
 
 We value the ability to talk to each other and resolve conflicts in a civil manner. If a conflict arises, we will try to resolve it by talking to each other. If that does not work, we will take it up with the conveyor in the group.
+
+#Progress plan for the first two weeks
+- Make sure the project works on everyones machines.
+- Discuss general project structure
+- Parsing of files
+- Simpel drawing
+- Set up the first git branches
+- Make a project plan for the whole project (Gantt schedule)
+- Slowly start coding
