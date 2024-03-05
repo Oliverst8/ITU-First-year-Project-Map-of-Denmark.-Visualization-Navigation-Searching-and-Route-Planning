@@ -1,20 +1,20 @@
 package itu.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import javafx.scene.canvas.GraphicsContext;
+
 import java.util.List;
 
 public class Way {
 
-    private final float[] cords;
+    private final float[] coords;
     private final String[] tags;
 
     public Way(List<Float> nodes, List<String> tags){
-        this.cords = new float[nodes.size()];
+        this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
 
-        for(int i = 0; i < this.cords.length; i++){
-            this.cords[i] = nodes.get(i);
+        for(int i = 0; i < this.coords.length; i++){
+            this.coords[i] = nodes.get(i);
         }
         for(int i = 0; i < this.tags.length; i++){
             this.tags[i] = tags.get(i);
@@ -25,11 +25,11 @@ public class Way {
     public String toString(){
         StringBuilder builder = new StringBuilder();
         builder.append("Nodes:\n");
-        for(int i = 0; i < cords.length; i += 2){
+        for(int i = 0; i < coords.length; i += 2){
             builder.append("Node: ");
-            builder.append(cords[i]);
+            builder.append(coords[i]);
             builder.append(" ");
-            builder.append(cords[i+1]);
+            builder.append(coords[i+1]);
             builder.append("\n");
         }
 
@@ -43,6 +43,15 @@ public class Way {
         }
 
         return builder.toString();
+    }
+
+    public void draw(GraphicsContext gc) {
+        gc.beginPath();
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2 ; i < coords.length ; i += 2) {
+            gc.lineTo(coords[i], coords[i+1]);
+        }
+        gc.stroke();
     }
 
 }

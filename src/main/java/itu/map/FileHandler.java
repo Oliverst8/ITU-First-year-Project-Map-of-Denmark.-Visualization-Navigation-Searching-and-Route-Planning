@@ -16,6 +16,9 @@ public class FileHandler {
 
     private final File file;
 
+    //Temp variable to save loaded ways
+    public ArrayList<Way> ways;
+
     /**
      * Initialises the filehandler
      * @param file
@@ -75,9 +78,7 @@ public class FileHandler {
                 }
             }
         }
-
-
-
+        this.ways = ways;
     }
 
 
