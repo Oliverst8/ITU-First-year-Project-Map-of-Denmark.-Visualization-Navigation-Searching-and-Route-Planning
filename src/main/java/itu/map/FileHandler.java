@@ -7,7 +7,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FileHandler {
@@ -31,24 +33,51 @@ public class FileHandler {
 
     public void load() throws IOException, XMLStreamException {
         InputStream inputStream = new BZip2CompressorInputStream(new FileInputStream(file));
-        Reader reader = new BufferedReader(new InputStreamReader(inputStream));
-        XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(reader);
+        XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         Map<Long, float[]> nodes = new HashMap<>();
+
+        ArrayList<Way> ways = new ArrayList<>();
+
         while(input.hasNext()){
             int tagKind = input.next();
 
             if(tagKind == XMLStreamConstants.START_ELEMENT){
-                String name = input.getLocalName();
-                if(name.equals("node")){
-                    float[] cords = new float[2];
-                    Long id = Long.parseLong(input.getAttributeValue(null, "id"));
-                    cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
-                    cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
-                    nodes.put(id,cords);
+                String type = input.getLocalName();
+                switch (type) {
+                    case "node" -> {
+                        float[] cords = new float[2];
+                        Long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                        cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
+                        cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
+                        nodes.put(id, cords);
+                    }
+                    case "way" -> {
+                        List<Float> cords = new ArrayList<>();
+                        List<String> tags = new ArrayList<>();
+
+                        while(input.hasNext()){
+                            if(input.next() != XMLStreamConstants.START_ELEMENT) continue;
+                            String innerType = input.getLocalName();
+                            if(innerType.equals("nd")){
+                                float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
+                                cords.add(temp[0]);
+                                cords.add(temp[1]);
+                            } else if (innerType.equals("tag")) {
+                                tags.add(input.getAttributeValue(null, "k"));
+                                tags.add(input.getAttributeValue(null, "v"));
+                            } else{
+                                break;
+                            }
+                        }
+
+                        ways.add(new Way(cords, tags));
+                    }
                 }
             }
         }
-        System.out.println(nodes.size());
+
+
+
     }
 
 
