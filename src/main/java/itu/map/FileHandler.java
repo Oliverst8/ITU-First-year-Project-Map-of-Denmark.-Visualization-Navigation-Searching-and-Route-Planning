@@ -1,5 +1,7 @@
 package itu.map;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -27,10 +29,11 @@ public class FileHandler {
 
     }
 
-    public void load() throws FileNotFoundException, XMLStreamException {
-        Reader reader = new BufferedReader(new FileReader(file));
+    public void load() throws IOException, XMLStreamException {
+        InputStream inputStream = new BZip2CompressorInputStream(new FileInputStream(file));
+        Reader reader = new BufferedReader(new InputStreamReader(inputStream));
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(reader);
-        Map<Integer, float[]> nodes = new HashMap<>();
+        Map<Long, float[]> nodes = new HashMap<>();
         while(input.hasNext()){
             int tagKind = input.next();
 
@@ -38,7 +41,7 @@ public class FileHandler {
                 String name = input.getLocalName();
                 if(name.equals("node")){
                     float[] cords = new float[2];
-                    int id = Integer.parseInt(input.getAttributeValue(null, "id"));
+                    Long id = Long.parseLong(input.getAttributeValue(null, "id"));
                     cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                     cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                     nodes.put(id,cords);

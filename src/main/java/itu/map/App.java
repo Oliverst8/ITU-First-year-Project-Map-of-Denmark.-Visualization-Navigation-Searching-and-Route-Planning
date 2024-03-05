@@ -1,11 +1,15 @@
 package itu.map;
 
+import java.io.File;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        try{
+            FileHandler fileHandler = new FileHandler(new File("/home/ostarup/Downloads/isle-of-man-latest.osm.bz2"));
+            fileHandler.load();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
