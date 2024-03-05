@@ -1,4 +1,4 @@
-package itu.map;
+package dk.itu.map;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -19,7 +19,6 @@ public class Way {
         for(int i = 0; i < this.tags.length; i++){
             this.tags[i] = tags.get(i);
         }
-
     }
 
     public String toString(){
@@ -53,5 +52,4 @@ public class Way {
         }
         gc.stroke();
     }
-
 }

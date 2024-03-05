@@ -1,4 +1,4 @@
-package itu.map;
+package dk.itu.map;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

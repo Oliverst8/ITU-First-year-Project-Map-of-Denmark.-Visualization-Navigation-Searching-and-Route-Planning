@@ -1,6 +1,9 @@
-package itu.map;
+package dk.itu.map;
 
 import javafx.geometry.Point2D;
+
+import javafx.stage.Stage;
+
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.stage.Stage;
 
 public class View {
     Canvas canvas = new Canvas(640, 480);
@@ -23,7 +25,6 @@ public class View {
     Model model;
 
     double detail;
-
 
     public View(Model model, Stage primaryStage) {
         this.model = model;
@@ -40,7 +41,6 @@ public class View {
     }
 
     void redraw() {
-
         Point2D p1 = mousetoModel(0,0);
         Point2D p2 = mousetoModel(0,100);
 
@@ -56,9 +56,6 @@ public class View {
         for (int i = 0; i < model.ways.size(); i += (int) detail + 1) {
             model.ways.get(i).draw(gc);
         }
-
-
-
     }
 
     void pan(double dx, double dy) {
@@ -82,6 +79,5 @@ public class View {
             // TODO Auto-generated catch block
             throw new RuntimeException(e);
         }
-
     }
 }

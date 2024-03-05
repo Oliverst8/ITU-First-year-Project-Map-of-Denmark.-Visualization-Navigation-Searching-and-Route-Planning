@@ -1,6 +1,4 @@
-package itu.map;
-
-import javafx.geometry.Point2D;
+package dk.itu.map;
 
 public class Controller {
     double lastX;
@@ -11,6 +9,7 @@ public class Controller {
             lastX = e.getX();
             lastY = e.getY();
         });
+
         view.canvas.setOnMouseDragged(e -> {
             if (e.isPrimaryButtonDown()) {
 
@@ -23,11 +22,10 @@ public class Controller {
             lastX = e.getX();
             lastY = e.getY();
         });
+
         view.canvas.setOnScroll(e -> {
             double factor = e.getDeltaY();
             view.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
         });
     }
-
 }
-

@@ -1,4 +1,4 @@
-package itu.map;
+package dk.itu.map;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
@@ -24,15 +24,10 @@ public class FileHandler {
      * Initialises the filehandler
      * @param file
      */
-    public FileHandler(File file){
+    public FileHandler(File file) {
         this.file = file;
-    }
 
-    /**
-     * Decompresses the file attribute
-     */
-    private void decompress(){
-
+        ways = new ArrayList<>();
     }
 
     public void load() throws IOException, XMLStreamException {
@@ -46,8 +41,6 @@ public class FileHandler {
     private void parse(InputStream inputStream) throws IOException, XMLStreamException {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         Map<Long, float[]> nodes = new HashMap<>();
-
-        ArrayList<Way> ways = new ArrayList<>();
 
         while(input.hasNext()){
             int tagKind = input.next();
@@ -94,6 +87,5 @@ public class FileHandler {
                 }
             }
         }
-        this.ways = ways;
     }
 }

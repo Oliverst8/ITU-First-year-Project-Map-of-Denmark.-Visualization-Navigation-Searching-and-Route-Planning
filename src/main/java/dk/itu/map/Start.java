@@ -1,6 +1,6 @@
-package itu.map;
+package dk.itu.map;
 
-public class Main {
+public class Start {
     public static void main(String[] args) {
         App.main(args);
     }
