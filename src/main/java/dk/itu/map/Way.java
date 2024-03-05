@@ -1,8 +1,8 @@
 package dk.itu.map;
 
-import javafx.scene.canvas.GraphicsContext;
-
 import java.util.List;
+
+import javafx.scene.canvas.GraphicsContext;
 
 public class Way {
 

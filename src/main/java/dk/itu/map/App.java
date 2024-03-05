@@ -1,9 +1,9 @@
 package dk.itu.map;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import java.io.File;
 
 public class App extends Application {
 
@@ -13,9 +13,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-            FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/isle-of-man-latest.osm.bz2"));
-            //fileHandler.load();
+        FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/isle-of-man-latest.osm.bz2"));
+        //fileHandler.load();
 
         Model model = new Model(fileHandler);
         var view = new View(model, primaryStage);
