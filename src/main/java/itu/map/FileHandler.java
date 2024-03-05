@@ -18,6 +18,7 @@ public class FileHandler {
 
     //Temp variable to save loaded ways
     public ArrayList<Way> ways;
+    public double minlat, maxlat, minlon, maxlon;
 
     /**
      * Initialises the filehandler
@@ -54,6 +55,14 @@ public class FileHandler {
                         cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                         nodes.put(id, cords);
                     }
+
+                    case "bounds" -> {
+                        minlat = Double.parseDouble(input.getAttributeValue(null, "minlat"));
+                        maxlat = Double.parseDouble(input.getAttributeValue(null, "maxlat"));
+                        minlon = Double.parseDouble(input.getAttributeValue(null, "minlon"));
+                        maxlon = Double.parseDouble(input.getAttributeValue(null, "maxlon"));
+                    }
+
                     case "way" -> {
                         List<Float> cords = new ArrayList<>();
                         List<String> tags = new ArrayList<>();

@@ -34,8 +34,8 @@ public class View {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        pan(-0.55*55, -5);
-        //zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
+        pan(-0.56*model.minlon, model.maxlat);
+        zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
         redraw();
     }
 
