@@ -36,7 +36,14 @@ public class FileHandler {
     }
 
     public void load() throws IOException, XMLStreamException {
-        InputStream inputStream = new BZip2CompressorInputStream(new FileInputStream(file));
+        if (file.getName().contains("bz2")) {
+            parse(new BZip2CompressorInputStream(new FileInputStream(file)));
+        } else {
+            parse(new FileInputStream(file));
+        }        
+    }
+
+    private void parse(InputStream inputStream) throws IOException, XMLStreamException {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         Map<Long, float[]> nodes = new HashMap<>();
 
@@ -89,7 +96,4 @@ public class FileHandler {
         }
         this.ways = ways;
     }
-
-
-
 }
