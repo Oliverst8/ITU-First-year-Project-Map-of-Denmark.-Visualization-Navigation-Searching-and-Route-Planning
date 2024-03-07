@@ -1,6 +1,5 @@
 package dk.itu.map;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class ChunkGenerator {
 
     }
 
-    private int coordsToChunk(float lat, float lon) {
+    private int coordsToChunkIndex(float lat, float lon) {
         return (int)Math.floor((lon-minlon)/chunkSize) + 
         (int)Math.floor((lat-minlat)/chunkSize) * chunkColumnAmount;
     }
@@ -63,7 +62,7 @@ public class ChunkGenerator {
             float lat = coords[i];
             float lon = coords[i+1];
 
-            int chunkIndex = coordsToChunk(lat, lon);
+            int chunkIndex = coordsToChunkIndex(lat, lon);
             
             if (chunkIndex < chunkAmount && chunkIndex >= 0) {
                 chunks.get(chunkIndex).add(way);
