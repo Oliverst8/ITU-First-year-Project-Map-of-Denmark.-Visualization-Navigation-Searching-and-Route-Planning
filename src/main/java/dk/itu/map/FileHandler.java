@@ -22,6 +22,7 @@ public class FileHandler {
 
     /**
      * Initialises the filehandler
+     *
      * @param file
      */
     public FileHandler(File file) {
@@ -35,17 +36,17 @@ public class FileHandler {
             parse(new BZip2CompressorInputStream(new FileInputStream(file)));
         } else {
             parse(new FileInputStream(file));
-        }        
+        }
     }
 
     private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         Map<Long, float[]> nodes = new HashMap<>();
 
-        while(input.hasNext()){
+        while (input.hasNext()) {
             int tagKind = input.next();
 
-            if(tagKind == XMLStreamConstants.START_ELEMENT){
+            if (tagKind == XMLStreamConstants.START_ELEMENT) {
                 String type = input.getLocalName();
                 switch (type) {
                     case "node" -> {
@@ -93,8 +94,8 @@ public class FileHandler {
             if(innerType.equals("nd")){
                 float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
 
-                coords.add(temp[1]);
                 coords.add(temp[0]);
+                coords.add(temp[1]);
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));
