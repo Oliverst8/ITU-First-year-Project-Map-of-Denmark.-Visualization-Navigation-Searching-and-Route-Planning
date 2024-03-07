@@ -10,33 +10,22 @@ public class Way {
     private final float[] coords;
     private final String[] tags;
 
-    /*public Way(List<Float> nodes, List<String> tags){
+    public Way(List<Float> nodes, List<String> tags){
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
 
         for(int i = 0; i < this.coords.length; i += 2){
-            this.coords[i] = 0.56f * nodes.get(i);
-            this.coords[i+1] = -nodes.get(i+1);
-        }
-        for(int i = 0; i < this.tags.length; i++){
-            this.tags[i] = tags.get(i);
-        }
-    }*/
-
-    public Way(ArrayList<Node> way, ArrayList<String> tags) {
-        coords = new float[way.size() * 2];
-        this.tags = new String[tags.size()];
-
-        for (int i = 0 ; i < way.size() ; ++i) {
-            var node = way.get(i);
-            coords[2 * i] = node.lat;
-            coords[2 * i + 1] = node.lon;
+            this.coords[i] = nodes.get(i);
+            this.coords[i+1] = nodes.get(i+1);
         }
         for(int i = 0; i < this.tags.length; i++){
             this.tags[i] = tags.get(i);
         }
     }
 
+
+
+    @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
         builder.append("Nodes:\n");

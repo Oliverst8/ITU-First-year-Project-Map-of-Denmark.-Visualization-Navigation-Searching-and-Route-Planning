@@ -52,7 +52,7 @@ public class View {
 
         gc.setStroke(Color.BLACK);
 
-        System.out.println("Amount of ways: " + model.ways.size());
+
         for (int i = 0; i < model.ways.size(); i++) {
             model.ways.get(i).draw(gc);
         }

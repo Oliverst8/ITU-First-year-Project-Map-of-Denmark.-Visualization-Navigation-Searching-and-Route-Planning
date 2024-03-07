@@ -17,7 +17,7 @@ public class FileHandler {
     //Temp variable to save loaded ways
     public ArrayList<Way> ways;
     public float minlat, maxlat, minlon, maxlon;
-    
+
     private ChunkGenerator chunkGenerator;
 
     /**
@@ -61,37 +61,11 @@ public class FileHandler {
                         maxlat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                         minlon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                         maxlon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                        System.out.println("Bounds found");
-                        System.out.println(minlat + " " + maxlat + " "+ minlon +" " + " " + maxlon);
                         chunkGenerator = new ChunkGenerator(minlat, maxlat, minlon, maxlon);
                     }
 
                     case "way" -> {
-                        var coords = new ArrayList<Node>();
-                        var tags = new ArrayList<String>();
-
-                        while(input.hasNext()){
-                            if(input.next() != XMLStreamConstants.START_ELEMENT) continue;
-                            String innerType = input.getLocalName();
-                            if(innerType.equals("nd")){
-                                float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
-                                coords.add(new Node(temp[0], temp[1]));
-                                //cords.add(temp[0]);
-                                //cords.add(temp[1]);
-                            } else if (innerType.equals("tag")) {
-                                tags.add(input.getAttributeValue(null, "k"));
-                                tags.add(input.getAttributeValue(null, "v"));
-                            } else{
-                                break;
-                            }
-                        }
-                        
-                        if (chunkGenerator == null) {
-                            System.out.println("Chunkgenerator han not been made yet");
-                        } else {
-                            chunkGenerator.addWay(new Way(coords, tags));
-                        }
-                        ways.add(new Way(coords, tags));
+                        createWay(input, nodes);
                     }
                 }
             }
@@ -100,56 +74,42 @@ public class FileHandler {
         chunkGenerator.printAll();
     }
 
-    /*private void parse1(InputStream inputStream) throws IOException, XMLStreamException {
-        XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        Map<Long, float[]> nodes = new HashMap<>();
+
+
+    private void createWay(XMLStreamReader input, Map<Long, float[]> nodes) throws XMLStreamException {
+        List<Float> cords = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
+
+
 
         while(input.hasNext()){
-            int tagKind = input.next();
+            int eventType = input.next();
+            if(eventType != XMLStreamConstants.START_ELEMENT) {
+                if(eventType == XMLStreamConstants.END_ELEMENT && input.getLocalName().equals("way")) break;
+                continue;
+            }
 
-            if(tagKind == XMLStreamConstants.START_ELEMENT){
-                String type = input.getLocalName();
-                switch (type) {
-                    case "node" -> {
-                        float[] cords = new float[2];
-                        Long id = Long.parseLong(input.getAttributeValue(null, "id"));
-                        cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
-                        cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
-                        nodes.put(id, cords);
-                    }
+            String innerType = input.getLocalName();
+            if(innerType.equals("nd")){
+                float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
 
-                    case "bounds" -> {
-                        minlat = Double.parseDouble(input.getAttributeValue(null, "minlat"));
-                        maxlat = Double.parseDouble(input.getAttributeValue(null, "maxlat"));
-                        minlon = Double.parseDouble(input.getAttributeValue(null, "minlon"));
-                        maxlon = Double.parseDouble(input.getAttributeValue(null, "maxlon"));
-                        System.out.println("Bounds found");
-                        System.out.println(minlat + " " + maxlat + " "+ minlon +" " + " " + maxlon);
-                    }
-
-                    case "way" -> {
-                        List<Float> cords = new ArrayList<>();
-                        List<String> tags = new ArrayList<>();
-
-                        while(input.hasNext()){
-                            if(input.next() != XMLStreamConstants.START_ELEMENT) continue;
-                            String innerType = input.getLocalName();
-                            if(innerType.equals("nd")){
-                                float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
-                                cords.add(temp[0]);
-                                cords.add(temp[1]);
-                            } else if (innerType.equals("tag")) {
-                                tags.add(input.getAttributeValue(null, "k"));
-                                tags.add(input.getAttributeValue(null, "v"));
-                            } else{
-                                break;
-                            }
-                        }
-
-                        ways.add(new Way(cords, tags));
-                    }
-                }
+                cords.add(temp[1]);
+                cords.add(temp[0]);
+            } else if (innerType.equals("tag")) {
+                tags.add(input.getAttributeValue(null, "k"));
+                tags.add(input.getAttributeValue(null, "v"));
+            } else{
+                break;
             }
         }
-    }*/
+
+        if (chunkGenerator == null) {
+            System.out.println("Chunkgenerator han not been made yet");
+        } else {
+            chunkGenerator.addWay(new Way(coords, tags));
+        }
+        ways.add(new Way(cords, tags));
+    }
+
+
 }
