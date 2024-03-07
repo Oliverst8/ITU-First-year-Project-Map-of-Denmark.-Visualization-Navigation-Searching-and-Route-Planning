@@ -77,7 +77,7 @@ public class FileHandler {
 
 
     private void createWay(XMLStreamReader input, Map<Long, float[]> nodes) throws XMLStreamException {
-        List<Float> cords = new ArrayList<>();
+        List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
 
 
@@ -93,8 +93,8 @@ public class FileHandler {
             if(innerType.equals("nd")){
                 float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
 
-                cords.add(temp[1]);
-                cords.add(temp[0]);
+                coords.add(temp[1]);
+                coords.add(temp[0]);
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));
@@ -108,7 +108,7 @@ public class FileHandler {
         } else {
             chunkGenerator.addWay(new Way(coords, tags));
         }
-        ways.add(new Way(cords, tags));
+        ways.add(new Way(coords, tags));
     }
 
 
