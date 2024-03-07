@@ -1,0 +1,99 @@
+package dk.itu.map;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+
+public class ChunkGenerator {
+    // chunk size in coordinate size
+    private final float chunkSize = 0.25f;
+    
+    public float minlat, maxlat, minlon, maxlon;
+    
+    public int chunkColumnAmount, chunkRowAmount, chunkAmount;
+
+    private int waycounter = 0;
+
+    private ArrayList<ArrayList<Way>> chunks;
+    private File[] files;
+
+    private int tempCounter = 0;
+    
+
+    public ChunkGenerator(float minlat, float maxlat, float minlon, float maxlon) {
+
+        this.minlat = minlat;
+        this.maxlat = maxlat;
+        this.minlon = minlon;
+        this.maxlon = maxlon;
+
+        chunkColumnAmount = (int)Math.ceil(Math.abs(maxlon-minlon)/chunkSize);
+        chunkRowAmount = (int)Math.ceil(Math.abs(maxlat-minlat)/chunkSize);
+        
+        chunkAmount = chunkColumnAmount * chunkRowAmount;
+        
+        chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
+        for (int i = 0; i < chunkAmount; i++) {
+            chunks.add(new ArrayList<Way>());
+        }
+        files = new File[chunkAmount];
+
+        System.out.println(chunkRowAmount + " " + chunkColumnAmount);
+        
+        try {
+            for (int i = 0; i < chunkAmount; i++) {
+                files[i] = new File("chunkData/chunk" + i + ".txt");
+            }
+        } catch(Exception e) {
+            System.out.println("failed " + e.getMessage());
+        }
+
+    }
+
+    private int coordsToChunk(float lat, float lon) {
+        return (int)Math.floor((lon-minlon)/chunkSize) + 
+        (int)Math.floor((lat-minlat)/chunkSize) * chunkColumnAmount;
+    }
+
+    public void addWay(Way way){
+        tempCounter++;
+        float[] coords = way.getCoords();
+        for(int i=0; i<coords.length; i+=2){
+            float lat = coords[i];
+            float lon = coords[i+1];
+
+            int chunkIndex = coordsToChunk(lat, lon);
+            
+            if (chunkIndex < chunkAmount && chunkIndex >= 0) {
+                chunks.get(chunkIndex).add(way);
+            }
+        }
+    }
+
+    public void writeFiles() {
+        for (int i = 0; i < chunkAmount; i++) {
+            try {
+                FileWriter writer = new FileWriter(files[i]);
+                
+                for (Way way : chunks.get(i)) {
+                    writer.write(way.toString());
+                }
+
+                writer.close();
+                
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    public void printAll() {
+        for (int i = 0; i < chunks.size(); i++) {
+            // System.out.println(chunks.get(i);
+            System.out.println("nr " + i + ": " + chunks.get(i).size());
+        }
+        System.out.println(tempCounter);
+    }
+
+}

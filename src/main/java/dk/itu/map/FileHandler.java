@@ -16,7 +16,9 @@ public class FileHandler {
 
     //Temp variable to save loaded ways
     public ArrayList<Way> ways;
-    public double minlat, maxlat, minlon, maxlon;
+    public float minlat, maxlat, minlon, maxlon;
+    
+    private ChunkGenerator chunkGenerator;
 
     /**
      * Initialises the filehandler
@@ -55,16 +57,17 @@ public class FileHandler {
                     }
 
                     case "bounds" -> {
-                        minlat = Double.parseDouble(input.getAttributeValue(null, "minlat"));
-                        maxlat = Double.parseDouble(input.getAttributeValue(null, "maxlat"));
-                        minlon = Double.parseDouble(input.getAttributeValue(null, "minlon"));
-                        maxlon = Double.parseDouble(input.getAttributeValue(null, "maxlon"));
+                        minlat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
+                        maxlat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
+                        minlon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
+                        maxlon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
                         System.out.println("Bounds found");
                         System.out.println(minlat + " " + maxlat + " "+ minlon +" " + " " + maxlon);
+                        chunkGenerator = new ChunkGenerator(minlat, maxlat, minlon, maxlon);
                     }
 
                     case "way" -> {
-                        var cords = new ArrayList<Node>();
+                        var coords = new ArrayList<Node>();
                         var tags = new ArrayList<String>();
 
                         while(input.hasNext()){
@@ -72,7 +75,7 @@ public class FileHandler {
                             String innerType = input.getLocalName();
                             if(innerType.equals("nd")){
                                 float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
-                                cords.add(new Node(temp[0], temp[1]));
+                                coords.add(new Node(temp[0], temp[1]));
                                 //cords.add(temp[0]);
                                 //cords.add(temp[1]);
                             } else if (innerType.equals("tag")) {
@@ -82,12 +85,19 @@ public class FileHandler {
                                 break;
                             }
                         }
-
-                        ways.add(new Way(cords, tags));
+                        
+                        if (chunkGenerator == null) {
+                            System.out.println("Chunkgenerator han not been made yet");
+                        } else {
+                            chunkGenerator.addWay(new Way(coords, tags));
+                        }
+                        ways.add(new Way(coords, tags));
                     }
                 }
             }
         }
+        chunkGenerator.writeFiles();
+        chunkGenerator.printAll();
     }
 
     /*private void parse1(InputStream inputStream) throws IOException, XMLStreamException {

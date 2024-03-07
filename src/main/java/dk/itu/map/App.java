@@ -13,7 +13,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("/home/ostarup/github/itu/itu_semester_2/First-year Project Map of Denmark. Visualization, Navigation, Searching, and Route Planning/Handins/handinthree/data/small.osm"));
+        FileHandler fileHandler = new FileHandler(new File("C:\\Users\\nickl\\Downloads\\isle-of-man-latest.osm.bz2"));
         //fileHandler.load();
 
         Model model = new Model(fileHandler);

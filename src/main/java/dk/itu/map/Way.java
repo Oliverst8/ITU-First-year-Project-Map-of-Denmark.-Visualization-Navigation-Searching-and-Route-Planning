@@ -29,8 +29,8 @@ public class Way {
 
         for (int i = 0 ; i < way.size() ; ++i) {
             var node = way.get(i);
-            coords[2 * i] = 0.56f * node.lon;
-            coords[2 * i + 1] = -node.lat;
+            coords[2 * i] = node.lat;
+            coords[2 * i + 1] = node.lon;
         }
         for(int i = 0; i < this.tags.length; i++){
             this.tags[i] = tags.get(i);
@@ -41,7 +41,6 @@ public class Way {
         StringBuilder builder = new StringBuilder();
         builder.append("Nodes:\n");
         for(int i = 0; i < coords.length; i += 2){
-            builder.append("Node: ");
             builder.append(coords[i]);
             builder.append(" ");
             builder.append(coords[i+1]);
@@ -50,9 +49,8 @@ public class Way {
 
         builder.append("Tags:\n");
         for(int i = 0; i < tags.length; i += 2){
-            builder.append("Tag: k=");
             builder.append(tags[i]);
-            builder.append(" v=");
+            builder.append(" ");
             builder.append(tags[i+1]);
             builder.append("\n");
         }
@@ -62,10 +60,16 @@ public class Way {
 
     public void draw(GraphicsContext gc) {
         gc.beginPath();
-        gc.moveTo(coords[0], coords[1]);
+        gc.moveTo(0.56f * coords[1], -coords[0]);
         for (int i = 2 ; i < coords.length ; i += 2) {
-            gc.lineTo(coords[i], coords[i+1]);
+            gc.lineTo(0.56f * coords[i+1], -coords[i]);
         }
         gc.stroke();
     }
+
+
+public float[] getCoords(){
+    return coords;
+}
+
 }
