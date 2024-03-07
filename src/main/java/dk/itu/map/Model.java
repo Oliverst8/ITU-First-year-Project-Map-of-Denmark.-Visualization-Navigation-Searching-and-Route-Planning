@@ -16,5 +16,9 @@ public class Model implements Serializable {
     public Model(FileHandler fileHandler) throws XMLStreamException, IOException {
         fileHandler.load();
         ways = fileHandler.ways;
+        minlat = fileHandler.minlat;
+        maxlat = fileHandler.maxlat;
+        minlon = fileHandler.minlon;
+        maxlon = fileHandler.maxlon;
     }
 }

@@ -24,8 +24,6 @@ public class View {
 
     Model model;
 
-    double detail;
-
     public View(Model model, Stage primaryStage) {
         this.model = model;
 
@@ -44,7 +42,7 @@ public class View {
         Point2D p1 = mousetoModel(0,0);
         Point2D p2 = mousetoModel(0,100);
 
-        detail = p1.distance(p2)*1000;
+
 
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
@@ -52,8 +50,10 @@ public class View {
         gc.setTransform(trans);
         gc.setLineWidth(1/Math.sqrt(trans.determinant()));
 
+        gc.setStroke(Color.BLACK);
 
-        for (int i = 0; i < model.ways.size(); i += (int) detail + 1) {
+        System.out.println("Amount of ways: " + model.ways.size());
+        for (int i = 0; i < model.ways.size(); i++) {
             model.ways.get(i).draw(gc);
         }
     }
