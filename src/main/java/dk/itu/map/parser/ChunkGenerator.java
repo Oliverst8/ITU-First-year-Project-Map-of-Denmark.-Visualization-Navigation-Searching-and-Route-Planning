@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import dk.itu.map.Way;
+import dk.itu.map.structures.Way;
 
 public class ChunkGenerator {
     // chunk size in coordinate size
@@ -13,8 +13,6 @@ public class ChunkGenerator {
     public float minlat, maxlat, minlon, maxlon;
     
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
-
-    private int waycounter = 0;
 
     private ArrayList<ArrayList<Way>> chunks;
     private File[] files;
@@ -49,7 +47,6 @@ public class ChunkGenerator {
         } catch(Exception e) {
             System.out.println("failed " + e.getMessage());
         }
-
     }
 
     private int coordsToChunkIndex(float lat, float lon) {
@@ -96,5 +93,4 @@ public class ChunkGenerator {
         }
         System.out.println(tempCounter);
     }
-
 }

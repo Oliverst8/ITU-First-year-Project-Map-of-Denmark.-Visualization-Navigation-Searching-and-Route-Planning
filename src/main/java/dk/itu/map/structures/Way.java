@@ -1,6 +1,5 @@
-package dk.itu.map;
+package dk.itu.map.structures;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -10,7 +9,7 @@ public class Way {
     private final float[] coords;
     private final String[] tags;
 
-    public Way(List<Float> nodes, List<String> tags){
+    public Way(List<Float> nodes, List<String> tags) {
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
 
@@ -23,10 +22,8 @@ public class Way {
         }
     }
 
-
-
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Nodes:\n");
         for(int i = 0; i < coords.length; i += 2){
@@ -56,9 +53,7 @@ public class Way {
         gc.stroke();
     }
 
-
-public float[] getCoords(){
-    return coords;
-}
-
+    public float[] getCoords() {
+        return coords;
+    }
 }

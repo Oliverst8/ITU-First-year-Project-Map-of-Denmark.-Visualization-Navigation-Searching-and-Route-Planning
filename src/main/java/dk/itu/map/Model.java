@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.xml.stream.XMLStreamException;
 
 import dk.itu.map.parser.FileHandler;
+import dk.itu.map.structures.Way;
 
 public class Model implements Serializable {
     List<Way> ways = new ArrayList<Way>();

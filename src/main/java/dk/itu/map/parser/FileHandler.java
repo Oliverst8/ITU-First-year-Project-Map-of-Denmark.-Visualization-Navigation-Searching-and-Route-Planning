@@ -17,8 +17,8 @@ import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
-import dk.itu.map.Way;
 import dk.itu.map.structures.LongFloatArrayHashMap;
+import dk.itu.map.structures.Way;
 
 public class FileHandler {
 

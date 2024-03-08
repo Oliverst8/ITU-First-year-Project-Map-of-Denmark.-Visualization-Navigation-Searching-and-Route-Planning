@@ -39,11 +39,6 @@ public class View {
     }
 
     void redraw() {
-        Point2D p1 = mousetoModel(0,0);
-        Point2D p2 = mousetoModel(0,100);
-
-
-
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -51,7 +46,6 @@ public class View {
         gc.setLineWidth(1/Math.sqrt(trans.determinant()));
 
         gc.setStroke(Color.BLACK);
-
 
         for (int i = 0; i < model.ways.size(); i++) {
             model.ways.get(i).draw(gc);
@@ -76,7 +70,6 @@ public class View {
         try {
             return trans.inverseTransform(lastX, lastY);
         } catch (NonInvertibleTransformException e) {
-            // TODO Auto-generated catch block
             throw new RuntimeException(e);
         }
     }

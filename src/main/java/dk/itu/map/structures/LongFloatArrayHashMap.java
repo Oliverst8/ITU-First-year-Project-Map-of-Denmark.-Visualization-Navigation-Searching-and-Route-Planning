@@ -85,6 +85,7 @@ public class LongFloatArrayHashMap {
             index = (index + offset * offset) % capacity;
             offset++;
         }
+
         return keys[index] == key;
     }
 
@@ -124,15 +125,18 @@ public class LongFloatArrayHashMap {
             if (keys[i] != 0) {
                 int index = getIndex(keys[i], newCapacity);
                 int offset = 1;
+
                 while (newKeys[index] != 0) {
                     index = (index + offset * offset) % newCapacity;
                     offset++;
                 }
+
                 newKeys[index] = keys[i];
                 newValues0[index] = value0[i];
                 newValues1[index] = value1[i];
             }
         }
+
         keys = newKeys;
         value0 = newValues0;
         value1 = newValues1;
