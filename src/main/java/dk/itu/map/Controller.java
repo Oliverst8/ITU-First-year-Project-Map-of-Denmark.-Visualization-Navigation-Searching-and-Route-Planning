@@ -13,7 +13,6 @@ public class Controller {
         view.canvas.setOnMouseDragged(e -> {
             if (e.isPrimaryButtonDown()) {
 
-            } else {
                 double dx = e.getX() - lastX;
                 double dy = e.getY() - lastY;
                 view.pan(dx, dy);

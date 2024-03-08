@@ -2,6 +2,7 @@ package dk.itu.map;
 
 import java.io.File;
 
+import dk.itu.map.parser.FileHandler;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -13,7 +14,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("data/isle-of-man-latest2.osm"));
+        FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/bornhylm.osm"));
         //fileHandler.load();
 
         Model model = new Model(fileHandler);

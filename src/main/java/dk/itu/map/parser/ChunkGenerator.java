@@ -1,8 +1,10 @@
-package dk.itu.map;
+package dk.itu.map.parser;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+
+import dk.itu.map.Way;
 
 public class ChunkGenerator {
     // chunk size in coordinate size

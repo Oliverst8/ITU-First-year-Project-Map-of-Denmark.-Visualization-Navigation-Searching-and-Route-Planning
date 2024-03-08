@@ -1,14 +1,24 @@
-package dk.itu.map;
+package dk.itu.map.parser;
 
-import java.io.*;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import java.util.List;
-import java.util.HashMap;
 import java.util.ArrayList;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
+import dk.itu.map.Way;
+import dk.itu.map.structures.LongFloatArrayHashMap;
 
 public class FileHandler {
 
@@ -41,7 +51,7 @@ public class FileHandler {
 
     private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        Map<Long, float[]> nodes = new HashMap<>();
+        LongFloatArrayHashMap nodes = new LongFloatArrayHashMap();
 
         while (input.hasNext()) {
             int tagKind = input.next();
@@ -49,14 +59,6 @@ public class FileHandler {
             if (tagKind == XMLStreamConstants.START_ELEMENT) {
                 String type = input.getLocalName();
                 switch (type) {
-                    case "node" -> {
-                        float[] cords = new float[2];
-                        Long id = Long.parseLong(input.getAttributeValue(null, "id"));
-                        cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
-                        cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
-                        nodes.put(id, cords);
-                    }
-
                     case "bounds" -> {
                         minlat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
                         maxlat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
@@ -65,23 +67,28 @@ public class FileHandler {
                         chunkGenerator = new ChunkGenerator(minlat, maxlat, minlon, maxlon);
                     }
 
+                    case "node" -> {
+                        float[] cords = new float[2];
+                        Long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                        cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
+                        cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
+                        nodes.put(id, cords);
+                    }
+
                     case "way" -> {
                         createWay(input, nodes);
                     }
                 }
             }
         }
+
         chunkGenerator.writeFiles();
         chunkGenerator.printAll();
     }
 
-
-
-    private void createWay(XMLStreamReader input, Map<Long, float[]> nodes) throws XMLStreamException {
+    private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes) throws XMLStreamException {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
-
-
 
         while(input.hasNext()){
             int eventType = input.next();
@@ -92,7 +99,9 @@ public class FileHandler {
 
             String innerType = input.getLocalName();
             if(innerType.equals("nd")){
-                float[] temp = nodes.get(Long.parseLong(input.getAttributeValue(null, "ref")));
+                Long node = Long.parseLong(input.getAttributeValue(null, "ref"));
+
+                float[] temp = nodes.get(node);
 
                 coords.add(temp[0]);
                 coords.add(temp[1]);
@@ -109,8 +118,7 @@ public class FileHandler {
         } else {
             chunkGenerator.addWay(new Way(coords, tags));
         }
+
         ways.add(new Way(coords, tags));
     }
-
-
 }
