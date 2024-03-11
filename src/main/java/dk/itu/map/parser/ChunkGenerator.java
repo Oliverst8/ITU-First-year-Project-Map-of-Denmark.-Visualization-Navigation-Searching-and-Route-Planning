@@ -2,6 +2,7 @@ package dk.itu.map.parser;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import dk.itu.map.structures.Way;
@@ -83,6 +84,23 @@ public class ChunkGenerator {
             } catch(Exception e) {
                 System.out.println(e.getMessage());
             }
+        }
+
+        try {
+
+            FileWriter writer = new FileWriter("chunkData/config");
+            StringBuilder builder = new StringBuilder();
+            builder.append("minlat: " + minlat + "\n");
+            builder.append("maxlat: " + maxlat + "\n");
+            builder.append("minlon: " + minlon + "\n");
+            builder.append("maxlon: " + maxlon + "\n");
+            builder.append("chunkColumnAmount: " + chunkColumnAmount + "\n");
+            builder.append("chunkRowAmount: " + chunkRowAmount + "\n");
+            builder.append("chunkAmount: " + chunkAmount + "\n");
+            writer.write(builder.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

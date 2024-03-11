@@ -3,6 +3,7 @@ package dk.itu.map.structures;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.skin.ButtonSkin;
 
 public class Way {
 
@@ -22,18 +23,27 @@ public class Way {
         }
     }
 
+    public Way(float[] coords, String[] tags) {
+        this.coords = coords;
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Nodes:\n");
+        builder.append(coords.length);
+        builder.append("\n");
         for(int i = 0; i < coords.length; i += 2){
             builder.append(coords[i]);
             builder.append(" ");
             builder.append(coords[i+1]);
             builder.append("\n");
         }
-
+        
         builder.append("Tags:\n");
+        builder.append(tags.length);
+        builder.append("\n");
         for(int i = 0; i < tags.length; i += 2){
             builder.append(tags[i]);
             builder.append(" ");
