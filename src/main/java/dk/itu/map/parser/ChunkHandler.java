@@ -1,9 +1,13 @@
 package dk.itu.map.parser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.FileReader;
 
 import java.util.ArrayList;
@@ -78,7 +82,10 @@ public class ChunkHandler {
                     coords[i*2+1] = Float.parseFloat(numbers[1]);
                 }
                 line = reader.readLine();
-                if(!line.equals("Tags:")) throw new RuntimeException(line);
+                if(!line.equals("Tags:")) {
+                    reader.close();
+                    throw new RuntimeException(line);
+                }
                 
                 tags = new String[Integer.parseInt(reader.readLine())];
                 for (int i = 0; i < tags.length/2; i++) {
@@ -90,6 +97,28 @@ public class ChunkHandler {
             }
         }
         reader.close();
+    }
+
+    public void loadBytes(int chunk) throws IOException {
+        File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
+        DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+        
+        float[] coords;
+        String[] tags;
+
+        while (stream.available() > 0) {
+            coords = new float[stream.readInt()];
+            for (int i = 0; i < coords.length; i++) {
+                coords[i] = stream.readFloat();
+            }
+            tags = new String[stream.readInt()];
+            for (int i = 0; i < tags.length; i++) {
+                tags[i] = stream.readUTF();
+            }
+            chunks.get(chunk).add(new Way(coords, tags));
+
+        }
+        stream.close();
     }
 
     public ArrayList<Way> getChunk(int chunk) {

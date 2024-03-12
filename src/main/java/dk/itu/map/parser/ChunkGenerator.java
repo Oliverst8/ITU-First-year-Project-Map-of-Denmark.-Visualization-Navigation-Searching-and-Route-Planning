@@ -1,6 +1,9 @@
 package dk.itu.map.parser;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,13 +76,15 @@ public class ChunkGenerator {
     public void writeFiles() {
         for (int i = 0; i < chunkAmount; i++) {
             try {
-                FileWriter writer = new FileWriter(files[i]);
-                
+                // FileWriter writer = new FileWriter(files[i]);
+                DataOutputStream stream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(files[i])));
                 for (Way way : chunks.get(i)) {
-                    writer.write(way.toString());
+                    // writer.write(way.toString());
+                    way.stream(stream);
                 }
 
-                writer.close();
+                // writer.close();
+                stream.close();
                 
             } catch(Exception e) {
                 System.out.println(e.getMessage());

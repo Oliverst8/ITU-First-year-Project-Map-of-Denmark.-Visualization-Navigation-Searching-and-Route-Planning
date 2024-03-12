@@ -1,9 +1,10 @@
 package dk.itu.map.structures;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.skin.ButtonSkin;
 
 public class Way {
 
@@ -14,11 +15,11 @@ public class Way {
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
 
-        for(int i = 0; i < this.coords.length; i += 2){
+        for (int i = 0; i < this.coords.length; i += 2) {
             this.coords[i] = nodes.get(i);
-            this.coords[i+1] = nodes.get(i+1);
+            this.coords[i + 1] = nodes.get(i + 1);
         }
-        for(int i = 0; i < this.tags.length; i++){
+        for (int i = 0; i < this.tags.length; i++) {
             this.tags[i] = tags.get(i);
         }
     }
@@ -34,31 +35,48 @@ public class Way {
         builder.append("Nodes:\n");
         builder.append(coords.length);
         builder.append("\n");
-        for(int i = 0; i < coords.length; i += 2){
+        for (int i = 0; i < coords.length; i += 2) {
             builder.append(coords[i]);
             builder.append(" ");
-            builder.append(coords[i+1]);
+            builder.append(coords[i + 1]);
             builder.append("\n");
         }
-        
+
         builder.append("Tags:\n");
         builder.append(tags.length);
         builder.append("\n");
-        for(int i = 0; i < tags.length; i += 2){
+        for (int i = 0; i < tags.length; i += 2) {
             builder.append(tags[i]);
             builder.append(" ");
-            builder.append(tags[i+1]);
+            builder.append(tags[i + 1]);
             builder.append("\n");
         }
 
         return builder.toString();
     }
 
+    public void stream(DataOutputStream stream) {
+        try {
+
+            stream.writeInt(coords.length);
+            for(int i = 0; i < coords.length; i++) {
+                stream.writeFloat(coords[i]);
+            }
+            stream.writeInt(tags.length);
+            for(int i = 0; i < tags.length; i++) {
+                stream.writeUTF(tags[i]);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void draw(GraphicsContext gc) {
         gc.beginPath();
         gc.moveTo(0.56f * coords[1], -coords[0]);
-        for (int i = 2 ; i < coords.length ; i += 2) {
-            gc.lineTo(0.56f * coords[i+1], -coords[i]);
+        for (int i = 2; i < coords.length; i += 2) {
+            gc.lineTo(0.56f * coords[i + 1], -coords[i]);
         }
         gc.stroke();
     }
