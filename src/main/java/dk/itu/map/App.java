@@ -14,7 +14,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("C:/Users/nickl/Downloads/denmark-latest.osm"));
+        FileHandler fileHandler = new FileHandler(new File("/home/ostarup/Downloads/denmark-latest.osm"));
         //fileHandler.load();
 
         Model model = new Model(fileHandler);
