@@ -8,6 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileReader;
 
 import java.util.ArrayList;
@@ -105,20 +106,25 @@ public class ChunkHandler {
         
         float[] coords;
         String[] tags;
+        try{
+            while (true) {
+                coords = new float[stream.readInt()];
+                for (int i = 0; i < coords.length; i++) {
+                    coords[i] = stream.readFloat();
+                }
+                tags = new String[stream.readInt()];
+                for (int i = 0; i < tags.length; i++) {
+                    tags[i] = stream.readUTF();
+                }
+                chunks.get(chunk).add(new Way(coords, tags));
 
-        while (stream.available() > 0) {
-            coords = new float[stream.readInt()];
-            for (int i = 0; i < coords.length; i++) {
-                coords[i] = stream.readFloat();
             }
-            tags = new String[stream.readInt()];
-            for (int i = 0; i < tags.length; i++) {
-                tags[i] = stream.readUTF();
-            }
-            chunks.get(chunk).add(new Way(coords, tags));
-
+            /*The steam will throw an end of file exception when its done,
+            this way we can skip checking if we are done reading every loop run, and save time*/
+        } catch(EOFException e){
+            stream.close();
         }
-        stream.close();
+        
     }
 
     public ArrayList<Way> getChunk(int chunk) {
