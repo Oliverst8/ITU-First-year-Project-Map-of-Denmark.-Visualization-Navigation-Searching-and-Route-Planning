@@ -6,29 +6,26 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileReader;
 
 import java.util.ArrayList;
 
-
 import dk.itu.map.structures.Way;
 
 public class ChunkHandler {
 
     private final String dataPath;
-    
+
     public float minlat, maxlat, minlon, maxlon;
-    
+
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
 
-    //Temp variable to save loaded ways
+    // Temp variable to save loaded ways
     public ArrayList<Way> ways;
-    
-    private ArrayList<ArrayList<Way>> chunks;
 
+    private ArrayList<ArrayList<Way>> chunks;
 
     /**
      * Initialises the filehandler
@@ -37,7 +34,6 @@ public class ChunkHandler {
      */
     public ChunkHandler(String dataPath) {
         this.dataPath = dataPath;
-
 
         try {
             File file = new File(this.dataPath + "/config");
@@ -57,8 +53,7 @@ public class ChunkHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        
+
         ways = new ArrayList<>();
         chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
         for (int i = 0; i < chunkAmount; i++) {

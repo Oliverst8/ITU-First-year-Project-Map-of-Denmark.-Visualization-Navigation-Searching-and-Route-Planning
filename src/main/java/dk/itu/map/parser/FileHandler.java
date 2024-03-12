@@ -52,6 +52,7 @@ public class FileHandler {
     private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         LongFloatArrayHashMap nodes = new LongFloatArrayHashMap();
+        long startLoadTime = System.nanoTime();
 
         while (input.hasNext()) {
             int tagKind = input.next();
@@ -81,9 +82,13 @@ public class FileHandler {
                 }
             }
         }
-
+        long startWriteTime = System.nanoTime();
+        System.out.println("Reading took: " + ((startWriteTime-startLoadTime)/1_000_000_000.0) + "s");
+        
         chunkGenerator.writeFiles();
         chunkGenerator.printAll();
+        long endWriteTime = System.nanoTime();
+        System.out.println("Writing took: " + ((endWriteTime-startWriteTime)/1_000_000_000.0) + "s");
     }
 
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes) throws XMLStreamException {

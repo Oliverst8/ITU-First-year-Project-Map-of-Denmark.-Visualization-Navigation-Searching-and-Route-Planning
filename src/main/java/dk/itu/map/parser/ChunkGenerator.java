@@ -3,10 +3,15 @@ package dk.itu.map.parser;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import java.util.concurrent.*;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import dk.itu.map.structures.Way;
 
@@ -45,6 +50,11 @@ public class ChunkGenerator {
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
         
         try {
+            File folder = new File("chunkData");
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            
             for (int i = 0; i < chunkAmount; i++) {
                 files[i] = new File("chunkData/chunk" + i + ".txt");
             }
@@ -74,9 +84,9 @@ public class ChunkGenerator {
     }
 
     public void writeFiles() {
-        for (int i = 0; i < chunkAmount; i++) {
+        IntStream.range(0, chunks.size()).parallel().forEach(i -> {
             try {
-                // FileWriter writer = new FileWriter(files[i]);
+                
                 DataOutputStream stream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(files[i])));
                 for (Way way : chunks.get(i)) {
                     // writer.write(way.toString());
@@ -85,11 +95,28 @@ public class ChunkGenerator {
 
                 // writer.close();
                 stream.close();
-                
-            } catch(Exception e) {
-                System.out.println(e.getMessage());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
+        });
+        // for (int i = 0; i < chunkAmount; i++) {
+        //     try {
+        //         // FileWriter writer = new FileWriter(files[i]);
+        //         DataOutputStream stream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(files[i])));
+        //         for (Way way : chunks.get(i)) {
+        //             // writer.write(way.toString());
+        //             way.stream(stream);
+        //         }
+
+        //         // writer.close();
+        //         stream.close();
+                
+        //     } catch(Exception e) {
+        //         System.out.println(e.getMessage());
+        //     }
+        // }
 
         try {
 
