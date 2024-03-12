@@ -6,15 +6,13 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInput;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileReader;
 
 import java.util.ArrayList;
 
-
-import javax.xml.stream.XMLStreamException;
 
 import dk.itu.map.structures.Way;
 
@@ -68,45 +66,13 @@ public class ChunkHandler {
         }
     }
 
-    public void load(int chunk) throws IOException, XMLStreamException {
-        File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        float[] coords;
-        String[] tags;
-        while ((line = reader.readLine()) != null) {
-            if (line.equals("Nodes:")) {
-                coords = new float[Integer.parseInt(reader.readLine())];
-                for (int i = 0; i < coords.length/2; i++) {
-                    String[] numbers = reader.readLine().split(" ");
-                    coords[i*2] = Float.parseFloat(numbers[0]);
-                    coords[i*2+1] = Float.parseFloat(numbers[1]);
-                }
-                line = reader.readLine();
-                if(!line.equals("Tags:")) {
-                    reader.close();
-                    throw new RuntimeException(line);
-                }
-                
-                tags = new String[Integer.parseInt(reader.readLine())];
-                for (int i = 0; i < tags.length/2; i++) {
-                    String[] numbers = reader.readLine().split(" ", 2);
-                    tags[i*2] = numbers[0];
-                    tags[i*2+1] = numbers[1];
-                }
-                chunks.get(chunk).add(new Way(coords, tags));
-            }
-        }
-        reader.close();
-    }
-
     public void loadBytes(int chunk) throws IOException {
         File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
-        DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
         
         float[] coords;
         String[] tags;
-        try{
+
+        try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))){
             while (true) {
                 coords = new float[stream.readInt()];
                 for (int i = 0; i < coords.length; i++) {
@@ -117,12 +83,11 @@ public class ChunkHandler {
                     tags[i] = stream.readUTF();
                 }
                 chunks.get(chunk).add(new Way(coords, tags));
-
             }
             /*The steam will throw an end of file exception when its done,
             this way we can skip checking if we are done reading every loop run, and save time*/
         } catch(EOFException e){
-            stream.close();
+            //End of file reached
         }
         
     }
@@ -132,37 +97,3 @@ public class ChunkHandler {
     }
 }
 
-/**
-Nodes:
-53.60783 -3.0618331
-53.634167 -3.101333
-53.65 -3.1172
-53.65075 -3.133333
-53.750782 -3.883333
-53.75102 -3.917617
-53.751316 -3.934283
-53.76695 -4.016667
-53.76673 -4.05105
-53.81682 -4.634433
-53.81695 -4.65105
-53.384766 -6.101533
-53.3847 -6.117417
-53.384632 -6.117517
-Tags:
-communication line
-description Southport to Dublin
-name Hibernia 'C'
-operator Hibernia Atlantic
-phone +44 7771 730654
-seamark:cable_submarine:category fibre_optic
-seamark:type cable_submarine
-source Kingfisher Information Service, February 2010, http://www.kisca.org.uk/charts.htm
-submarine yes
-Nodes:
-53.60783 -3.0618331
-53.634167 -3.101333
-53.65 -3.1172
-53.65075 -3.133333
-53.6515 -3.1345
-53.6669 -3.150233
- */

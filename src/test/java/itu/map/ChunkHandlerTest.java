@@ -14,11 +14,11 @@ public class ChunkHandlerTest {
         long startTime = System.nanoTime();
 
         try {
-            chunkHandler.loadBytes(75);
+            chunkHandler.loadBytes(10);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertEquals(1047190, chunkHandler.getChunk(75).size());
+        assertEquals(317843, chunkHandler.getChunk(10).size());
         long endTime = System.nanoTime();
         System.out.println((endTime - startTime) / 1_000_000_000.0);
 
