@@ -26,5 +26,8 @@ public class Controller {
             double factor = e.getDeltaY();
             view.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
         });
+
+        view.zoomIn.setOnAction(e -> view.zoom(0, 0, 1.1));
+        view.zoomOut.setOnAction(e -> view.zoom(0, 0, 1 / 1.1));
     }
 }

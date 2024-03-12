@@ -1,20 +1,27 @@
 package dk.itu.map;
 
+import java.io.IOException;
+
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 
 import javafx.stage.Stage;
-
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.transform.Affine;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
-    Canvas canvas = new Canvas(640, 480);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
+    Canvas canvas;
+    GraphicsContext gc;
+
+    Button zoomIn;
+    Button zoomOut;
+
     double x1 = 100;
     double y1 = 100;
     double x2 = 200;
@@ -27,15 +34,27 @@ public class View {
     public View(Model model, Stage primaryStage) {
         this.model = model;
 
-        primaryStage.setTitle("Draw Lines");
-        BorderPane pane = new BorderPane(canvas);
-        Scene scene = new Scene(pane);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/scenes/main.fxml"));
+    
+            Scene scene = new Scene(root);
 
-        pan(-0.56*model.minlon, model.maxlat);
-        zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
-        redraw();
+            primaryStage.setTitle("MapIT");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+            canvas = (Canvas) scene.lookup("#canvas");
+            gc = canvas.getGraphicsContext2D();
+
+            zoomIn = (Button) scene.lookup("#zoomIn");
+            zoomOut = (Button) scene.lookup("#zoomOut");
+
+            pan(-0.56*model.minlon, model.maxlat);
+            zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
+            redraw();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void redraw() {
@@ -58,8 +77,6 @@ public class View {
     }
 
     void zoom(double dx, double dy, double factor) {
-
-        System.out.println("Factor: " + factor);
         pan(-dx, -dy);
         trans.prependScale(factor, factor);
         pan(dx, dy);
