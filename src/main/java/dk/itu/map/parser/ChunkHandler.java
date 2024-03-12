@@ -55,17 +55,18 @@ public class ChunkHandler {
         }
 
         ways = new ArrayList<>();
-        chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-        for (int i = 0; i < chunkAmount; i++) {
-            chunks.add(new ArrayList<Way>());
-        }
     }
 
-    public void loadBytes(int chunk) throws IOException {
+    public ArrayList<Way> loadBytes(int chunk) throws IOException {
+
+        if(chunk < 0 || chunk >= chunkAmount){
+            return new ArrayList<Way>();
+        }
         File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
-        
+
         float[] coords;
         String[] tags;
+        ArrayList<Way> ways = new ArrayList<>();
 
         try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))){
             while (true) {
@@ -77,18 +78,17 @@ public class ChunkHandler {
                 for (int i = 0; i < tags.length; i++) {
                     tags[i] = stream.readUTF();
                 }
-                chunks.get(chunk).add(new Way(coords, tags));
+                ways.add(new Way(coords, tags));
             }
             /*The steam will throw an end of file exception when its done,
             this way we can skip checking if we are done reading every loop run, and save time*/
         } catch(EOFException e){
             //End of file reached
         }
-        
+
+        return ways;
     }
 
-    public ArrayList<Way> getChunk(int chunk) {
-        return chunks.get(chunk);
-    }
+
 }
 
