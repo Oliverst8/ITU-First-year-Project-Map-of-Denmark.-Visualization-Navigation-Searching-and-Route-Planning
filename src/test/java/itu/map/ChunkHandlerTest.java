@@ -14,6 +14,8 @@ import javax.xml.stream.XMLStreamException;
 public class ChunkHandlerTest {
     @Test public void readChunkTest() {
         ChunkHandler chunkHandler = new ChunkHandler("chunkData");
+        long startTime = System.nanoTime();
+
         try {
             chunkHandler.load(10);
         } catch (IOException e) {
@@ -22,6 +24,8 @@ public class ChunkHandlerTest {
             e.printStackTrace();
         }
         assertEquals(317843, chunkHandler.getChunk(10).size());
+        long endTime = System.nanoTime();
+        System.out.println((endTime - startTime) / 1_000_000_000.0);
 
     }
 }

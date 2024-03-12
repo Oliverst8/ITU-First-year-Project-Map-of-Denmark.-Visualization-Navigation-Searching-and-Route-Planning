@@ -26,6 +26,7 @@ public class ChunkHandler {
     
     private ArrayList<ArrayList<Way>> chunks;
 
+
     /**
      * Initialises the filehandler
      *
@@ -38,10 +39,10 @@ public class ChunkHandler {
         try {
             File file = new File(this.dataPath + "/config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            this.minlat = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.maxlat = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.minlon = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.maxlon = Integer.parseInt(reader.readLine().split(" ")[1]);
+            this.minlat = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.maxlat = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.minlon = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.maxlon = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkRowAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
@@ -82,9 +83,6 @@ public class ChunkHandler {
                 tags = new String[Integer.parseInt(reader.readLine())];
                 for (int i = 0; i < tags.length/2; i++) {
                     String[] numbers = reader.readLine().split(" ", 2);
-                    if (i == 9) {
-                        System.out.println(tags.length);
-                    }
                     tags[i*2] = numbers[0];
                     tags[i*2+1] = numbers[1];
                 }
