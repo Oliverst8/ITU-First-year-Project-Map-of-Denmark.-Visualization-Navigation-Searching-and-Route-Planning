@@ -1,10 +1,10 @@
 package itu.map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import dk.itu.map.structures.LongFloatArrayHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LongFloatArrayHashMapTest {
     @Test public void addOneMillionSmallNumbers() {
