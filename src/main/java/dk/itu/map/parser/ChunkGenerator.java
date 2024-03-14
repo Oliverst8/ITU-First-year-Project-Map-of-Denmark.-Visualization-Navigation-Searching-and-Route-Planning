@@ -98,6 +98,7 @@ public class ChunkGenerator implements Runnable {
 
     public void chunkWays() {
         List<Way> newWays = rawWays;
+        //System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         newWays.forEach(way -> {
             float[] coords = way.getCoords();
