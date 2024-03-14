@@ -105,7 +105,7 @@ public class ChunkGenerator implements Runnable {
         for(Way way : newWays) {
             byte zoomLevel = -1;
             String[] tags = way.getTags();
-            /*for(String tag : tags){
+            for(String tag : tags){
                 switch (tag) {
                     case "water":
                     case "wetland":
@@ -150,9 +150,9 @@ public class ChunkGenerator implements Runnable {
                         break;
                 }
             }
-            //if(zoomLevel == -1) continue;
+            if(zoomLevel == -1) continue;
             way.setZoomLevel( zoomLevel);
- */
+
             float[] coords = way.getCoords();
             for (int i = 0; i < coords.length; i += 2) {
                 float lat = coords[i];
