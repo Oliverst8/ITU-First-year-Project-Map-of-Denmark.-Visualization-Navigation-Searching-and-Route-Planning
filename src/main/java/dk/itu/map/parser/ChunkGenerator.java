@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import dk.itu.map.structures.Way;
 
@@ -71,7 +70,7 @@ public class ChunkGenerator implements Runnable {
                     for (File file : files) {
                         count++;
                         file.delete();
-                        if (count > 50) {
+                        if (count > 500) {
                             System.err.println("STOPPPPPP");
                             break;
                         }
@@ -98,7 +97,7 @@ public class ChunkGenerator implements Runnable {
 
     public void chunkWays() {
         List<Way> newWays = rawWays;
-        //System.out.println("chunking: " + newWays.size());
+        System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         newWays.forEach(way -> {
             float[] coords = way.getCoords();
@@ -145,11 +144,8 @@ public class ChunkGenerator implements Runnable {
                 DataOutputStream stream = new DataOutputStream(
                         new BufferedOutputStream(new FileOutputStream(files[i], true)));
                 for (Way way : chunks.get(i)) {
-                    // writer.write(way.toString());
                     way.stream(stream);
                 }
-
-                // writer.close();
                 stream.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -159,22 +155,25 @@ public class ChunkGenerator implements Runnable {
         });
 
         try {
-
-            FileWriter writer = new FileWriter("chunkData/config");
-            StringBuilder builder = new StringBuilder();
-            builder.append("minlat: " + minlat + "\n");
-            builder.append("maxlat: " + maxlat + "\n");
-            builder.append("minlon: " + minlon + "\n");
-            builder.append("maxlon: " + maxlon + "\n");
-            builder.append("chunkColumnAmount: " + chunkColumnAmount + "\n");
-            builder.append("chunkRowAmount: " + chunkRowAmount + "\n");
-            builder.append("chunkAmount: " + chunkAmount + "\n");
-            writer.write(builder.toString());
-            writer.close();
+            writeConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void writeConfig() throws IOException {
+        FileWriter writer = new FileWriter("chunkData/config");
+        StringBuilder builder = new StringBuilder();
+        builder.append("minlat: ").append(minlat).append("\n")
+        .append("maxlat: ").append(maxlat).append("\n")
+        .append("minlon: ").append(minlon).append("\n")
+        .append("maxlon: ").append(maxlon).append("\n")
+        .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
+        .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
+        .append("chunkAmount: ").append(chunkAmount).append("\n");
+        writer.write(builder.toString());
+        writer.close();
     }
 
     public void printAll() {
