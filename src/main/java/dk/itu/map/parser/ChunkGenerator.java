@@ -7,10 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
@@ -31,6 +28,12 @@ public class ChunkGenerator implements Runnable {
     private List<Way> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
+
+    private final HashSet<String> zoomWords0 = new HashSet<>(Arrays.asList("building", "highway"));
+    private final HashSet<String> zoomWords1 = new HashSet<>(Arrays.asList("terminal", "gate"));
+    private final HashSet<String> zoomWords2 = new HashSet<>(Arrays.asList("runway", "tertiary", "tertiary_link", "unclassified", "residential"));
+    private final HashSet<String> zoomWords3 = new HashSet<>(Arrays.asList("secondary", "secondary_link", "rail", "light_rail"));
+    private final HashSet<String> zoomWords4 = new HashSet<>(Arrays.asList("aerodrome", "motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link", "fell", "grassland", "heath", "scrub", "wood", "bay", "beach", "coastline", "cape", "water", "wetland"));
     
 
     private Thread chunkingThread;
@@ -99,7 +102,57 @@ public class ChunkGenerator implements Runnable {
         List<Way> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        newWays.forEach(way -> {
+        for(Way way : newWays) {
+            byte zoomLevel = -1;
+            String[] tags = way.getTags();
+            /*for(String tag : tags){
+                switch (tag) {
+                    case "water":
+                    case "wetland":
+                    case "bay":
+                    case "beach":
+                    case "coastline":
+                    case "cape":
+                    case "fell":
+                    case "grassland":
+                    case "heath":
+                    case "scrub":
+                    case "wood":
+                    case "motorway":
+                    case "motorway_link":
+                    case "trunk":
+                    case "trunk_link":
+                    case "primary":
+                    case "primary_link":
+                    case "aerodrome":
+                        zoomLevel = 4;
+                        break;
+                    case "secondary":
+                    case "secondary_link":
+                    case "rail":
+                    case "light_rail":
+                        if(zoomLevel < 3) zoomLevel = 3;
+                        break;
+                    case "runway":
+                    case "tertiary":
+                    case "tertiary_link":
+                    case "unclassified":
+                    case "residential":
+                        if(zoomLevel < 2) zoomLevel = 2;
+                        break;
+                    case "terminal":
+                    case "gate":
+                        if(zoomLevel < 1) zoomLevel = 1;
+                        break;
+                    case "building":
+                    case "highway":
+                        if(zoomLevel < 0) zoomLevel = 0;
+                        break;
+                }
+            }
+            //if(zoomLevel == -1) continue;
+            way.setZoomLevel( zoomLevel);
+ */
             float[] coords = way.getCoords();
             for (int i = 0; i < coords.length; i += 2) {
                 float lat = coords[i];
@@ -111,7 +164,7 @@ public class ChunkGenerator implements Runnable {
                     chunks.get(chunkIndex).add(way);
                 }
             }
-        });
+        }
     }
 
     public void run() {

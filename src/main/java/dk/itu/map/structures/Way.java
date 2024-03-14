@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Way {
 
+    private byte zoomLevel;
     private final float[] coords;
     private final String[] tags;
 
@@ -84,4 +85,9 @@ public class Way {
     public float[] getCoords() {
         return coords;
     }
+    public String[] getTags() {
+        return tags;
+    }
+    public void setZoomLevel(byte zoomLevel){ this.zoomLevel = zoomLevel;}
+
 }
