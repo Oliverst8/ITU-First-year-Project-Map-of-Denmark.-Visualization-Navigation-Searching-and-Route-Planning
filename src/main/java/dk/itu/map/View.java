@@ -48,11 +48,10 @@ public class View {
         gc.setStroke(Color.BLACK);
 
         model.updateChunk(2);
-        for (int i = 0; i < model.ways.size(); i++) {
-            for(int j = 0; j < model.ways.get(i).size(); j++){
-                model.ways.get(i).get(j).draw(gc);
+        for (int chunk : model.chunks.keySet()) {
+            for(int j = 0; j < model.chunks.get(chunk).size(); j++){
+                model.chunks.get(chunk).get(j).draw(gc);
             }
-
         }
     }
 
