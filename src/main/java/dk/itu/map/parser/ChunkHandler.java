@@ -25,8 +25,6 @@ public class ChunkHandler {
     // Temp variable to save loaded ways
     public ArrayList<Way> ways;
 
-    private ArrayList<ArrayList<Way>> chunks;
-
     /**
      * Initialises the filehandler
      *
@@ -59,7 +57,7 @@ public class ChunkHandler {
 
     public ArrayList<Way> loadBytes(int chunk) throws IOException {
 
-        if(chunk < 0 || chunk >= chunkAmount){
+        if (chunk < 0 || chunk >= chunkAmount) {
             return new ArrayList<Way>();
         }
         File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
@@ -68,7 +66,7 @@ public class ChunkHandler {
         String[] tags;
         ArrayList<Way> ways = new ArrayList<>();
 
-        try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))){
+        try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             while (true) {
                 coords = new float[stream.readInt()];
                 for (int i = 0; i < coords.length; i++) {
@@ -89,6 +87,4 @@ public class ChunkHandler {
         return ways;
     }
 
-
 }
-

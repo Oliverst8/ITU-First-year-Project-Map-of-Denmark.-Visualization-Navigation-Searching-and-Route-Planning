@@ -8,17 +8,15 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 import dk.itu.map.structures.Way;
 
 public class ChunkGenerator implements Runnable {
     // chunk size in coordinate size
-    private final float chunkSize = 0.25f;
+    private final float CHUNK_SIZE = 0.25f;
 
     public float minlat, maxlat, minlon, maxlon;
 
@@ -46,8 +44,8 @@ public class ChunkGenerator implements Runnable {
         this.minlon = minlon;
         this.maxlon = maxlon;
 
-        chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / chunkSize);
-        chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / chunkSize);
+        chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / CHUNK_SIZE);
+        chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / CHUNK_SIZE);
 
         chunkAmount = chunkColumnAmount * chunkRowAmount;
 
@@ -87,8 +85,8 @@ public class ChunkGenerator implements Runnable {
     }
 
     private int coordsToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minlon) / chunkSize) +
-                (int) Math.floor((lat - minlat) / chunkSize) * chunkColumnAmount;
+        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
+                (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
     public void addWay(Way way) { // main

@@ -2,6 +2,7 @@ package dk.itu.map;
 
 import java.io.File;
 
+import dk.itu.map.parser.ChunkHandler;
 import dk.itu.map.parser.FileHandler;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -14,12 +15,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // if (!new File("chunkData/config").exists()) {
+        if (!new File("chunkData/config").exists()) {
             FileHandler fileHandler = new FileHandler(new File("C:\\Users\\nickl\\Downloads\\fyn-latest.osm"));
-        // }
-        //fileHandler.load();
-
-        Model model = new Model(fileHandler);
+            fileHandler.load();
+        }
+        
+        ChunkHandler chunkHandler = new ChunkHandler("chunkData");
+        Model model = new Model(chunkHandler);
         var view = new View(model, primaryStage);
         new Controller(model, view);
     }
