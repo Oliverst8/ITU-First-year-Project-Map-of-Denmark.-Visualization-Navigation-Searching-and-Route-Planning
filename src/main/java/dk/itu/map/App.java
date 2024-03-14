@@ -14,7 +14,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("C:/Users/nickl/Downloads/denmark-latest.osm"));
+        // if (!new File("chunkData/config").exists()) {
+            FileHandler fileHandler = new FileHandler(new File("C:\\Users\\nickl\\Downloads\\denmark-latest.osm"));
+        // }
         //fileHandler.load();
 
         Model model = new Model(fileHandler);
