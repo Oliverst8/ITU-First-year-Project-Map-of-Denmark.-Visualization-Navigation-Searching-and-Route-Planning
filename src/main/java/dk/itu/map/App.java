@@ -14,7 +14,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("C:/Users/augus/Downloads/isle-of-man-latest.osm.bz2"));
+        // if (!new File("chunkData/config").exists()) {
+            FileHandler fileHandler = new FileHandler(new File("C:\\Users\\nickl\\Downloads\\fyn-latest.osm"));
+        // }
         //fileHandler.load();
 
         Model model = new Model(fileHandler);

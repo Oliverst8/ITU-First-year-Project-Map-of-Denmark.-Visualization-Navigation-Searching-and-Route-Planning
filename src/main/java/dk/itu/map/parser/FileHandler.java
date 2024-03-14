@@ -85,8 +85,10 @@ public class FileHandler {
         long startWriteTime = System.nanoTime();
         System.out.println("Reading took: " + ((startWriteTime-startLoadTime)/1_000_000_000.0) + "s");
         
-        chunkGenerator.writeFiles();
-        chunkGenerator.printAll();
+        chunkGenerator.finishWork();
+        // chunkGenerator.setWays(ways);
+        // chunkGenerator.run();
+        // chunkGenerator.printAll();
         long endWriteTime = System.nanoTime();
         System.out.println("Writing took: " + ((endWriteTime-startWriteTime)/1_000_000_000.0) + "s");
     }
@@ -124,6 +126,13 @@ public class FileHandler {
             chunkGenerator.addWay(new Way(coords, tags));
         }
 
-        ways.add(new Way(coords, tags));
+        // ways.add(new Way(coords, tags));
+
+        // if (ways.size() > 100_000 && !chunkGenerator.isWriting()) {
+        //     chunkGenerator.setWays(ways);
+        //     Thread thread = new Thread(chunkGenerator);
+        //     thread.start(); 
+        //     ways = new ArrayList<>();
+        // }
     }
 }
