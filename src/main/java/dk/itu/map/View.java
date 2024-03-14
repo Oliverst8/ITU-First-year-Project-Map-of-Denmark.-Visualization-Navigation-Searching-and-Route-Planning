@@ -35,7 +35,7 @@ public class View {
         this.model = model;
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/scenes/main.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/scenes/map.fxml"));
     
             Scene scene = new Scene(root);
 
