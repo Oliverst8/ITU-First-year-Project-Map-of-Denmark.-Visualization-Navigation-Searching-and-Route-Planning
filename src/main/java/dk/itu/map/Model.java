@@ -19,13 +19,9 @@ public class Model implements Serializable {
 
     double minlat, maxlat, minlon, maxlon;
 
-    public Model(FileHandler fileHandler) throws XMLStreamException, IOException {
-        fileHandler.load();
-        //ways = fileHandler.ways;
-        minlat = fileHandler.minlat;
-        maxlat = fileHandler.maxlat;
-        minlon = fileHandler.minlon;
-        maxlon = fileHandler.maxlon;
+    public Model(ChunkHandler chunkHandler) {
+        this.chunkHandler = chunkHandler;
+
     }
 
     public void updateChunk(int n){
