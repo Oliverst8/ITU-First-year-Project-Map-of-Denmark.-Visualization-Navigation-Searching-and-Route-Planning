@@ -21,19 +21,13 @@ public class ChunkGenerator implements Runnable {
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
 
-    private ArrayList<ArrayList<Way>> chunks;
-    private File[] files;
+    private ArrayList<ArrayList<ArrayList<Way>>> chunks;
+    private File[][] files;
 
     private int tempCounter = 0;
     private List<Way> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
-
-    private final HashSet<String> zoomWords0 = new HashSet<>(Arrays.asList("building", "highway"));
-    private final HashSet<String> zoomWords1 = new HashSet<>(Arrays.asList("terminal", "gate"));
-    private final HashSet<String> zoomWords2 = new HashSet<>(Arrays.asList("runway", "tertiary", "tertiary_link", "unclassified", "residential"));
-    private final HashSet<String> zoomWords3 = new HashSet<>(Arrays.asList("secondary", "secondary_link", "rail", "light_rail"));
-    private final HashSet<String> zoomWords4 = new HashSet<>(Arrays.asList("aerodrome", "motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link", "fell", "grassland", "heath", "scrub", "wood", "bay", "beach", "coastline", "cape", "water", "wetland"));
     
 
     private Thread chunkingThread;
@@ -54,36 +48,34 @@ public class ChunkGenerator implements Runnable {
 
         chunkAmount = chunkColumnAmount * chunkRowAmount;
 
-        chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-        for (int i = 0; i < chunkAmount; i++) {
-            chunks.add(new ArrayList<Way>());
+        chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
+        for(int i = 0; i < 5; i++){
+            chunks.add(new ArrayList<ArrayList<Way>>());
+            for (int j = 0; j < chunkAmount; j++) {
+                chunks.get(i).add(new ArrayList<Way>());
+            }
         }
-        files = new File[chunkAmount];
+
+        files = new File[5][chunkAmount];
 
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         try {
-            File folder = new File("chunkData");
+            File folder = new File("zoomLayers");
             if (!folder.exists()) {
                 folder.mkdir();
-            } else {
-                File[] files = folder.listFiles();
-                int count = 0;
-                if (files != null) {
-                    for (File file : files) {
-                        count++;
-                        file.delete();
-                        if (count > 500) {
-                            System.err.println("STOPPPPPP");
-                            break;
-                        }
+                for(int i = 0; i < 5; i++ ){
+                    File innerFolder = new File("zoomLayers/zoom" + i);
+                    innerFolder.mkdir();
+                    for (int j = 0; j < chunkAmount; j++) {
+                        files[i][j] = new File("zoomLayers/zoom" + i + "/chunk" + j +".txt");
+
                     }
                 }
             }
 
-            for (int i = 0; i < chunkAmount; i++) {
-                files[i] = new File("chunkData/chunk" + i + ".txt");
-            }
+
+
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
         }
@@ -151,7 +143,7 @@ public class ChunkGenerator implements Runnable {
                 }
             }
             if(zoomLevel == -1) continue;
-            way.setZoomLevel( zoomLevel);
+            //way.setZoomLevel( zoomLevel);
 
             float[] coords = way.getCoords();
             for (int i = 0; i < coords.length; i += 2) {
@@ -161,7 +153,7 @@ public class ChunkGenerator implements Runnable {
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 
                 if (chunkIndex < chunkAmount && chunkIndex >= 0) {
-                    chunks.get(chunkIndex).add(way);
+                    chunks.get(zoomLevel).get(chunkIndex).add(way);
                 }
             }
         }
@@ -178,11 +170,14 @@ public class ChunkGenerator implements Runnable {
                 }
                 continue;
             }
-            chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-            for (int i = 0; i < chunkAmount; i++) {
-                chunks.add(new ArrayList<Way>());
+            chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
+            for(int i = 0; i < 5; i++){
+                chunks.add(new ArrayList<ArrayList<Way>>());
+                for (int j = 0; j < chunkAmount; j++) {
+                    chunks.get(i).add(new ArrayList<Way>());
+                }
             }
-            
+
             chunkWays();
 
             writeFiles();
@@ -191,21 +186,27 @@ public class ChunkGenerator implements Runnable {
     }
 
     public void writeFiles() {
-        IntStream.range(0, chunks.size()).parallel().forEach(i -> {
-            try {
+        IntStream.range(0, 5).forEach(i -> {
+            IntStream.range(0, chunks.size()).parallel().forEach(j -> {
+                try {
 
-                DataOutputStream stream = new DataOutputStream(
-                        new BufferedOutputStream(new FileOutputStream(files[i], true)));
-                for (Way way : chunks.get(i)) {
-                    way.stream(stream);
+                    DataOutputStream stream = new DataOutputStream(
+                            new BufferedOutputStream(new FileOutputStream(files[i][j], true)));
+                    for (Way way : chunks.get(i).get(j)) {
+                        way.stream(stream);
+                    }
+                    stream.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e){
+                    System.out.println("e.getMessage()");
+                    e.printStackTrace();
                 }
-                stream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            });
         });
+        
 
         try {
             writeConfig();
