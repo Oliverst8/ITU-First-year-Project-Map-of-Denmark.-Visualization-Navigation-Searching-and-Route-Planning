@@ -2,7 +2,7 @@ module dk.itu.map {
     requires java.xml;
     
     requires javafx.fxml;
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires transitive javafx.graphics;
     
     requires org.apache.commons.compress;

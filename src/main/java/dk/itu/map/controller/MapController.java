@@ -1,10 +1,13 @@
-package dk.itu.map;
+package dk.itu.map.controller;
 
-public class Controller {
+import dk.itu.map.View;
+import dk.itu.map.Model;
+
+public class MapController {
     double lastX;
     double lastY;
 
-    public Controller(Model model, View view) {
+    public MapController(Model model, View view) {
         view.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();

@@ -1,24 +1,20 @@
 package dk.itu.map;
 
-import java.io.File;
-
-import dk.itu.map.parser.FileHandler;
+import dk.itu.map.controller.MapController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class App extends Application {
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/map.osm"));
-        //fileHandler.load();
+        primaryStage.setTitle("MapIT");
 
-        Model model = new Model(fileHandler);
-        var view = new View(model, primaryStage);
-        new Controller(model, view);
+        Model model = new Model();
+        View view = new View(model, primaryStage);
+        new MapController(model, view);
     }
 }

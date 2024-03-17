@@ -8,10 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 import dk.itu.map.structures.Way;

@@ -16,16 +16,11 @@ import javafx.scene.control.Button;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
-    Canvas canvas;
-    GraphicsContext gc;
+    public Canvas canvas;
+    public GraphicsContext gc;
 
-    Button zoomIn;
-    Button zoomOut;
-
-    double x1 = 100;
-    double y1 = 100;
-    double x2 = 200;
-    double y2 = 800;
+    public Button zoomIn;
+    public Button zoomOut;
 
     Affine trans = new Affine();
 
@@ -57,7 +52,7 @@ public class View {
         }
     }
 
-    void redraw() {
+    public void redraw() {
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -71,12 +66,12 @@ public class View {
         }
     }
 
-    void pan(double dx, double dy) {
+    public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         redraw();
     }
 
-    void zoom(double dx, double dy, double factor) {
+    public void zoom(double dx, double dy, double factor) {
         pan(-dx, -dy);
         trans.prependScale(factor, factor);
         pan(dx, dy);

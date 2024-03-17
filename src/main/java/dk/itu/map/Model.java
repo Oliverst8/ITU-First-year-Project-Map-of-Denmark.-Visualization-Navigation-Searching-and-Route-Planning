@@ -2,7 +2,7 @@ package dk.itu.map;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -16,7 +16,9 @@ public class Model implements Serializable {
 
     double minlat, maxlat, minlon, maxlon;
 
-    public Model(FileHandler fileHandler) throws XMLStreamException, IOException {
+    public Model() throws XMLStreamException, IOException {
+        FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/map.osm"));
+        
         fileHandler.load();
         ways = fileHandler.ways;
         minlat = fileHandler.minlat;
