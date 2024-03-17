@@ -12,15 +12,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.transform.Affine;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
     public Canvas canvas;
     public GraphicsContext gc;
-
-    public Button zoomIn;
-    public Button zoomOut;
 
     Affine trans = new Affine();
 
@@ -30,7 +26,7 @@ public class View {
         this.model = model;
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/scenes/map.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/scenes/home.fxml"));
     
             Scene scene = new Scene(root);
 
@@ -40,9 +36,6 @@ public class View {
 
             canvas = (Canvas) scene.lookup("#canvas");
             gc = canvas.getGraphicsContext2D();
-
-            zoomIn = (Button) scene.lookup("#zoomIn");
-            zoomOut = (Button) scene.lookup("#zoomOut");
 
             pan(-0.56*model.minlon, model.maxlat);
             zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));

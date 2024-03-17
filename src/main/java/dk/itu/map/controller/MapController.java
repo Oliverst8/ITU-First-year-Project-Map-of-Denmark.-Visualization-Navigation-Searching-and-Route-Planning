@@ -3,34 +3,45 @@ package dk.itu.map.controller;
 import dk.itu.map.View;
 import dk.itu.map.Model;
 
+import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+
 public class MapController {
     double lastX;
     double lastY;
 
-    public MapController(Model model, View view) {
-        view.canvas.setOnMousePressed(e -> {
-            lastX = e.getX();
-            lastY = e.getY();
-        });
+    @FXML
+    void setOnMousePressed(MouseEvent e) {
+        lastX = e.getX();
+        lastY = e.getY();
+    }
 
-        view.canvas.setOnMouseDragged(e -> {
-            if (e.isPrimaryButtonDown()) {
+    @FXML
+    void setOnMouseDragged(MouseEvent e) {
+        if (e.isPrimaryButtonDown()) {
+            double dx = e.getX() - lastX;
+            double dy = e.getY() - lastY;
+            view.pan(dx, dy);
+        }
 
-                double dx = e.getX() - lastX;
-                double dy = e.getY() - lastY;
-                view.pan(dx, dy);
-            }
+        lastX = e.getX();
+        lastY = e.getY();
+    }
 
-            lastX = e.getX();
-            lastY = e.getY();
-        });
+    @FXML
+    void setOnScroll(ScrollEvent e) {
+        double factor = e.getDeltaY();
+        view.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
+    }
 
-        view.canvas.setOnScroll(e -> {
-            double factor = e.getDeltaY();
-            view.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
-        });
+    @FXML
+    void zoomIn() {
+        view.zoom(0, 0, 1.1);
+    }
 
-        view.zoomIn.setOnAction(e -> view.zoom(0, 0, 1.1));
-        view.zoomOut.setOnAction(e -> view.zoom(0, 0, 1 / 1.1));
+    @FXML
+    void zoomOut() {
+        view.zoom(0, 0, 1 / 1.1);
     }
 }

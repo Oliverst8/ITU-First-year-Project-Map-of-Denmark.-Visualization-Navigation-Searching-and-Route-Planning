@@ -19,7 +19,7 @@ public class Model implements Serializable {
     public Model() throws XMLStreamException, IOException {
         FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/map.osm"));
         
-        fileHandler.load();
+        //fileHandler.load();
         ways = fileHandler.ways;
         minlat = fileHandler.minlat;
         maxlat = fileHandler.maxlat;
