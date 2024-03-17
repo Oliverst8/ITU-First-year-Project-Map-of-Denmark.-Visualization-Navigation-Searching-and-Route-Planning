@@ -59,28 +59,26 @@ public class ChunkHandler {
     }
 
     public Map<Integer, List<Way>> loadBytes(int chunk) {
-        return loadBytes(new int[]{chunk});
+        return loadBytes(new int[] { chunk });
     }
 
     public Map<Integer, List<Way>> loadBytes(int[] chunks) {
 
-        //List<Way> ways = Collections.synchronizedList(new ArrayList<>());
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
 
-        for (int chunk : chunks) {
-            ways.put(chunk, new ArrayList<>());
-        }
-
         long StartTime = System.nanoTime();
-        IntStream.range(0, chunks.length).parallel().forEach(i -> {
 
-            if(chunks[i] < 0 || chunks[i] >= chunkAmount) return;
+        IntStream.of(chunks).parallel().forEach(chunk -> {
 
-            File file = new File(this.dataPath + "/chunk" + chunks[i] + ".txt");
+            if (chunk < 0 || chunk >= chunkAmount) return;
+
+            ways.put(chunk, new ArrayList<>());
+
+            File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
 
             float[] coords;
             String[] tags;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))){
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
                     coords = new float[stream.readInt()];
                     for (int j = 0; j < coords.length; j++) {
@@ -90,26 +88,29 @@ public class ChunkHandler {
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
-                    ways.get(chunks[i]).add(new Way(coords, tags));
+                    ways.get(chunk).add(new Way(coords, tags));
                 }
-                /*The steam will throw an end of file exception when its done,
-                this way we can skip checking if we are done reading every loop run, and save time*/
-            } catch(EOFException e){
-                //End of file reached
+                /*
+                 * The steam will throw an end of file exception when its done,
+                 * this way we can skip checking if we are done reading every loop run, and save
+                 * time
+                 */
+            } catch (EOFException e) {
+                // End of file reached
+                return;
             } catch (IOException e) {
-                //Since we run it in parallel we need to return a runtime exception if since we can throw the IOException out of the scope
+                // Since we run it in parallel we need to return a runtime exception since we
+                // can throw the IOException out of the scope
                 throw new RuntimeException(e);
             }
         });
 
         long EndTime = System.nanoTime();
 
-        System.out.println("Reading " + chunks.length + " chunks took: " + ((EndTime-StartTime)/1_000_000_000.0) + "s");
+        System.out.println("Reading " + ways.size() + " chunks took: " + ((EndTime - StartTime) / 1_000_000_000.0) + "s");
 
         return ways;
 
     }
 
-
 }
-

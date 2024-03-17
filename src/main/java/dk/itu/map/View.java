@@ -33,8 +33,8 @@ public class View {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        pan(-0.56*model.minlon, model.maxlat);
-        zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
+        pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
+        zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
         redraw();
     }
 
@@ -63,9 +63,9 @@ public class View {
     void zoom(double dx, double dy, double factor) {
 
         System.out.println("Factor: " + factor);
-        pan(-dx, -dy);
+        trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
-        pan(dx, dy);
+        trans.prependTranslation(dx, dy);
         redraw();
     }
 

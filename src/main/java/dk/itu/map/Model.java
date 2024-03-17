@@ -17,54 +17,39 @@ public class Model implements Serializable {
     Map<Integer, List<Way>> chunks = new HashMap<>();
     ChunkHandler chunkHandler = new ChunkHandler("chunkData");
 
-    double minlat, maxlat, minlon, maxlon;
-
     public Model(ChunkHandler chunkHandler) {
         this.chunkHandler = chunkHandler;
 
     }
 
-    public void updateChunk(int n){
+    public void updateChunk(int n) {
 
-            Set<Integer> chunkNumbers = new HashSet<>();
-                chunkNumbers.add(n-chunkHandler.chunkColumnAmount-1);
-                chunkNumbers.add(n-chunkHandler.chunkColumnAmount);
-                chunkNumbers.add(n-chunkHandler.chunkColumnAmount+1);
-                chunkNumbers.add(n-1);
-                chunkNumbers.add(n);
-                chunkNumbers.add(n+1);
-                chunkNumbers.add(n+chunkHandler.chunkColumnAmount-1);
-                chunkNumbers.add(n+chunkHandler.chunkColumnAmount);
-                chunkNumbers.add(n+chunkHandler.chunkColumnAmount+1);
+        int[] chunkNumbers = new int[9];
 
+        chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[1] = n - chunkHandler.chunkColumnAmount;
+        chunkNumbers[2] = n - chunkHandler.chunkColumnAmount + 1;
+        chunkNumbers[3] = n - 1;
+        chunkNumbers[4] = n;
+        chunkNumbers[5] = n + 1;
+        chunkNumbers[6] = n + chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[7] = n + chunkHandler.chunkColumnAmount;
+        chunkNumbers[8] = n + chunkHandler.chunkColumnAmount + 1;
 
-            chunkNumbers.removeAll(chunks.keySet());
+        int[] newChunks = new int[9];
 
-            int[] chunkNumbersArray = new int[chunkNumbers.size()];
-
-            Object[] tempArray = chunkNumbers.toArray();
-
-            System.out.println("chunkNumbers.size() = " + chunkNumbers.size());
-
-            for(int i = 0; i < chunkNumbers.size(); i++){
-                chunkNumbersArray[i] = (int) tempArray[i];
-            }
-
-            chunks = chunkHandler.loadBytes(chunkNumbersArray);
-
+        int c = 0;
+        for (int chunk : chunkNumbers) {
+            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
+            if (chunks.containsKey(chunk)) continue;
+            newChunks[c++] = chunk;
+        }
+        System.out.println(c);
+        while (c < newChunks.length) {
+            newChunks[c++] = -1;
+        }
 
 
-            //ways.add(chunkHandler.loadBytes(n-chunkHandler.chunkColumnAmount-1));
-            //ways.add(chunkHandler.loadBytes(n-chunkHandler.chunkColumnAmount));
-            //ways.add(chunkHandler.loadBytes(n-chunkHandler.chunkColumnAmount+1));
-            //ways.add(chunkHandler.loadBytes(n-1));
-            //ways.add(chunkHandler.loadBytes(n));
-            //ways.add(chunkHandler.loadBytes(n+1));
-            //ways.add(chunkHandler.loadBytes(n+chunkHandler.chunkColumnAmount-1));
-            //ways.add(chunkHandler.loadBytes(n+chunkHandler.chunkColumnAmount));
-            //ways.add(chunkHandler.loadBytes(n+chunkHandler.chunkColumnAmount+1));
-
-
-
+        chunks.putAll(chunkHandler.loadBytes(newChunks));
     }
 }

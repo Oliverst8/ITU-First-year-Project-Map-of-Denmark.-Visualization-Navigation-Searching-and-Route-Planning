@@ -13,11 +13,11 @@ public class ChunkHandlerTest {
         ChunkHandler chunkHandler = new ChunkHandler("chunkData2");
         long startTime = System.nanoTime();
         int chunk = 75;
-        try {
+        // try {
             chunkHandler.loadBytes(chunk);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
         // assertEquals(1047190, chunkHandler.getChunk(chunk).size());
         // assertEquals(5, chunkHandler.getChunk(chunk).size());
         long endTime = System.nanoTime();
