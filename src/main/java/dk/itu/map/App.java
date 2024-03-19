@@ -22,7 +22,7 @@ public class App extends Application {
         }
 
 
-        ChunkHandler chunkHandler = new ChunkHandler("chunkData");
+        ChunkHandler chunkHandler = new ChunkHandler("zoomLayers");
         Model model = new Model(chunkHandler);
         var view = new View(model, primaryStage);
         System.out.println("View created.");

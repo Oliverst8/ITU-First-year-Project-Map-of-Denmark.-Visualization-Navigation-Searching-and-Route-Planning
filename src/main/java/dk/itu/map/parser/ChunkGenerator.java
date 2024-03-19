@@ -219,7 +219,7 @@ public class ChunkGenerator implements Runnable {
     }
 
     private void writeConfig() throws IOException {
-        FileWriter writer = new FileWriter("chunkData/config");
+        FileWriter writer = new FileWriter("zoomLayers/config");
         StringBuilder builder = new StringBuilder();
         builder.append("minlat: ").append(minlat).append("\n")
         .append("maxlat: ").append(maxlat).append("\n")

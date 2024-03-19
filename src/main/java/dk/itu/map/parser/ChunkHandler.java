@@ -58,11 +58,11 @@ public class ChunkHandler {
         ways = new ArrayList<>();
     }
 
-    public Map<Integer, List<Way>> loadBytes(int chunk) {
-        return loadBytes(new int[] { chunk });
+    public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {
+        return loadBytes(new int[] { chunk }, zoomLevel);
     }
 
-    public Map<Integer, List<Way>> loadBytes(int[] chunks) {
+    public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
 
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
 
@@ -74,7 +74,7 @@ public class ChunkHandler {
 
             ways.put(chunk, new ArrayList<>());
 
-            File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
+            File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
             float[] coords;
             String[] tags;

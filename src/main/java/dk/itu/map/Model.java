@@ -15,7 +15,7 @@ import dk.itu.map.structures.Way;
 public class Model implements Serializable {
 
     Map<Integer, List<Way>> chunks = new HashMap<>();
-    ChunkHandler chunkHandler = new ChunkHandler("chunkData");
+    final ChunkHandler chunkHandler;
 
     public Model(ChunkHandler chunkHandler) {
         this.chunkHandler = chunkHandler;
@@ -50,6 +50,6 @@ public class Model implements Serializable {
         }
 
 
-        chunks.putAll(chunkHandler.loadBytes(newChunks));
+        chunks.putAll(chunkHandler.loadBytes(newChunks, 4));
     }
 }
