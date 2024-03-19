@@ -16,10 +16,10 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        if (!new File("chunkData/config").exists()) {
+        // if (!new File("zoomLayers/config").exists()) {
             FileHandler fileHandler = new FileHandler(new File("data/isle-of-man-latest2.osm"));
             fileHandler.load();
-        }
+        // }
 
 
         ChunkHandler chunkHandler = new ChunkHandler("zoomLayers");

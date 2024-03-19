@@ -7,7 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -16,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import dk.itu.map.structures.LongFloatArrayHashMap;
 import dk.itu.map.structures.Way;
@@ -25,8 +29,13 @@ public class FileHandler {
     private final File file;
 
     //Temp variable to save loaded ways
-    public ArrayList<Way> ways;
-    public float minlat, maxlat, minlon, maxlon;
+    private ArrayList<Way> ways;
+    private ArrayList<Way> relations;
+    private float minlat, maxlat, minlon, maxlon;
+    private LongFloatArrayHashMap nodes;
+    private Map<Long, LinkedList<Way>> relationMap;
+
+
 
     private ChunkGenerator chunkGenerator;
 
@@ -39,19 +48,23 @@ public class FileHandler {
         this.file = file;
 
         ways = new ArrayList<>();
+        relations = new ArrayList<>();
+        relationMap = new HashMap<>();
     }
 
     public void load() throws IOException, XMLStreamException {
         if (file.getName().contains("bz2")) {
             parse(new BZip2CompressorInputStream(new FileInputStream(file)));
         } else {
+            ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
+            parseRelations(relationReader);
             parse(new FileInputStream(file));
         }
     }
 
     private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        LongFloatArrayHashMap nodes = new LongFloatArrayHashMap();
+        nodes = new LongFloatArrayHashMap();
         long startLoadTime = System.nanoTime();
 
         while (input.hasNext()) {
@@ -93,6 +106,54 @@ public class FileHandler {
         System.out.println("Writing took: " + ((endWriteTime-startWriteTime)/1_000_000_000.0) + "s");
     }
 
+    private void parseRelations(ReversedLinesFileReader reader) {
+        try {
+            first:
+            for (String line = reader.readLine(); !line.equals("  </way>"); line = reader.readLine()) {
+                if (!line.equals("  </relation>")) continue;
+
+                List<String> tags = new ArrayList<>();
+                List<Long> outer = new ArrayList<>();
+                List<Long> inner = new ArrayList<>();
+                for (line = reader.readLine(); !line.startsWith("  <relation"); line = reader.readLine()) {
+                    if (line.startsWith("    <tag")) {
+                        String[] temp = line.split("\"");
+                        tags.add(temp[1]);
+                        tags.add(temp[3]);
+                        if (temp[1].equals("type") && !temp[3].equals("multipolygon")) {
+                            continue first;
+                        }
+                        continue;
+                    }
+                    if (line.startsWith("    <member")) {
+                        String[] temp = line.split("\"");
+                        long ref = Long.parseLong(temp[3]);
+                        if (temp[5].equals("outer")) {
+                            outer.add(ref);
+                        } else if (temp[5].equals("inner")) {
+                            inner.add(ref);
+                        }
+                    }
+                }
+                Way way = new Way(new ArrayList<>(), tags, outer, inner);
+                relations.add(way);
+                outer.forEach(ref -> {
+                    if (relationMap.containsKey(ref)) {
+                        relationMap.get(ref).add(way);
+                    }
+                });
+                inner.forEach(ref -> {
+                    if (relationMap.containsKey(ref)) {
+                        relationMap.get(ref).add(way);
+                    }
+                });
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes) throws XMLStreamException {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
@@ -123,7 +184,7 @@ public class FileHandler {
         if (chunkGenerator == null) {
             System.out.println("Chunkgenerator han not been made yet");
         } else {
-            chunkGenerator.addWay(new Way(coords, tags));
+            chunkGenerator.addWay(new Way(coords, tags, new ArrayList<>(), new ArrayList<>()));
         }
 
         // ways.add(new Way(coords, tags));

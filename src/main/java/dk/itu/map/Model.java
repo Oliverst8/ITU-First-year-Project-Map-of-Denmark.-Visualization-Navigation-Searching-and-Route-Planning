@@ -1,15 +1,10 @@
 package dk.itu.map;
 
-import java.io.File;
 import java.util.*;
 
-import java.io.IOException;
 import java.io.Serializable;
 
-import javax.xml.stream.XMLStreamException;
-
 import dk.itu.map.parser.ChunkHandler;
-import dk.itu.map.parser.FileHandler;
 import dk.itu.map.structures.Way;
 
 public class Model implements Serializable {
