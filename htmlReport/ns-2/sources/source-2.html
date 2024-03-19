@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChunkHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dk.itu.map.parser</a>
+</div>
+
+<h1>Coverage Summary for Class: ChunkHandler (dk.itu.map.parser)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChunkHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    39%
+  </span>
+  <span class="absValue">
+    (16/41)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dk.itu.map.parser;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileInputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.FileNotFoundException;
+&nbsp;import java.io.BufferedInputStream;
+&nbsp;import java.io.BufferedReader;
+&nbsp;import java.io.DataInputStream;
+&nbsp;import java.io.EOFException;
+&nbsp;import java.io.FileReader;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.IntStream;
+&nbsp;
+&nbsp;import dk.itu.map.structures.Way;
+&nbsp;
+&nbsp;public class ChunkHandler {
+&nbsp;
+&nbsp;    private final String dataPath;
+&nbsp;
+&nbsp;    public float minlat, maxlat, minlon, maxlon;
+&nbsp;
+&nbsp;    public int chunkColumnAmount, chunkRowAmount, chunkAmount;
+&nbsp;
+&nbsp;    // Temp variable to save loaded ways
+&nbsp;    public ArrayList&lt;Way&gt; ways;
+&nbsp;
+&nbsp;    private ArrayList&lt;ArrayList&lt;Way&gt;&gt; chunks;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the filehandler
+&nbsp;     *
+&nbsp;     * @param dataPath
+&nbsp;     */
+<b class="fc">&nbsp;    public ChunkHandler(String dataPath) {</b>
+<b class="fc">&nbsp;        this.dataPath = dataPath;</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            File file = new File(this.dataPath + &quot;/config&quot;);</b>
+<b class="fc">&nbsp;            BufferedReader reader = new BufferedReader(new FileReader(file));</b>
+<b class="nc">&nbsp;            this.minlat = Float.parseFloat(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.maxlat = Float.parseFloat(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.minlon = Float.parseFloat(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.maxlon = Float.parseFloat(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.chunkRowAmount = Integer.parseInt(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            this.chunkAmount = Integer.parseInt(reader.readLine().split(&quot; &quot;)[1]);</b>
+<b class="nc">&nbsp;            reader.close();</b>
+<b class="fc">&nbsp;        } catch (FileNotFoundException e) {</b>
+<b class="fc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        ways = new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;Integer, List&lt;Way&gt;&gt; loadBytes(int chunk, int zoomLevel) {
+<b class="fc">&nbsp;        return loadBytes(new int[] { chunk }, zoomLevel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;Integer, List&lt;Way&gt;&gt; loadBytes(int[] chunks, int zoomLevel) {
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;Integer, List&lt;Way&gt;&gt; ways = Collections.synchronizedMap(new HashMap&lt;&gt;());</b>
+&nbsp;
+<b class="fc">&nbsp;        long StartTime = System.nanoTime();</b>
+&nbsp;
+<b class="fc">&nbsp;        IntStream.of(chunks).parallel().forEach(chunk -&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;            if (chunk &lt; 0 || chunk &gt;= chunkAmount) return;</b>
+&nbsp;
+<b class="nc">&nbsp;            ways.put(chunk, new ArrayList&lt;&gt;());</b>
+&nbsp;
+<b class="nc">&nbsp;            File file = new File(this.dataPath + &quot;/zoom&quot; + zoomLevel + &quot;/chunk&quot; + chunk + &quot;.txt&quot;);</b>
+&nbsp;
+&nbsp;            float[] coords;
+&nbsp;            String[] tags;
+<b class="nc">&nbsp;            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {</b>
+&nbsp;                while (true) {
+<b class="nc">&nbsp;                    coords = new float[stream.readInt()];</b>
+<b class="nc">&nbsp;                    for (int j = 0; j &lt; coords.length; j++) {</b>
+<b class="nc">&nbsp;                        coords[j] = stream.readFloat();</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    tags = new String[stream.readInt()];</b>
+<b class="nc">&nbsp;                    for (int j = 0; j &lt; tags.length; j++) {</b>
+<b class="nc">&nbsp;                        tags[j] = stream.readUTF();</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    ways.get(chunk).add(new Way(coords, tags));</b>
+&nbsp;                }
+&nbsp;                /*
+&nbsp;                 * The steam will throw an end of file exception when its done,
+&nbsp;                 * this way we can skip checking if we are done reading every loop run, and save
+&nbsp;                 * time
+&nbsp;                 */
+<b class="nc">&nbsp;            } catch (EOFException e) {</b>
+&nbsp;                // End of file reached
+&nbsp;                return;
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+&nbsp;                // Since we run it in parallel we need to return a runtime exception since we
+&nbsp;                // can throw the IOException out of the scope
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        long EndTime = System.nanoTime();</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;Reading &quot; + ways.size() + &quot; chunks took: &quot; + ((EndTime - StartTime) / 1_000_000_000.0) + &quot;s&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ways;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-19 15:23</div>
+</div>
+</body>
+</html>

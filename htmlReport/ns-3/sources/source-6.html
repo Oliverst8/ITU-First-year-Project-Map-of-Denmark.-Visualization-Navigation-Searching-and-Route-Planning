@@ -1,0 +1,268 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LongFloatArrayHashMap</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dk.itu.map.structures</a>
+</div>
+
+<h1>Coverage Summary for Class: LongFloatArrayHashMap (dk.itu.map.structures)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LongFloatArrayHashMap</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (6/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.4%
+  </span>
+  <span class="absValue">
+    (35/61)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dk.itu.map.structures;
+&nbsp;
+&nbsp;/**
+&nbsp; * &lt;pre&gt;LongFloatArrayHashMap is a hash map that uses longs as keys and float arrays as values.
+&nbsp; * Note: The key cannot be 0.&lt;/pre&gt;
+&nbsp; */
+&nbsp;public class LongFloatArrayHashMap {
+<b class="fc">&nbsp;    private final int INITIAL_CAPACITY = 1_000_000;</b>
+&nbsp;
+&nbsp;    private int capacity;
+&nbsp;    private int size;
+&nbsp;    private long[] keys;
+&nbsp;    private float[] value0;
+&nbsp;    private float[] value1;
+&nbsp;
+<b class="fc">&nbsp;    public LongFloatArrayHashMap() {</b>
+<b class="fc">&nbsp;        capacity = INITIAL_CAPACITY;</b>
+<b class="fc">&nbsp;        keys = new long[INITIAL_CAPACITY];</b>
+<b class="fc">&nbsp;        value0 = new float[INITIAL_CAPACITY];</b>
+<b class="fc">&nbsp;        value1 = new float[INITIAL_CAPACITY];</b>
+<b class="fc">&nbsp;        size = 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return the number of elements in the map
+&nbsp;     */
+&nbsp;    public int size() {
+<b class="fc">&nbsp;        return size;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * &lt;pre&gt;Puts a value into the map
+&nbsp;     * Note: If the key already exists, the value will be overwritten.
+&nbsp;     * Note: The key cannot be 0.&lt;/pre&gt;
+&nbsp;     * @param key to put in the map.
+&nbsp;     * @param value to put in the map.
+&nbsp;     */
+&nbsp;    public void put(long key, float[] value) {
+<b class="fc">&nbsp;        if (size &gt;= capacity * 0.75) {</b>
+<b class="fc">&nbsp;            resizeArrays();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int index = getIndex(key);</b>
+<b class="fc">&nbsp;        int offset = 1;</b>
+&nbsp;        
+<b class="fc">&nbsp;        while (keys[index] != 0) {</b>
+<b class="nc">&nbsp;            index = (index + offset * offset) % capacity;</b>
+<b class="nc">&nbsp;            offset++;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        keys[index] = key;</b>
+<b class="fc">&nbsp;        value0[index] = value[0];</b>
+<b class="fc">&nbsp;        value1[index] = value[1];</b>
+<b class="fc">&nbsp;        size++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets a value from the map.
+&nbsp;     * @param key to get the value from.
+&nbsp;     * @return the value from the map.
+&nbsp;     */
+&nbsp;    public float[] get(long key) {
+<b class="nc">&nbsp;        int index = getIndex(key);</b>
+&nbsp;
+<b class="nc">&nbsp;        int offset = 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        while (keys[index] != key &amp;&amp; keys[index] != 0) {</b>
+<b class="nc">&nbsp;            index = (index + offset * offset) % capacity;</b>
+<b class="nc">&nbsp;            offset++;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new float[] {value0[index], value1[index]};</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the map contains a key.
+&nbsp;     * @param key to check for.
+&nbsp;     * @return true if the key exists in the map, otherwise false.
+&nbsp;     */
+&nbsp;    public boolean containsKey(long key) {
+<b class="nc">&nbsp;        int index = getIndex(key);</b>
+<b class="nc">&nbsp;        int offset = 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        while (keys[index] != key &amp;&amp; keys[index] != 0) {</b>
+<b class="nc">&nbsp;            index = (index + offset * offset) % capacity;</b>
+<b class="nc">&nbsp;            offset++;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return keys[index] == key;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a key from the map.
+&nbsp;     * @param key to remove from the map.
+&nbsp;     */
+&nbsp;    public void remove(long key) {
+<b class="nc">&nbsp;        int index = getIndex(key);</b>
+<b class="nc">&nbsp;        int offset = 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        while (keys[index] != key &amp;&amp; keys[index] != 0) {</b>
+<b class="nc">&nbsp;            index = (index + offset * offset) % capacity;</b>
+<b class="nc">&nbsp;            offset++;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (keys[index] == key) {</b>
+<b class="nc">&nbsp;            keys[index] = 0;</b>
+<b class="nc">&nbsp;            value0[index] = 0;</b>
+<b class="nc">&nbsp;            value1[index] = 0;</b>
+<b class="nc">&nbsp;            size--;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * &lt;pre&gt;Resizes the arrays in the map.
+&nbsp;     * Note: The capacity will be doubled.&lt;/pre&gt;
+&nbsp;     */
+&nbsp;    private void resizeArrays() {
+<b class="fc">&nbsp;        int newCapacity = capacity * 2;</b>
+&nbsp;
+<b class="fc">&nbsp;        long[] newKeys = new long[newCapacity];</b>
+<b class="fc">&nbsp;        float[] newValues0 = new float[newCapacity];</b>
+<b class="fc">&nbsp;        float[] newValues1 = new float[newCapacity];</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; capacity; i++) {</b>
+<b class="fc">&nbsp;            if (keys[i] != 0) {</b>
+<b class="fc">&nbsp;                int index = getIndex(keys[i], newCapacity);</b>
+<b class="fc">&nbsp;                int offset = 1;</b>
+&nbsp;
+<b class="fc">&nbsp;                while (newKeys[index] != 0) {</b>
+<b class="nc">&nbsp;                    index = (index + offset * offset) % newCapacity;</b>
+<b class="nc">&nbsp;                    offset++;</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                newKeys[index] = keys[i];</b>
+<b class="fc">&nbsp;                newValues0[index] = value0[i];</b>
+<b class="fc">&nbsp;                newValues1[index] = value1[i];</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        keys = newKeys;</b>
+<b class="fc">&nbsp;        value0 = newValues0;</b>
+<b class="fc">&nbsp;        value1 = newValues1;</b>
+<b class="fc">&nbsp;        capacity = newCapacity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the index of a key in the map.
+&nbsp;     * @param key to get the index for.
+&nbsp;     * @return the index of the key.
+&nbsp;     */
+&nbsp;    private int getIndex(long key) {
+<b class="fc">&nbsp;        return (int) (key % (long) capacity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the index of a key in the map.
+&nbsp;     * @param key to get the index for.
+&nbsp;     * @param capacity of the map.
+&nbsp;     * @return the index of the key.
+&nbsp;     */
+&nbsp;    private int getIndex(long key, int capacity) {
+<b class="fc">&nbsp;        return (int) (key % (long) capacity);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-19 15:23</div>
+</div>
+</body>
+</html>
