@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,12 +21,14 @@ public class ChunkGenerator implements Runnable {
     // chunk size in coordinate size
     private final float CHUNK_SIZE = 0.25f;
 
+    private final byte amountOfZoomLayers = 5;
+
     public float minlat, maxlat, minlon, maxlon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
 
-    private ArrayList<ArrayList<Way>> chunks;
-    private File[] files;
+    private ArrayList<ArrayList<ArrayList<Way>>> chunks;
+    private File[][] files;
 
     private int tempCounter = 0;
     private List<Way> rawWays;
@@ -49,36 +54,30 @@ public class ChunkGenerator implements Runnable {
 
         chunkAmount = chunkColumnAmount * chunkRowAmount;
 
-        chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-        for (int i = 0; i < chunkAmount; i++) {
-            chunks.add(new ArrayList<Way>());
+        chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
+        for(int i = 0; i < amountOfZoomLayers; i++){
+            chunks.add(new ArrayList<ArrayList<Way>>());
+            for (int j = 0; j < chunkAmount; j++) {
+                chunks.get(i).add(new ArrayList<Way>());
+            }
         }
-        files = new File[chunkAmount];
+
+        files = new File[amountOfZoomLayers][chunkAmount];
 
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         try {
-            File folder = new File("chunkData");
-            if (!folder.exists()) {
-                folder.mkdir();
-            } else {
-                File[] files = folder.listFiles();
-                int count = 0;
-                if (files != null) {
-                    for (File file : files) {
-                        count++;
-                        file.delete();
-                        if (count > 500) {
-                            System.err.println("STOPPPPPP");
-                            break;
-                        }
-                    }
+            File folder = new File("zoomLayers");
+            folder.mkdir();
+            for(int i = 0; i < amountOfZoomLayers; i++ ){
+                File innerFolder = new File("zoomLayers/zoom" + i);
+                innerFolder.mkdir();
+                for (int j = 0; j < chunkAmount; j++) {
+                    files[i][j] = new File("zoomLayers/zoom" + i + "/chunk" + j +".txt");
+
                 }
             }
 
-            for (int i = 0; i < chunkAmount; i++) {
-                files[i] = new File("chunkData/chunk" + i + ".txt");
-            }
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
         }
@@ -97,7 +96,57 @@ public class ChunkGenerator implements Runnable {
         List<Way> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        newWays.forEach(way -> {
+        for(Way way : newWays) {
+            byte zoomLevel = -1;
+            String[] tags = way.getTags();
+            for(String tag : tags){
+                switch (tag) {
+                    case "water":
+                    case "wetland":
+                    case "bay":
+                    case "beach":
+                    case "coastline":
+                    case "cape":
+                    case "fell":
+                    case "grassland":
+                    case "heath":
+                    case "scrub":
+                    case "wood":
+                    case "motorway":
+                    case "motorway_link":
+                    case "trunk":
+                    case "trunk_link":
+                    case "primary":
+                    case "primary_link":
+                    case "aerodrome":
+                        zoomLevel = 4;
+                        break;
+                    case "secondary":
+                    case "secondary_link":
+                    case "rail":
+                    case "light_rail":
+                        if(zoomLevel < 3) zoomLevel = 3;
+                        break;
+                    case "runway":
+                    case "tertiary":
+                    case "tertiary_link":
+                    case "unclassified":
+                    case "residential":
+                        if(zoomLevel < 2) zoomLevel = 2;
+                        break;
+                    case "terminal":
+                    case "gate":
+                        if(zoomLevel < 1) zoomLevel = 1;
+                        break;
+                    case "building":
+                    case "highway":
+                        if(zoomLevel < 0) zoomLevel = 0;
+                        break;
+                }
+            }
+            if(zoomLevel == -1) continue;
+            //way.setZoomLevel( zoomLevel);
+
             float[] coords = way.getCoords();
             for (int i = 0; i < coords.length; i += 2) {
                 float lat = coords[i];
@@ -106,10 +155,10 @@ public class ChunkGenerator implements Runnable {
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 
                 if (chunkIndex < chunkAmount && chunkIndex >= 0) {
-                    chunks.get(chunkIndex).add(way);
+                    chunks.get(zoomLevel).get(chunkIndex).add(way);
                 }
             }
-        });
+        }
     }
 
     public void run() {
@@ -123,11 +172,14 @@ public class ChunkGenerator implements Runnable {
                 }
                 continue;
             }
-            chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-            for (int i = 0; i < chunkAmount; i++) {
-                chunks.add(new ArrayList<Way>());
+            chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
+            for(int i = 0; i < amountOfZoomLayers; i++){
+                chunks.add(new ArrayList<ArrayList<Way>>());
+                for (int j = 0; j < chunkAmount; j++) {
+                    chunks.get(i).add(new ArrayList<Way>());
+                }
             }
-            
+
             chunkWays();
 
             writeFiles();
@@ -136,21 +188,27 @@ public class ChunkGenerator implements Runnable {
     }
 
     public void writeFiles() {
-        IntStream.range(0, chunks.size()).parallel().forEach(i -> {
-            try {
+        IntStream.range(0, amountOfZoomLayers).forEach(i -> {
+            IntStream.range(0, chunks.get(i).size()).parallel().forEach(j -> {
+                try {
 
-                DataOutputStream stream = new DataOutputStream(
-                        new BufferedOutputStream(new FileOutputStream(files[i], true)));
-                for (Way way : chunks.get(i)) {
-                    way.stream(stream);
+                    DataOutputStream stream = new DataOutputStream(
+                            new BufferedOutputStream(new FileOutputStream(files[i][j], true)));
+                    for (Way way : chunks.get(i).get(j)) {
+                        way.stream(stream);
+                    }
+                    stream.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e){
+                    System.out.println("e.getMessage()");
+                    e.printStackTrace();
                 }
-                stream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            });
         });
+        
 
         try {
             writeConfig();
@@ -161,7 +219,7 @@ public class ChunkGenerator implements Runnable {
     }
 
     private void writeConfig() throws IOException {
-        FileWriter writer = new FileWriter("chunkData/config");
+        FileWriter writer = new FileWriter("zoomLayers/config");
         StringBuilder builder = new StringBuilder();
         builder.append("minlat: ").append(minlat).append("\n")
         .append("maxlat: ").append(maxlat).append("\n")
