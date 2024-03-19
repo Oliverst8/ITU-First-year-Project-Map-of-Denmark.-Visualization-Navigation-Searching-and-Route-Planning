@@ -18,7 +18,7 @@ public class Graph implements Runnable{
         edges = new FloatArrayList();
         ways = Collections.synchronizedList(new ArrayList<>());
         idToIndex = new HashMap<>();
-        ids = new LongArrayList();
+        ids = new LongArrayList(); 
     }
 
     private float calcWeight(float ux, float uy, float vx, float vy) {
