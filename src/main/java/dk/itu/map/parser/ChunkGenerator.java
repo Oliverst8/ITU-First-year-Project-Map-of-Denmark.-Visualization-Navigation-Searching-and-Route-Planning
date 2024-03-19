@@ -17,6 +17,8 @@ public class ChunkGenerator implements Runnable {
     // chunk size in coordinate size
     private final float chunkSize = 0.25f;
 
+    private final byte amountOfZoomLayers = 5;
+
     public float minlat, maxlat, minlon, maxlon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
@@ -49,32 +51,28 @@ public class ChunkGenerator implements Runnable {
         chunkAmount = chunkColumnAmount * chunkRowAmount;
 
         chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < amountOfZoomLayers; i++){
             chunks.add(new ArrayList<ArrayList<Way>>());
             for (int j = 0; j < chunkAmount; j++) {
                 chunks.get(i).add(new ArrayList<Way>());
             }
         }
 
-        files = new File[5][chunkAmount];
+        files = new File[amountOfZoomLayers][chunkAmount];
 
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         try {
             File folder = new File("zoomLayers");
-            if (!folder.exists()) {
-                folder.mkdir();
-                for(int i = 0; i < 5; i++ ){
-                    File innerFolder = new File("zoomLayers/zoom" + i);
-                    innerFolder.mkdir();
-                    for (int j = 0; j < chunkAmount; j++) {
-                        files[i][j] = new File("zoomLayers/zoom" + i + "/chunk" + j +".txt");
+            folder.mkdir();
+            for(int i = 0; i < amountOfZoomLayers; i++ ){
+                File innerFolder = new File("zoomLayers/zoom" + i);
+                innerFolder.mkdir();
+                for (int j = 0; j < chunkAmount; j++) {
+                    files[i][j] = new File("zoomLayers/zoom" + i + "/chunk" + j +".txt");
 
-                    }
                 }
             }
-
-
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -171,7 +169,7 @@ public class ChunkGenerator implements Runnable {
                 continue;
             }
             chunks = new ArrayList<ArrayList<ArrayList<Way>>>(chunkAmount);
-            for(int i = 0; i < 5; i++){
+            for(int i = 0; i < amountOfZoomLayers; i++){
                 chunks.add(new ArrayList<ArrayList<Way>>());
                 for (int j = 0; j < chunkAmount; j++) {
                     chunks.get(i).add(new ArrayList<Way>());
@@ -186,8 +184,8 @@ public class ChunkGenerator implements Runnable {
     }
 
     public void writeFiles() {
-        IntStream.range(0, 5).forEach(i -> {
-            IntStream.range(0, chunks.size()).parallel().forEach(j -> {
+        IntStream.range(0, amountOfZoomLayers).forEach(i -> {
+            IntStream.range(0, chunks.get(i).size()).parallel().forEach(j -> {
                 try {
 
                     DataOutputStream stream = new DataOutputStream(
