@@ -7,14 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.Way;
 
 public class ChunkGenerator implements Runnable {
@@ -34,7 +33,8 @@ public class ChunkGenerator implements Runnable {
     private List<Way> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
-    
+
+    private final Graph graph = new Graph();
 
     private Thread chunkingThread;
 
@@ -101,6 +101,13 @@ public class ChunkGenerator implements Runnable {
             String[] tags = way.getTags();
             for(String tag : tags){
                 switch (tag) {
+                    case "motorway":
+                    case "motorway_link":
+                    case "trunk":
+                    case "trunk_link":
+                    case "primary":
+                    case "primary_link":
+
                     case "water":
                     case "wetland":
                     case "bay":
@@ -112,12 +119,6 @@ public class ChunkGenerator implements Runnable {
                     case "heath":
                     case "scrub":
                     case "wood":
-                    case "motorway":
-                    case "motorway_link":
-                    case "trunk":
-                    case "trunk_link":
-                    case "primary":
-                    case "primary_link":
                     case "aerodrome":
                         zoomLevel = 4;
                         break;

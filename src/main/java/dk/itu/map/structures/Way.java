@@ -12,16 +12,25 @@ public class Way {
     private final float[] coords;
     private final String[] tags;
 
-    public Way(List<Float> nodes, List<String> tags) {
+    private long id;
+    private long[] nodeIds;
+
+    public Way(List<Float> nodes, List<String> tags, long[] nodeIds) {
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
-
+        this.nodeIds = nodeIds;
         for (int i = 0; i < this.coords.length; i += 2) {
             this.coords[i] = nodes.get(i);
             this.coords[i + 1] = nodes.get(i + 1);
         }
         for (int i = 0; i < this.tags.length; i++) {
-            this.tags[i] = tags.get(i);
+            String tag = tags.get(i);
+
+            // If the tag is an id, set the id of the way, and dont add it to the array, otherwise add it to the array
+            if(tag.equals("id")) {
+                this.id = Long.parseLong(tags.get(i+1));
+                i++;
+            } else this.tags[i] = tags.get(i);
         }
     }
 
@@ -87,6 +96,10 @@ public class Way {
     }
     public String[] getTags() {
         return tags;
+    }
+
+    public long getId() {
+        return id;
     }
     public void setZoomLevel(byte zoomLevel){ this.zoomLevel = zoomLevel;}
 
