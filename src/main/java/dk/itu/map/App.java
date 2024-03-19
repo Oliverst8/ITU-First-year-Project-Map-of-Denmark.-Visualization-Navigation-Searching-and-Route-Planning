@@ -23,6 +23,8 @@ public class App extends Application {
         ChunkHandler chunkHandler = new ChunkHandler("chunkData");
         Model model = new Model(chunkHandler);
         var view = new View(model, primaryStage);
+        System.out.println("View created.");
         new Controller(model, view);
+        System.out.println("Controller created.");
     }
 }
