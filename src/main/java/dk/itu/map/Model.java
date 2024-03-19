@@ -1,27 +1,55 @@
 package dk.itu.map;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.io.File;
+import java.util.*;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.xml.stream.XMLStreamException;
 
+import dk.itu.map.parser.ChunkHandler;
 import dk.itu.map.parser.FileHandler;
 import dk.itu.map.structures.Way;
 
 public class Model implements Serializable {
-    List<Way> ways = new ArrayList<Way>();
 
-    double minlat, maxlat, minlon, maxlon;
+    Map<Integer, List<Way>> chunks = new HashMap<>();
+    ChunkHandler chunkHandler = new ChunkHandler("chunkData");
 
-    public Model(FileHandler fileHandler) throws XMLStreamException, IOException {
-        fileHandler.load();
-        ways = fileHandler.ways;
-        minlat = fileHandler.minlat;
-        maxlat = fileHandler.maxlat;
-        minlon = fileHandler.minlon;
-        maxlon = fileHandler.maxlon;
+    public Model(ChunkHandler chunkHandler) {
+        this.chunkHandler = chunkHandler;
+
+    }
+
+    public void updateChunk(int n) {
+
+        int[] chunkNumbers = new int[9];
+
+        chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[1] = n - chunkHandler.chunkColumnAmount;
+        chunkNumbers[2] = n - chunkHandler.chunkColumnAmount + 1;
+        chunkNumbers[3] = n - 1;
+        chunkNumbers[4] = n;
+        chunkNumbers[5] = n + 1;
+        chunkNumbers[6] = n + chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[7] = n + chunkHandler.chunkColumnAmount;
+        chunkNumbers[8] = n + chunkHandler.chunkColumnAmount + 1;
+
+        int[] newChunks = new int[9];
+
+        int c = 0;
+        for (int chunk : chunkNumbers) {
+            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
+            if (chunks.containsKey(chunk)) continue;
+            newChunks[c++] = chunk;
+        }
+        System.out.println(c);
+        while (c < newChunks.length) {
+            newChunks[c++] = -1;
+        }
+
+
+        chunks.putAll(chunkHandler.loadBytes(newChunks));
     }
 }

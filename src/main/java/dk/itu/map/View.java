@@ -33,8 +33,8 @@ public class View {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        pan(-0.56*model.minlon, model.maxlat);
-        zoom(0, 0, canvas.getHeight() / (model.maxlat - model.minlat));
+        pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
+        zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
         redraw();
     }
 
@@ -47,9 +47,15 @@ public class View {
 
         gc.setStroke(Color.BLACK);
 
-        for (int i = 0; i < model.ways.size(); i++) {
-            model.ways.get(i).draw(gc);
+        model.updateChunk(2);
+        long start = System.nanoTime();
+        for (int chunk : model.chunks.keySet()) {
+            for(int j = 0; j < model.chunks.get(chunk).size(); j++){
+                model.chunks.get(chunk).get(j).draw(gc);
+            }
         }
+        long end = System.nanoTime();
+        System.out.println("Time to draw current chunks: " + (end - start) / 1000000000.0 + "s");
     }
 
     void pan(double dx, double dy) {
@@ -59,10 +65,10 @@ public class View {
 
     void zoom(double dx, double dy, double factor) {
 
-        System.out.println("Factor: " + factor);
-        pan(-dx, -dy);
+        //System.out.println("Factor: " + factor);
+        trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
-        pan(dx, dy);
+        trans.prependTranslation(dx, dy);
         redraw();
     }
 
