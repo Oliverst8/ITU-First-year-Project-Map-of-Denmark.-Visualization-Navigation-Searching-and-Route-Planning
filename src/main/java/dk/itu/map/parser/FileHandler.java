@@ -90,18 +90,17 @@ public class FileHandler {
                     }
 
                     case "way" -> {
-                        createWay(input, nodes);
+                        long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                        createWay(input, nodes, id);
                     }
                 }
             }
         }
+
         long startWriteTime = System.nanoTime();
         System.out.println("Reading took: " + ((startWriteTime-startLoadTime)/1_000_000_000.0) + "s");
         
         chunkGenerator.finishWork();
-        // chunkGenerator.setWays(ways);
-        // chunkGenerator.run();
-        // chunkGenerator.printAll();
         long endWriteTime = System.nanoTime();
         System.out.println("Writing took: " + ((endWriteTime-startWriteTime)/1_000_000_000.0) + "s");
     }
@@ -154,7 +153,7 @@ public class FileHandler {
         }
     }
 
-    private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes) throws XMLStreamException {
+    private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
 
@@ -176,24 +175,23 @@ public class FileHandler {
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));
-            } else{
+            } else {
                 break;
             }
         }
 
-        if (chunkGenerator == null) {
-            System.out.println("Chunkgenerator han not been made yet");
-        } else {
-            chunkGenerator.addWay(new Way(coords, tags, new ArrayList<>(), new ArrayList<>()));
+        Way way = new Way(coords, tags, new ArrayList<>(), new ArrayList<>());
+
+        if (relationMap.containsKey(id)) {
+            relationMap.get(id).forEach(relation -> {
+                relation.addRelation(way, id);
+            });
         }
 
-        // ways.add(new Way(coords, tags));
-
-        // if (ways.size() > 100_000 && !chunkGenerator.isWriting()) {
-        //     chunkGenerator.setWays(ways);
-        //     Thread thread = new Thread(chunkGenerator);
-        //     thread.start(); 
-        //     ways = new ArrayList<>();
-        // }
+        if (chunkGenerator == null) {
+            System.err.println("Chunkgenerator han not been made yet");
+        } else {
+            chunkGenerator.addWay(way);
+        }
     }
 }

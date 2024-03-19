@@ -91,7 +91,7 @@ public class Way {
     /**
      * Also only used in fileHandler
      */
-    public void addWay(Way way, long id) {
+    public void addRelation(Way way, long id) {
         if (outerRef.contains(id)) {
             outer[outerRef.indexOf(id)] = way;
         }
