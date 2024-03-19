@@ -32,26 +32,31 @@ public class GraphTest {
         Thread.sleep(10);
         graph.stop();
         thread.join();
-        FloatArrayList expected = new FloatArrayList();
-        expected.add(1f);
-        expected.add(1f);
-        expected.add((float) Math.sqrt(2));
-        expected.add(0f);
-        expected.add(0f);
-        expected.add((float) Math.sqrt(2));
-        expected.add(3f);
-        expected.add(1f);
-        expected.add(2f);
-        expected.add(1f);
-        expected.add(1f);
-        expected.add(2f);
+        FloatArrayList expectedWeights = new FloatArrayList();
+        expectedWeights.add((float) Math.sqrt(2));
+        expectedWeights.add((float) Math.sqrt(2));
+        expectedWeights.add(2f);
+        expectedWeights.add(2f);
 
-        FloatArrayList actual = graph.getEdges();
+        IntArrayList expectedDestinations = new IntArrayList();
 
-        for(int i = 0; i < expected.size(); i++){
-            assertEquals(expected.get(i), actual.get(i));
+        expectedDestinations.add(0);
+        expectedDestinations.add(1);
+        expectedDestinations.add(2);
+        expectedDestinations.add(1);
+
+
+        IntArrayList actualDestinations = graph.getEdges();
+        FloatArrayList actualWeights = graph.getWeights();
+
+        for(int i = 0; i < expectedWeights.size(); i++){
+            assertEquals(expectedWeights.get(i), actualWeights.get(i));
         }
-        assertEquals(expected.size(), actual.size());
+        for(int i = 0; i < expectedDestinations.size(); i++){
+            assertEquals(expectedDestinations.get(i), actualDestinations.get(i));
+        }
+        assertEquals(expectedWeights.size(), actualWeights.size());
+        assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
 
     @Test
