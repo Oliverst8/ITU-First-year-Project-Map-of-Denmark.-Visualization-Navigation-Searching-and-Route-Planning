@@ -13,12 +13,12 @@ public class Way {
     private final String[] tags;
 
     private long id;
-    private long[] nodeIds;
+    private long[] nodeIDs;
 
     public Way(List<Float> nodes, List<String> tags, long[] nodeIds) {
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
-        this.nodeIds = nodeIds;
+        this.nodeIDs = nodeIds;
         for (int i = 0; i < this.coords.length; i += 2) {
             this.coords[i] = nodes.get(i);
             this.coords[i + 1] = nodes.get(i + 1);
@@ -102,5 +102,9 @@ public class Way {
         return id;
     }
     public void setZoomLevel(byte zoomLevel){ this.zoomLevel = zoomLevel;}
+
+    public long[] getNodeIDs(){
+        return nodeIDs;
+    }
 
 }

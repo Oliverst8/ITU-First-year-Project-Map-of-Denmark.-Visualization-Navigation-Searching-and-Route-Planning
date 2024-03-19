@@ -21,32 +21,47 @@ public class Graph implements Runnable{
         ids = new LongArrayList(); 
     }
 
-    private float calcWeight(float ux, float uy, float vx, float vy) {
-        float dist = (float) Math.sqrt(Math.pow(ux - vx, 2) + Math.pow(uy - vy, 2));
-        return dist;
+    private float calcWeight(Way way) {
+        float[] coords = way.getCoords();
+        float distSum = 0;
+        for(int i = 0; i < way.getCoords().length-4; i +=2) {
+            distSum += (float) Math.sqrt(Math.pow(coords[i] - coords[i+1], 2) + Math.pow(coords[i+2] - coords[i+3], 2));
+        }
+        return distSum;
     }
 
     public void run() {
         while(true){
-            if(ways.size() > 100_000){
+            if(ways.size() > 1){
                 Way way = ways.remove(0);
                 float[] coords = way.getCoords();
-                float weight = calcWeight(coords[0], coords[1], coords[coords.length-2], coords[coords.length-1]);
-                addEdge(coords[0], coords[1], coords[coords.length-2], coords[coords.length-1], weight, way.getId());
+                addVertix(way.getNodeIDs());
+                addEdge(way);
             }
         }
     }
 
-    private void addVertix(){
-
+    private void addVertix(long[] vertexID){
+        idToIndex.putIfAbsent(vertexID[0], new IntArrayList());
+        idToIndex.putIfAbsent(vertexID[1], new IntArrayList());
     }
 
-    private void addEdge(float ux, float uy, float vx, float vy, float weight, long id) {
-        idToIndex.putIfAbsent(id, new IntArrayList());
-        IntArrayList list = idToIndex.get(id);
+    private void addEdge(Way way) {
+        idToIndex.get(way.getNodeIDs()[0]).add(ids.size());
+        ids.add(way.getId());
+        idToIndex.get(way.getNodeIDs()[1]).add(ids.size());
+        ids.add(way.getId());
 
+        float[] nodes = way.getCoords();
+        edges.add(nodes[0]);
+        edges.add(nodes[1]);
+        edges.add(calcWeight(way));
 
+        edges.add(nodes[nodes.length-2]);
+        edges.add(nodes[nodes.length-1]);
+        edges.add(calcWeight(way));
     }
+
 
     public void addWay(Way way) {
         ways.add(way);
