@@ -98,6 +98,8 @@ public class Graph implements Runnable{
         // but as long as we just call these methods here, we should be okay I think
     }
 
+    private
+
 
     public void addWay(Way way) {
         ways.add(way);
