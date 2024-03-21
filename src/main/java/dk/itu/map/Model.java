@@ -14,17 +14,21 @@ import dk.itu.map.structures.Way;
 import javafx.geometry.Point2D;
 
 public class Model implements Serializable {
-
-    Map<Integer, List<Way>> chunks = new HashMap<>();
+    
+    List<Map<Integer,List<Way>>> chunkLayers;
     final ChunkHandler chunkHandler;
 
     public Model(ChunkHandler chunkHandler) {
         this.chunkHandler = chunkHandler;
-
+        chunkLayers = new ArrayList<>();
+        for(int i = 0; i <= 4; i++)
+            chunkLayers.add(new HashMap<>());
     }
 
-    public void updateChunk(int n, int zoomLevel) {
-        chunks = new HashMap<>();
+    private void updateChunkLevel(int n, int zoomLevel) {
+
+        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
+
         int[] chunkNumbers = new int[9];
 
         chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
@@ -52,7 +56,11 @@ public class Model implements Serializable {
 
 
         chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+    }
 
+    public void updateChunk(int n, int zoomLevel) {
+        for(int i = zoomLevel; i <= 4; i++)
+            updateChunkLevel(n, i);
     }
 
     public void updateChunks(){

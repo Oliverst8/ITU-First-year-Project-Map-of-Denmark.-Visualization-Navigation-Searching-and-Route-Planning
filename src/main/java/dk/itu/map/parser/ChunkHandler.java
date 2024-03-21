@@ -67,7 +67,6 @@ public class ChunkHandler {
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
 
         long StartTime = System.nanoTime();
-        IntStream.range(zoomLevel, 5).forEach( zoomLayer -> {
 
             IntStream.of(chunks).parallel().forEach(chunk -> {
 
@@ -75,7 +74,7 @@ public class ChunkHandler {
 
                 ways.putIfAbsent(chunk, new ArrayList<>());
 
-                File file = new File(this.dataPath + "/zoom" + zoomLayer + "/chunk" + chunk + ".txt");
+                File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
                 float[] coords;
                 String[] tags;
@@ -105,7 +104,7 @@ public class ChunkHandler {
                     throw new RuntimeException(e);
                 }
             });
-        });
+
 
         long EndTime = System.nanoTime();
 

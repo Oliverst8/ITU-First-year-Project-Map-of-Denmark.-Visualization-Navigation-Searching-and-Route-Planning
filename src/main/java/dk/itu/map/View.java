@@ -1,5 +1,6 @@
 package dk.itu.map;
 
+import dk.itu.map.structures.Way;
 import javafx.geometry.Point2D;
 
 import javafx.stage.Stage;
@@ -11,6 +12,9 @@ import javafx.scene.transform.Affine;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.NonInvertibleTransformException;
+
+import java.util.List;
+import java.util.Map;
 
 public class View {
     Canvas canvas = new Canvas(640, 480);
@@ -73,10 +77,13 @@ public class View {
         System.out.println("Drawing with detail level: " + getDetailLevel());
         int count = 0;
         long start = System.nanoTime();
-        for (int chunk : model.chunks.keySet()) {
-            for(int j = 0; j < model.chunks.get(chunk).size(); j++){
-                model.chunks.get(chunk).get(j).draw(gc);
-                count++;
+        for(int i = getDetailLevel(); i <= 4; i++){
+            Map<Integer, List<Way>> chunkLayer = model.chunkLayers.get(i);
+            for (int chunk : chunkLayer.keySet()) {
+                for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
+                    chunkLayer.get(chunk).get(j).draw(gc);
+                    count++;
+                }
             }
         }
         long end = System.nanoTime();
