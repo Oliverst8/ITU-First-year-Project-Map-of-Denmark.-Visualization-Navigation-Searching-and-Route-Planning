@@ -24,6 +24,8 @@ public class View {
     private float zoomLevel;
     private float startZoom;
 
+    public int chunkToBeloaded = 2;
+
     Model model;
 
     public View(Model model, Stage primaryStage) {
@@ -73,7 +75,7 @@ public class View {
 
         gc.setStroke(Color.BLACK);
         updateZoomLevel();
-        model.updateChunk(2, getDetailLevel());
+        model.updateChunk(chunkToBeloaded, getDetailLevel());
         System.out.println("Drawing with detail level: " + getDetailLevel());
         int count = 0;
         long start = System.nanoTime();

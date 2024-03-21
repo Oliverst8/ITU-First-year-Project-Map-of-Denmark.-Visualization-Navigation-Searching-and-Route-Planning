@@ -22,6 +22,7 @@ public class ChunkHandler {
     public float minlat, maxlat, minlon, maxlon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
+    public float CHUNK_SIZE;
 
     // Temp variable to save loaded ways
     public ArrayList<Way> ways;
@@ -46,6 +47,7 @@ public class ChunkHandler {
             this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkRowAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
+            this.CHUNK_SIZE = Float.parseFloat(reader.readLine().split(" ")[1]);
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -56,6 +58,11 @@ public class ChunkHandler {
         }
 
         ways = new ArrayList<>();
+    }
+
+    public int coordsToChunkIndex(float lat, float lon) {
+        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
+                (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
     public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {

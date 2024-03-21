@@ -229,7 +229,8 @@ public class ChunkGenerator implements Runnable {
                 .append("maxlon: ").append(maxlon).append("\n")
                 .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
                 .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
-                .append("chunkAmount: ").append(chunkAmount).append("\n");
+                .append("chunkAmount: ").append(chunkAmount).append("\n")
+                .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
         writer.write(builder.toString());
         writer.close();
     }
