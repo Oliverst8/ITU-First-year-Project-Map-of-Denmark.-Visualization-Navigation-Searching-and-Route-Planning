@@ -23,8 +23,8 @@ public class Model implements Serializable {
 
     }
 
-    public void updateChunk(int n) {
-
+    public void updateChunk(int n, int zoomLevel) {
+        chunks = new HashMap<>();
         int[] chunkNumbers = new int[9];
 
         chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
@@ -51,7 +51,8 @@ public class Model implements Serializable {
         }
 
 
-        chunks.putAll(chunkHandler.loadBytes(newChunks, 4));
+        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+
     }
 
     public void updateChunks(){

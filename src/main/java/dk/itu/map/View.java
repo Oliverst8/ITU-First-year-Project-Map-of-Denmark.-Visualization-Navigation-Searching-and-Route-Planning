@@ -52,6 +52,14 @@ public class View {
         return (float) p1.distance(p2);
     }
 
+    private int getDetailLevel(){
+        if(zoomLevel > 50) return 4;
+        if(zoomLevel > 30) return 3;
+        if(zoomLevel > 20) return 2;
+        if(zoomLevel > 15) return 1;
+        return 0;
+    }
+
     void redraw() {
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
@@ -61,15 +69,19 @@ public class View {
 
         gc.setStroke(Color.BLACK);
         updateZoomLevel();
-        model.updateChunk(2);
+        model.updateChunk(2, getDetailLevel());
+        System.out.println("Drawing with detail level: " + getDetailLevel());
+        int count = 0;
         long start = System.nanoTime();
         for (int chunk : model.chunks.keySet()) {
             for(int j = 0; j < model.chunks.get(chunk).size(); j++){
                 model.chunks.get(chunk).get(j).draw(gc);
+                count++;
             }
         }
         long end = System.nanoTime();
         System.out.println("Time to draw current chunks: " + (end - start) / 1000000000.0 + "s");
+        System.out.println("Number of ways drawn: " + count);
     }
 
     void pan(double dx, double dy) {
@@ -92,9 +104,7 @@ public class View {
         System.out.println("Current Zoom Level: " + zoomLevel);
     }
 
-    public float getZoomLevel(){
-        return zoomLevel;
-    }
+
 
     public Point2D convertTo2DPoint(double lastX, double lastY) {
         try {

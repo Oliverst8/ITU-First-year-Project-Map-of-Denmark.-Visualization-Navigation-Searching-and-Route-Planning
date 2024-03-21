@@ -67,42 +67,44 @@ public class ChunkHandler {
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
 
         long StartTime = System.nanoTime();
+        IntStream.range(zoomLevel, 5).forEach( zoomLayer -> {
 
-        IntStream.of(chunks).parallel().forEach(chunk -> {
+            IntStream.of(chunks).parallel().forEach(chunk -> {
 
-            if (chunk < 0 || chunk >= chunkAmount) return;
+                if (chunk < 0 || chunk >= chunkAmount) return;
 
-            ways.put(chunk, new ArrayList<>());
+                ways.putIfAbsent(chunk, new ArrayList<>());
 
-            File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+                File file = new File(this.dataPath + "/zoom" + zoomLayer + "/chunk" + chunk + ".txt");
 
-            float[] coords;
-            String[] tags;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-                while (true) {
-                    coords = new float[stream.readInt()];
-                    for (int j = 0; j < coords.length; j++) {
-                        coords[j] = stream.readFloat();
+                float[] coords;
+                String[] tags;
+                try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                    while (true) {
+                        coords = new float[stream.readInt()];
+                        for (int j = 0; j < coords.length; j++) {
+                            coords[j] = stream.readFloat();
+                        }
+                        tags = new String[stream.readInt()];
+                        for (int j = 0; j < tags.length; j++) {
+                            tags[j] = stream.readUTF();
+                        }
+                        ways.get(chunk).add(new Way(coords, tags));
                     }
-                    tags = new String[stream.readInt()];
-                    for (int j = 0; j < tags.length; j++) {
-                        tags[j] = stream.readUTF();
-                    }
-                    ways.get(chunk).add(new Way(coords, tags));
+                    /*
+                     * The steam will throw an end of file exception when its done,
+                     * this way we can skip checking if we are done reading every loop run, and save
+                     * time
+                     */
+                } catch (EOFException e) {
+                    // End of file reached
+                    return;
+                } catch (IOException e) {
+                    // Since we run it in parallel we need to return a runtime exception since we
+                    // can throw the IOException out of the scope
+                    throw new RuntimeException(e);
                 }
-                /*
-                 * The steam will throw an end of file exception when its done,
-                 * this way we can skip checking if we are done reading every loop run, and save
-                 * time
-                 */
-            } catch (EOFException e) {
-                // End of file reached
-                return;
-            } catch (IOException e) {
-                // Since we run it in parallel we need to return a runtime exception since we
-                // can throw the IOException out of the scope
-                throw new RuntimeException(e);
-            }
+            });
         });
 
         long EndTime = System.nanoTime();
