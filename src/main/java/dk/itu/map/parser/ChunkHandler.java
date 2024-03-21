@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import dk.itu.map.structures.Way;
+import javafx.geometry.Point2D;
 
 public class ChunkHandler {
 
@@ -60,10 +61,21 @@ public class ChunkHandler {
         ways = new ArrayList<>();
     }
 
-    public int coordsToChunkIndex(float lat, float lon) {
+    public int latLonToChunkIndex(float lat, float lon) {
         return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
                 (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
+
+    public int pointToChunkIndex(Point2D p) {
+        float X = (float) p.getX()/0.56f;
+        float Y = (float) p.getY()*-1;
+        int chunkIndex = latLonToChunkIndex(Y, X);
+        chunkIndex = Math.min(chunkIndex, chunkAmount-1);
+        chunkIndex = Math.max(chunkIndex, 0);
+        return chunkIndex;
+    }
+
+
 
     public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {
         return loadBytes(new int[] { chunk }, zoomLevel);
@@ -115,7 +127,7 @@ public class ChunkHandler {
 
         long EndTime = System.nanoTime();
 
-        System.out.println("Reading " + ways.size() + " chunks took: " + ((EndTime - StartTime) / 1_000_000_000.0) + "s");
+
 
         return ways;
 

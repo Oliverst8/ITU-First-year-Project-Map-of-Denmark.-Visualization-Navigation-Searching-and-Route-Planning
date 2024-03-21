@@ -13,8 +13,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class View {
     Canvas canvas = new Canvas(640, 480);
@@ -22,9 +24,9 @@ public class View {
 
     Affine trans = new Affine();
     private float zoomLevel;
-    private float startZoom;
+    private final float startZoom;
 
-    public int chunkToBeloaded = 2;
+
 
     Model model;
 
@@ -39,17 +41,16 @@ public class View {
 
 
 
-        pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
+        //pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
+        trans.prependTranslation(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
+        //This is done to avoid getheight and getwidth from canvas, returning way to big values
         zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
 
 
         startZoom = getZoomDistance();
 
-        System.out.println("StartZoom level: " + startZoom);
-
-        updateZoomLevel();
-
         redraw();
+
     }
 
     private float getZoomDistance(){
@@ -74,9 +75,10 @@ public class View {
         gc.setLineWidth(1/Math.sqrt(trans.determinant()));
 
         gc.setStroke(Color.BLACK);
+
         updateZoomLevel();
-        model.updateChunk(chunkToBeloaded, getDetailLevel());
-        System.out.println("Drawing with detail level: " + getDetailLevel());
+        updateChunks();
+
         int count = 0;
         long start = System.nanoTime();
         for(int i = getDetailLevel(); i <= 4; i++){
@@ -89,8 +91,41 @@ public class View {
             }
         }
         long end = System.nanoTime();
-        System.out.println("Time to draw current chunks: " + (end - start) / 1000000000.0 + "s");
+
         System.out.println("Number of ways drawn: " + count);
+    }
+
+    private Point2D getUpperLeftCorner() {
+        return convertTo2DPoint(0, 0);
+    }
+
+    private Point2D getLowerRightCorner() {
+        return convertTo2DPoint(canvas.getWidth(), canvas.getHeight());
+    }
+
+    private void updateChunks() {
+
+        Point2D upperLeftCorner = getUpperLeftCorner();
+        Point2D lowerRightCorner = getLowerRightCorner();
+
+
+
+        int upperLeftChunk = model.chunkHandler.pointToChunkIndex(upperLeftCorner);
+        int lowerRightChunk = model.chunkHandler.pointToChunkIndex(lowerRightCorner);
+
+        Set<Integer> chunks = new HashSet<>();
+        //THIS IS WRONG
+
+        int width = Math.abs((lowerRightChunk + model.chunkHandler.chunkColumnAmount) - upperLeftChunk);
+        int height = Math.abs(upperLeftChunk+width - lowerRightChunk)/model.chunkHandler.chunkColumnAmount;
+
+        for(int i = upperLeftChunk; i <= upperLeftChunk + width; i++){
+            for(int j = 0; j <= height; j++){
+                chunks.add(i - j*model.chunkHandler.chunkColumnAmount);
+            }
+        }
+        model.updateChunks(chunks, getDetailLevel());
+        throw new RuntimeException("This above code needs to be fixed, so it only gets the correct square");
     }
 
     void pan(double dx, double dy) {
@@ -99,8 +134,6 @@ public class View {
     }
 
     void zoom(double dx, double dy, double factor) {
-
-        //System.out.println("Factor: " + factor);
         trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
         trans.prependTranslation(dx, dy);
@@ -110,7 +143,7 @@ public class View {
     public void updateZoomLevel(){
         float newZoom = getZoomDistance();
         zoomLevel = (newZoom/startZoom) * 100;
-        System.out.println("Current Zoom Level: " + zoomLevel);
+
     }
 
 

@@ -14,8 +14,8 @@ public class Controller {
             float X = (float) p.getX()/0.56f;
             float Y = (float) p.getY()*-1;
             System.out.println("X: " + X + " Y: " + Y);
-            System.out.println("Chunk: " + model.chunkHandler.coordsToChunkIndex(Y, X));
-            view.chunkToBeloaded = model.chunkHandler.coordsToChunkIndex(Y, X);
+            System.out.println("Chunk: " + model.chunkHandler.latLonToChunkIndex(Y, X));
+
         });
 
         view.canvas.setOnMouseDragged(e -> {
