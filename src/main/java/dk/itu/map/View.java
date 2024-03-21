@@ -36,15 +36,20 @@ public class View {
         pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
         zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
 
-        Point2D p1 = convertTo2DPoint(0,0);
-        Point2D p2 = convertTo2DPoint(0,100);
-        startZoom = (float) p1.distance(p2) * 1000;
+
+        startZoom = getZoomDistance();
 
         System.out.println("StartZoom level: " + startZoom);
 
         updateZoomLevel();
 
         redraw();
+    }
+
+    private float getZoomDistance(){
+        Point2D p1 = convertTo2DPoint(0,0);
+        Point2D p2 = convertTo2DPoint(0,100);
+        return (float) p1.distance(p2);
     }
 
     void redraw() {
@@ -82,13 +87,9 @@ public class View {
     }
 
     public void updateZoomLevel(){
-        Point2D p1 = convertTo2DPoint(0,0);
-        Point2D p2 = convertTo2DPoint(0,100);
-        float newZoom = (float) p1.distance(p2) * 1000;
-
-        System.out.println("New Zoom Level: " + newZoom);
-
-        System.out.println("Current Zoom Level: " + newZoom/startZoom);
+        float newZoom = getZoomDistance();
+        zoomLevel = (newZoom/startZoom) * 100;
+        System.out.println("Current Zoom Level: " + zoomLevel);
     }
 
     public float getZoomLevel(){
