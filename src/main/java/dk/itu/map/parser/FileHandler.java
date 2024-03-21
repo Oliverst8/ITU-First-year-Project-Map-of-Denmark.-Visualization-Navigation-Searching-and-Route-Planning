@@ -28,8 +28,6 @@ public class FileHandler {
 
     private final File file;
 
-    //Temp variable to save loaded ways
-    private ArrayList<Way> ways;
     private ArrayList<Way> relations;
     private float minlat, maxlat, minlon, maxlon;
     private LongFloatArrayHashMap nodes;
@@ -47,7 +45,6 @@ public class FileHandler {
     public FileHandler(File file) {
         this.file = file;
 
-        ways = new ArrayList<>();
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
     }
