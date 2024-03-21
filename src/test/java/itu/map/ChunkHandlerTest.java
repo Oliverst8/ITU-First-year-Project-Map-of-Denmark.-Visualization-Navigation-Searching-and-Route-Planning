@@ -14,7 +14,7 @@ public class ChunkHandlerTest {
         long startTime = System.nanoTime();
         int chunk = 75;
         // try {
-            chunkHandler.loadBytes(chunk);
+            chunkHandler.loadBytes(chunk, 0);
         // } catch (IOException e) {
         //     e.printStackTrace();
         // }
