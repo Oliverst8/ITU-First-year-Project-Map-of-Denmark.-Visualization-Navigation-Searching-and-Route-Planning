@@ -18,6 +18,7 @@ public class View {
 
     Affine trans = new Affine();
     private float zoomLevel;
+    private float startZoom;
 
     Model model;
 
@@ -30,8 +31,16 @@ public class View {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
+
         pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
         zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
+
+        Point2D p1 = convertTo2DPoint(0,0);
+        Point2D p2 = convertTo2DPoint(0,100);
+        startZoom = (float) p1.distance(p2) * 1000;
+
+        System.out.println("StartZoom level: " + startZoom);
 
         updateZoomLevel();
 
@@ -46,7 +55,7 @@ public class View {
         gc.setLineWidth(1/Math.sqrt(trans.determinant()));
 
         gc.setStroke(Color.BLACK);
-
+        updateZoomLevel();
         model.updateChunk(2);
         long start = System.nanoTime();
         for (int chunk : model.chunks.keySet()) {
@@ -75,8 +84,11 @@ public class View {
     public void updateZoomLevel(){
         Point2D p1 = convertTo2DPoint(0,0);
         Point2D p2 = convertTo2DPoint(0,100);
-        zoomLevel = (float) p1.distance(p2) * 1000;
-        System.out.println("Zoom level: " + zoomLevel);
+        float newZoom = (float) p1.distance(p2) * 1000;
+
+        System.out.println("New Zoom Level: " + newZoom);
+
+        System.out.println("Current Zoom Level: " + newZoom/startZoom);
     }
 
     public float getZoomLevel(){
