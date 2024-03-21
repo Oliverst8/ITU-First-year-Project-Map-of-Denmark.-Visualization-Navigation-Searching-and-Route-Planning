@@ -19,18 +19,25 @@ public class Way {
     /**
      * Only use for FileHandler
      */
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
+    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long[] nodeIds) {
         this.coords = new float[nodes.size()];
         this.tags = new String[tags.size()];
         this.outer = new Way[outerRef.size()];
         this.inner = new Way[innerRef.size()];
+        this.nodeIDs = nodeIds;
 
         for (int i = 0; i < this.coords.length; i += 2) {
             this.coords[i] = nodes.get(i);
             this.coords[i + 1] = nodes.get(i + 1);
         }
         for (int i = 0; i < this.tags.length; i++) {
-            this.tags[i] = tags.get(i);
+            String tag = tags.get(i);
+
+            // If the tag is an id, set the id of the way, and dont add it to the array, otherwise add it to the array
+            if(tag.equals("id")) {
+                this.id = Long.parseLong(tags.get(i+1));
+                i++;
+            } else this.tags[i] = tags.get(i);
         }
     }
 
@@ -106,6 +113,14 @@ public class Way {
     public String[] getTags() {
         return tags;
     }
+
+    public long getId() {
+        return id;
+    }
     public void setZoomLevel(byte zoomLevel){ this.zoomLevel = zoomLevel;}
+
+    public long[] getNodeIDs(){
+        return nodeIDs;
+    }
 
 }
