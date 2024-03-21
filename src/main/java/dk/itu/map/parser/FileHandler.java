@@ -185,7 +185,7 @@ public class FileHandler {
 
         if (relationMap.containsKey(id)) {
             relationMap.get(id).forEach(relation -> {
-                relation.addRelation(way, id);
+                relation.addRelatedWay(way, id);
             });
         }
 

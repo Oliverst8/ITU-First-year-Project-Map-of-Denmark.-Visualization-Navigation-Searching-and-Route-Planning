@@ -1,5 +1,7 @@
 package dk.itu.map.structures;
 
+import java.util.Arrays;
+
 public class FloatArrayList {
     private final int ARRAY_INIT_SIZE = 100_000;
     private float[] array;
@@ -8,6 +10,16 @@ public class FloatArrayList {
     public FloatArrayList() {
         array = new float[ARRAY_INIT_SIZE];
         size = 0;
+    }
+
+    public FloatArrayList(int init_size) {
+        array = new float[init_size];
+        size = 0;
+    }
+
+    public FloatArrayList(float[] array) {
+        this.array = array;
+        size = array.length;
     }
 
     private void resize() {
@@ -24,6 +36,18 @@ public class FloatArrayList {
         }
         array[size] = value;
         size++;
+    }
+
+    public void addAll(float[] values) {
+        if (size + values.length > array.length) {
+            resize();
+        }
+        System.arraycopy(values, 0, array, size, values.length);
+        size += values.length;
+    }
+
+    public float[] toArray() {
+        return Arrays.copyOf(array, size);
     }
 
     public float get(int index) {
