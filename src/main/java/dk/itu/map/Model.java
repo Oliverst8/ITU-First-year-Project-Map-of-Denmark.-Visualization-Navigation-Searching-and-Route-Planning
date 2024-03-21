@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import dk.itu.map.parser.ChunkHandler;
 import dk.itu.map.parser.FileHandler;
 import dk.itu.map.structures.Way;
+import javafx.geometry.Point2D;
 
 public class Model implements Serializable {
 
@@ -51,5 +52,9 @@ public class Model implements Serializable {
 
 
         chunks.putAll(chunkHandler.loadBytes(newChunks, 4));
+    }
+
+    public void updateChunks(){
+
     }
 }

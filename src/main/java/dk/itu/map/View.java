@@ -15,12 +15,9 @@ import javafx.scene.transform.NonInvertibleTransformException;
 public class View {
     Canvas canvas = new Canvas(640, 480);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    double x1 = 100;
-    double y1 = 100;
-    double x2 = 200;
-    double y2 = 800;
 
     Affine trans = new Affine();
+    private float zoomLevel;
 
     Model model;
 
@@ -35,6 +32,9 @@ public class View {
 
         pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
         zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));
+
+        updateZoomLevel();
+
         redraw();
     }
 
@@ -72,7 +72,18 @@ public class View {
         redraw();
     }
 
-    public Point2D mousetoModel(double lastX, double lastY) {
+    public void updateZoomLevel(){
+        Point2D p1 = convertTo2DPoint(0,0);
+        Point2D p2 = convertTo2DPoint(0,100);
+        zoomLevel = (float) p1.distance(p2) * 1000;
+        System.out.println("Zoom level: " + zoomLevel);
+    }
+
+    public float getZoomLevel(){
+        return zoomLevel;
+    }
+
+    public Point2D convertTo2DPoint(double lastX, double lastY) {
         try {
             return trans.inverseTransform(lastX, lastY);
         } catch (NonInvertibleTransformException e) {
