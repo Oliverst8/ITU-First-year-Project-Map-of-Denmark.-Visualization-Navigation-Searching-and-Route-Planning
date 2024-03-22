@@ -17,7 +17,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         if (!new File("zoomLayers/config").exists()) {
-            FileHandler fileHandler = new FileHandler(new File("data/isle-of-man-latest2.osm"));
+            FileHandler fileHandler = new FileHandler(new File("/home/ostarup/Downloads/denmark-latest.osm"));
             fileHandler.load();
         } else{
             System.out.println("File already exists. loading...");

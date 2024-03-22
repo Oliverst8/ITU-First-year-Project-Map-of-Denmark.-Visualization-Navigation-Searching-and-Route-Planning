@@ -30,6 +30,10 @@ public class View {
 
     Model model;
 
+    public View(){
+        startZoom = 0;
+    }
+
     public View(Model model, Stage primaryStage) {
         this.model = model;
 
@@ -108,24 +112,32 @@ public class View {
         Point2D upperLeftCorner = getUpperLeftCorner();
         Point2D lowerRightCorner = getLowerRightCorner();
 
-
-
         int upperLeftChunk = model.chunkHandler.pointToChunkIndex(upperLeftCorner);
         int lowerRightChunk = model.chunkHandler.pointToChunkIndex(lowerRightCorner);
 
+        Set<Integer> chunks = getSmallestRect(upperLeftChunk, lowerRightChunk, model.chunkHandler.chunkColumnAmount, model.chunkHandler.chunkRowAmount);
+
+        model.updateChunks(chunks, getDetailLevel());
+
+    }
+
+    public Set<Integer> getSmallestRect(int chunk1, int chunk2, int columAmount, int rowAmount){
         Set<Integer> chunks = new HashSet<>();
-        //THIS IS WRONG
 
-        int width = Math.abs((lowerRightChunk + model.chunkHandler.chunkColumnAmount) - upperLeftChunk);
-        int height = Math.abs(upperLeftChunk+width - lowerRightChunk)/model.chunkHandler.chunkColumnAmount;
+        int a = Math.min(chunk1, chunk2);
+        int b = Math.max(chunk1, chunk2);
 
-        for(int i = upperLeftChunk; i <= upperLeftChunk + width; i++){
-            for(int j = 0; j <= height; j++){
-                chunks.add(i - j*model.chunkHandler.chunkColumnAmount);
+        int height = b/columAmount - a/columAmount;
+        int width = a%columAmount-b%columAmount;
+
+        for(int i = 0; i <= height; i++) {
+            int c = a + columAmount*i;
+            for(int j = 0; j <= width; j++) {
+                chunks.add(c-j);
             }
         }
-        model.updateChunks(chunks, getDetailLevel());
-        throw new RuntimeException("This above code needs to be fixed, so it only gets the correct square");
+
+        return chunks;
     }
 
     void pan(double dx, double dy) {

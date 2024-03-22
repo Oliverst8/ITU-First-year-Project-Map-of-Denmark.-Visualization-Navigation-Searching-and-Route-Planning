@@ -68,7 +68,11 @@ public class ChunkHandler {
 
     public int pointToChunkIndex(Point2D p) {
         float X = (float) p.getX()/0.56f;
+        X = Math.min(X,maxlon);
+        X = Math.max(X,minlon);
         float Y = (float) p.getY()*-1;
+        Y = Math.min(Y,maxlat);
+        Y = Math.max(Y,minlat);
         int chunkIndex = latLonToChunkIndex(Y, X);
         chunkIndex = Math.min(chunkIndex, chunkAmount-1);
         chunkIndex = Math.max(chunkIndex, 0);
