@@ -81,7 +81,7 @@ public class Model implements Serializable {
 
     public void updateChunks(Set<Integer> chunks, int zoomLevel) {
         System.out.println("Updating " + chunks.size() + " chunks");
-        System.out.println("Zoom level: " + zoomLevel);
+        System.out.println("Zoom detail level: " + zoomLevel);
         for(Map<Integer, List<Way>> chunkLayers : chunkLayers)
             chunkLayers.keySet().retainAll(chunks);
 

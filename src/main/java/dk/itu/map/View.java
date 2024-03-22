@@ -26,6 +26,7 @@ public class View {
     private float zoomLevel;
     private final float startZoom;
 
+    private float currentChunkAmountSeen = 1;
 
 
     Model model;
@@ -52,7 +53,6 @@ public class View {
 
 
         startZoom = getZoomDistance();
-
         redraw();
 
     }
@@ -64,10 +64,10 @@ public class View {
     }
 
     private int getDetailLevel(){
-        if(zoomLevel > 50) return 4;
+        if(zoomLevel > 400) return 4;
         if(zoomLevel > 30) return 3;
-        if(zoomLevel > 20) return 2;
-        if(zoomLevel > 15) return 1;
+        if(zoomLevel > 15) return 2;
+        if(zoomLevel > 5) return 1;
         return 0;
     }
 
@@ -80,8 +80,10 @@ public class View {
 
         gc.setStroke(Color.BLACK);
 
+        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
         updateChunks();
+        updateZoomLevel();
 
         int count = 0;
         long start = System.nanoTime();
@@ -117,6 +119,8 @@ public class View {
 
         Set<Integer> chunks = getSmallestRect(upperLeftChunk, lowerRightChunk, model.chunkHandler.chunkColumnAmount, model.chunkHandler.chunkRowAmount);
 
+        currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY()) / model.chunkHandler.CHUNK_SIZE);
+
         model.updateChunks(chunks, getDetailLevel());
 
     }
@@ -128,13 +132,17 @@ public class View {
         int b = Math.max(chunk1, chunk2);
 
         int height = b/columAmount - a/columAmount;
-        int width = a%columAmount-b%columAmount;
+        int width = Math.abs(a%columAmount-b%columAmount);
 
         for(int i = 0; i <= height; i++) {
             int c = a + columAmount*i;
             for(int j = 0; j <= width; j++) {
                 chunks.add(c-j);
             }
+        }
+
+        if(chunks.isEmpty()){
+            System.out.println("HERE");
         }
 
         return chunks;
@@ -154,8 +162,8 @@ public class View {
 
     public void updateZoomLevel(){
         float newZoom = getZoomDistance();
-        zoomLevel = (newZoom/startZoom) * 100;
-
+        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen;
+        System.out.println("Set zoomlevel to: " + zoomLevel);
     }
 
 
