@@ -39,5 +39,12 @@ public class ViewTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void testGetSmallestRectExpects345(){
+        Set<Integer> actual = view.getSmallestRect(3,5,3,3);
+        Set<Integer> expected = Set.of(3,4,5);
+        assertEquals(expected, actual);
+    }
+
 
 }

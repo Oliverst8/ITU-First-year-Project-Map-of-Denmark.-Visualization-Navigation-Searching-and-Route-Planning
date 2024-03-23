@@ -18,7 +18,7 @@ public class App extends Application {
 
         if (!new File("zoomLayers/config").exists()) {
             //Isle of man relative path: data/isle-of-man-latest2.osm
-            FileHandler fileHandler = new FileHandler(new File("data/isle-of-man-latest2.osm"));
+            FileHandler fileHandler = new FileHandler(new File("C:\\Users\\olive\\Downloads\\denmark-latest.osm"));
             fileHandler.load();
         } else{
             System.out.println("File already exists. loading...");
