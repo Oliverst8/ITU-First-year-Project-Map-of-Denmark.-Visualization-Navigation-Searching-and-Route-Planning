@@ -17,6 +17,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         if (!new File("zoomLayers/config").exists()) {
+            //Isle of man relative path: data/isle-of-man-latest2.osm
             FileHandler fileHandler = new FileHandler(new File("data/isle-of-man-latest2.osm"));
             fileHandler.load();
         } else{

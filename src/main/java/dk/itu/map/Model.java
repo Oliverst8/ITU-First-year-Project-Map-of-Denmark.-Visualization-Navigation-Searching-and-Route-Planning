@@ -62,40 +62,34 @@ public class Model implements Serializable {
 
         Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
 
+        chunkSet.removeAll(chunks.keySet());
+
         int[] newChunks = new int[chunkSet.size()];
 
         int c = 0;
         for (int chunk : chunkSet) {
-            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
-            if (chunks.containsKey(chunk)) continue;
             newChunks[c++] = chunk;
         }
-
-        while (c < newChunks.length) {
-            newChunks[c++] = -1;
+        if(chunkSet.isEmpty()) {
+            return;
         }
-
-
         chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
     }
 
     public void updateChunks(Set<Integer> chunks, int zoomLevel) {
-        System.out.println("Updating " + chunks.size() + " chunks");
-        System.out.println("Zoom detail level: " + zoomLevel);
-        for(Map<Integer, List<Way>> chunkLayers : chunkLayers)
+
+        for(Map<Integer, List<Way>> chunkLayers : chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
+        }
 
-        for(int n : chunks)
-            for(int i = zoomLevel; i <= 4; i++)
-                updateChunkLevel(n, i);
-    }
+            for(int i = zoomLevel; i <= 4; i++) {
+                updateChunkLevel(chunks, i);
+            }
 
-    public void updateChunk(int n, int zoomLevel) {
-        for(int i = zoomLevel; i <= 4; i++)
-            updateChunkLevel(n, i);
-    }
-
-    public void updateChunks(){
 
     }
+
+
+
+
 }

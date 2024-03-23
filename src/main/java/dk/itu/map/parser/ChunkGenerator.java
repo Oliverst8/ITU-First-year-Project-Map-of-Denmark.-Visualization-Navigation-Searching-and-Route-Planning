@@ -116,20 +116,20 @@ public class ChunkGenerator implements Runnable {
                     case "primary":
                     case "primary_link":
 
-                    case "water":
-                    case "wetland":
                     case "bay":
-                    case "beach":
                     case "coastline":
                     case "cape":
+                        zoomLevel = 4;
+                        break;
+                    case "beach":
+                    case "water":
+                    case "wetland":
                     case "fell":
                     case "grassland":
                     case "heath":
                     case "scrub":
                     case "wood":
                     case "aerodrome":
-                        zoomLevel = 4;
-                        break;
                     case "secondary":
                     case "secondary_link":
                     case "rail":

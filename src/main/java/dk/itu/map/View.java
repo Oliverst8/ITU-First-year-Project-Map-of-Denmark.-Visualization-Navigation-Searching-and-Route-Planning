@@ -67,7 +67,7 @@ public class View {
         if(zoomLevel > 400) return 4;
         if(zoomLevel > 30) return 3;
         if(zoomLevel > 15) return 2;
-        if(zoomLevel > 5) return 1;
+        if(zoomLevel > 0.2) return 1;
         return 0;
     }
 
@@ -82,7 +82,10 @@ public class View {
 
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
+        Long startUpdateChunkTime = System.nanoTime();
         updateChunks();
+        Long endUpdateChunkTime = System.nanoTime();
+        //System.out.println("Time to update chunks: " + ((endUpdateChunkTime - startUpdateChunkTime)/1_000_000_000.0) + "s");
         updateZoomLevel();
 
         int count = 0;
@@ -97,7 +100,7 @@ public class View {
             }
         }
         long end = System.nanoTime();
-
+        //System.out.println("Time to draw: " + ((end - start)/1_000_000_000.0) + "s");
         System.out.println("Number of ways drawn: " + count);
     }
 
