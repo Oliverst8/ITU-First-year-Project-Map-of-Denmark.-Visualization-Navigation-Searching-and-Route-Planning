@@ -137,15 +137,15 @@ public class View {
         int height = b/columAmount - a/columAmount;
         int width = Math.abs(a%columAmount-b%columAmount);
 
-        for(int i = 0; i <= height; i++) {
-            int c = a + columAmount*i;
-            for(int j = 0; j <= width; j++) {
+        int leftMost;
+        if(height == 0) leftMost = b;
+        else leftMost = a;
+
+        for(int i = 0; i <= height; i++){
+            int c = leftMost + i*columAmount;
+            for(int j = 0; j <= width; j++){
                 chunks.add(c-j);
             }
-        }
-
-        if(chunks.isEmpty()){
-            System.out.println("HERE");
         }
 
         return chunks;
