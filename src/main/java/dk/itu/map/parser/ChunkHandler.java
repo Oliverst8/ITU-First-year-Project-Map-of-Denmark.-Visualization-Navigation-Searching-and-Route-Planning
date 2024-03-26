@@ -76,19 +76,24 @@ public class ChunkHandler {
 
             File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
-            float[] coords;
+            float[] outerCoords;
+            float[] innerCoords;
             String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
-                    coords = new float[stream.readInt()];
-                    for (int j = 0; j < coords.length; j++) {
-                        coords[j] = stream.readFloat();
+                    outerCoords = new float[stream.readInt()];
+                    for (int j = 0; j < outerCoords.length; j++) {
+                        outerCoords[j] = stream.readFloat();
+                    }
+                    innerCoords = new float[stream.readInt()];
+                    for (int j = 0; j < innerCoords.length; j++) {
+                        innerCoords[j] = stream.readFloat();
                     }
                     tags = new String[stream.readInt()];
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
-                    ways.get(chunk).add(new Way(coords, tags));
+                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags));
                 }
                 /*
                  * The steam will throw an end of file exception when its done,

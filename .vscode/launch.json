@@ -8,8 +8,8 @@
       "mainClass": "dk.itu.map/dk.itu.map.Main",
       "projectName": "BFST2024Group8",
       "args": [
-        "-Xmx8g",
-        "-Xms8g"
+        "-Xmx8G",
+        "-Xms8G"
       ]
     }
   ]

@@ -18,14 +18,15 @@ public class Way {
 
     private Way[] tempWays;
 
+    private long id;
     private long[] nodeIDs;
 
     /**
      * Only use for FileHandler
      */
     public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new FloatArrayList();
-        innerCoords = new FloatArrayList();
+        outerCoords = new FloatArrayList(10);
+        innerCoords = new FloatArrayList(10);
         this.outerRef = outerRef;
         this.innerRef = innerRef;
         this.tempWays = new Way[outerRef.size() + innerRef.size()];
@@ -36,7 +37,16 @@ public class Way {
         }
 
         for (int i = 0; i < this.tags.length; i++) {
-            this.tags[i] = tags.get(i);
+            String tag = tags.get(i);
+
+            // If the tag is an id, set the id of the way, and dont add it to the array,
+            // otherwise add it to the array
+            if (tag.equals("id")) {
+                this.id = Long.parseLong(tags.get(i + 1));
+                i++;
+            } else {
+                this.tags[i] = tag;
+            }
         }
     }
 
@@ -101,18 +111,26 @@ public class Way {
         for (int i = 2; i < outerCoords.size(); i += 2) {
             gc.lineTo(0.56f * outerCoords.get(i + 1), -outerCoords.get(i));
         }
-        gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
-        for (int i = 2; i < innerCoords.size(); i += 2) {
-            gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
+        if (innerCoords.size() > 0) {
+            gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
+            for (int i = 2; i < innerCoords.size(); i += 2) {
+                gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
+            }
         }
-        gc.stroke();
+        if (innerCoords.size() == 0) {
+            gc.stroke();
+        } else {
+            gc.stroke();
+            gc.fill();
+        }
     }
 
     /**
      * Also only used in fileHandler
      */
     public void addRelatedWay(Way way, long id) {
-        if (tempWays == null) throw new RuntimeException("Related ways cannot be added to fully filled ways");
+        if (tempWays == null)
+            throw new RuntimeException("Related ways cannot be added to fully filled ways");
 
         if (outerRef.contains(id)) {
             tempWays[outerRef.indexOf(id)] = way;
@@ -120,7 +138,7 @@ public class Way {
         if (innerRef.contains(id)) {
             tempWays[outerRef.size() + innerRef.indexOf(id)] = way;
         }
-        
+
         boolean filled = true;
         for (int i = 0; i < tempWays.length; i++) {
             if (tempWays[i] == null) {
@@ -133,11 +151,16 @@ public class Way {
                 this.outerCoords.addAll(tempWays[i].outerCoords.toArray());
             }
             for (int i = 0; i < innerRef.size(); i++) {
-                this.innerCoords.addAll(tempWays[i].outerCoords.toArray()); // outercoords are used here cause Ways use outer by default.
-                // FIXME: what happens if relation hash relation with inner ways inside
+                this.innerCoords.addAll(tempWays[i].outerCoords.toArray());
+                // outercoords are used here cause Ways use outer by default.
+                // FIXME: what happens if relation has relation with inner ways inside
             }
 
         }
+    }
+    
+    public void setZoomLevel(byte zoomLevel) {
+        this.zoomLevel = zoomLevel;
     }
 
     public float[] getCoords() {
@@ -148,8 +171,8 @@ public class Way {
         return tags;
     }
 
-    public void setZoomLevel(byte zoomLevel) {
-        this.zoomLevel = zoomLevel;
+    public long getId() {
+        return id;
     }
 
     public long[] getNodeIDs() {

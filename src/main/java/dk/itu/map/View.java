@@ -46,8 +46,9 @@ public class View {
         gc.setLineWidth(1/Math.sqrt(trans.determinant()));
 
         gc.setStroke(Color.BLACK);
+        gc.setFill(Color.GRAY);
 
-        model.updateChunk(2);
+        model.updateChunk(30);
         long start = System.nanoTime();
         for (int chunk : model.chunks.keySet()) {
             for(int j = 0; j < model.chunks.get(chunk).size(); j++){
