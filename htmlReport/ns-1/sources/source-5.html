@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > View</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dk.itu.map</a>
+</div>
+
+<h1>Coverage Summary for Class: View (dk.itu.map)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">View</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dk.itu.map;
+&nbsp;
+&nbsp;import javafx.geometry.Point2D;
+&nbsp;
+&nbsp;import javafx.stage.Stage;
+&nbsp;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.paint.Color;
+&nbsp;import javafx.scene.canvas.Canvas;
+&nbsp;import javafx.scene.transform.Affine;
+&nbsp;import javafx.scene.layout.BorderPane;
+&nbsp;import javafx.scene.canvas.GraphicsContext;
+&nbsp;import javafx.scene.transform.NonInvertibleTransformException;
+&nbsp;
+&nbsp;public class View {
+<b class="nc">&nbsp;    Canvas canvas = new Canvas(640, 480);</b>
+<b class="nc">&nbsp;    GraphicsContext gc = canvas.getGraphicsContext2D();</b>
+<b class="nc">&nbsp;    double x1 = 100;</b>
+<b class="nc">&nbsp;    double y1 = 100;</b>
+<b class="nc">&nbsp;    double x2 = 200;</b>
+<b class="nc">&nbsp;    double y2 = 800;</b>
+&nbsp;
+<b class="nc">&nbsp;    Affine trans = new Affine();</b>
+&nbsp;
+&nbsp;    Model model;
+&nbsp;
+<b class="nc">&nbsp;    public View(Model model, Stage primaryStage) {</b>
+<b class="nc">&nbsp;        this.model = model;</b>
+&nbsp;
+<b class="nc">&nbsp;        primaryStage.setTitle(&quot;Draw Lines&quot;);</b>
+<b class="nc">&nbsp;        BorderPane pane = new BorderPane(canvas);</b>
+<b class="nc">&nbsp;        Scene scene = new Scene(pane);</b>
+<b class="nc">&nbsp;        primaryStage.setScene(scene);</b>
+<b class="nc">&nbsp;        primaryStage.show();</b>
+&nbsp;
+<b class="nc">&nbsp;        pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);</b>
+<b class="nc">&nbsp;        zoom(0, 0, canvas.getHeight() / (model.chunkHandler.maxlat - model.chunkHandler.minlat));</b>
+<b class="nc">&nbsp;        redraw();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    void redraw() {
+<b class="nc">&nbsp;        gc.setTransform(new Affine());</b>
+<b class="nc">&nbsp;        gc.setFill(Color.WHITE);</b>
+<b class="nc">&nbsp;        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());</b>
+<b class="nc">&nbsp;        gc.setTransform(trans);</b>
+<b class="nc">&nbsp;        gc.setLineWidth(1/Math.sqrt(trans.determinant()));</b>
+&nbsp;
+<b class="nc">&nbsp;        gc.setStroke(Color.BLACK);</b>
+&nbsp;
+<b class="nc">&nbsp;        model.updateChunk(2);</b>
+<b class="nc">&nbsp;        long start = System.nanoTime();</b>
+<b class="nc">&nbsp;        for (int chunk : model.chunks.keySet()) {</b>
+<b class="nc">&nbsp;            for(int j = 0; j &lt; model.chunks.get(chunk).size(); j++){</b>
+<b class="nc">&nbsp;                model.chunks.get(chunk).get(j).draw(gc);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        long end = System.nanoTime();</b>
+<b class="nc">&nbsp;        System.out.println(&quot;Time to draw current chunks: &quot; + (end - start) / 1000000000.0 + &quot;s&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    void pan(double dx, double dy) {
+<b class="nc">&nbsp;        trans.prependTranslation(dx, dy);</b>
+<b class="nc">&nbsp;        redraw();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    void zoom(double dx, double dy, double factor) {
+&nbsp;
+&nbsp;        //System.out.println(&quot;Factor: &quot; + factor);
+<b class="nc">&nbsp;        trans.prependTranslation(-dx, -dy);</b>
+<b class="nc">&nbsp;        trans.prependScale(factor, factor);</b>
+<b class="nc">&nbsp;        trans.prependTranslation(dx, dy);</b>
+<b class="nc">&nbsp;        redraw();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Point2D mousetoModel(double lastX, double lastY) {
+&nbsp;        try {
+<b class="nc">&nbsp;            return trans.inverseTransform(lastX, lastY);</b>
+<b class="nc">&nbsp;        } catch (NonInvertibleTransformException e) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-19 15:23</div>
+</div>
+</body>
+</html>

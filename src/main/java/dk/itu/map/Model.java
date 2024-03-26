@@ -1,38 +1,99 @@
 package dk.itu.map;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import javax.xml.stream.XMLStreamException;
-
-import dk.itu.map.parser.FileHandler;
+import dk.itu.map.parser.ChunkHandler;
 import dk.itu.map.structures.Way;
 
-public class Model {
-    List<Way> ways = new ArrayList<Way>();
+public class Model implements Serializable {
+    
+    List<Map<Integer,List<Way>>> chunkLayers;
+    final ChunkHandler chunkHandler;
 
-    double minlat, maxlat, minlon, maxlon;
+    public Model(ChunkHandler chunkHandler) {
+        this.chunkHandler = chunkHandler;
+        chunkLayers = new ArrayList<>();
+        for(int i = 0; i <= 4; i++)
+            chunkLayers.add(new HashMap<>());
+    }
 
-    public Model() {}
+    private void updateChunkLevel(int n, int zoomLevel) {
 
-    void parseMap(String path) {
-        FileHandler fileHandler = new FileHandler(new File("/home/jogge/Downloads/map.osm"));
+        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
 
-        try {
-            fileHandler.load();
+        int[] chunkNumbers = new int[9];
 
-            ways = fileHandler.ways;
-            minlat = fileHandler.minlat;
-            maxlat = fileHandler.maxlat;
-            minlon = fileHandler.minlon;
-            maxlon = fileHandler.maxlon;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
+        chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[1] = n - chunkHandler.chunkColumnAmount;
+        chunkNumbers[2] = n - chunkHandler.chunkColumnAmount + 1;
+        chunkNumbers[3] = n - 1;
+        chunkNumbers[4] = n;
+        chunkNumbers[5] = n + 1;
+        chunkNumbers[6] = n + chunkHandler.chunkColumnAmount - 1;
+        chunkNumbers[7] = n + chunkHandler.chunkColumnAmount;
+        chunkNumbers[8] = n + chunkHandler.chunkColumnAmount + 1;
+
+        int[] newChunks = new int[9];
+
+        int c = 0;
+        for (int chunk : chunkNumbers) {
+            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
+            if (chunks.containsKey(chunk)) continue;
+            newChunks[c++] = chunk;
         }
+
+        while (c < newChunks.length) {
+            newChunks[c++] = -1;
+        }
+
+
+        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+    }
+
+    private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
+
+        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
+
+        int[] newChunks = new int[chunkSet.size()];
+
+        int c = 0;
+        for (int chunk : chunkSet) {
+            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
+            if (chunks.containsKey(chunk)) continue;
+            newChunks[c++] = chunk;
+        }
+
+        while (c < newChunks.length) {
+            newChunks[c++] = -1;
+        }
+
+
+        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+    }
+
+    public void updateChunks(Set<Integer> chunks, int zoomLevel) {
+        System.out.println("Updating " + chunks.size() + " chunks");
+        System.out.println("Zoom level: " + zoomLevel);
+        for(Map<Integer, List<Way>> chunkLayers : chunkLayers)
+            chunkLayers.keySet().retainAll(chunks);
+
+        for(int n : chunks)
+            for(int i = zoomLevel; i <= 4; i++)
+                updateChunkLevel(n, i);
+    }
+
+    public void updateChunk(int n, int zoomLevel) {
+        for(int i = zoomLevel; i <= 4; i++)
+            updateChunkLevel(n, i);
+    }
+
+    public void updateChunks(){
+
     }
 }

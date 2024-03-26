@@ -10,9 +10,11 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileReader;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import dk.itu.map.structures.Way;
+import javafx.geometry.Point2D;
 
 public class ChunkHandler {
 
@@ -21,6 +23,7 @@ public class ChunkHandler {
     public float minlat, maxlat, minlon, maxlon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
+    public float CHUNK_SIZE;
 
     // Temp variable to save loaded ways
     public ArrayList<Way> ways;
@@ -45,6 +48,7 @@ public class ChunkHandler {
             this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkRowAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
+            this.CHUNK_SIZE = Float.parseFloat(reader.readLine().split(" ")[1]);
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -55,40 +59,82 @@ public class ChunkHandler {
         }
 
         ways = new ArrayList<>();
-        chunks = new ArrayList<ArrayList<Way>>(chunkAmount);
-        for (int i = 0; i < chunkAmount; i++) {
-            chunks.add(new ArrayList<Way>());
-        }
     }
 
-    public void loadBytes(int chunk) throws IOException {
-        File file = new File(this.dataPath + "/chunk" + chunk + ".txt");
-        
-        float[] coords;
-        String[] tags;
+    public int latLonToChunkIndex(float lat, float lon) {
+        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
+                (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+    }
 
-        try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))){
-            while (true) {
-                coords = new float[stream.readInt()];
-                for (int i = 0; i < coords.length; i++) {
-                    coords[i] = stream.readFloat();
+    public int pointToChunkIndex(Point2D p) {
+        float X = (float) p.getX()/0.56f;
+        X = Math.min(X,maxlon);
+        X = Math.max(X,minlon);
+        float Y = (float) p.getY()*-1;
+        Y = Math.min(Y,maxlat);
+        Y = Math.max(Y,minlat);
+        int chunkIndex = latLonToChunkIndex(Y, X);
+        chunkIndex = Math.min(chunkIndex, chunkAmount-1);
+        chunkIndex = Math.max(chunkIndex, 0);
+        return chunkIndex;
+    }
+
+
+
+    public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {
+        return loadBytes(new int[] { chunk }, zoomLevel);
+    }
+
+    public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
+
+        Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
+
+        long StartTime = System.nanoTime();
+
+            IntStream.of(chunks).parallel().forEach(chunk -> {
+
+                if (chunk < 0 || chunk >= chunkAmount) return;
+
+                ways.putIfAbsent(chunk, new ArrayList<>());
+
+                File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+
+                float[] coords;
+                String[] tags;
+                try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                    while (true) {
+                        coords = new float[stream.readInt()];
+                        for (int j = 0; j < coords.length; j++) {
+                            coords[j] = stream.readFloat();
+                        }
+                        tags = new String[stream.readInt()];
+                        for (int j = 0; j < tags.length; j++) {
+                            tags[j] = stream.readUTF();
+                        }
+                        ways.get(chunk).add(new Way(coords, tags));
+                    }
+                    /*
+                     * The steam will throw an end of file exception when its done,
+                     * this way we can skip checking if we are done reading every loop run, and save
+                     * time
+                     */
+                } catch (EOFException e) {
+                    // End of file reached
+                    return;
+                } catch (IOException e) {
+                    // Since we run it in parallel we need to return a runtime exception since we
+                    // can throw the IOException out of the scope
+                    throw new RuntimeException(e);
                 }
-                tags = new String[stream.readInt()];
-                for (int i = 0; i < tags.length; i++) {
-                    tags[i] = stream.readUTF();
-                }
-                chunks.get(chunk).add(new Way(coords, tags));
-            }
-            /*The steam will throw an end of file exception when its done,
-            this way we can skip checking if we are done reading every loop run, and save time*/
-        } catch(EOFException e){
-            //End of file reached
-        }
-        
+            });
+
+
+        long EndTime = System.nanoTime();
+
+
+
+        return ways;
+
     }
 
-    public ArrayList<Way> getChunk(int chunk) {
-        return chunks.get(chunk);
-    }
 }
-

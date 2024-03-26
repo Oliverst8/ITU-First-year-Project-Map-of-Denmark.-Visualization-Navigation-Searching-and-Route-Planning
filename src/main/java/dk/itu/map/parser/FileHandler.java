@@ -96,7 +96,7 @@ public class FileHandler {
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes) throws XMLStreamException {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
-
+        long[] nodeIds = new long[]{-1,0};
         while(input.hasNext()){
             int eventType = input.next();
             if(eventType != XMLStreamConstants.START_ELEMENT) {
@@ -106,7 +106,11 @@ public class FileHandler {
 
             String innerType = input.getLocalName();
             if(innerType.equals("nd")){
+
                 Long node = Long.parseLong(input.getAttributeValue(null, "ref"));
+
+                if(nodeIds[0] == -1) nodeIds[0] = node;
+                else nodeIds[1] = node;
 
                 float[] temp = nodes.get(node);
 
@@ -123,7 +127,7 @@ public class FileHandler {
         if (chunkGenerator == null) {
             System.out.println("Chunkgenerator han not been made yet");
         } else {
-            chunkGenerator.addWay(new Way(coords, tags));
+            chunkGenerator.addWay(new Way(coords, tags, nodeIds));
         }
 
         // ways.add(new Way(coords, tags));
