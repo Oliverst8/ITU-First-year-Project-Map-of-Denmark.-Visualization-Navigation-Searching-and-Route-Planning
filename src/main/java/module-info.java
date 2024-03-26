@@ -8,8 +8,10 @@ module dk.itu.map {
     requires org.apache.commons.compress;
     
     opens dk.itu.map to javafx.fxml;
+    opens dk.itu.map.fxml to javafx.fxml;
 
     exports dk.itu.map;
+    exports dk.itu.map.fxml;
     exports dk.itu.map.parser;
     exports dk.itu.map.structures;
 }

@@ -40,15 +40,26 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="427.0" prefWidth="640.0" fx:controller="dk.itu.map.controller.HomeController" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox alignment="CENTER" layoutX="233.0" layoutY="35.0" prefHeight="17.0" prefWidth="175.0">
+<VBox prefHeight="400.0" prefWidth="640.0" fx:controller="dk.itu.map.fxml.HomeController" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+      <AnchorPane prefHeight="427.0" prefWidth="640.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" wrappingWidth="95.71399688720703">
-               <font>
-                  <Font size="32.0" />
-               </font>
-            </Text>
+            <HBox alignment="CENTER" layoutX="233.0" layoutY="35.0" prefHeight="17.0" prefWidth="175.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" wrappingWidth="95.71399688720703">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+            <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" onAction="#importClicked" text="Import new" />
+            <MenuButton layoutX="275.0" layoutY="200.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Load">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+            </MenuButton>
          </children>
       </HBox>
       <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" text="Import new" />

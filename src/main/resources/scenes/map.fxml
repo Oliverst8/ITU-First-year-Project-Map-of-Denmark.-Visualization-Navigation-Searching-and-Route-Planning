@@ -38,26 +38,43 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:controller="dk.itu.map.controller.MapController" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Canvas fx:id="canvas" height="373.0" width="640.0" />
-      <Button fx:id="zoomIn" layoutX="600.0" layoutY="295.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="21.0">
-         <graphic>
-            <ImageView fitHeight="14.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/plus.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="zoomOut" layoutX="600.0" layoutY="331.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="21.0">
-         <graphic>
-            <ImageView fitHeight="14.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/minus.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-   </children>
-</AnchorPane>
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <MenuBar useSystemMenuBar="true" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Import" />
+            <MenuItem mnemonicParsing="false" text="Open" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <AnchorPane>
+         <children>
+            <Canvas fx:id="canvas" height="373.0" width="640.0" />
+            <Button fx:id="zoomIn" layoutX="600.0" layoutY="295.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="21.0">
+               <graphic>
+                  <ImageView fitHeight="14.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/plus.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="zoomOut" layoutX="600.0" layoutY="331.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="21.0">
+               <graphic>
+                  <ImageView fitHeight="14.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/minus.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </AnchorPane>
+  </children>
+</VBox>
