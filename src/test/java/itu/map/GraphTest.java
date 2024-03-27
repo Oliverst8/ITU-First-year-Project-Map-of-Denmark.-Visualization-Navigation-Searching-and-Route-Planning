@@ -40,8 +40,8 @@ public class GraphTest {
 
         IntArrayList expectedDestinations = new IntArrayList();
 
-        expectedDestinations.add(0);
         expectedDestinations.add(1);
+        expectedDestinations.add(0);
         expectedDestinations.add(2);
         expectedDestinations.add(1);
 
@@ -58,6 +58,7 @@ public class GraphTest {
         assertEquals(expectedWeights.size(), actualWeights.size());
         assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
+
 
     @Test
     void testAddIDs() throws InterruptedException {

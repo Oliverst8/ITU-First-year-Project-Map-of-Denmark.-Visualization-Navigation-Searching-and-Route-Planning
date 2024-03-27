@@ -1,5 +1,6 @@
 package dk.itu.map.structures;
 
+import java.util.LinkedList;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class ChangablePriorityQueue {
@@ -9,13 +10,14 @@ public class ChangablePriorityQueue {
     private Graph graph;
     private FloatArrayList shortestPathList;
     private IntArrayList lastDestinationList;
-    private IntArrayList heap;
+    private LinkedList<Integer> heap;
+    //private Node[] heapReference;
 
     public ChangablePriorityQueue(Graph graph){
         this.graph = graph;
         shortestPathList = new FloatArrayList();
         lastDestinationList = new IntArrayList();
-        heap = new IntArrayList();
+        heap = new LinkedList();
         for(int i = 0; i < graph.getIds().size(); i++){
             shortestPathList.add(Float.MAX_VALUE);
             heap.add(i);
@@ -23,12 +25,13 @@ public class ChangablePriorityQueue {
         }
     }
     private int deleteMinValue(){
-        throw new UnsupportedOperationException();
+        return (int) heap.remove();
     }
     private void decreaseValue(int id, float newDistance){
         throw new UnsupportedOperationException();
     }
-    private void swim(int i){
+    private void swim(int index){
         throw new UnsupportedOperationException();
+        //if(shortestPathList.get(index) < shortestPathList.get(+))
     }
 }

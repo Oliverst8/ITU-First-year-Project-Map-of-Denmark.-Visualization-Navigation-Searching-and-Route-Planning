@@ -26,7 +26,6 @@ public class Graph implements Runnable{
         coords = new FloatArrayList();
         wayIDs = new LongArrayList();
         ways = Collections.synchronizedList(new ArrayList<>());
-        
     }
 
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader? 
@@ -53,7 +52,7 @@ public class Graph implements Runnable{
 
     private void addVertices(long[] vertexID){
 
-        if(idToIndex.keySet().contains(vertexID[0])){
+        if(!idToIndex.containsKey(vertexID[0])){
             int index = vertexList.size();
             idToIndex.put(vertexID[0], index);
             vertexList.add(new IntArrayList());
@@ -63,7 +62,7 @@ public class Graph implements Runnable{
 
             //Here we could add node ids to an nodeIDArray, if we want them later
         }
-        if(idToIndex.keySet().contains(vertexID[1])){
+        if(!idToIndex.containsKey(vertexID[1])){
             idToIndex.put(vertexID[1], vertexList.size());
             vertexList.add(new IntArrayList());
             //coords.add();
@@ -91,14 +90,19 @@ public class Graph implements Runnable{
         edgeWeights.add(edgeWeight);
         edgeWeights.add(edgeWeight);
 
-       wayIDs.add(way.getId());
-       wayIDs.add(way.getId());
+        wayIDs.add(way.getId());
+        wayIDs.add(way.getId());
 
        //Maybe for all these we should add at the specific index to make sure no mistakes are made,
         // but as long as we just call these methods here, we should be okay I think
     }
 
-    private
+    private float[] findShortestPath(){
+        ChangablePriorityQueue CPQ = new ChangablePriorityQueue();
+
+        float[] shortestPath = new float[1 ];
+        return shortestPath;
+    }
 
 
     public void addWay(Way way) {
