@@ -48,7 +48,7 @@ public class View {
         gc.setStroke(Color.BLACK);
         gc.setFill(Color.GRAY);
 
-        model.updateChunk(30);
+        model.updateChunk(2);
         long start = System.nanoTime();
         for (int chunk : model.chunks.keySet()) {
             for(int j = 0; j < model.chunks.get(chunk).size(); j++){
@@ -56,7 +56,7 @@ public class View {
             }
         }
         long end = System.nanoTime();
-        System.out.println("Time to draw current chunks: " + (end - start) / 1000000000.0 + "s");
+        // System.out.println("Time to draw current chunks: " + (end - start) / 1000000000.0 + "s");
     }
 
     void pan(double dx, double dy) {

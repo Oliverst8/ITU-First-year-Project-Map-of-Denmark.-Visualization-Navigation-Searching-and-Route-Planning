@@ -96,8 +96,8 @@ public class ChunkHandler {
                     ways.get(chunk).add(new Way(outerCoords, innerCoords, tags));
                 }
                 /*
-                 * The steam will throw an end of file exception when its done,
-                 * this way we can skip checking if we are done reading every loop run, and save
+                 * The stream will throw an end of file exception when its done,
+                 * this way we can skip checking if we are done reading every loop, and save
                  * time
                  */
             } catch (EOFException e) {
@@ -112,7 +112,8 @@ public class ChunkHandler {
 
         long EndTime = System.nanoTime();
 
-        System.out.println("Reading " + ways.size() + " chunks took: " + ((EndTime - StartTime) / 1_000_000_000.0) + "s");
+        if (!ways.isEmpty())
+            System.out.println("Reading " + ways.size() + " chunks took: " + ((EndTime - StartTime) / 1_000_000_000.0) + "s");
 
         return ways;
 

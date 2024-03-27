@@ -95,11 +95,15 @@ public class FileHandler {
         }
 
         long startWriteTime = System.nanoTime();
-        System.out.println("Reading took: " + ((startWriteTime-startLoadTime)/1_000_000_000.0) + "s");
-        
+        System.out.println("Reading took: " + ((startWriteTime - startLoadTime) / 1_000_000_000.0) + "s");
+
+        relations.forEach(relation -> {
+            chunkGenerator.addWay(relation);
+        });
+
         chunkGenerator.finishWork();
         long endWriteTime = System.nanoTime();
-        System.out.println("Writing took: " + ((endWriteTime-startWriteTime)/1_000_000_000.0) + "s");
+        System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
     }
 
     private void parseRelations(ReversedLinesFileReader reader) {
@@ -136,10 +140,16 @@ public class FileHandler {
                 outer.forEach(ref -> {
                     if (relationMap.containsKey(ref)) {
                         relationMap.get(ref).add(way);
+                    } else {
+                        relationMap.put(ref, new LinkedList<>());
+                        relationMap.get(ref).add(way);
                     }
                 });
                 inner.forEach(ref -> {
                     if (relationMap.containsKey(ref)) {
+                        relationMap.get(ref).add(way);
+                    } else {
+                        relationMap.put(ref, new LinkedList<>());
                         relationMap.get(ref).add(way);
                     }
                 });
@@ -154,20 +164,23 @@ public class FileHandler {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
         long[] nodeIds = new long[]{-1,0};
-        while(input.hasNext()){
+        while (input.hasNext()) {
             int eventType = input.next();
-            if(eventType != XMLStreamConstants.START_ELEMENT) {
-                if(eventType == XMLStreamConstants.END_ELEMENT && input.getLocalName().equals("way")) break;
+            if (eventType != XMLStreamConstants.START_ELEMENT) {
+                if (eventType == XMLStreamConstants.END_ELEMENT && input.getLocalName().equals("way")) break;
                 continue;
             }
 
             String innerType = input.getLocalName();
-            if(innerType.equals("nd")){
+            if (innerType.equals("nd")) {
 
                 Long node = Long.parseLong(input.getAttributeValue(null, "ref"));
 
-                if(nodeIds[0] == -1) nodeIds[0] = node;
-                else nodeIds[1] = node;
+                if (nodeIds[0] == -1) {
+                    nodeIds[0] = node;
+                } else {
+                    nodeIds[1] = node;
+                }
 
                 float[] temp = nodes.get(node);
 

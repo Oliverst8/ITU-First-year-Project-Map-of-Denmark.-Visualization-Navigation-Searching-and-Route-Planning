@@ -109,6 +109,9 @@ public class ChunkGenerator implements Runnable {
             String[] tags = way.getTags();
             for (String tag : tags) {
                 switch (tag) {
+
+                    // case "school": //nicklas test
+
                     case "motorway":
                     case "motorway_link":
                     case "trunk":
@@ -148,12 +151,14 @@ public class ChunkGenerator implements Runnable {
                         if (zoomLevel < 1) zoomLevel = 1;
                         break;
                     case "building":
+                    case "school":
                     case "highway":
                         if (zoomLevel < 0) zoomLevel = 0;
                         break;
                 }
             }
             if (zoomLevel == -1) continue;
+            // if (zoomLevel == -1) zoomLevel = 0;
             // way.setZoomLevel( zoomLevel);
 
             float[] coords = way.getCoords();
@@ -196,7 +201,8 @@ public class ChunkGenerator implements Runnable {
             IntStream.range(0, zoomLayers.get(i).size()).parallel().forEach(j -> {
                 try {
                     DataOutputStream stream = new DataOutputStream(
-                            new BufferedOutputStream(new FileOutputStream(files[i][j], true)));
+                            new BufferedOutputStream(
+                                new FileOutputStream(files[i][j], true)));
                     for (Way way : zoomLayers.get(i).get(j)) {
                         way.stream(stream);
                     }

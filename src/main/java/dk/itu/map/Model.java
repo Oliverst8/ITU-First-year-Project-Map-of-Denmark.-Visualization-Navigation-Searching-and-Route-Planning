@@ -39,12 +39,12 @@ public class Model implements Serializable {
             if (chunks.containsKey(chunk)) continue;
             newChunks[c++] = chunk;
         }
-        System.out.println(c);
+        // System.out.println(c);
         while (c < newChunks.length) {
             newChunks[c++] = -1;
         }
 
 
-        chunks.putAll(chunkHandler.loadBytes(newChunks, 4));
+        chunks.putAll(chunkHandler.loadBytes(newChunks, 0));
     }
 }

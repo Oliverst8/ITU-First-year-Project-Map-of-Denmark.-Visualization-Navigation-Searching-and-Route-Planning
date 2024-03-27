@@ -76,6 +76,15 @@ public class Way {
             builder.append(outerCoords.get(i + 1));
             builder.append("\n");
         }
+        builder.append("Inner nodes:\n");
+        builder.append(innerCoords.size());
+        builder.append("\n");
+        for (int i = 0; i < innerCoords.size(); i += 2) {
+            builder.append(innerCoords.get(i));
+            builder.append(" ");
+            builder.append(innerCoords.get(i + 1));
+            builder.append("\n");
+        }
 
         builder.append("Tags:\n");
         builder.append(tags.length);
@@ -151,7 +160,7 @@ public class Way {
                 this.outerCoords.addAll(tempWays[i].outerCoords.toArray());
             }
             for (int i = 0; i < innerRef.size(); i++) {
-                this.innerCoords.addAll(tempWays[i].outerCoords.toArray());
+                this.innerCoords.addAll(tempWays[outerRef.size()+i].outerCoords.toArray());
                 // outercoords are used here cause Ways use outer by default.
                 // FIXME: what happens if relation has relation with inner ways inside
             }

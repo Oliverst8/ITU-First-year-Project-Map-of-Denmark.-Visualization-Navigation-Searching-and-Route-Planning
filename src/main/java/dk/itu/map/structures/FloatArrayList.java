@@ -39,7 +39,7 @@ public class FloatArrayList {
     }
 
     public void addAll(float[] values) {
-        if (size + values.length > array.length) {
+        while (size + values.length > array.length) {
             resize();
         }
         System.arraycopy(values, 0, array, size, values.length);
