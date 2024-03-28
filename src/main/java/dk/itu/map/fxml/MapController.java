@@ -49,7 +49,6 @@ public class MapController {
         zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkHandler.maxlat - this.viewModel.chunkHandler.minlat));
 
         startZoom = getZoomDistance();
-
         redraw();
 
         canvas.setOnMousePressed(e -> {
@@ -111,6 +110,7 @@ public class MapController {
                 }
             }
         }
+
         System.out.println("Number of ways drawn: " + count);
     }
 
