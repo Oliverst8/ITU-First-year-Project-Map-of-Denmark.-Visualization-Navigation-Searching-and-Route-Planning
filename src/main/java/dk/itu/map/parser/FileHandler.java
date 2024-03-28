@@ -200,12 +200,15 @@ public class FileHandler {
             relationMap.get(id).forEach(relation -> {
                 relation.addRelatedWay(way, id);
             });
+            
+        } else {
+
+            if (chunkGenerator == null) {
+                System.err.println("Chunkgenerator han not been made yet");
+            } else {
+                chunkGenerator.addWay(way);
+            }
         }
 
-        if (chunkGenerator == null) {
-            System.err.println("Chunkgenerator han not been made yet");
-        } else {
-            chunkGenerator.addWay(way);
-        }
     }
 }

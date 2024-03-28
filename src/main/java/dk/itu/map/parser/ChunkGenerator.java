@@ -110,8 +110,6 @@ public class ChunkGenerator implements Runnable {
             for (String tag : tags) {
                 switch (tag) {
 
-                    // case "school": //nicklas test
-
                     case "motorway":
                     case "motorway_link":
                     case "trunk":
@@ -151,7 +149,6 @@ public class ChunkGenerator implements Runnable {
                         if (zoomLevel < 1) zoomLevel = 1;
                         break;
                     case "building":
-                    case "school":
                     case "highway":
                         if (zoomLevel < 0) zoomLevel = 0;
                         break;

@@ -50,6 +50,14 @@ public class FloatArrayList {
         return Arrays.copyOf(array, size);
     }
 
+    public double[] toDoubleArray() {
+        double[] output = new double[size];
+        for (int i = 0; i < size; i++) {
+            output[i] = array[i];
+        }
+        return output;
+    }
+
     public float get(int index) {
         return array[index];
     }

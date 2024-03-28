@@ -2,10 +2,10 @@ package dk.itu.map.structures;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.FillRule;
 
 public class Way {
 
@@ -115,12 +115,13 @@ public class Way {
     }
 
     public void draw(GraphicsContext gc) {
+        gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
         gc.moveTo(0.56f * outerCoords.get(1), -outerCoords.get(0));
         for (int i = 2; i < outerCoords.size(); i += 2) {
             gc.lineTo(0.56f * outerCoords.get(i + 1), -outerCoords.get(i));
         }
-        if (innerCoords.size() > 0) {
+            if (innerCoords.size() > 0) { 
             gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
             for (int i = 2; i < innerCoords.size(); i += 2) {
                 gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
@@ -129,9 +130,10 @@ public class Way {
         if (innerCoords.size() == 0) {
             gc.stroke();
         } else {
-            gc.stroke();
             gc.fill();
+            gc.stroke();
         }
+        
     }
 
     /**
@@ -167,7 +169,7 @@ public class Way {
 
         }
     }
-    
+
     public void setZoomLevel(byte zoomLevel) {
         this.zoomLevel = zoomLevel;
     }
