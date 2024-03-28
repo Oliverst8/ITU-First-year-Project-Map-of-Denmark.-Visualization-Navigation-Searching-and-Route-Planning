@@ -122,10 +122,25 @@ public class Way {
         for (int i = 2; i < outerCoords.size(); i += 2) {
             gc.lineTo(0.56f * outerCoords.get(i + 1), -outerCoords.get(i));
         }
-            if (innerCoords.size() > 0) { 
-            gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
-            for (int i = 2; i < innerCoords.size(); i += 2) {
-                gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
+        if (innerCoords.size() > 0) { 
+            float prevX = 0f;
+            float prevY = 0f;
+            boolean move = true;
+            // gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
+            for (int i = 0; i < innerCoords.size(); i += 2) {
+                if (move) {
+                    gc.moveTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
+                    if (i+2 > innerCoords.size()) {
+                        prevX = innerCoords.get(i + 2);
+                        prevY = innerCoords.get(i + 3);
+                    }
+
+                } else {
+                    gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
+                    if (prevX == innerCoords.get(i) && prevY == innerCoords.get(i + 1)) {
+                        move = true;
+                    }
+                }
             }
         }
         if (setColors(gc, tags, scaleFactor)) {
