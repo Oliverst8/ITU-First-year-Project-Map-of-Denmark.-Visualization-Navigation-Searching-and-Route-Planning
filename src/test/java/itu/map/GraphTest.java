@@ -23,8 +23,8 @@ public class GraphTest {
         List<Float> nodes1 = Arrays.asList(0f,0f,1f,1f);
         List<String> stringList = new ArrayList<>();
         List<Float> nodes2 = Arrays.asList(1f,1f,3f,1f);
-        Way way1 = new Way(nodes1, stringList, new long[]{0, 1});
-        Way way2 = new Way(nodes2, stringList, new long[]{1, 2});
+        Way way1 = new Way(nodes1, stringList, new ArrayList<>(), new ArrayList<>(), new long[]{0, 1});
+        Way way2 = new Way(nodes2, stringList, new ArrayList<>(), new ArrayList<>(), new long[]{1, 2});
         graph.addWay(way1);
         graph.addWay(way2);
         Thread thread = new Thread(graph);
@@ -61,8 +61,8 @@ public class GraphTest {
         List<String> stringList1 = Arrays.asList("id", "1");
         List<String> stringList2 = Arrays.asList("id", "2");
         List<Float> nodes2 = Arrays.asList(1f,1f,3f,1f);
-        Way way1 = new Way(nodes1, stringList1, new long[]{0, 1});
-        Way way2 = new Way(nodes2, stringList2, new long[]{1, 2});
+        Way way1 = new Way(nodes1, stringList1, new ArrayList<>(), new ArrayList<>(), new long[]{0, 1});
+        Way way2 = new Way(nodes2, stringList2, new ArrayList<>(), new ArrayList<>(), new long[]{1, 2});
         graph.addWay(way1);
         graph.addWay(way2);
         Thread thread = new Thread(graph);

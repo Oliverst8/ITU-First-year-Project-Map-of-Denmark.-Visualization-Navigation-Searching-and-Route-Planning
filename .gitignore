@@ -1,5 +1,7 @@
 chunkData/
 zoomLayers/
+extra/
+htmlReport/
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,linux,windows,visualstudiocode,intellij,gradle,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,linux,windows,visualstudiocode,intellij,gradle,vim
