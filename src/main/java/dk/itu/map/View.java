@@ -64,7 +64,7 @@ public class View {
     }
 
     private int getDetailLevel(){
-        if(zoomLevel > 400) return 4;
+        if(zoomLevel > 64000) return 4;
         if(zoomLevel > 30) return 3;
         if(zoomLevel > 15) return 2;
         if(zoomLevel > 0.2) return 1;
@@ -137,12 +137,10 @@ public class View {
         int height = b/columAmount - a/columAmount;
         int width = Math.abs(a%columAmount-b%columAmount);
 
-        int leftMost;
-        if(height == 0) leftMost = b;
-        else leftMost = a;
+        int rightMost = height > 0 ? a : b;
 
         for(int i = 0; i <= height; i++){
-            int c = leftMost + i*columAmount;
+            int c = rightMost + i*columAmount;
             for(int j = 0; j <= width; j++){
                 chunks.add(c-j);
             }
@@ -165,7 +163,7 @@ public class View {
 
     public void updateZoomLevel(){
         float newZoom = getZoomDistance();
-        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen;
+        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen * model.chunkHandler.chunkAmount;
         System.out.println("Set zoomlevel to: " + zoomLevel);
     }
 
