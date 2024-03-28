@@ -67,7 +67,7 @@ public class View {
         if(zoomLevel > 55000) return 4;
         if(zoomLevel > 2300) return 3;
         if(zoomLevel > 115) return 2;
-        if(zoomLevel > 10) return 1;
+        if(zoomLevel > 10)return 1;
         return 0;
     }
 
