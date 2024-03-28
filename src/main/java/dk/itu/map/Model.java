@@ -6,18 +6,23 @@ import java.io.Serializable;
 
 import dk.itu.map.parser.ChunkHandler;
 import dk.itu.map.structures.Way;
+import javafx.geometry.Point2D;
 
 public class Model implements Serializable {
-
-    Map<Integer, List<Way>> chunks = new HashMap<>();
+    
+    List<Map<Integer,List<Way>>> chunkLayers;
     final ChunkHandler chunkHandler;
 
     public Model(ChunkHandler chunkHandler) {
         this.chunkHandler = chunkHandler;
-
+        chunkLayers = new ArrayList<>();
+        for(int i = 0; i <= 4; i++)
+            chunkLayers.add(new HashMap<>());
     }
 
-    public void updateChunk(int n) {
+    private void updateChunkLevel(int n, int zoomLevel) {
+
+        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
 
         int[] chunkNumbers = new int[9];
 
@@ -39,12 +44,53 @@ public class Model implements Serializable {
             if (chunks.containsKey(chunk)) continue;
             newChunks[c++] = chunk;
         }
-        // System.out.println(c);
+
         while (c < newChunks.length) {
             newChunks[c++] = -1;
         }
 
 
-        chunks.putAll(chunkHandler.loadBytes(newChunks, 0));
+        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+    }
+
+    private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
+
+        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
+
+        int[] newChunks = new int[chunkSet.size()];
+
+        int c = 0;
+        for (int chunk : chunkSet) {
+            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
+            if (chunks.containsKey(chunk)) continue;
+            newChunks[c++] = chunk;
+        }
+
+        while (c < newChunks.length) {
+            newChunks[c++] = -1;
+        }
+
+
+        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+    }
+
+    public void updateChunks(Set<Integer> chunks, int zoomLevel) {
+        System.out.println("Updating " + chunks.size() + " chunks");
+        System.out.println("Zoom level: " + zoomLevel);
+        for(Map<Integer, List<Way>> chunkLayers : chunkLayers)
+            chunkLayers.keySet().retainAll(chunks);
+
+        for(int n : chunks)
+            for(int i = zoomLevel; i <= 4; i++)
+                updateChunkLevel(n, i);
+    }
+
+    public void updateChunk(int n, int zoomLevel) {
+        for(int i = zoomLevel; i <= 4; i++)
+            updateChunkLevel(n, i);
+    }
+
+    public void updateChunks(){
+
     }
 }

@@ -1,13 +1,21 @@
 package dk.itu.map;
 
+import javafx.geometry.Point2D;
+
 public class Controller {
-    double lastX;
-    double lastY;
+    float lastX;
+    float lastY;
 
     public Controller(Model model, View view) {
         view.canvas.setOnMousePressed(e -> {
-            lastX = e.getX();
-            lastY = e.getY();
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
+            Point2D p = view.convertTo2DPoint(lastX, lastY);
+            float X = (float) p.getX()/0.56f;
+            float Y = (float) p.getY()*-1;
+            System.out.println("X: " + X + " Y: " + Y);
+            System.out.println("Chunk: " + model.chunkHandler.latLonToChunkIndex(Y, X));
+
         });
 
         view.canvas.setOnMouseDragged(e -> {
@@ -18,8 +26,8 @@ public class Controller {
                 view.pan(dx, dy);
             }
 
-            lastX = e.getX();
-            lastY = e.getY();
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
         });
 
         view.canvas.setOnScroll(e -> {
