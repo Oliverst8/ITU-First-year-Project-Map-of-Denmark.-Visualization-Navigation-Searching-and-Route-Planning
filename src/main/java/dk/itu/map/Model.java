@@ -25,39 +25,6 @@ public class Model implements Serializable {
             chunkLayers.add(new HashMap<>());
     }
 
-    private void updateChunkLevel(int n, int zoomLevel) {
-
-        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
-
-        int[] chunkNumbers = new int[9];
-
-        chunkNumbers[0] = n - chunkHandler.chunkColumnAmount - 1;
-        chunkNumbers[1] = n - chunkHandler.chunkColumnAmount;
-        chunkNumbers[2] = n - chunkHandler.chunkColumnAmount + 1;
-        chunkNumbers[3] = n - 1;
-        chunkNumbers[4] = n;
-        chunkNumbers[5] = n + 1;
-        chunkNumbers[6] = n + chunkHandler.chunkColumnAmount - 1;
-        chunkNumbers[7] = n + chunkHandler.chunkColumnAmount;
-        chunkNumbers[8] = n + chunkHandler.chunkColumnAmount + 1;
-
-        int[] newChunks = new int[9];
-
-        int c = 0;
-        for (int chunk : chunkNumbers) {
-            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
-            if (chunks.containsKey(chunk)) continue;
-            newChunks[c++] = chunk;
-        }
-
-        while (c < newChunks.length) {
-            newChunks[c++] = -1;
-        }
-
-
-        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
-    }
-
     private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
 
         Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);

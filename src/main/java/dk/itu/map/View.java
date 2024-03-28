@@ -64,10 +64,10 @@ public class View {
     }
 
     private int getDetailLevel(){
-        if(zoomLevel > 64000) return 4;
-        if(zoomLevel > 30) return 3;
-        if(zoomLevel > 15) return 2;
-        if(zoomLevel > 0.2) return 1;
+        if(zoomLevel > 55000) return 4;
+        if(zoomLevel > 2300) return 3;
+        if(zoomLevel > 115) return 2;
+        if(zoomLevel > 10) return 1;
         return 0;
     }
 
