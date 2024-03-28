@@ -1,26 +1,47 @@
 package dk.itu.map;
 
+import dk.itu.map.structures.Way;
+import dk.itu.map.parser.FileHandler;
+import dk.itu.map.parser.ChunkHandler;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
+import java.util.ArrayList;
 
-import dk.itu.map.parser.ChunkHandler;
-import dk.itu.map.structures.Way;
+import javax.xml.stream.XMLStreamException;
 
 public class Model implements Serializable {
     
-    List<Map<Integer,List<Way>>> chunkLayers;
-    final ChunkHandler chunkHandler;
+    public List<Map<Integer,List<Way>>> chunkLayers;
+    public final ChunkHandler chunkHandler;
 
-    public Model(ChunkHandler chunkHandler) {
-        this.chunkHandler = chunkHandler;
+    public Model() {
+        loadFile("data/isle-of-man-latest2.osm");
+
+        chunkHandler = new ChunkHandler("zoomLayers");
         chunkLayers = new ArrayList<>();
-        for(int i = 0; i <= 4; i++)
+        for(int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
+        }
+    }
+
+    private void loadFile(String filePath) {
+        try {            
+            if (new File("zoomLayers/config").exists()) return;
+
+            FileHandler fileHandler = new FileHandler(new File(filePath));
+            fileHandler.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateChunkLevel(int n, int zoomLevel) {
@@ -43,27 +64,6 @@ public class Model implements Serializable {
 
         int c = 0;
         for (int chunk : chunkNumbers) {
-            if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
-            if (chunks.containsKey(chunk)) continue;
-            newChunks[c++] = chunk;
-        }
-
-        while (c < newChunks.length) {
-            newChunks[c++] = -1;
-        }
-
-
-        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
-    }
-
-    private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
-
-        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
-
-        int[] newChunks = new int[chunkSet.size()];
-
-        int c = 0;
-        for (int chunk : chunkSet) {
             if (chunk < 0 || chunk >= chunkHandler.chunkAmount) continue;
             if (chunks.containsKey(chunk)) continue;
             newChunks[c++] = chunk;
