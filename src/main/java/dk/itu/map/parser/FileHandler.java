@@ -201,14 +201,14 @@ public class FileHandler {
                 relation.addRelatedWay(way, id);
             });
             
-        } else {
+        }
 
             if (chunkGenerator == null) {
                 System.err.println("Chunkgenerator han not been made yet");
             } else {
                 chunkGenerator.addWay(way);
             }
-        }
+
 
     }
 }
