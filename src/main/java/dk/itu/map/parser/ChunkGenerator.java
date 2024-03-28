@@ -104,11 +104,14 @@ public class ChunkGenerator implements Runnable {
         List<Way> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
+        forWay:
         for (Way way : newWays) {
             byte zoomLevel = -1;
             String[] tags = way.getTags();
             for (String tag : tags) {
                 switch (tag) {
+                    case "ferry":
+                        continue forWay;
 
                     case "motorway":
                     case "motorway_link":
@@ -117,18 +120,16 @@ public class ChunkGenerator implements Runnable {
                     case "primary":
                     case "primary_link":
 
-                    case "bay":
                     case "coastline":
-                    case "cape":
                         zoomLevel = 4;
                         break;
-                    case "aerodrome":
                     case "secondary":
                     case "secondary_link":
                     case "rail":
                     case "light_rail":
                         if (zoomLevel < 3) zoomLevel = 3;
                         break;
+                    case "forest":
                     case "grassland":
                     case "runway":
                     case "tertiary":
@@ -137,13 +138,9 @@ public class ChunkGenerator implements Runnable {
                     case "scrub":
                     case "fell":
                     case "beach":
-                    case "wetland":
+                    case "water":
                         if (zoomLevel < 2) zoomLevel = 2;
                         break;
-                    case "wood":
-                    case "terminal":
-                    case "gate":
-                    case "water":
                     case "unclassified":
                     case "residential":
                         if (zoomLevel < 1) zoomLevel = 1;
@@ -153,6 +150,9 @@ public class ChunkGenerator implements Runnable {
                         if (zoomLevel < 0) zoomLevel = 0;
                         break;
                 }
+            }
+            if (way.isRelation() && zoomLevel == -1) {
+                zoomLevel = 3;
             }
             if (zoomLevel == -1) continue;
             // if (zoomLevel == -1) zoomLevel = 0;

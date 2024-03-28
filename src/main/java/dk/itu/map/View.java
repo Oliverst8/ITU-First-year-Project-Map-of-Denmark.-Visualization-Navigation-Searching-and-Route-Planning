@@ -95,7 +95,7 @@ public class View {
             Map<Integer, List<Way>> chunkLayer = model.chunkLayers.get(i);
             for (int chunk : chunkLayer.keySet()) {
                 for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
-                    chunkLayer.get(chunk).get(j).draw(gc);
+                    chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/startZoom*100);
                     count++;
                 }
             }

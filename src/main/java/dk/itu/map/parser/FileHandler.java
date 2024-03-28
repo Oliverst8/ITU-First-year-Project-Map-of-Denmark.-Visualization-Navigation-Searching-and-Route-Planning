@@ -135,6 +135,7 @@ public class FileHandler {
                         }
                     }
                 }
+
                 Way way = new Way(new ArrayList<>(), tags, outer, inner);
                 relations.add(way);
                 outer.forEach(ref -> {
@@ -194,6 +195,7 @@ public class FileHandler {
             }
         }
 
+
         Way way = new Way(coords, tags, new ArrayList<>(), new ArrayList<>(), nodeIds);
 
         if (relationMap.containsKey(id)) {
@@ -201,14 +203,13 @@ public class FileHandler {
                 relation.addRelatedWay(way, id);
             });
             
-        } else {
+        }
 
             if (chunkGenerator == null) {
                 System.err.println("Chunkgenerator han not been made yet");
             } else {
                 chunkGenerator.addWay(way);
             }
-        }
 
     }
 }

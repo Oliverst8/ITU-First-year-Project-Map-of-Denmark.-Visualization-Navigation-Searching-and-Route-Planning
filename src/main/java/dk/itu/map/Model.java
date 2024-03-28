@@ -51,6 +51,10 @@ public class Model implements Serializable {
 
     }
 
+    public static void printProgress(long startTime, long total, long current) {
+        
+    }
+
 
 
 

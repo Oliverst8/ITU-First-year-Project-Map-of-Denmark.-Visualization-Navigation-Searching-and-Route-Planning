@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 
 public class Way {
@@ -114,7 +115,7 @@ public class Way {
         }
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, float scaleFactor) {
         gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
         gc.moveTo(0.56f * outerCoords.get(1), -outerCoords.get(0));
@@ -127,12 +128,18 @@ public class Way {
                 gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
             }
         }
-        if (innerCoords.size() == 0) {
-            gc.stroke();
-        } else {
+        if (setColors(gc, tags, scaleFactor)) {
             gc.fill();
             gc.stroke();
+        } else {
+            gc.stroke();
         }
+        // if (innerCoords.size() == 0) {
+        //     gc.stroke();
+        // } else {
+        //     gc.fill();
+        //     gc.stroke();
+        // }
         
     }
 
@@ -144,10 +151,10 @@ public class Way {
             throw new RuntimeException("Related ways cannot be added to fully filled ways");
 
         if (outerRef.contains(id)) {
-            tempWays[outerRef.indexOf(id)] = way;
+            tempWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
         }
         if (innerRef.contains(id)) {
-            tempWays[outerRef.size() + innerRef.indexOf(id)] = way;
+            tempWays[outerRef.size() + innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
         }
 
         boolean filled = true;
@@ -170,8 +177,128 @@ public class Way {
         }
     }
 
+    private boolean setColors(GraphicsContext gc, String[] tags, float scaleFactor) {
+        // 0 = ingen stroke, ingen fill
+        // 1 = ingen stroke, fill
+        // 2 = stroke, ingen fill
+        // 3 = stroke, fill
+        gc.setStroke(Color.ORANGE);
+        gc.setFill(Color.ORANGE);
+        float lineWidth = 0.00001f;
+        boolean shouldFill = false;
+        forLoop:
+        for (String tag : tags) {
+            switch (tag) {
+
+                case "motorway_link":
+                case "motorway":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.DARKRED);
+                    shouldFill = false;
+                    break forLoop;
+                case "trunk":
+                case "trunk_link":
+                
+                case "primary":
+                case "primary_link":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.DARKGRAY);
+                    shouldFill = false;
+                    break forLoop;
+
+                    
+                case "coastline":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.web("#332020"));
+                    shouldFill = false;
+                    break forLoop;
+                    
+                case "secondary":
+                case "secondary_link":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.GRAY);
+                    shouldFill = false;
+                    break forLoop;
+                case "rail":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.GRAY);
+                    shouldFill = false;
+                    break forLoop;
+                case "light_rail":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.LIGHTGRAY);
+                    shouldFill = false;
+                    break forLoop;
+                case "grassland":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.DARKGREEN);
+                    gc.setFill(Color.GREEN);
+                    shouldFill = true;
+                    break forLoop;
+                case "runway":
+                    lineWidth = 0.0008f;
+                    gc.setStroke(Color.GRAY);
+                    shouldFill = false;
+                    break forLoop;
+
+                case "tertiary":
+                case "tertiary_link":
+                    lineWidth = 0.0001f;
+                    gc.setStroke(Color.GRAY);
+                    shouldFill = false;
+                    break forLoop;
+                case "heath":
+                case "scrub":
+                case "fell":
+                    lineWidth = 0.0001f;
+                    gc.setStroke(Color.DARKMAGENTA);
+                    gc.setFill(Color.PURPLE);
+                    shouldFill = true;
+                    break forLoop;
+                case "beach":
+                    
+                    lineWidth = 0.00000001f;
+                    gc.setFill(Color.YELLOW);
+                    shouldFill = true;
+                    break forLoop;
+
+                case "forest":
+                    lineWidth = 0.00001f;
+                    gc.setStroke(Color.GREEN);
+                    gc.setFill(Color.LIGHTGREEN);
+                    shouldFill = true;
+                    break forLoop;
+                case "water":
+                    lineWidth = 0.00001f;
+                    gc.setStroke(Color.BLUE);
+                    gc.setFill(Color.LIGHTBLUE);
+                    shouldFill = true;
+                    break forLoop;
+                case "unclassified":
+                case "residential":
+                    lineWidth = 0.0001f;
+                    gc.setStroke(Color.LIGHTGRAY);
+                    shouldFill = false;
+                    break forLoop;
+                case "building":
+                    lineWidth = 0.00001f;
+                    gc.setStroke(Color.LIGHTGRAY);
+                    gc.setFill(Color.LIGHTGOLDENRODYELLOW);
+                    shouldFill = true;
+                    break forLoop;
+                case "highway":
+            }
+        }
+        gc.setLineWidth(lineWidth * scaleFactor * 0.50);
+        return shouldFill;
+    }
+
     public void setZoomLevel(byte zoomLevel) {
         this.zoomLevel = zoomLevel;
+    }
+
+    public boolean isRelation() {
+        return innerCoords.size() != 0;
     }
 
     public float[] getCoords() {
