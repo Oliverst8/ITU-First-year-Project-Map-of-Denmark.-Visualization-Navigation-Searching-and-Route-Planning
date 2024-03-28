@@ -195,21 +195,18 @@ public class FileHandler {
             }
         }
 
-
         Way way = new Way(coords, tags, new ArrayList<>(), new ArrayList<>(), nodeIds);
 
         if (relationMap.containsKey(id)) {
             relationMap.get(id).forEach(relation -> {
                 relation.addRelatedWay(way, id);
             });
-            
         }
 
-            if (chunkGenerator == null) {
-                System.err.println("Chunkgenerator han not been made yet");
-            } else {
-                chunkGenerator.addWay(way);
-            }
-
+        if (chunkGenerator == null) {
+            System.err.println("Chunkgenerator han not been made yet");
+        } else {
+            chunkGenerator.addWay(way);
+        }
     }
 }

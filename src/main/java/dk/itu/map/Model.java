@@ -1,23 +1,47 @@
 package dk.itu.map;
 
-import java.util.*;
+import dk.itu.map.structures.Way;
+import dk.itu.map.parser.FileHandler;
+import dk.itu.map.parser.ChunkHandler;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
-import dk.itu.map.parser.ChunkHandler;
-import dk.itu.map.structures.Way;
-import javafx.geometry.Point2D;
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import javax.xml.stream.XMLStreamException;
 
 public class Model implements Serializable {
     
-    List<Map<Integer,List<Way>>> chunkLayers;
-    final ChunkHandler chunkHandler;
+    public List<Map<Integer,List<Way>>> chunkLayers;
+    public final ChunkHandler chunkHandler;
 
-    public Model(ChunkHandler chunkHandler) {
-        this.chunkHandler = chunkHandler;
+    public Model() {
+        loadFile("data/isle-of-man-latest2.osm");
+
+        chunkHandler = new ChunkHandler("zoomLayers");
         chunkLayers = new ArrayList<>();
-        for(int i = 0; i <= 4; i++)
+        for(int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
+        }
+    }
+
+    private void loadFile(String filePath) {
+        try {            
+            if (new File("zoomLayers/config").exists()) return;
+
+            FileHandler fileHandler = new FileHandler(new File(filePath));
+            fileHandler.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
@@ -50,12 +74,4 @@ public class Model implements Serializable {
 
 
     }
-
-    public static void printProgress(long startTime, long total, long current) {
-        
-    }
-
-
-
-
 }

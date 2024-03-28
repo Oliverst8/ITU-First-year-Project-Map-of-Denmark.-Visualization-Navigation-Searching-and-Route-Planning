@@ -123,6 +123,7 @@ public class ChunkGenerator implements Runnable {
                     case "coastline":
                         zoomLevel = 4;
                         break;
+                    case "aerodrome":
                     case "secondary":
                     case "secondary_link":
                     case "rail":
@@ -131,6 +132,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                     case "forest":
                     case "grassland":
+                    case "wetland":
                     case "runway":
                     case "tertiary":
                     case "tertiary_link":

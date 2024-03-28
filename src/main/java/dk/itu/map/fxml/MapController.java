@@ -1,0 +1,194 @@
+package dk.itu.map.fxml;
+
+import dk.itu.map.Model;
+import dk.itu.map.Controller;
+import dk.itu.map.structures.Way;
+
+
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+
+import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.NonInvertibleTransformException;
+
+public class MapController {
+    private final Model viewModel;
+
+    @FXML
+    private Canvas canvas;
+
+    private GraphicsContext gc;
+    private Affine trans;
+    private float zoomLevel;
+    private float startZoom;
+
+    private float lastX;
+    private float lastY;
+
+    private float currentChunkAmountSeen = 1;
+
+    public MapController(Controller controller, Model viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    @FXML
+    public void initialize() {
+        gc = canvas.getGraphicsContext2D();
+        trans = new Affine();
+
+        //pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
+        trans.prependTranslation(-0.56*this.viewModel.chunkHandler.minlon, this.viewModel.chunkHandler.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
+        //This is done to avoid getheight and getwidth from canvas, returning way to big values
+        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkHandler.maxlat - this.viewModel.chunkHandler.minlat));
+
+        startZoom = getZoomDistance();
+        redraw();
+
+        canvas.setOnMousePressed(e -> {
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
+            Point2D p = convertTo2DPoint(lastX, lastY);
+            float X = (float) p.getX()/0.56f;
+            float Y = (float) p.getY()*-1;
+            System.out.println("X: " + X + " Y: " + Y);
+            System.out.println("Chunk: " + viewModel.chunkHandler.latLonToChunkIndex(Y, X));
+
+        });
+
+        canvas.setOnMouseDragged(e -> {
+            if (e.isPrimaryButtonDown()) {
+
+                double dx = e.getX() - lastX;
+                double dy = e.getY() - lastY;
+                pan(dx, dy);
+            }
+
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
+        });
+
+        canvas.setOnScroll(e -> {
+            double factor = e.getDeltaY();
+            zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
+        });
+    }
+
+    private void pan(double dx, double dy) {
+        trans.prependTranslation(dx, dy);
+        redraw();
+    }
+
+    private void redraw() {
+        gc.setTransform(new Affine());
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.setTransform(trans);
+        gc.setLineWidth(1/Math.sqrt(trans.determinant()));
+
+        gc.setStroke(Color.BLACK);
+        gc.setFill(Color.GRAY);
+
+        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
+        updateZoomLevel();
+        updateChunks();
+        updateZoomLevel();
+
+        int count = 0;
+        for(int i = getDetailLevel(); i <= 4; i++){
+            Map<Integer, List<Way>> chunkLayer = viewModel.chunkLayers.get(i);
+            for (int chunk : chunkLayer.keySet()) {
+                for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
+                    chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/startZoom*100);
+                    count++;
+                }
+            }
+        }
+
+        System.out.println("Number of ways drawn: " + count);
+    }
+
+    private Point2D getUpperLeftCorner() {
+        return convertTo2DPoint(0, 0);
+    }
+
+    private Point2D getLowerRightCorner() {
+        return convertTo2DPoint(canvas.getWidth(), canvas.getHeight());
+    }
+
+    private void updateChunks() {
+        Point2D upperLeftCorner = getUpperLeftCorner();
+        Point2D lowerRightCorner = getLowerRightCorner();
+
+        int upperLeftChunk = viewModel.chunkHandler.pointToChunkIndex(upperLeftCorner);
+        int lowerRightChunk = viewModel.chunkHandler.pointToChunkIndex(lowerRightCorner);
+
+        Set<Integer> chunks = getSmallestRect(upperLeftChunk, lowerRightChunk, viewModel.chunkHandler.chunkColumnAmount, viewModel.chunkHandler.chunkRowAmount);
+
+        currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY()) / viewModel.chunkHandler.CHUNK_SIZE);
+
+        viewModel.updateChunks(chunks, getDetailLevel());
+    }
+
+    private Set<Integer> getSmallestRect(int chunk1, int chunk2, int columAmount, int rowAmount){
+        Set<Integer> chunks = new HashSet<>();
+
+        int a = Math.min(chunk1, chunk2);
+        int b = Math.max(chunk1, chunk2);
+
+        int height = b/columAmount - a/columAmount;
+        int width = Math.abs(a%columAmount-b%columAmount);
+
+        int rightMost = height > 0 ? a : b;
+
+        for(int i = 0; i <= height; i++){
+            int c = rightMost + i*columAmount;
+            for(int j = 0; j <= width; j++){
+                chunks.add(c-j);
+            }
+        }
+
+        return chunks;
+    }
+
+    private int getDetailLevel(){
+        if(zoomLevel > 55000) return 4;
+        if(zoomLevel > 2300) return 3;
+        if(zoomLevel > 115) return 2;
+        if(zoomLevel > 10)return 1;
+        return 0;
+    }
+
+    private void zoom(double dx, double dy, double factor) {
+        trans.prependTranslation(-dx, -dy);
+        trans.prependScale(factor, factor);
+        trans.prependTranslation(dx, dy);
+        redraw();
+    }
+
+    private float getZoomDistance(){
+        Point2D p1 = convertTo2DPoint(0,0);
+        Point2D p2 = convertTo2DPoint(0,100);
+        return (float) p1.distance(p2);
+    }
+
+    private void updateZoomLevel(){
+        float newZoom = getZoomDistance();
+        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen * viewModel.chunkHandler.chunkAmount;
+        System.out.println("Set zoomlevel to: " + zoomLevel);
+    }
+
+    private Point2D convertTo2DPoint(double lastX, double lastY) {
+        try {
+            return trans.inverseTransform(lastX, lastY);
+        } catch (NonInvertibleTransformException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
