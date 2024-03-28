@@ -97,13 +97,6 @@ public class Graph implements Runnable{
         // but as long as we just call these methods here, we should be okay I think
     }
 
-    private float[] findShortestPath(){
-        ChangablePriorityQueue CPQ = new ChangablePriorityQueue();
-
-        float[] shortestPath = new float[1 ];
-        return shortestPath;
-    }
-
 
     public void addWay(Way way) {
         ways.add(way);
@@ -119,6 +112,14 @@ public class Graph implements Runnable{
 
     public LongArrayList getIds() {
         return wayIDs;
+    }
+    public IntArrayList getEdgeList(int vertex){return vertexList.get(vertex);}
+
+    public int getDestination(int edge){
+        return edgeDestinations.get(edge);
+    }
+    public float getWeight(int edge){
+        return edgeWeights.get(edge);
     }
 
     public FloatArrayList getWeights() {

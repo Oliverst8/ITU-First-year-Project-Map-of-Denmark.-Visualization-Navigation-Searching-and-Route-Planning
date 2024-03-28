@@ -26,6 +26,10 @@ public class FloatArrayList {
         size++;
     }
 
+    public void set(int index, float element){
+        array[index] = element;
+    }
+
     public float get(int index) {
         return array[index];
     }

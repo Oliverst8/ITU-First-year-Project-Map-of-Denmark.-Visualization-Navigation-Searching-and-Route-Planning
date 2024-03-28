@@ -1,5 +1,7 @@
 package dk.itu.map.structures;
 
+import java.util.Iterator;
+
 public class IntArrayList {
     private int[] array;
     private int size;
@@ -29,8 +31,12 @@ public class IntArrayList {
     public int get(int index) {
         return array[index];
     }
+    public void set(int index, int element){
+        array[index] = element;
+    }
 
     public int size() {
         return size;
     }
+
 }
