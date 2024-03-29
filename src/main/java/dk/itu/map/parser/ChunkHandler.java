@@ -79,8 +79,6 @@ public class ChunkHandler {
         return chunkIndex;
     }
 
-
-
     public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {
         return loadBytes(new int[] { chunk }, zoomLevel);
     }
@@ -88,8 +86,6 @@ public class ChunkHandler {
     public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
 
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
-
-        long StartTime = System.nanoTime();
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
 
@@ -133,13 +129,6 @@ public class ChunkHandler {
             }
         });
 
-        long EndTime = System.nanoTime();
-
-        if (!ways.isEmpty())
-            System.out.println("Reading " + ways.size() + " chunks took: " + ((EndTime - StartTime) / 1_000_000_000.0) + "s");
-
         return ways;
-
     }
-
 }

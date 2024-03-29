@@ -55,11 +55,6 @@ public class MapController {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
             Point2D p = convertTo2DPoint(lastX, lastY);
-            float X = (float) p.getX()/0.56f;
-            float Y = (float) p.getY()*-1;
-            System.out.println("X: " + X + " Y: " + Y);
-            System.out.println("Chunk: " + viewModel.chunkHandler.latLonToChunkIndex(Y, X));
-
         });
 
         canvas.setOnMouseDragged(e -> {
@@ -100,18 +95,14 @@ public class MapController {
         updateChunks();
         updateZoomLevel();
 
-        int count = 0;
         for(int i = getDetailLevel(); i <= 4; i++){
             Map<Integer, List<Way>> chunkLayer = viewModel.chunkLayers.get(i);
             for (int chunk : chunkLayer.keySet()) {
                 for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
                     chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/startZoom*100);
-                    count++;
                 }
             }
         }
-
-        System.out.println("Number of ways drawn: " + count);
     }
 
     private Point2D getUpperLeftCorner() {
@@ -181,7 +172,6 @@ public class MapController {
     private void updateZoomLevel(){
         float newZoom = getZoomDistance();
         zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen * viewModel.chunkHandler.chunkAmount;
-        System.out.println("Set zoomlevel to: " + zoomLevel);
     }
 
     private Point2D convertTo2DPoint(double lastX, double lastY) {
