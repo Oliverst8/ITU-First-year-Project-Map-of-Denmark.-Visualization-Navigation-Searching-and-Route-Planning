@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -18,8 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
-public class MapController {
-    private final Model viewModel;
+public class MapController extends ViewController {
 
     @FXML
     private Canvas canvas;
@@ -35,7 +36,7 @@ public class MapController {
     private float currentChunkAmountSeen = 1;
 
     public MapController(Controller controller, Model viewModel) {
-        this.viewModel = viewModel;
+        super(controller, viewModel);
     }
 
     @FXML
@@ -180,4 +181,15 @@ public class MapController {
             throw new RuntimeException(e);
         }
     }
+
+    @FXML
+    void quitApplication(ActionEvent event){
+        Platform.exit();
+    }
+
+    @FXML
+    void openRecent(ActionEvent event){
+        loadMaps();
+    }
+
 }
