@@ -36,16 +36,7 @@ public class Way {
         }
 
         for (int i = 0; i < this.tags.length; i++) {
-            String tag = tags.get(i);
-
-            // If the tag is an id, set the id of the way, and dont add it to the array,
-            // otherwise add it to the array
-            if (tag.equals("id")) {
-                this.id = Long.parseLong(tags.get(i + 1));
-                i++;
-            } else {
-                this.tags[i] = tag;
-            }
+            this.tags[i] = tags.get(i);
         }
     }
 
