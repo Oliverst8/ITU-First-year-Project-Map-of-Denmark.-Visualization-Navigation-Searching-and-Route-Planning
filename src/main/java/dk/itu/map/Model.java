@@ -17,26 +17,27 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamException;
 
 public class Model implements Serializable {
-    
+    private final String dataPath = "maps";
+
     public List<Map<Integer,List<Way>>> chunkLayers;
-    public final ChunkHandler chunkHandler;
+    public ChunkHandler chunkHandler;
 
     public Model() {
-        loadFile("data/isle-of-man-latest2.osm");
-
-        chunkHandler = new ChunkHandler("zoomLayers");
+        chunkHandler = null;
         chunkLayers = new ArrayList<>();
         for(int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
     }
 
-    private void loadFile(String filePath) {
+    public void importMap(String filePath, String name) {
         try {            
-            if (new File("zoomLayers/config").exists()) return;
+            if (!new File(dataPath + "/" + name + "/config").exists()) {
+                FileHandler fileHandler = new FileHandler(new File(filePath), dataPath + "/" + name);
+                fileHandler.load();
+            };
 
-            FileHandler fileHandler = new FileHandler(new File(filePath));
-            fileHandler.load();
+            chunkHandler = new ChunkHandler(dataPath + "/" + name);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {

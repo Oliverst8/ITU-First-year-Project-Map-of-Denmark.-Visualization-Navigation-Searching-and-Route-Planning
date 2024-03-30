@@ -26,6 +26,7 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 
 public class FileHandler {
     private final File file;
+    private final String dataPath;
 
     private ArrayList<Way> relations;
     private float minlat, maxlat, minlon, maxlon;
@@ -39,8 +40,9 @@ public class FileHandler {
      *
      * @param file
      */
-    public FileHandler(File file) {
+    public FileHandler(File file, String dataPath) {
         this.file = file;
+        this.dataPath = dataPath;
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
@@ -72,7 +74,7 @@ public class FileHandler {
                         maxlat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                         minlon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                         maxlon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                        chunkGenerator = new ChunkGenerator(minlat, maxlat, minlon, maxlon);
+                        chunkGenerator = new ChunkGenerator(dataPath, minlat, maxlat, minlon, maxlon);
                     }
 
                     case "node" -> {

@@ -21,8 +21,8 @@ class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
     // chunk size in coordinate size
+    private final String dataPath;
     private final float CHUNK_SIZE = 0.25f;
-
     private final byte amountOfZoomLayers = 5;
 
     public float minlat, maxlat, minlon, maxlon;
@@ -39,7 +39,8 @@ public class ChunkGenerator implements Runnable {
 
     private Thread chunkingThread;
 
-    public ChunkGenerator(float minlat, float maxlat, float minlon, float maxlon) {
+    public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
+        this.dataPath = dataPath;
         hasMoreWork = false;
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         chunkingThread = new Thread(this);
@@ -62,13 +63,14 @@ public class ChunkGenerator implements Runnable {
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         try {
-            File folder = new File("zoomLayers");
-            folder.mkdir();
+            File folder = new File(dataPath);
+            folder.mkdirs();
             for (int i = 0; i < amountOfZoomLayers; i++) {
-                File innerFolder = new File("zoomLayers/zoom" + i);
+                File innerFolder = new File(dataPath + "/zoom" + i);
                 innerFolder.mkdir();
+
                 for (int j = 0; j < chunkAmount; j++) {
-                    files[i][j] = new File("zoomLayers/zoom" + i + "/chunk" + j + ".txt");
+                    files[i][j] = new File(dataPath + "/zoom" + i + "/chunk" + j + ".txt");
                     new FileOutputStream(files[i][j]).close();
                 }
             }
@@ -224,7 +226,7 @@ public class ChunkGenerator implements Runnable {
     }
 
     private void writeConfig() throws IOException {
-        FileWriter writer = new FileWriter("zoomLayers/config");
+        FileWriter writer = new FileWriter(dataPath + "/config");
         StringBuilder builder = new StringBuilder();
         builder.append("minlat: ").append(minlat).append("\n")
             .append("maxlat: ").append(maxlat).append("\n")

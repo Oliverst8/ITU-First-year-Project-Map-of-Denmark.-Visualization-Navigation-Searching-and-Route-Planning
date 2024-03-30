@@ -51,12 +51,9 @@
             </Text>
          </children>
       </HBox>
-      <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" text="Import new" onAction="#importClicked" />
-      <MenuButton layoutX="275.0" layoutY="200.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Load">
-         <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-            <MenuItem mnemonicParsing="false" text="Action 2" />
-         </items>
+      <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" onAction="#importClicked" text="Import new" />
+      <MenuButton fx:id="mapList" layoutX="275.0" layoutY="200.0" prefHeight="26.0" prefWidth="90.0" text="Load">
+
       </MenuButton>
    </children>
 </AnchorPane>
