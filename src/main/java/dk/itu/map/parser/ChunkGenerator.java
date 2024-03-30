@@ -129,6 +129,8 @@ public class ChunkGenerator implements Runnable {
                         break;
                     case "forest":
                     case "grassland":
+                    case "farmland":
+                    case "wood":
                     case "wetland":
                     case "runway":
                     case "tertiary":

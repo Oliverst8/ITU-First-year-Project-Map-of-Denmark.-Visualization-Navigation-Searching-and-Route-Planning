@@ -201,16 +201,15 @@ public class Way {
         forLoop:
         for (String tag : tags) {
             switch (tag) {
-
                 case "motorway_link":
                 case "motorway":
                     lineWidth = 0.0003f;
                     gc.setStroke(Color.DARKRED);
                     shouldFill = false;
                     break forLoop;
+
                 case "trunk":
                 case "trunk_link":
-                
                 case "primary":
                 case "primary_link":
                     lineWidth = 0.0003f;
@@ -218,7 +217,6 @@ public class Way {
                     shouldFill = false;
                     break forLoop;
 
-                    
                 case "coastline":
                     lineWidth = 0.0003f;
                     gc.setStroke(Color.web("#332020"));
@@ -231,22 +229,40 @@ public class Way {
                     gc.setStroke(Color.GRAY);
                     shouldFill = false;
                     break forLoop;
+
                 case "rail":
                     lineWidth = 0.0003f;
                     gc.setStroke(Color.GRAY);
                     shouldFill = false;
                     break forLoop;
+
                 case "light_rail":
                     lineWidth = 0.0003f;
                     gc.setStroke(Color.LIGHTGRAY);
                     shouldFill = false;
                     break forLoop;
+                
+                case "wood":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.web("#60b153"));
+                    gc.setFill(Color.web("#60b153"));
+                    shouldFill = true;
+                    break forLoop;
+
+                case "farmland":
+                    lineWidth = 0.00005f;
+                    gc.setStroke(Color.web("#545400"));
+                    gc.setFill(Color.web("#6f6f00"));
+                    shouldFill = true;
+                    break forLoop;
+
                 case "grassland":
                     lineWidth = 0.0003f;
                     gc.setStroke(Color.DARKGREEN);
                     gc.setFill(Color.GREEN);
                     shouldFill = true;
                     break forLoop;
+
                 case "runway":
                     lineWidth = 0.0008f;
                     gc.setStroke(Color.GRAY);
@@ -259,16 +275,17 @@ public class Way {
                     gc.setStroke(Color.GRAY);
                     shouldFill = false;
                     break forLoop;
+
                 case "heath":
                 case "scrub":
                 case "fell":
                     lineWidth = 0.0001f;
-                    gc.setStroke(Color.DARKMAGENTA);
-                    gc.setFill(Color.PURPLE);
+                    gc.setStroke(Color.web("#bfa548"));
+                    gc.setFill(Color.web("#ffe97c"));
                     shouldFill = true;
                     break forLoop;
+
                 case "beach":
-                    
                     lineWidth = 0.00000001f;
                     gc.setFill(Color.YELLOW);
                     shouldFill = true;
@@ -280,18 +297,22 @@ public class Way {
                     gc.setFill(Color.LIGHTGREEN);
                     shouldFill = true;
                     break forLoop;
+
                 case "water":
                     lineWidth = 0.00001f;
                     gc.setStroke(Color.BLUE);
                     gc.setFill(Color.LIGHTBLUE);
                     shouldFill = true;
                     break forLoop;
+
                 case "unclassified":
                 case "residential":
                     lineWidth = 0.0001f;
                     gc.setStroke(Color.LIGHTGRAY);
-                    shouldFill = false;
+                    gc.setFill(Color.LIGHTGRAY);
+                    shouldFill = true;
                     break forLoop;
+
                 case "building":
                     lineWidth = 0.00001f;
                     gc.setStroke(Color.LIGHTGRAY);
