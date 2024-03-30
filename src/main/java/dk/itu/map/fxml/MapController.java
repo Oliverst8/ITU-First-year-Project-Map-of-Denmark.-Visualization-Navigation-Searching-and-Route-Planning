@@ -54,7 +54,6 @@ public class MapController {
         canvas.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
-            Point2D p = convertTo2DPoint(lastX, lastY);
         });
 
         canvas.setOnMouseDragged(e -> {

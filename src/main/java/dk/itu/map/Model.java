@@ -45,7 +45,6 @@ public class Model implements Serializable {
     }
 
     private void updateChunkLevel(Set<Integer> chunkSet, int zoomLevel) {
-
         Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
 
         chunkSet.removeAll(chunks.keySet());
@@ -63,15 +62,12 @@ public class Model implements Serializable {
     }
 
     public void updateChunks(Set<Integer> chunks, int zoomLevel) {
-
         for(Map<Integer, List<Way>> chunkLayers : chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
         }
 
-            for(int i = zoomLevel; i <= 4; i++) {
-                updateChunkLevel(chunks, i);
-            }
-
-
+        for(int i = zoomLevel; i <= 4; i++) {
+            updateChunkLevel(chunks, i);
+        }
     }
 }

@@ -1,5 +1,8 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.Way;
+import dk.itu.map.structures.LongFloatArrayHashMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,19 +24,13 @@ import javax.xml.stream.FactoryConfigurationError;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
-import dk.itu.map.structures.LongFloatArrayHashMap;
-import dk.itu.map.structures.Way;
-
 public class FileHandler {
-
     private final File file;
 
     private ArrayList<Way> relations;
     private float minlat, maxlat, minlon, maxlon;
     private LongFloatArrayHashMap nodes;
     private Map<Long, LinkedList<Way>> relationMap;
-
-
 
     private ChunkGenerator chunkGenerator;
 

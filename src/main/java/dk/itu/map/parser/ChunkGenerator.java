@@ -1,21 +1,20 @@
 package dk.itu.map.parser;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
+import dk.itu.map.structures.Way;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 
+import java.util.List;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.stream.IntStream;
-
-import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.Way;
 
 class Chunk extends HashSet<Way> {}
 class ZoomLayer extends ArrayList<Chunk> {}
@@ -37,8 +36,6 @@ public class ChunkGenerator implements Runnable {
     private List<Way> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
-
-    private final Graph graph = new Graph();
 
     private Thread chunkingThread;
 
@@ -93,7 +90,7 @@ public class ChunkGenerator implements Runnable {
 
     private int coordsToChunkIndex(float lat, float lon) {
         return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
-                (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+            (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
     public void addWay(Way way) { // main
@@ -222,20 +219,19 @@ public class ChunkGenerator implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void writeConfig() throws IOException {
         FileWriter writer = new FileWriter("zoomLayers/config");
         StringBuilder builder = new StringBuilder();
         builder.append("minlat: ").append(minlat).append("\n")
-                .append("maxlat: ").append(maxlat).append("\n")
-                .append("minlon: ").append(minlon).append("\n")
-                .append("maxlon: ").append(maxlon).append("\n")
-                .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
-                .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
-                .append("chunkAmount: ").append(chunkAmount).append("\n")
-                .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
+            .append("maxlat: ").append(maxlat).append("\n")
+            .append("minlon: ").append(minlon).append("\n")
+            .append("maxlon: ").append(maxlon).append("\n")
+            .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
+            .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
+            .append("chunkAmount: ").append(chunkAmount).append("\n")
+            .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
         writer.write(builder.toString());
         writer.close();
     }

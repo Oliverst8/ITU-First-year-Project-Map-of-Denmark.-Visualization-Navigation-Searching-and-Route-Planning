@@ -1,10 +1,9 @@
 package dk.itu.map.structures;
 
 public class EdgeList {
+    private int size;
     private float[] edges;
     private final int ARRAY_INIT_SIZE = 100_000;
-
-    private int size;
 
     public EdgeList() {
         edges = new float[ARRAY_INIT_SIZE*3];
@@ -24,7 +23,6 @@ public class EdgeList {
         if(size + 4 > edges.length) {
             resize();
         }
-        int pos = size * 4;
         edges[size] = coordX;
         edges[size+1] = coordY;
         edges[size+2] = weight;
@@ -34,6 +32,4 @@ public class EdgeList {
         int gotten_index = index*3;
         return new float[] {edges[gotten_index], edges[gotten_index+1], edges[gotten_index+2]};
     }
-
-
 }

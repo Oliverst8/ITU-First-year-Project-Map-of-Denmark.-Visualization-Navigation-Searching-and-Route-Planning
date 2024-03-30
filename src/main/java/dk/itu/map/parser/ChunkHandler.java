@@ -1,23 +1,27 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.Way;
+
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.EOFException;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.FileReader;
 
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.IntStream;
 
-import dk.itu.map.structures.Way;
 import javafx.geometry.Point2D;
 
 public class ChunkHandler {
-
     private final String dataPath;
 
     public float minlat, maxlat, minlon, maxlon;
@@ -27,8 +31,6 @@ public class ChunkHandler {
 
     // Temp variable to save loaded ways
     public ArrayList<Way> ways;
-
-    private ArrayList<ArrayList<Way>> chunks;
 
     /**
      * Initialises the filehandler
@@ -63,7 +65,7 @@ public class ChunkHandler {
 
     public int latLonToChunkIndex(float lat, float lon) {
         return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
-                (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+            (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
     public int pointToChunkIndex(Point2D p) {
@@ -84,11 +86,9 @@ public class ChunkHandler {
     }
 
     public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
-
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
-
             if (chunk < 0 || chunk >= chunkAmount) return;
 
             ways.putIfAbsent(chunk, new ArrayList<>());

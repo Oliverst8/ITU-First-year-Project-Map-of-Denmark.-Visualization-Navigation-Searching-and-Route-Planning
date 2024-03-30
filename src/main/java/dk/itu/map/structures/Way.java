@@ -9,8 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 
 public class Way {
-
-    private byte zoomLevel;
     private List<Long> outerRef;
     private List<Long> innerRef;
     private final FloatArrayList outerCoords;
@@ -188,7 +186,6 @@ public class Way {
                 // outercoords are used here cause Ways use outer by default.
                 // FIXME: what happens if relation has relation with inner ways inside
             }
-
         }
     }
 
@@ -306,10 +303,6 @@ public class Way {
         }
         gc.setLineWidth(lineWidth * scaleFactor * 0.50);
         return shouldFill;
-    }
-
-    public void setZoomLevel(byte zoomLevel) {
-        this.zoomLevel = zoomLevel;
     }
 
     public boolean isRelation() {

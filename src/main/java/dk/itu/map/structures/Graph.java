@@ -1,14 +1,11 @@
 package dk.itu.map.structures;
 
+import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
-
-public class Graph implements Runnable{
-
-
+public class Graph implements Runnable {
     private List<Way> ways;
     private final HashMap<Long, IntArrayList> idToIndex;
     private final FloatArrayList edges;
@@ -28,6 +25,7 @@ public class Graph implements Runnable{
         for(int i = 0; i < way.getCoords().length-2; i +=2) {
             distSum += (float) Math.sqrt(Math.pow(coords[i] - coords[i+2], 2) + Math.pow(coords[i+1] - coords[i+3], 2));
         }
+
         return distSum;
     }
 
@@ -35,7 +33,6 @@ public class Graph implements Runnable{
         while(running){
             while(!ways.isEmpty()){
                 Way way = ways.remove(0);
-                float[] coords = way.getCoords();
                 addVertix(way.getNodeIDs());
                 addEdge(way);
             }
@@ -62,15 +59,13 @@ public class Graph implements Runnable{
         edges.add(nodes[0]);
         edges.add(nodes[1]);
         edges.add(calcWeight(way));
-
     }
-
 
     public void addWay(Way way) {
         ways.add(way);
     }
 
-    public void stop(){
+    public void stop() {
         running = false;
     }
 
@@ -81,5 +76,4 @@ public class Graph implements Runnable{
     public LongArrayList getIds() {
         return ids;
     }
-
 }
