@@ -14,11 +14,12 @@ import javafx.scene.shape.FillRule;
 public class Way {
     private List<Long> outerRef;
     private List<Long> innerRef;
+    private Way[] tempOuterWays;
+    private Way[] tempInnerWays;
     private final FloatArrayList outerCoords;
     private final FloatArrayList innerCoords;
     private final String[] tags;
 
-    private Way[] tempWays;
 
     private long id;
     private long[] nodeIDs;
@@ -31,7 +32,8 @@ public class Way {
         innerCoords = new FloatArrayList(10);
         this.outerRef = outerRef;
         this.innerRef = innerRef;
-        this.tempWays = new Way[outerRef.size() + innerRef.size()];
+        this.tempOuterWays = new Way[outerRef.size()];
+        this.tempInnerWays = new Way[innerRef.size()];
         this.tags = new String[tags.size()];
 
         for (float node : nodes) {
@@ -145,37 +147,61 @@ public class Way {
      * Also only used in fileHandler
      */
     public void addRelatedWay(Way way, long id) {
-        if (tempWays == null)
+        if (tempOuterWays == null || tempInnerWays == null)
             throw new RuntimeException("Related ways cannot be added to fully filled ways");
 
         if (outerRef.contains(id)) {
-            tempWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
+            tempOuterWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
         }
         if (innerRef.contains(id)) {
-            tempWays[outerRef.size() + innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
+            tempInnerWays[innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
         }
 
         boolean filled = true;
-        for (int i = 0; i < tempWays.length; i++) {
-            if (tempWays[i] == null) {
+        for (int i = 0; i < tempOuterWays.length; i++) {
+            if (tempOuterWays[i] == null) {
+                filled = false;
+                break;
+            }
+        }
+        for (int i = 0; i < tempInnerWays.length; i++) {
+            if (tempInnerWays[i] == null) {
                 filled = false;
                 break;
             }
         }
         if (filled) {
-            LinkedListSimple<Way> queuedWays = new LinkedListSimple<>(Arrays.asList(tempWays));
+            LinkedListSimple<Way> queuedWays = new LinkedListSimple<>(Arrays.asList(tempOuterWays));
             Node<Way> current = queuedWays.getFirst();
             Way prevWay = current.getValue();
-            Way initialWay = current.getValue();
             while (current != null) {
-                while (prevWay.outerCoords.get(-1) != current.getValue().outerCoords.get(0))
+                Node<Way> preSearch = null;
+                Node<Way> search = current;
+                while (prevWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) &&
+                prevWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
+                    // Check if way fits if it is reversed.
+                    if (prevWay.outerCoords.get(-2) != search.getValue().outerCoords.get(-2) &&
+                    prevWay.outerCoords.get(-1) != search.getValue().outerCoords.get(-1)) {
+                        search.getValue().outerCoords.reverse();
+                    }
+
+                    preSearch = search;
+                    search = search.getNext();
+                }
+
+                if (search != current) {
+                    queuedWays.move(current, preSearch);
+                }
+
+                this.outerCoords.addAll(current.getValue().getCoords());
                 current = current.getNext();
             }
-            for (int i = 0; i < innerRef.size(); i++) {
-                this.innerCoords.addAll(tempWays[outerRef.size()+i].getCoords());
-                // outercoords are used here cause Ways use outer by default.
-                // FIXME: what happens if relation has relation with inner ways inside
-            }
+            
+            // for (int i = 0; i < innerRef.size(); i++) {
+            //     this.innerCoords.addAll(tempWays[outerRef.size()+i].getCoords());
+            //     // outercoords are used here cause Ways use outer by default.
+            //     // FIXME: what happens if relation has relation with inner ways inside
+            // }
         }
     }
 

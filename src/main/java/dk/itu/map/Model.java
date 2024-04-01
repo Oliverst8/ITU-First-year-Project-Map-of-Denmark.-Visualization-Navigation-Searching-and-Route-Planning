@@ -35,6 +35,7 @@ public class Model implements Serializable {
             if (!new File(dataPath + "/" + name + "/config").exists()) {
                 FileHandler fileHandler = new FileHandler(new File(filePath), dataPath + "/" + name);
                 fileHandler.load();
+                System.out.println("Finished importing map!");
             };
 
             chunkHandler = new ChunkHandler(dataPath + "/" + name);

@@ -60,7 +60,7 @@ public class FloatArrayList {
 
     public float get(int index) {
         if (index < 0)
-            return array[size - index];
+            return array[size + index];
         else
             return array[index];
     }

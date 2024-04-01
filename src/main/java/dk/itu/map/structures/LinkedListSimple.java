@@ -11,9 +11,11 @@ public class LinkedListSimple<E> {
 
     private void addAll(Collection<E> c) {
         Node<E> current = null;
+
         for (E e : c) {
             if (current == null) {
-                current = first = new Node<E>(c.iterator().next(), null);
+                current = first = new Node<E>(e, null);
+                continue;
             }
             current.setNext(new Node<E>(e, null));
         }
@@ -23,7 +25,20 @@ public class LinkedListSimple<E> {
         return first;
     }
 
-    
+    /*
+     * preDestination -> destination ... preTarget -> target -> postTarget
+     * ----
+     * preDestination -> target -> destination ... preTarget -> postTarget
+     */
+    public void move(Node<E> preDestination, Node<E> preTarget) {
+        Node<E> target = preTarget.getNext();
+
+        preTarget.setNext(target.getNext());
+        target.setNext(preDestination.getNext());
+
+        preDestination.setNext(target);
+    }
+
     public static class Node<E> {
         private E item;
         private Node<E> next;
@@ -46,5 +61,4 @@ public class LinkedListSimple<E> {
         }
     }
 }
-
 
