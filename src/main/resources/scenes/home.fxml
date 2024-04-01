@@ -51,7 +51,7 @@
             </Text>
          </children>
       </HBox>
-      <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" onAction="#importClicked" text="Import new" />
+      <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" onAction="#importMap" text="Import new" />
       <MenuButton fx:id="mapList" layoutX="275.0" layoutY="200.0" prefHeight="26.0" prefWidth="90.0" text="Load">
 
       </MenuButton>
