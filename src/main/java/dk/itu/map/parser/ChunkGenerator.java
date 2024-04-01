@@ -22,7 +22,7 @@ class ZoomLayer extends ArrayList<Chunk> {}
 public class ChunkGenerator implements Runnable {
     // chunk size in coordinate size
     private final String dataPath;
-    private final float CHUNK_SIZE = 0.25f;
+    private final float CHUNK_SIZE = 0.05f;
     private final byte amountOfZoomLayers = 5;
 
     public float minlat, maxlat, minlon, maxlon;
@@ -107,52 +107,172 @@ public class ChunkGenerator implements Runnable {
         for (Way way : newWays) {
             byte zoomLevel = -1;
             String[] tags = way.getTags();
-            for (String tag : tags) {
-                switch (tag) {
-                    case "ferry":
-                        continue forWay;
+            for (int i = 0; i < tags.length; i += 2) {
+                switch (tags[i]) {
+                    case "route":
+                        switch (tags[i + 1]) {
+                            case "ferry":
+                            case "ferry_link":
+                                continue forWay;
+                        }
 
-                    case "motorway":
-                    case "motorway_link":
-                    case "trunk":
-                    case "trunk_link":
-                    case "primary":
-                    case "primary_link":
+                    case "aeroway":
+                        switch (tags[i + 1]) {
+                            case "aerodrome":
+                                if (zoomLevel < 3) zoomLevel = 3;
 
-                    case "coastline":
-                        zoomLevel = 4;
+                            case "apron":
+                            case "runway":
+                            case "taxiway":
+                                if (zoomLevel < 2) zoomLevel = 2;
+                                break;
+                        }
                         break;
-                    case "aerodrome":
-                    case "secondary":
-                    case "secondary_link":
-                    case "rail":
-                    case "light_rail":
-                        if (zoomLevel < 3) zoomLevel = 3;
-                        break;
-                    case "forest":
-                    case "grassland":
-                    case "farmland":
-                    case "wood":
-                    case "wetland":
-                    case "runway":
-                    case "tertiary":
-                    case "tertiary_link":
-                    case "heath":
-                    case "scrub":
-                    case "fell":
-                    case "beach":
-                    case "water":
-                        if (zoomLevel < 2) zoomLevel = 2;
-                        break;
-                    case "unclassified":
-                    case "residential":
-                        if (zoomLevel < 1) zoomLevel = 1;
-                        break;
-                    case "building":
+                    
                     case "highway":
-                        if (zoomLevel < 0) zoomLevel = 0;
+                        switch (tags[i + 1]) {
+                            case "trunk":
+                            case "trunk_link":
+                            case "primary":
+                            case "primary_link":
+                            case "motorway":
+                            case "motorway_link":
+                                if (zoomLevel < 4) zoomLevel = 4;
+                                break;
+
+                            case "tertiary":
+                            case "tertiary_link":
+                                if (zoomLevel < 3) zoomLevel = 3;
+                                break;
+                            
+                            case "service":
+                            case "residential":
+                            case "unclassified":
+                                if (zoomLevel < 0) zoomLevel = 0;
+                                break;
+                        }
+                        break;
+
+                    case "natural":
+                        switch (tags[i + 1]) {
+                            case "wood":
+                            case "water":
+                            case "scrub":
+                            case "beach":
+                            case "meadow":
+                            case "coastline":
+                            case "grassland":
+                                if (zoomLevel < 3) zoomLevel = 3;
+                                break;
+                        }
+                        break;
+                    
+                    case "place":
+                        switch (tags[i + 1]) {
+                            case "island":
+                                if (zoomLevel < 4) zoomLevel = 4;
+                                break;
+                        }
+                        break;
+                    
+                    case "landuse":
+                        switch (tags[i + 1]) {
+                            case "grass":
+                            case "forest":
+                            case "meadow":
+                            case "farmland":
+                            case "military":
+                            case "allotments":
+                            case "industrial":
+                            case "residential":
+                            case "construction":
+                            case "recreation_ground":
+                                if (zoomLevel < 3) zoomLevel = 3;
+                                break;
+                        }
+                        break;
+
+                    case "leisure":
+                        switch (tags[i + 1]) {
+                            case "park":
+                            case "golf_course":
+                            case "sports_centre":
+                                if (zoomLevel < 2) zoomLevel = 2;
+                                break;
+                        }
+                        break;
+
+                    case "amenity":
+                        switch (tags[i + 1]) {
+                            case "parking":
+                                if (zoomLevel < 2) zoomLevel = 2;
+                                break;
+                        }
+                        break;
+                    
+                    case "building":
+                        switch (tags[i + 1]) {
+                            case "yes":
+                            if (zoomLevel < 0) zoomLevel = 0;
+                        }
                         break;
                 }
+
+                // switch (tags[i]) {
+                //     case "ferry":
+                //         continue forWay;
+
+                //     case "motorway":
+                //     case "motorway_link":
+                //     case "trunk":
+                //     case "trunk_link":
+                //     case "primary":
+                //     case "primary_link":
+                //     case "coastline":
+                //     // case "land_area":
+                //     // case "peninsula":
+                //     // case "island":
+                //         zoomLevel = 4;
+                //         break;
+
+                //     case "aerodrome":
+                //     case "secondary":
+                //     case "secondary_link":
+                //     case "rail":
+                //     case "light_rail":
+                //         if (zoomLevel < 3) zoomLevel = 3;
+                //         break;
+
+                //     case "forest":
+                //     case "wetland":
+                //     case "runway":
+                //     case "tertiary":
+                //     case "tertiary_link":
+                //     case "heath":
+                //     case "grassland":
+                //     case "farmland":
+                //     case "wood":
+                //     case "meadow":
+                //     case "scrub":
+                //     case "fell":
+                //     case "recreation_ground":
+                //     case "beach":
+                //     case "water":
+                //     case "residential":
+                //     case "industrial":
+                //     case "park":
+                //         if (zoomLevel < 2) zoomLevel = 2;
+                //         break;
+                        
+                //     case "unclassified":
+                //         if (zoomLevel < 1) zoomLevel = 1;
+                //         break;
+
+                //     case "building":
+                //     case "highway":
+                //         if (zoomLevel < 0) zoomLevel = 0;
+                //         break;
+                // }
             }
             if (way.isRelation() && zoomLevel == -1) {
                 zoomLevel = 3;

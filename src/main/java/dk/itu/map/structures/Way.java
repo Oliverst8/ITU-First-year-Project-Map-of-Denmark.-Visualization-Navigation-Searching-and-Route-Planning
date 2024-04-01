@@ -11,8 +11,8 @@ import javafx.scene.shape.FillRule;
 public class Way {
     private List<Long> outerRef;
     private List<Long> innerRef;
-    private final FloatArrayList outerCoords;
-    private final FloatArrayList innerCoords;
+    public final FloatArrayList outerCoords;
+    public final FloatArrayList innerCoords;
     private final String[] tags;
 
     private Way[] tempWays;
@@ -199,131 +199,344 @@ public class Way {
         float lineWidth = 0.00001f;
         boolean shouldFill = false;
         forLoop:
-        for (String tag : tags) {
-            switch (tag) {
-                case "motorway_link":
-                case "motorway":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKRED);
-                    shouldFill = false;
-                    break forLoop;
+        for (int i = 0; i < tags.length; i += 2) {
+            switch (tags[i]) {
+                case "aeroway":
+                    switch (tags[i + 1]) {
+                        case "aerodrome":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.DARKGRAY);
+                            gc.setFill(Color.DARKGRAY);
+                            shouldFill = true;
+                            break forLoop;
 
-                case "trunk":
-                case "trunk_link":
-                case "primary":
-                case "primary_link":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKGRAY);
-                    shouldFill = false;
-                    break forLoop;
+                        case "runway":
+                            lineWidth = 0.0008f;
+                            gc.setStroke(Color.GRAY);
+                            shouldFill = false;
+                            break forLoop;
 
-                case "coastline":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.web("#332020"));
-                    shouldFill = false;
-                    break forLoop;
-                    
-                case "secondary":
-                case "secondary_link":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
+                        case "taxiway":
+                            lineWidth = 0.0003f;
+                            gc.setStroke(Color.GRAY);
+                            shouldFill = false;
+                            break forLoop;
+                        
+                        case "apron":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.DARKGRAY);
+                            gc.setFill(Color.DARKGRAY);
+                            shouldFill = true;
+                            break forLoop;
+                    }
 
-                case "rail":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-
-                case "light_rail":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    shouldFill = false;
-                    break forLoop;
-                
-                case "wood":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.web("#60b153"));
-                    gc.setFill(Color.web("#60b153"));
-                    shouldFill = true;
-                    break forLoop;
-
-                case "farmland":
-                    lineWidth = 0.00005f;
-                    gc.setStroke(Color.web("#545400"));
-                    gc.setFill(Color.web("#6f6f00"));
-                    shouldFill = true;
-                    break forLoop;
-
-                case "grassland":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKGREEN);
-                    gc.setFill(Color.GREEN);
-                    shouldFill = true;
-                    break forLoop;
-
-                case "runway":
-                    lineWidth = 0.0008f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-
-                case "tertiary":
-                case "tertiary_link":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-
-                case "heath":
-                case "scrub":
-                case "fell":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.web("#bfa548"));
-                    gc.setFill(Color.web("#ffe97c"));
-                    shouldFill = true;
-                    break forLoop;
-
-                case "beach":
-                    lineWidth = 0.00000001f;
-                    gc.setFill(Color.YELLOW);
-                    shouldFill = true;
-                    break forLoop;
-
-                case "forest":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.GREEN);
-                    gc.setFill(Color.LIGHTGREEN);
-                    shouldFill = true;
-                    break forLoop;
-
-                case "water":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.BLUE);
-                    gc.setFill(Color.LIGHTBLUE);
-                    shouldFill = true;
-                    break forLoop;
-
-                case "unclassified":
-                case "residential":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    gc.setFill(Color.LIGHTGRAY);
-                    shouldFill = true;
-                    break forLoop;
-
-                case "building":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    gc.setFill(Color.LIGHTGOLDENRODYELLOW);
-                    shouldFill = true;
-                    break forLoop;
                 case "highway":
+                    switch (tags[i + 1]) {
+                        case "motorway":
+                        case "motorway_link":
+                            lineWidth = 0.001f;
+                            gc.setStroke(Color.DARKRED);
+                            shouldFill = false;
+                            break forLoop;
+
+                        case "tertiary":
+                        case "tertiary_link":
+                            lineWidth = 0.00025f;
+                            gc.setStroke(Color.GRAY);
+                            shouldFill = false;
+                            break forLoop;
+                        
+                        case "service":
+                        case "residential":
+                        case "unclassified":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.GRAY);
+                            shouldFill = false;
+                            break forLoop;
+
+                        case "trunk":
+                        case "trunk_link":
+                        case "primary":
+                        case "primary_link":
+                            lineWidth = 0.0002f;
+                            gc.setStroke(Color.DARKGRAY);
+                            shouldFill = false;
+                            break forLoop;
+                    }
+
+                case "natural":
+                    switch (tags[i + 1]) {
+                        case "meadow":
+                        case "grassland":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.GREEN);
+                            shouldFill = true;
+                            break forLoop;
+
+                        case "wood":
+                            lineWidth = 0.0003f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.LIGHTGREEN);
+                            shouldFill = true;
+                            break forLoop;
+                        
+                        case "scrub":
+                        case "beach":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.web("#ffe97c"));
+                            gc.setFill(Color.web("#ffe97c"));
+                            shouldFill = true;
+                            break forLoop;
+                        
+                        case "water":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.BLUE);
+                            gc.setFill(Color.LIGHTBLUE);
+                            shouldFill = true;
+                            break forLoop;
+                    }
+                
+                case "place":
+                    switch (tags[i + 1]) {
+                        case "island":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.GREEN);
+                            shouldFill = true;
+                            break forLoop;
+                    }
+
+                case "landuse":
+                    switch (tags[i + 1]) {
+                        //case "grass":
+                        case "meadow":
+                        case "recreation_ground":
+                            lineWidth = 0f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.GREEN);
+                            shouldFill = true;
+                            break forLoop;
+
+                        case "forest":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.LIGHTGREEN);
+                            shouldFill = true;
+                            break forLoop;
+                        
+                        case "farmland":
+                            lineWidth = 0.00005f;
+                            gc.setStroke(Color.web("#545400"));
+                            gc.setFill(Color.web("#6f6f00"));
+                            shouldFill = true;
+                            break forLoop;
+
+                        case "allotments":
+                        case "industrial":
+                        case "residential":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.web("#383737"));
+                            gc.setFill(Color.web("#383737"));
+                            shouldFill = true;
+                            break forLoop;
+
+                        case "military":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.web("#381212"));
+                            gc.setFill(Color.web("#381212"));
+                            shouldFill = true;
+                            break forLoop;
+
+                        case "construction":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.web("#676b36"));
+                            gc.setFill(Color.web("#676b36"));
+                            shouldFill = true;
+                            break forLoop;
+                    }
+
+                case "leisure":
+                    switch (tags[i + 1]) {
+                        case "park":
+                        // case "golf_course":
+                        // case "sports_centre":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.GREEN);
+                            gc.setFill(Color.LIGHTGREEN);
+                            shouldFill = true;
+                            break forLoop;
+                    }
+
+                case "amenity":
+                    switch (tags[i + 1]) {
+                        case "parking":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.web("#383737"));
+                            gc.setFill(Color.web("#383737"));
+                            shouldFill = true;
+                            break forLoop;
+                    }
+                
+                case "building":
+                    switch (tags[i + 1]) {
+                        case "yes":
+                            lineWidth = 0.00001f;
+                            gc.setStroke(Color.GRAY);
+                            gc.setStroke(Color.GRAY);
+                            shouldFill = true;
+                            break forLoop;
+                    }
             }
         }
-        gc.setLineWidth(lineWidth * scaleFactor * 0.50);
+
+        // for (String tag : tags) {
+        //     switch (tag) {
+        //         // case "island":
+        //         // case "peninsula":
+        //         // case "land_area":
+        //         //     lineWidth = 0.00001f;
+        //         //     gc.setStroke(Color.LIGHTGREEN);
+        //         //     gc.setFill(Color.LIGHTGREEN);
+        //         //     shouldFill = true;
+        //         //     break forLoop;
+
+        //         case "unclassified":
+        //         case "residential":
+        //         case "industrial":
+        //             lineWidth = 0.0001f;
+        //             gc.setStroke(Color.web("#2A2929"));
+        //             gc.setFill(Color.web("#2A2929"));
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "motorway_link":
+        //         case "motorway":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.DARKRED);
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "trunk":
+        //         case "trunk_link":
+        //         case "primary":
+        //         case "primary_link":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.DARKGRAY);
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "coastline":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.web("#332020"));
+        //             shouldFill = false;
+        //             break forLoop;
+                    
+        //         case "secondary":
+        //         case "secondary_link":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.GRAY);
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "rail":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.GRAY);
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "light_rail":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.LIGHTGRAY);
+        //             shouldFill = false;
+        //             break forLoop;
+                
+        //         case "wood":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.web("#60b153"));
+        //             gc.setFill(Color.web("#60b153"));
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "recreation_ground":
+        //         case "farmland":
+        //             lineWidth = 0.00005f;
+        //             gc.setStroke(Color.web("#545400"));
+        //             gc.setFill(Color.web("#6f6f00"));
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "meadow":
+        //         case "grassland":
+        //             lineWidth = 0.0003f;
+        //             gc.setStroke(Color.DARKGREEN);
+        //             gc.setFill(Color.GREEN);
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "runway":
+        //             lineWidth = 0.0008f;
+        //             gc.setStroke(Color.GRAY);
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "tertiary":
+        //         case "tertiary_link":
+        //             lineWidth = 0.001f;
+        //             gc.setStroke(Color.web("#0C0C0D"));
+        //             shouldFill = false;
+        //             break forLoop;
+
+        //         case "heath":
+        //         case "scrub":
+        //         case "fell":
+        //             lineWidth = 0.0001f;
+        //             gc.setStroke(Color.web("#bfa548"));
+        //             gc.setFill(Color.web("#ffe97c"));
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "beach":
+        //             lineWidth = 0.00000001f;
+        //             gc.setFill(Color.YELLOW);
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "park":
+        //         case "forest":
+        //             lineWidth = 0.00001f;
+        //             gc.setStroke(Color.GREEN);
+        //             gc.setFill(Color.LIGHTGREEN);
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "water":
+        //             lineWidth = 0.00001f;
+        //             gc.setStroke(Color.BLUE);
+        //             gc.setFill(Color.LIGHTBLUE);
+        //             shouldFill = true;
+        //             break forLoop;
+
+        //         case "building":
+        //             lineWidth = 0.00001f;
+        //             gc.setStroke(Color.LIGHTGRAY);
+        //             gc.setFill(Color.LIGHTGOLDENRODYELLOW);
+        //             shouldFill = true;
+        //             break forLoop;
+        //         case "highway":
+        //     }
+        // }
+        gc.setLineWidth(lineWidth);
         return shouldFill;
+    }
+
+    public boolean containsTag(String tag) {
+        for (int i = 0; i < tags.length; i += 2) {
+            if (tags[i].equals(tag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isRelation() {

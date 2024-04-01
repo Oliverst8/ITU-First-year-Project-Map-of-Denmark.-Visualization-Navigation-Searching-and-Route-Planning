@@ -3,7 +3,7 @@ package dk.itu.map.fxml;
 import dk.itu.map.Model;
 import dk.itu.map.Controller;
 import dk.itu.map.structures.Way;
-
+import dk.itu.map.task.CanvasRedrawTask;
 
 import java.util.Map;
 import java.util.Set;
@@ -13,8 +13,6 @@ import java.util.HashSet;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -22,9 +20,16 @@ public class MapController {
     private final Model viewModel;
 
     @FXML
-    private Canvas canvas;
+    private Canvas canvasHighway;
+    @FXML
+    private Canvas canvasAeroway;
+    @FXML
+    private Canvas canvasLanduse;
+    @FXML
+    private Canvas canvasNatural;
+    @FXML
+    private Canvas canvasPlace;
 
-    private GraphicsContext gc;
     private Affine trans;
     private float zoomLevel;
     private float startZoom;
@@ -40,23 +45,22 @@ public class MapController {
 
     @FXML
     public void initialize() {
-        gc = canvas.getGraphicsContext2D();
         trans = new Affine();
 
         //pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);
         trans.prependTranslation(-0.56*this.viewModel.chunkHandler.minlon, this.viewModel.chunkHandler.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
         //This is done to avoid getheight and getwidth from canvas, returning way to big values
-        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkHandler.maxlat - this.viewModel.chunkHandler.minlat));
+        zoom(0, 0, canvasPlace.getHeight() / (this.viewModel.chunkHandler.maxlat - this.viewModel.chunkHandler.minlat));
 
         startZoom = getZoomDistance();
         redraw();
 
-        canvas.setOnMousePressed(e -> {
+        canvasHighway.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
         });
 
-        canvas.setOnMouseDragged(e -> {
+        canvasHighway.setOnMouseDragged(e -> {
             if (e.isPrimaryButtonDown()) {
 
                 double dx = e.getX() - lastX;
@@ -68,7 +72,7 @@ public class MapController {
             lastY = (float) e.getY();
         });
 
-        canvas.setOnScroll(e -> {
+        canvasHighway.setOnScroll(e -> {
             double factor = e.getDeltaY();
             zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
         });
@@ -80,28 +84,46 @@ public class MapController {
     }
 
     private void redraw() {
-        gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.setTransform(trans);
-        gc.setLineWidth(1/Math.sqrt(trans.determinant()));
-
-        gc.setStroke(Color.BLACK);
-        gc.setFill(Color.GRAY);
-
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
         updateChunks();
         updateZoomLevel();
 
-        for(int i = getDetailLevel(); i <= 4; i++){
+        Set<Way> waysPlace = new HashSet<>();
+        Set<Way> waysNatural = new HashSet<>();
+        Set<Way> waysLanduse = new HashSet<>();
+        Set<Way> waysAeroway = new HashSet<>();
+        Set<Way> waysHighway = new HashSet<>();
+
+        float zoom = getZoomDistance() / startZoom * 100;
+
+        for(int i = getDetailLevel(); i <= 4; i++) {
             Map<Integer, List<Way>> chunkLayer = viewModel.chunkLayers.get(i);
             for (int chunk : chunkLayer.keySet()) {
-                for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
-                    chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/startZoom*100);
+                for(int j = 0; j < chunkLayer.get(chunk).size(); j++) {
+                    Way way = chunkLayer.get(chunk).get(j);
+
+                    if(way.containsTag("highway")) 
+                        waysHighway.add(way);
+                    else if(way.containsTag("aeroway")) 
+                        waysAeroway.add(way);
+                    else if(way.containsTag("landuse"))
+                        waysLanduse.add(way);
+                    else if(way.containsTag("natural"))
+                        waysNatural.add(way);
+                    else if(way.containsTag("place"))
+                        waysPlace.add(way);
                 }
             }
         }
+
+        System.out.println("Place: " + waysPlace.size());
+
+        //new CanvasRedrawTask(canvasPlace, waysPlace, trans, zoom).run();
+        new CanvasRedrawTask(canvasNatural, waysNatural, trans, zoom).run();
+        new CanvasRedrawTask(canvasLanduse, waysLanduse, trans, zoom).run();
+        new CanvasRedrawTask(canvasAeroway, waysAeroway, trans, zoom).run();
+        new CanvasRedrawTask(canvasHighway, waysHighway, trans, zoom).run();
     }
 
     private Point2D getUpperLeftCorner() {
@@ -109,7 +131,7 @@ public class MapController {
     }
 
     private Point2D getLowerRightCorner() {
-        return convertTo2DPoint(canvas.getWidth(), canvas.getHeight());
+        return convertTo2DPoint(canvasPlace.getWidth(), canvasPlace.getHeight());
     }
 
     private void updateChunks() {
@@ -148,10 +170,10 @@ public class MapController {
     }
 
     private int getDetailLevel(){
-        if(zoomLevel > 55000) return 4;
-        if(zoomLevel > 2300) return 3;
-        if(zoomLevel > 115) return 2;
-        if(zoomLevel > 10)return 1;
+        if(zoomLevel > 300000) return 4;
+        if(zoomLevel > 150000) return 3;
+        if(zoomLevel > 29000) return 2;
+        if(zoomLevel > 250) return 1;
         return 0;
     }
 
