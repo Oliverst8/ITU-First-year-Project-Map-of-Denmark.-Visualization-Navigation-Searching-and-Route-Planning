@@ -118,7 +118,7 @@ public class ChunkGenerator implements Runnable {
                     case "trunk_link":
                     case "primary":
                     case "primary_link":
-
+                    case "island":
                     case "coastline":
                         zoomLevel = 4;
                         break;

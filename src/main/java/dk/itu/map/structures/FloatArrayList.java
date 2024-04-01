@@ -23,15 +23,15 @@ public class FloatArrayList {
     }
 
     private void resize() {
-        float[] newArray = new float[array.length*2];
-        for(int i = 0; i < array.length; i++) {
+        float[] newArray = new float[array.length * 2];
+        for (int i = 0; i < array.length; i++) {
             newArray[i] = array[i];
         }
         array = newArray;
     }
 
     public void add(float value) {
-        if(size + 1 > array.length) {
+        if (size + 1 > array.length) {
             resize();
         }
         array[size] = value;
@@ -59,7 +59,10 @@ public class FloatArrayList {
     }
 
     public float get(int index) {
-        return array[index];
+        if (index < 0)
+            return array[size - index];
+        else
+            return array[index];
     }
 
     public int size() {

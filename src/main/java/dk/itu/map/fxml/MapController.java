@@ -17,6 +17,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -42,6 +43,7 @@ public class MapController extends ViewController {
     @FXML
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
+        gc.setFillRule(FillRule.EVEN_ODD);
         trans = new Affine();
 
         //pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);

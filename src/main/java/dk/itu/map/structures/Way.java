@@ -2,8 +2,11 @@ package dk.itu.map.structures;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
+import dk.itu.map.structures.LinkedListSimple.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
@@ -105,46 +108,37 @@ public class Way {
     }
 
     public void draw(GraphicsContext gc, float scaleFactor) {
-        gc.setFillRule(FillRule.EVEN_ODD);
+        if (Arrays.asList(tags).contains("island")) return;
         gc.beginPath();
-        gc.moveTo(0.56f * outerCoords.get(1), -outerCoords.get(0));
-        for (int i = 2; i < outerCoords.size(); i += 2) {
-            gc.lineTo(0.56f * outerCoords.get(i + 1), -outerCoords.get(i));
-        }
-        if (innerCoords.size() > 0) { 
-            float prevX = 0f;
-            float prevY = 0f;
-            boolean move = true;
-            // gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
-            for (int i = 0; i < innerCoords.size(); i += 2) {
-                if (move) {
-                    gc.moveTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
-                    if (i+2 > innerCoords.size()) {
-                        prevX = innerCoords.get(i + 2);
-                        prevY = innerCoords.get(i + 3);
-                    }
-
-                } else {
-                    gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
-                    if (prevX == innerCoords.get(i) && prevY == innerCoords.get(i + 1)) {
-                        move = true;
-                    }
-                }
-            }
-        }
+        drawCoords(gc, outerCoords);
+        // drawCoords(gc, outerCoords);
         if (setColors(gc, tags, scaleFactor)) {
             gc.fill();
             gc.stroke();
         } else {
             gc.stroke();
         }
-        // if (innerCoords.size() == 0) {
-        //     gc.stroke();
-        // } else {
-        //     gc.fill();
-        //     gc.stroke();
-        // }
+        gc.closePath();
         
+    }
+
+    public void drawCoords(GraphicsContext gc, FloatArrayList coords) {
+        if (coords.size() == 0) return;
+        float startX = 0f, startY = 0f;
+        boolean startNew = true;
+        for (int i = 0; i < coords.size(); i += 2) {
+            if (startNew) {
+                gc.moveTo(0.56f * coords.get(i + 1), -coords.get(i));
+                startNew = false;
+                startX = coords.get(i + 1);
+                startY = coords.get(i);
+                continue;
+            }
+            gc.lineTo(0.56f * coords.get(i + 1), -coords.get(i));
+            if (startX == coords.get(i + 1) && startY == coords.get(i)) {
+                startNew = true;
+            }
+        }
     }
 
     /**
@@ -169,11 +163,16 @@ public class Way {
             }
         }
         if (filled) {
-            for (int i = 0; i < outerRef.size(); i++) {
-                this.outerCoords.addAll(tempWays[i].outerCoords.toArray());
+            LinkedListSimple<Way> queuedWays = new LinkedListSimple<>(Arrays.asList(tempWays));
+            Node<Way> current = queuedWays.getFirst();
+            Way prevWay = current.getValue();
+            Way initialWay = current.getValue();
+            while (current != null) {
+                while (prevWay.outerCoords.get(-1) != current.getValue().outerCoords.get(0))
+                current = current.getNext();
             }
             for (int i = 0; i < innerRef.size(); i++) {
-                this.innerCoords.addAll(tempWays[outerRef.size()+i].outerCoords.toArray());
+                this.innerCoords.addAll(tempWays[outerRef.size()+i].getCoords());
                 // outercoords are used here cause Ways use outer by default.
                 // FIXME: what happens if relation has relation with inner ways inside
             }
@@ -291,6 +290,15 @@ public class Way {
                     break forLoop;
                 case "highway":
             }
+            // switch (tag) {
+            //     case "island":
+            //         lineWidth = 0.00001f;
+            //         gc.setStroke(Color.LIGHTGREEN);
+            //         gc.setFill(Color.LIGHTGREEN);
+            //         shouldFill = true;
+            //         break forLoop;
+                
+            // }
         }
         gc.setLineWidth(lineWidth * scaleFactor * 0.50);
         return shouldFill;
