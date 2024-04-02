@@ -40,7 +40,7 @@ public class Graph implements Runnable{
     }
 
     public void run() {
-        while(running){
+        while(running || !ways.isEmpty()){
             while(!ways.isEmpty()){
                 Way way = ways.remove(0);
                 float[] coords = way.getCoords();

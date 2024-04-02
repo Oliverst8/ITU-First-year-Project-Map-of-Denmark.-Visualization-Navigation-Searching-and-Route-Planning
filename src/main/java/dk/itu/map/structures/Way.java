@@ -54,6 +54,13 @@ public class Way {
         this.tags = tags;
     }
 
+    public Way(float[] outerCoords, float[] innerCoords, String[] tags, long[] nodeIDs) {
+        this.outerCoords = new FloatArrayList(outerCoords);
+        this.innerCoords = new FloatArrayList(innerCoords);
+        this.tags = tags;
+        this.nodeIDs = nodeIDs;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

@@ -20,11 +20,13 @@ public class ChangablePriorityQueue {
     }
 
     private void swim(int index){
+        if(index == 0) return;
         int parentIndex = (index-1)/4;
         while(value[heap[parentIndex]] > value[heap[index]]) {
             exch(parentIndex, index);
             index = parentIndex;
             parentIndex = (index-1)/4;
+            if(index == 0) return;
         }
     }
 
@@ -35,8 +37,11 @@ public class ChangablePriorityQueue {
                 int childValue = index * 4 + i;
                 if (value[smallestChild] > value[childValue]) smallestChild = childValue;
             }
-            if (value[index] > value[smallestChild]) exch(index, smallestChild);
-            else break;
+            if (value[index] > value[smallestChild]) {
+                exch(index, smallestChild);
+                index = smallestChild;
+            } else break;
+
         }
     }
 
@@ -47,18 +52,24 @@ public class ChangablePriorityQueue {
     }
     public void decreaseValueTo(int id, float newDistance){
 
-        if(value[id] == Float.MAX_VALUE) exch(currentSize++, id);
+        int index = id;
 
-        if(newDistance > value[id]) throw new IllegalArgumentException("new value cant be bigger then old: \nnew value: " + newDistance + " \nold value: " + value[id]);
+        if(value[id] == Float.MAX_VALUE) {
+            exch(currentSize, id);
+            index = currentSize;
+            currentSize++;
+        }
+
+        if(newDistance > value[id]) throw new IllegalArgumentException("new value cant be bigger then old: \nnew value: " + newDistance + " \nold value: " + value[heap[id]]);
 
         value[id] = newDistance;
 
-        swim(id);
+        swim(index);
     }
     public int deleteMinValue(){
         int min = heap[0];
 
-        value[0] = Float.POSITIVE_INFINITY;
+        value[min] = Float.POSITIVE_INFINITY;
 
         exch(--size, 0);
 
