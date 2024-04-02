@@ -55,12 +55,19 @@ class Polygon extends MapElement {
     @Override
     public CoordArrayList getCoords() {
         CoordArrayList coords = new CoordArrayList();
-        for (Way way : outerWays) {
-            coords.addAll(way.getCoords().toArray());
+
+        if (outerWays != null) {
+            for (Way way : outerWays) {
+                coords.addAll(way.getCoords().toArray());
+            }
         }
-        for (Way way : innerWays) {
-            coords.addAll(way.getCoords().toArray());
+
+        if (innerWays != null) {
+            for (Way way : innerWays) {
+                coords.addAll(way.getCoords().toArray());
+            }
         }
+
         return coords;
     }
 
@@ -85,6 +92,9 @@ class Polygon extends MapElement {
 
     private int countCoords(LinkedListSimple<Way> ways) {
         int count = 0;
+
+        if (ways == null) return count;
+
         for (Way way : ways) {
             count += way.getCoords().size();
         }
@@ -104,11 +114,11 @@ class Polygon extends MapElement {
                 continue;
             }
 
-            Node<Way> search = current.getNext();
-            while (!compareCoords(current.getValue().getLastCoords(), search.getValue().getFirstCoords())) {
-                if (current.getValue().getLastCoords() == search.getValue().getLastCoords()) {
-                    search.getValue().getCoords().reverse();
-                    search = search.getNext();
+            Node<Way> search = current;
+
+            while (!compareCoords(current.getValue().getLastCoords(), search.getNext().getValue().getFirstCoords())) {
+                if (compareCoords(current.getValue().getLastCoords(), search.getNext().getValue().getLastCoords())) {
+                    search.getNext().getValue().getCoords().reverse();
                     break;
                 }
 
