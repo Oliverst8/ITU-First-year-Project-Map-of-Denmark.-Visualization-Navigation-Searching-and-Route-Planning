@@ -27,7 +27,6 @@ public class LongArrayList {
     }
 
     private void resize() {
-        System.out.println("Resizing " + this + " to " + list.length * 2);
         long[] newList = new long[list.length * 2];
         for (int i = 0; i < list.length; i++) {
             newList[i] = list[i];

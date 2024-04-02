@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "gradle",
+			"id": "BFST2024Group8runBFST2024Group8",
+			"script": "run",
+			"description": "Runs this project as a JVM application",
+			"group": "application",
+			"project": "BFST2024Group8",
+			"buildFile": "${workspaceFolder}\\build.gradle",
+			"rootProject": "BFST2024Group8",
+			"projectFolder": "${workspaceFolder}",
+			"workspaceFolder": "${workspaceFolder}",
+			"args": "",
+			"javaDebug": true,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "project run"
+		}
+	]
+}

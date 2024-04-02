@@ -1,30 +1,23 @@
 package dk.itu.map;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 public class Controller {
-    double lastX;
-    double lastY;
 
-    public Controller(Model model, View view) {
-        view.canvas.setOnMousePressed(e -> {
-            lastX = e.getX();
-            lastY = e.getY();
-        });
+    private final ViewBuilder viewBuilder;
+    private Model model = new Model();
+    private Stage stage;
 
-        view.canvas.setOnMouseDragged(e -> {
-            if (e.isPrimaryButtonDown()) {
+    public Controller(Stage stage) {
+        viewBuilder = new ViewBuilder(this, model, "home");
+        this.stage = stage;
 
-                double dx = e.getX() - lastX;
-                double dy = e.getY() - lastY;
-                view.pan(dx, dy);
-            }
+        setView("home");
+    }
 
-            lastX = e.getX();
-            lastY = e.getY();
-        });
-
-        view.canvas.setOnScroll(e -> {
-            double factor = e.getDeltaY();
-            view.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
-        });
+    public void setView(String view) {
+        viewBuilder.setView(view);
+        stage.setScene(new Scene(viewBuilder.build()));
     }
 }
