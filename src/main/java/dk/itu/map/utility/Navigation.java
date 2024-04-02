@@ -19,8 +19,8 @@ public class Navigation {
     public Stack<Long> navigate(int startPoint, int endPoint){
         queue = new ChangablePriorityQueue(graph);
         queue.decreaseValueTo(startPoint, 0);
-        while(queue.size() > 0){
-            relax(queue.deleteMinValue());
+        for(int min = queue.deleteMinValue(); queue.getValue(min) < Float.MAX_VALUE; min = queue.deleteMinValue()){
+            relax(min);
         }
     }
 
