@@ -5,16 +5,17 @@ public class ChangablePriorityQueue {
     private final float[] value;
     private final int[] heap;
     private int size;
+    private int currentSize;
 
 
     public ChangablePriorityQueue(Graph graph){
+        currentSize = 0;
         size = graph.getIds().size();
         value = new float[size];
         heap = new int[size];
         for(int i = 0; i < size; i++){
             value[i] = Float.MAX_VALUE;
             heap[i] = i;
-            swim(i);
         }
     }
 
@@ -46,6 +47,8 @@ public class ChangablePriorityQueue {
     }
     public void decreaseValueTo(int id, float newDistance){
 
+        if(value[id] == Float.MAX_VALUE) exch(currentSize++, id);
+
         if(newDistance > value[id]) throw new IllegalArgumentException("new value cant be bigger then old: \nnew value: " + newDistance + " \nold value: " + value[id]);
 
         value[id] = newDistance;
@@ -58,6 +61,8 @@ public class ChangablePriorityQueue {
         value[0] = Float.POSITIVE_INFINITY;
 
         exch(--size, 0);
+
+        currentSize--;
 
         sink(0);
 
