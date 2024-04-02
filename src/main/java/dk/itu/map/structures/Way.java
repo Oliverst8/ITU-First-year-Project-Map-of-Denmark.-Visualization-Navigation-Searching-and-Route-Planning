@@ -108,7 +108,7 @@ public class Way {
     }
 
     public void draw(GraphicsContext gc, float scaleFactor) {
-        // if (Arrays.asList(tags).contains("island")) return;
+        if (Arrays.asList(tags).contains("island")) return;
         gc.beginPath();
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
