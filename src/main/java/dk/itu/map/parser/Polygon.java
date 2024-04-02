@@ -29,6 +29,8 @@ class Polygon extends MapElement {
         this.innerRef = innerRef;
         this.stagedOuterWays = new Way[outerRef.size()];
         this.stagedInnerWays = new Way[innerRef.size()];
+        this.outerWays = new LinkedListSimple<>();
+        this.innerWays = new LinkedListSimple<>();
         this.totalWays = outerRef.size() + innerRef.size();
     }
 
@@ -56,16 +58,12 @@ class Polygon extends MapElement {
     public CoordArrayList getCoords() {
         CoordArrayList coords = new CoordArrayList();
 
-        if (outerWays != null) {
-            for (Way way : outerWays) {
-                coords.addAll(way.getCoords().toArray());
-            }
+        for (Way way : outerWays) {
+            coords.addAll(way.getCoords().toArray());
         }
 
-        if (innerWays != null) {
-            for (Way way : innerWays) {
-                coords.addAll(way.getCoords().toArray());
-            }
+        for (Way way : innerWays) {
+            coords.addAll(way.getCoords().toArray());
         }
 
         return coords;

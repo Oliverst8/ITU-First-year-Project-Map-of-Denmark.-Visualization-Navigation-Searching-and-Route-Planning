@@ -5,6 +5,8 @@ import java.util.Iterator;
 public class LinkedListSimple<E> implements Iterable<E> {
     private int size = 0;
     private Node<E> first;
+
+    public LinkedListSimple() {}
     
     public LinkedListSimple(Collection<E> c) {
         addAll(c);
