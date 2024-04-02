@@ -21,7 +21,7 @@ class ChangablePriorityQueueTest {
     private Graph getGraph1(){
         Graph graph = new Graph();
 
-        Way way = new Way(new float[]{0f,0f,1f,1f}, new float[]{}, new String[]{""}, new long[]{0,1});
+        Way way = new Way(new float[]{0f,0f,1f,1f,2f,2f,3f,3f,4f,4f,5f,5f,6f,6f,7f,7f,8f,8f,9f,9f}, new float[]{}, new String[]{""}, new long[]{0,1,2,3,4,5,6,7,8,9});
         graph.addWay(way);
         graph.addWay(way);
         graph.addWay(way);

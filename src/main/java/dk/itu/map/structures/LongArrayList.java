@@ -1,6 +1,8 @@
 package dk.itu.map.structures;
 
-public class LongArrayList {
+import java.io.Serializable;
+
+public class LongArrayList implements Serializable {
     private long[] list;
     private int size;
     private final int ARRAY_INIT_SIZE = 100_000;

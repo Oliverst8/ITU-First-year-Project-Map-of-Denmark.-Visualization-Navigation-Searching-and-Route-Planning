@@ -1,12 +1,13 @@
 package dk.itu.map.structures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class Graph implements Runnable{
+public class Graph implements Runnable, Serializable {
 
 
     private List<Way> ways;
@@ -52,7 +53,7 @@ public class Graph implements Runnable{
             if(!idToIndex.containsKey(vertexID[i])){
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
-                vertexList.add(new IntArrayList());
+                vertexList.add(new IntArrayList(2));
                 this.coords.add(coords[i*2]);
                 this.coords.add(coords[i*2+1]);
                 //coords.add();
@@ -102,12 +103,11 @@ public class Graph implements Runnable{
             edgeDestinations.add(node2);
             edgeDestinations.add(node1);
 
+
             float weight = calcWeight(way, i);
 
             edgeWeights.add(weight);
             edgeWeights.add(weight);
-
-
 
         }
 
@@ -115,6 +115,9 @@ public class Graph implements Runnable{
         // but as long as we just call these methods here, we should be okay I think
     }
 
+    public int size(){
+        return idToIndex.size();
+    }
 
     public void addWay(Way way) {
         ways.add(way);
@@ -146,5 +149,9 @@ public class Graph implements Runnable{
 
     public float[] getCoords(int index){
         return new float[]{coords.get(index*2), coords.get(index*2+1)};
+    }
+
+    public int idToVertexId(long id){
+        return idToIndex.get(id);
     }
 }

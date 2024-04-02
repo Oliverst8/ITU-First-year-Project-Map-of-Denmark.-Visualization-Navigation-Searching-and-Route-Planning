@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
 
+import dk.itu.map.utility.Navigation;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,6 +56,10 @@ public class MapController extends ViewController {
         canvas.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
+            Navigation navigation = new Navigation(this.viewModel.getGraph());
+            Way path = navigation.getPath(8254275761l,283481200l); //this works
+            System.out.println(path);
+            path.draw(gc, getZoomDistance()/startZoom*100);
         });
 
         canvas.setOnMouseDragged(e -> {

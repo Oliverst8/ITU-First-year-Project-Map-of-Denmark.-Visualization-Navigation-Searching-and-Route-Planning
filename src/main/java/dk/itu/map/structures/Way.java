@@ -2,13 +2,14 @@ package dk.itu.map.structures;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 
-public class Way {
+public class Way implements Serializable {
     private List<Long> outerRef;
     private List<Long> innerRef;
     private final FloatArrayList outerCoords;

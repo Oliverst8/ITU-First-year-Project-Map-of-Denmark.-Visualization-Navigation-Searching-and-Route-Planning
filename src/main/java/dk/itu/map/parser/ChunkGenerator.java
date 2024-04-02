@@ -1,14 +1,9 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.Way;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 import java.util.List;
 import java.util.HashSet;
@@ -36,15 +31,20 @@ public class ChunkGenerator implements Runnable {
     private List<Way> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
+    private final Graph graph;
+    private final Thread graphThread;
 
     private Thread chunkingThread;
 
     public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
+        graph = new Graph();
         this.dataPath = dataPath;
         hasMoreWork = false;
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         chunkingThread = new Thread(this);
         chunkingThread.start();
+        graphThread = new Thread(graph);
+        graphThread.start();
 
         this.minlat = minlat;
         this.maxlat = maxlat;
@@ -74,6 +74,7 @@ public class ChunkGenerator implements Runnable {
                     new FileOutputStream(files[i][j]).close();
                 }
             }
+            (new File(dataPath + "/utilities")).mkdir();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -118,23 +119,25 @@ public class ChunkGenerator implements Runnable {
                     case "trunk_link":
                     case "primary":
                     case "primary_link":
-
+                        graph.addWay(way);
                     case "coastline":
                         zoomLevel = 4;
                         break;
-                    case "aerodrome":
                     case "secondary":
                     case "secondary_link":
+                        graph.addWay(way);
+                    case "aerodrome":
                     case "rail":
                     case "light_rail":
                         if (zoomLevel < 3) zoomLevel = 3;
                         break;
+                    case "tertiary":
+                    case "tertiary_link":
+                        graph.addWay(way);
                     case "forest":
                     case "grassland":
                     case "wetland":
                     case "runway":
-                    case "tertiary":
-                    case "tertiary_link":
                     case "heath":
                     case "scrub":
                     case "fell":
@@ -143,11 +146,13 @@ public class ChunkGenerator implements Runnable {
                         if (zoomLevel < 2) zoomLevel = 2;
                         break;
                     case "unclassified":
+                        graph.addWay(way);
                     case "residential":
                         if (zoomLevel < 1) zoomLevel = 1;
                         break;
-                    case "building":
                     case "highway":
+                        if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
+                    case "building":
                         if (zoomLevel < 0) zoomLevel = 0;
                         break;
                 }
@@ -191,7 +196,16 @@ public class ChunkGenerator implements Runnable {
 
             writeFiles();
         }
-        System.out.println("Finished while loop");
+        long startTime = System.nanoTime();
+        graph.stop();
+        try {
+            graphThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        writeUtilities();
+        long endTime = System.nanoTime();
+        System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
     }
 
     public void writeFiles() {
@@ -236,6 +250,20 @@ public class ChunkGenerator implements Runnable {
             .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
         writer.write(builder.toString());
         writer.close();
+    }
+
+    private void writeUtilities(){
+        try {
+            FileOutputStream graphStream = new FileOutputStream(dataPath + "/utilities/graph.txt");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(graphStream);
+            objectOutputStream.writeObject(graph);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void printAll() {

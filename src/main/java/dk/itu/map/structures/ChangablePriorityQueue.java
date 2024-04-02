@@ -10,7 +10,7 @@ public class ChangablePriorityQueue {
 
     public ChangablePriorityQueue(Graph graph){
         currentSize = 0;
-        size = graph.getIds().size();
+        size = graph.size();
         value = new float[size];
         heap = new int[size];
         for(int i = 0; i < size; i++){
@@ -31,10 +31,12 @@ public class ChangablePriorityQueue {
     }
 
     private void sink(int index){
+        whileLoop:
         while(true){
             int smallestChild = index * 4 + 1;
             for (int i = 2; i <= 4; i++) {
                 int childValue = index * 4 + i;
+                if (childValue >= size) break whileLoop;
                 if (value[smallestChild] > value[childValue]) smallestChild = childValue;
             }
             if (value[index] > value[smallestChild]) {
@@ -69,7 +71,7 @@ public class ChangablePriorityQueue {
     public int deleteMinValue(){
         int min = heap[0];
 
-        value[min] = Float.POSITIVE_INFINITY;
+        //value[min] = Float.POSITIVE_INFINITY;
 
         exch(--size, 0);
 
@@ -84,5 +86,9 @@ public class ChangablePriorityQueue {
     }
     public float getValue(int index){
         return value[index];
+    }
+
+    public boolean isEmpty(){
+        return currentSize == 0;
     }
 }

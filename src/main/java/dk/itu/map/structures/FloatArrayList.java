@@ -1,8 +1,9 @@
 package dk.itu.map.structures;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class FloatArrayList {
+public class FloatArrayList implements Serializable {
     private final int ARRAY_INIT_SIZE = 100_000;
     private float[] array;
     private int size;

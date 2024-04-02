@@ -1,8 +1,9 @@
 package dk.itu.map.structures;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class IntArrayList {
+public class IntArrayList implements Serializable {
     private int[] array;
     private int size;
     private final int ARRAY_INIT_SIZE = 100_000;
@@ -10,6 +11,11 @@ public class IntArrayList {
     public IntArrayList() {
         array = new int[ARRAY_INIT_SIZE];
         size = 0;
+    }
+
+    public IntArrayList(int size) {
+        array = new int[size];
+        this.size = 0;
     }
 
     private void resize() {
