@@ -82,6 +82,15 @@ class Polygon extends MapElement {
          
         // if we are still missing ways, return.
         if (stagedWays != totalWays) return;
+        
+        // Do some redundant checks since deleted nodes can exist and not adhere to rules. example: relation/15978913
+        for (int i = 0; i < stagedOuterWays.length; i++) {
+            if (stagedOuterWays[i] == null) return;
+        }
+        for (int i = 0; i < stagedInnerWays.length; i++) {
+            if (stagedInnerWays[i] == null) return;
+        }
+        if (stagedOuterWays.length == 0) return;
 
         // Order ways by their first and last nodes.
         if (stagedOuterWays.length > 0) outerWays = orderWays(stagedOuterWays);
@@ -132,6 +141,6 @@ class Polygon extends MapElement {
     }
 
     private boolean compareCoords(float[] firstCoord, float[] lastCoord) {
-        return firstCoord[0] == lastCoord[0] && firstCoord[1] == lastCoord[1];
+        return Arrays.compare(firstCoord, lastCoord) == 0;
     }
 }
