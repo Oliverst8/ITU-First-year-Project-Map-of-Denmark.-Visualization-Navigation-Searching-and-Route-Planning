@@ -1,6 +1,7 @@
 package dk.itu.map.structures;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class LongArrayList implements Serializable {
     private long[] list;
@@ -39,5 +40,9 @@ public class LongArrayList implements Serializable {
             newList[i] = list[i];
         }
         list = newList;
+    }
+
+    public long[] toArray() {
+        return Arrays.copyOf(list, size);
     }
 }

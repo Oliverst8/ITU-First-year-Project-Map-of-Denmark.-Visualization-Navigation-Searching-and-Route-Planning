@@ -46,15 +46,17 @@ public class Navigation {
         if(!buildPaths(startPointID, endPointID)) return null;
 
         FloatArrayList path = new FloatArrayList();
+        LongArrayList pathIDs = new LongArrayList();
         int current = endPointID;
         while(current != startPointID){
             float[] coords = graph.getCoords(current);
             path.add(coords[0]);
             path.add(coords[1]);
+            pathIDs.add(current);
             current = vertexTo[current];
         }
 
-        return new Way(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"});
+        return new Way(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
 
 
         //return path;
