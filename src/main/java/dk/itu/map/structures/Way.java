@@ -3,21 +3,19 @@ package dk.itu.map.structures;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import dk.itu.map.structures.LinkedListSimple.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
 
 public class Way {
     private List<Long> outerRef;
     private List<Long> innerRef;
     private Way[] tempOuterWays;
     private Way[] tempInnerWays;
-    private final FloatArrayList outerCoords;
-    private final FloatArrayList innerCoords;
+    private final CoordArrayList outerCoords;
+    private final CoordArrayList innerCoords;
     private final String[] tags;
 
 
@@ -28,8 +26,8 @@ public class Way {
      * Only use for FileHandler
      */
     public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new FloatArrayList(10);
-        innerCoords = new FloatArrayList(10);
+        outerCoords = new CoordArrayList(10);
+        innerCoords = new CoordArrayList(10);
         this.outerRef = outerRef;
         this.innerRef = innerRef;
         this.tempOuterWays = new Way[outerRef.size()];
@@ -54,8 +52,8 @@ public class Way {
      * Only used for ChunkHandler
      */
     public Way(float[] outerCoords, float[] innerCoords, String[] tags) {
-        this.outerCoords = new FloatArrayList(outerCoords);
-        this.innerCoords = new FloatArrayList(innerCoords);
+        this.outerCoords = new CoordArrayList(outerCoords);
+        this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
     }
 
@@ -110,7 +108,7 @@ public class Way {
     }
 
     public void draw(GraphicsContext gc, float scaleFactor) {
-        if (Arrays.asList(tags).contains("island")) return;
+        // if (Arrays.asList(tags).contains("island")) return;
         gc.beginPath();
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
@@ -124,7 +122,7 @@ public class Way {
         
     }
 
-    public void drawCoords(GraphicsContext gc, FloatArrayList coords) {
+    public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
@@ -172,21 +170,44 @@ public class Way {
         }
         if (filled) {
             LinkedListSimple<Way> queuedWays = new LinkedListSimple<>(Arrays.asList(tempOuterWays));
+            if (tempOuterWays.length == 0) return;
+
             Node<Way> current = queuedWays.getFirst();
-            Way prevWay = current.getValue();
+            Way currentWay;
+            Way initialWay = current.getValue();
             while (current != null) {
-                Node<Way> preSearch = null;
+                currentWay = current.getValue();
+                Node<Way> preSearch = current;
                 Node<Way> search = current;
-                while (prevWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) &&
-                prevWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
+
+                if (current.getNext() == null) {
+                    this.outerCoords.addAll(current.getValue().getCoords());
+                    break;
+                }
+
+                if (currentWay.outerCoords.get(-2) == initialWay.outerCoords.get(0) &&
+                currentWay.outerCoords.get(-1) == initialWay.outerCoords.get(1)) {
+                    this.outerCoords.addAll(current.getValue().getCoords());
+                    initialWay = current.getNext().getValue();
+                    current = current.getNext();
+
+                    continue;
+                }
+
+                while (currentWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) ||
+                currentWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
                     // Check if way fits if it is reversed.
-                    if (prevWay.outerCoords.get(-2) != search.getValue().outerCoords.get(-2) &&
-                    prevWay.outerCoords.get(-1) != search.getValue().outerCoords.get(-1)) {
+                    if (currentWay.outerCoords.get(-2) == search.getValue().outerCoords.get(-2) &&
+                    currentWay.outerCoords.get(-1) == search.getValue().outerCoords.get(-1) && currentWay != search.getValue()) {
                         search.getValue().outerCoords.reverse();
+                        break;
                     }
 
                     preSearch = search;
                     search = search.getNext();
+                    if (search == null) {
+                        System.out.println("Could not find next way in relation");
+                    }
                 }
 
                 if (search != current) {
@@ -196,12 +217,6 @@ public class Way {
                 this.outerCoords.addAll(current.getValue().getCoords());
                 current = current.getNext();
             }
-            
-            // for (int i = 0; i < innerRef.size(); i++) {
-            //     this.innerCoords.addAll(tempWays[outerRef.size()+i].getCoords());
-            //     // outercoords are used here cause Ways use outer by default.
-            //     // FIXME: what happens if relation has relation with inner ways inside
-            // }
         }
     }
 
@@ -314,15 +329,15 @@ public class Way {
                     gc.setFill(Color.LIGHTGOLDENRODYELLOW);
                     shouldFill = true;
                     break forLoop;
+                case "island":
+                    lineWidth = 0.00001f;
+                    gc.setStroke(Color.LIGHTGREEN);
+                    gc.setFill(Color.LIGHTGREEN);
+                    shouldFill = true;
+                    break forLoop;
                 case "highway":
             }
             // switch (tag) {
-            //     case "island":
-            //         lineWidth = 0.00001f;
-            //         gc.setStroke(Color.LIGHTGREEN);
-            //         gc.setFill(Color.LIGHTGREEN);
-            //         shouldFill = true;
-            //         break forLoop;
                 
             // }
         }

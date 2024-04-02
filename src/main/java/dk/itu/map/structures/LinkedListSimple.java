@@ -18,6 +18,7 @@ public class LinkedListSimple<E> {
                 continue;
             }
             current.setNext(new Node<E>(e, null));
+            current = current.getNext();
         }
     }
 

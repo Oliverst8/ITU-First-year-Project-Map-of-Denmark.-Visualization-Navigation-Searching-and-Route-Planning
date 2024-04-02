@@ -2,22 +2,22 @@ package dk.itu.map.structures;
 
 import java.util.Arrays;
 
-public class FloatArrayList {
+public class CoordArrayList {
     private final int ARRAY_INIT_SIZE = 100_000;
     private float[] array;
     private int size;
 
-    public FloatArrayList() {
+    public CoordArrayList() {
         array = new float[ARRAY_INIT_SIZE];
         size = 0;
     }
 
-    public FloatArrayList(int init_size) {
+    public CoordArrayList(int init_size) {
         array = new float[init_size];
         size = 0;
     }
 
-    public FloatArrayList(float[] array) {
+    public CoordArrayList(float[] array) {
         this.array = array;
         size = array.length;
     }
@@ -56,6 +56,19 @@ public class FloatArrayList {
             output[i] = array[i];
         }
         return output;
+    }
+
+    public void reverse() {
+        for (int i = 0; i < size / 2; i += 2) {
+            float tempX = array[i];
+            float tempY = array[i + 1];
+
+            array[i] = array[size - i - 2];
+            array[i + 1] = array[size - i - 1];
+
+            array[size - i - 2] = tempX;
+            array[size - i - 1] = tempY;
+        }
     }
 
     public float get(int index) {

@@ -20,6 +20,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.shape.FillRule;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+
 
 public class MapController extends ViewController {
 
@@ -44,6 +48,8 @@ public class MapController extends ViewController {
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
         gc.setFillRule(FillRule.EVEN_ODD);
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
         trans = new Affine();
 
         //pan(-0.56*model.chunkHandler.minlon, model.chunkHandler.maxlat);

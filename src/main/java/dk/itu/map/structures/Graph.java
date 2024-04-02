@@ -8,12 +8,12 @@ import java.util.Collections;
 public class Graph implements Runnable {
     private List<Way> ways;
     private final HashMap<Long, IntArrayList> idToIndex;
-    private final FloatArrayList edges;
+    private final CoordArrayList edges;
     private final LongArrayList ids;
     private boolean running = true;
 
     public Graph() {
-        edges = new FloatArrayList();
+        edges = new CoordArrayList();
         ways = Collections.synchronizedList(new ArrayList<>());
         idToIndex = new HashMap<>();
         ids = new LongArrayList(); 
@@ -69,7 +69,7 @@ public class Graph implements Runnable {
         running = false;
     }
 
-    public FloatArrayList getEdges() {
+    public CoordArrayList getEdges() {
         return edges;
     }
 
