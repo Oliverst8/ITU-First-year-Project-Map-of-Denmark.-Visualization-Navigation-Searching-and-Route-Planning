@@ -10,6 +10,11 @@ public class LongArrayList {
         size = 0;
     }
 
+    public LongArrayList(int size) {
+        list = new long[size];
+        this.size = 0;
+    }
+
     public void add(long value) {
         if (size >= list.length) {
             resize();

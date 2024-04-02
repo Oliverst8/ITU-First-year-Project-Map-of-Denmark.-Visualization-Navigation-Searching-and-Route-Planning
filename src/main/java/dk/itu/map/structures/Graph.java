@@ -30,13 +30,10 @@ public class Graph implements Runnable{
 
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader? 
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
-    private float calcWeight(Way way) {
+    private float calcWeight(Way way, int firstNode) {
         float[] coords = way.getCoords();
-        float distSum = 0;
-        for(int i = 0; i < way.getCoords().length-2; i +=2) {
-            distSum += (float) Math.sqrt(Math.pow(coords[i] - coords[i+2], 2) + Math.pow(coords[i+1] - coords[i+3], 2));
-        }
-        return distSum;
+
+        return (float) Math.sqrt(Math.pow(coords[firstNode] - coords[firstNode+2], 2) + Math.pow(coords[firstNode+1] - coords[firstNode+3], 2));
     }
 
     public void run() {
@@ -44,36 +41,31 @@ public class Graph implements Runnable{
             while(!ways.isEmpty()){
                 Way way = ways.remove(0);
                 float[] coords = way.getCoords();
-                addVertices(way.getNodeIDs());
+                addVertices(way.getNodeIDs(), way.getCoords());
                 addEdge(way);
             }
         }
     }
 
-    private void addVertices(long[] vertexID){
+    private void addVertices(long[] vertexID, float[] coords) {
+        for (int i = 0; i < vertexID.length; i++) {
+            if(!idToIndex.containsKey(vertexID[i])){
+                int index = vertexList.size();
+                idToIndex.put(vertexID[i], index);
+                vertexList.add(new IntArrayList());
+                this.coords.add(coords[i*2]);
+                this.coords.add(coords[i*2+1]);
+                //coords.add();
+                //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
+                // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
 
-        if(!idToIndex.containsKey(vertexID[0])){
-            int index = vertexList.size();
-            idToIndex.put(vertexID[0], index);
-            vertexList.add(new IntArrayList());
-            //coords.add();
-            //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way, 
-            // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
-
-            //Here we could add node ids to an nodeIDArray, if we want them later
-        }
-        if(!idToIndex.containsKey(vertexID[1])){
-            idToIndex.put(vertexID[1], vertexList.size());
-            vertexList.add(new IntArrayList());
-            //coords.add();
-            //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way, 
-            // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
-
-            //Here we could add node ids to an nodeIDArray, if we want them later
+                //Here we could add node ids to an nodeIDArray, if we want them later
+            }
         }
     }
 
     private void addEdge(Way way) {
+        /*
         int node1 = idToIndex.get(way.getNodeIDs()[0]);
         int node2 = idToIndex.get(way.getNodeIDs()[1]);
         int edgeNumberFrom1 = edgeDestinations.size();
@@ -92,6 +84,32 @@ public class Graph implements Runnable{
 
         wayIDs.add(way.getId());
         wayIDs.add(way.getId());
+        */
+
+        //This is the new version of the above code, which should be more efficient
+        long[] nodeIDs = way.getNodeIDs();
+
+        for(int i = 0; i < nodeIDs.length-1; i++){
+            int node1 = idToIndex.get(nodeIDs[i]);
+            int node2 = idToIndex.get(nodeIDs[(i+1)]);
+
+            int edgeNumberFrom1 = edgeDestinations.size();
+            int edgeNumberFrom2 = edgeNumberFrom1+1;
+
+            vertexList.get(node1).add(edgeNumberFrom1);
+            vertexList.get(node2).add(edgeNumberFrom2);
+
+            edgeDestinations.add(node2);
+            edgeDestinations.add(node1);
+
+            float weight = calcWeight(way, i);
+
+            edgeWeights.add(weight);
+            edgeWeights.add(weight);
+
+
+
+        }
 
        //Maybe for all these we should add at the specific index to make sure no mistakes are made,
         // but as long as we just call these methods here, we should be okay I think
@@ -124,5 +142,9 @@ public class Graph implements Runnable{
 
     public FloatArrayList getWeights() {
         return edgeWeights;
+    }
+
+    public float[] getCoords(int index){
+        return new float[]{coords.get(index*2), coords.get(index*2+1)};
     }
 }

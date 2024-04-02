@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.LongArrayList;
 import dk.itu.map.structures.Way;
 import dk.itu.map.structures.LongFloatArrayHashMap;
 
@@ -163,7 +164,7 @@ public class FileHandler {
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
         List<Float> coords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
-        long[] nodeIds = new long[]{-1,0};
+        LongArrayList nodeIds = new LongArrayList(10);
         while (input.hasNext()) {
             int eventType = input.next();
             if (eventType != XMLStreamConstants.START_ELEMENT) {
@@ -176,11 +177,7 @@ public class FileHandler {
 
                 Long node = Long.parseLong(input.getAttributeValue(null, "ref"));
 
-                if (nodeIds[0] == -1) {
-                    nodeIds[0] = node;
-                } else {
-                    nodeIds[1] = node;
-                }
+                nodeIds.add(node);
 
                 float[] temp = nodes.get(node);
 

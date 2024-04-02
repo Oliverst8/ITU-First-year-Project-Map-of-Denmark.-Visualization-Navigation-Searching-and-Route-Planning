@@ -13,7 +13,7 @@ public class Way {
     private List<Long> innerRef;
     private final FloatArrayList outerCoords;
     private final FloatArrayList innerCoords;
-    private final String[] tags;
+    private String[] tags;
 
     private Way[] tempWays;
 
@@ -40,9 +40,12 @@ public class Way {
         }
     }
 
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long[] nodeIds) {
+    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, LongArrayList nodeIds) {
         this(nodes, tags, outerRef, innerRef);
-        this.nodeIDs = nodeIds;
+        this.nodeIDs = new long[nodeIds.size()];
+        for (int i = 0; i < nodeIds.size(); i++) {
+            this.nodeIDs[i] = nodeIds.get(i);
+        }
     }
 
     /**
@@ -60,6 +63,8 @@ public class Way {
         this.tags = tags;
         this.nodeIDs = nodeIDs;
     }
+
+
 
     @Override
     public String toString() {
@@ -199,6 +204,12 @@ public class Way {
         forLoop:
         for (String tag : tags) {
             switch (tag) {
+
+                case "navigationPath":
+                    lineWidth = 0.0003f;
+                    gc.setStroke(Color.TURQUOISE);
+                    shouldFill = false;
+                    break forLoop;
 
                 case "motorway_link":
                 case "motorway":
