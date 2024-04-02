@@ -22,6 +22,7 @@ public class Navigation {
         for(int min = queue.deleteMinValue(); queue.getValue(min) < Float.MAX_VALUE; min = queue.deleteMinValue()){
             relax(min);
         }
+        throw new UnsupportedOperationException();
     }
 
     private void relax(int vertex){
