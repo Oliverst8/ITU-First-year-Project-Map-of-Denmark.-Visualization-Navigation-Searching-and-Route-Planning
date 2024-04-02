@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.CoordArrayList;
 import dk.itu.map.structures.LongFloatArrayHashMap;
 
 import java.io.File;
@@ -28,10 +28,10 @@ public class FileHandler {
     private final File file;
     private final String dataPath;
 
-    private ArrayList<Way> relations;
+    private ArrayList<MapElement> relations;
     private float minlat, maxlat, minlon, maxlon;
     private LongFloatArrayHashMap nodes;
-    private Map<Long, LinkedList<Way>> relationMap;
+    private Map<Long, LinkedList<Polygon>> relationMap;
 
     private ChunkGenerator chunkGenerator;
 
@@ -52,8 +52,12 @@ public class FileHandler {
         if (file.getName().contains("bz2")) {
             parse(new BZip2CompressorInputStream(new FileInputStream(file)));
         } else {
-            ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
-            parseRelations(relationReader);
+            try {
+                ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
+                parseRelations(relationReader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             parse(new FileInputStream(file));
         }
     }
@@ -105,63 +109,62 @@ public class FileHandler {
         System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
     }
 
-    private void parseRelations(ReversedLinesFileReader reader) {
-        try {
-            first:
-            for (String line = reader.readLine(); !line.equals("  </way>"); line = reader.readLine()) {
-                if (!line.equals("  </relation>")) continue;
+    private void parseRelations(ReversedLinesFileReader reader) throws IOException {
+        nextRelation:
+        for (String line = reader.readLine().trim(); !line.equals("</way>"); line = reader.readLine().trim()) {
+            if (!line.equals("</relation>")) continue;
 
-                List<String> tags = new ArrayList<>();
-                List<Long> outer = new ArrayList<>();
-                List<Long> inner = new ArrayList<>();
-                for (line = reader.readLine(); !line.startsWith("  <relation"); line = reader.readLine()) {
-                    if (line.startsWith("    <tag")) {
-                        String[] temp = line.split("\"");
-                        tags.add(temp[1]);
-                        tags.add(temp[3]);
-                        if (temp[1].equals("type") && !temp[3].equals("multipolygon")) {
-                            continue first;
-                        }
-                        continue;
+            List<String> tags = new ArrayList<>();
+            List<Long> outer = new ArrayList<>();
+            List<Long> inner = new ArrayList<>();
+            for (line = reader.readLine().trim(); !line.startsWith("<relation"); line = reader.readLine().trim()) {
+                if (line.startsWith("<tag")) {
+                    String[] temp = line.split("\"");
+                    tags.add(temp[1]);
+                    tags.add(temp[3]);
+                    if (temp[1].equals("type") && !temp[3].equals("multipolygon")) {
+                        continue nextRelation;
                     }
-                    if (line.startsWith("    <member")) {
-                        String[] temp = line.split("\"");
-                        long ref = Long.parseLong(temp[3]);
-                        if (temp[5].equals("outer")) {
-                            outer.add(ref);
-                        } else if (temp[5].equals("inner")) {
-                            inner.add(ref);
-                        }
+                    continue;
+                }
+                if (line.startsWith("<member")) {
+                    String[] temp = line.split("\"");
+                    long ref = Long.parseLong(temp[3]);
+                    if (temp[5].equals("outer")) {
+                        outer.add(ref);
+                    } else if (temp[5].equals("inner")) {
+                        inner.add(ref);
                     }
                 }
-
-                Way way = new Way(new ArrayList<>(), tags, outer, inner);
-                relations.add(way);
-                outer.forEach(ref -> {
-                    if (relationMap.containsKey(ref)) {
-                        relationMap.get(ref).add(way);
-                    } else {
-                        relationMap.put(ref, new LinkedList<>());
-                        relationMap.get(ref).add(way);
-                    }
-                });
-                inner.forEach(ref -> {
-                    if (relationMap.containsKey(ref)) {
-                        relationMap.get(ref).add(way);
-                    } else {
-                        relationMap.put(ref, new LinkedList<>());
-                        relationMap.get(ref).add(way);
-                    }
-                });
-
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            
+            if (outer.isEmpty()) continue;
+
+            long id = Long.parseLong(line.split("\"")[1]);
+
+            Polygon polygon = new Polygon(id, tags, outer, inner);
+            relations.add(polygon);
+            outer.forEach(ref -> {
+                if (relationMap.containsKey(ref)) {
+                    relationMap.get(ref).add(polygon);
+                } else {
+                    relationMap.put(ref, new LinkedList<>());
+                    relationMap.get(ref).add(polygon);
+                }
+            });
+            inner.forEach(ref -> {
+                if (relationMap.containsKey(ref)) {
+                    relationMap.get(ref).add(polygon);
+                } else {
+                    relationMap.put(ref, new LinkedList<>());
+                    relationMap.get(ref).add(polygon);
+                }
+            });
         }
     }
 
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
-        List<Float> coords = new ArrayList<>();
+        CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
         long[] nodeIds = new long[]{-1,0};
         while (input.hasNext()) {
@@ -194,11 +197,11 @@ public class FileHandler {
             }
         }
 
-        Way way = new Way(coords, tags, new ArrayList<>(), new ArrayList<>(), nodeIds);
+        Way way = new Way(id, tags, coords);
 
         if (relationMap.containsKey(id)) {
             relationMap.get(id).forEach(relation -> {
-                relation.addRelatedWay(way, id);
+                relation.addWay(way);
             });
         }
 

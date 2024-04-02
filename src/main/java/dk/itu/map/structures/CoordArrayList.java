@@ -3,7 +3,7 @@ package dk.itu.map.structures;
 import java.util.Arrays;
 
 public class CoordArrayList {
-    private final int ARRAY_INIT_SIZE = 100_000;
+    private final int ARRAY_INIT_SIZE = 10;
     private float[] array;
     private int size;
 

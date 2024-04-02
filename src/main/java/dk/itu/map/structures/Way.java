@@ -26,8 +26,8 @@ public class Way {
      * Only use for FileHandler
      */
     public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new CoordArrayList(10);
-        innerCoords = new CoordArrayList(10);
+        outerCoords = new CoordArrayList();
+        innerCoords = new CoordArrayList();
         this.outerRef = outerRef;
         this.innerRef = innerRef;
         this.tempOuterWays = new Way[outerRef.size()];

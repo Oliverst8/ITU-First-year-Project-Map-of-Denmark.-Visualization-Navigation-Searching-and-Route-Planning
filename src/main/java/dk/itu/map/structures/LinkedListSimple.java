@@ -1,9 +1,10 @@
 package dk.itu.map.structures;
 import java.util.Collection;
+import java.util.Iterator;
 
-public class LinkedListSimple<E> {
-    transient int size = 0;
-    transient Node<E> first;
+public class LinkedListSimple<E> implements Iterable<E> {
+    private int size = 0;
+    private Node<E> first;
     
     public LinkedListSimple(Collection<E> c) {
         addAll(c);
@@ -11,6 +12,7 @@ public class LinkedListSimple<E> {
 
     private void addAll(Collection<E> c) {
         Node<E> current = null;
+        size = c.size();
 
         for (E e : c) {
             if (current == null) {
@@ -24,6 +26,26 @@ public class LinkedListSimple<E> {
 
     public Node<E> getFirst() {
         return first;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            Node<E> current = first;
+
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            public E next() {
+                E item = current.getValue();
+                current = current.getNext();
+                return item;
+            }
+        };
     }
 
     /*

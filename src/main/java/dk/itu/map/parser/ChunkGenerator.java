@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.CoordArrayList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
-class Chunk extends HashSet<Way> {}
+class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
@@ -33,7 +33,7 @@ public class ChunkGenerator implements Runnable {
     private File[][] files;
 
     private int tempCounter = 0;
-    private List<Way> rawWays;
+    private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
 
@@ -95,18 +95,18 @@ public class ChunkGenerator implements Runnable {
             (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
-    public void addWay(Way way) { // main
+    public void addWay(MapElement way) { // main
         rawWays.add(way);
     }
 
     public void chunkWays() {
-        List<Way> newWays = rawWays;
+        List<MapElement> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         forWay:
-        for (Way way : newWays) {
+        for (MapElement way : newWays) {
             byte zoomLevel = -1;
-            String[] tags = way.getTags();
+            List<String> tags = way.getTags();
             for (String tag : tags) {
                 switch (tag) {
                     case "ferry":
@@ -152,17 +152,17 @@ public class ChunkGenerator implements Runnable {
                         break;
                 }
             }
-            if (way.isRelation() && zoomLevel == -1) {
+            if (way instanceof Polygon && zoomLevel == -1) {
                 zoomLevel = 3;
             }
             if (zoomLevel == -1) continue;
             // if (zoomLevel == -1) zoomLevel = 0;
             // way.setZoomLevel( zoomLevel);
 
-            float[] coords = way.getCoords();
-            for (int i = 0; i < coords.length; i += 2) {
-                float lat = coords[i];
-                float lon = coords[i + 1];
+            CoordArrayList coords = way.getCoords();
+            for (int i = 0; i < coords.size(); i += 2) {
+                float lat = coords.get(i);
+                float lon = coords.get(i + 1);
 
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 
@@ -201,7 +201,7 @@ public class ChunkGenerator implements Runnable {
                     DataOutputStream stream = new DataOutputStream(
                             new BufferedOutputStream(
                                 new FileOutputStream(files[i][j], true)));
-                    for (Way way : zoomLayers.get(i).get(j)) {
+                    for (MapElement way : zoomLayers.get(i).get(j)) {
                         way.stream(stream);
                     }
                     stream.close();
@@ -246,7 +246,7 @@ public class ChunkGenerator implements Runnable {
         System.out.println(tempCounter);
     }
 
-    public void setWays(ArrayList<Way> rawWay) {
+    public void setWays(ArrayList<MapElement> rawWay) {
         this.rawWays = rawWay;
     }
 
