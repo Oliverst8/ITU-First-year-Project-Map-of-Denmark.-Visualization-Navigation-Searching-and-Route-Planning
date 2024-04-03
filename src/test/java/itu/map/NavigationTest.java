@@ -1,8 +1,10 @@
 package itu.map;
 
 import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.LongArrayList;
 import dk.itu.map.structures.Way;
 import dk.itu.map.utility.Navigation;
+import dk.itu.map.structures.FloatArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,33 @@ class NavigationTest {
         Navigation navigation = new Navigation(graph);
         Way path = navigation.getPath(0, 10);
         assertNotNull(path);
+        FloatArrayList expectedCoords = new FloatArrayList();
+        expectedCoords.add(0f);
+        expectedCoords.add(0f);
+        expectedCoords.add(1f);
+        expectedCoords.add(1f);
+        expectedCoords.add(1f);
+        expectedCoords.add(2f);
+
+        LongArrayList pathIDs = new LongArrayList();
+        pathIDs.add(10);
+        pathIDs.add(1);
+        pathIDs.add(0);
+
+        Way expectedPath = new Way(expectedCoords.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
+
+        assertEquals(expectedPath, path);
+    }
+
+    @Test
+    void testGetPathNoPath() {
+        Graph graph = getGraph1();
+        Way secondWay = new Way(new float[]{1f,2f,3f,4f}, new float[]{}, new String[]{""}, new long[]{10,11});
+        graph.addWay(secondWay);
+        graph.run();
+        Navigation navigation = new Navigation(graph);
+        Way path = navigation.getPath(1, 11);
+        assertNull(path);
     }
 
 }
