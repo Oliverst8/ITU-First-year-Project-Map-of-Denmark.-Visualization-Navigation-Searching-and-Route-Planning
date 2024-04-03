@@ -30,10 +30,22 @@ class NavigationTest {
     }
 
     @Test
-    void getPath() {
+    void testGetPathOneWay() {
         Graph graph = getGraph1();
         Navigation navigation = new Navigation(graph);
         Way path = navigation.getPath(0, 9);
         assertNotNull(path);
     }
+
+    @Test
+    void testGetPathTwoWays() {
+        Graph graph = getGraph1();
+        Way secondWay = new Way(new float[]{1f,2f,3f,4f}, new float[]{}, new String[]{""}, new long[]{10,1});
+        graph.addWay(secondWay);
+        graph.run();
+        Navigation navigation = new Navigation(graph);
+        Way path = navigation.getPath(0, 10);
+        assertNotNull(path);
+    }
+
 }

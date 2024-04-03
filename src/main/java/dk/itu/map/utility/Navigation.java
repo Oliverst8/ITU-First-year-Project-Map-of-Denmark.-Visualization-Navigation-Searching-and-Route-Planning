@@ -2,6 +2,7 @@ package dk.itu.map.utility;
 
 import dk.itu.map.structures.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -13,6 +14,18 @@ public class Navigation {
     public Navigation(Graph graph){
         this.graph = graph;
         vertexTo = new int[graph.size()];
+        Arrays.fill(vertexTo, -1);
+    }
+
+    private boolean buildPaths(int startPoint, int endPoint){
+        queue = new ChangablePriorityQueue(graph);
+        queue.decreaseValueTo(startPoint, 0);
+        while(!queue.isEmpty()){
+            int min = queue.deleteMinValue();
+            if(min == endPoint) return true;
+            relax(min);
+        }
+        return false;
     }
 
     private void relax(int vertex){
@@ -25,17 +38,6 @@ public class Navigation {
                 vertexTo[destination] = vertex;
             }
         }
-    }
-
-    private boolean buildPaths(int startPoint, int endPoint){
-        queue = new ChangablePriorityQueue(graph);
-        queue.decreaseValueTo(startPoint, 0);
-        while(!queue.isEmpty()){
-            int min = queue.deleteMinValue();
-            if(min == endPoint) return true;
-            relax(min);
-        }
-        return false;
     }
 
     public Way getPath(long startPoint, long endPoint){
