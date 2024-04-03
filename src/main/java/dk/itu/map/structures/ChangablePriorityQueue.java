@@ -57,10 +57,10 @@ public class ChangablePriorityQueue {
         int index = id;
 
         if(value[id] >= Float.MAX_VALUE) {
-            //if(value[id] == id) {
+            if(value[id] == id) {
                 exch(currentSize, id);
                 index = currentSize;
-            //}
+            }
             currentSize++;
         }
 
