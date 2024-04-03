@@ -151,6 +151,21 @@ class ChangablePriorityQueueTest {
         assertEquals(2, priorityQueue.deleteMinValue());
     }
 
+    @Test
+    void testChangeValueAfterMove(){
+        Graph graph = new Graph();
+        Way way = new Way(new float[]{0f,0f,1f,1f,2f,2f}, new float[]{}, new String[]{""}, new long[]{0,1,2});
+        graph.addWay(way);
+        graph.stop();
+        graph.run();
+        priorityQueue = new ChangablePriorityQueue(graph);
+        priorityQueue.decreaseValueTo(0,2);
+        priorityQueue.deleteMinValue();
+        priorityQueue.decreaseValueTo(2,0);
+        priorityQueue.decreaseValueTo(0, -1);
+        assertEquals(0, priorityQueue.deleteMinValue());
+    }
+
 
 
 }
