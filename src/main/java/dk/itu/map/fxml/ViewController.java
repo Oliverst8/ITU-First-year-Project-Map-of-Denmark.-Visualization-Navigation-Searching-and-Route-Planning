@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public abstract class ViewController {
+abstract class ViewController {
 
     @FXML
     private MenuButton mapList;
@@ -42,13 +42,13 @@ public abstract class ViewController {
     protected void loadMaps() {
         File directoryPath = new File("maps/");
 
-        String maps[] = directoryPath.list();
+        String[] maps = directoryPath.list();
 
         // If the directory is empty, return.
         if (maps == null) return;
 
-        for(int i=0; i < maps.length; i++) {
-            MenuItem item = new MenuItem(maps[i]);
+        for (String map : maps) {
+            MenuItem item = new MenuItem(map);
             mapList.getItems().add(item);
 
             item.setOnAction(e -> {

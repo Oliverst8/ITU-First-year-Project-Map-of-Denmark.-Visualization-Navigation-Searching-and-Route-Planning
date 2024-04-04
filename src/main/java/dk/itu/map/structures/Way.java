@@ -23,7 +23,7 @@ public class Way {
     private long[] nodeIDs;
 
     /**
-     * Only use for FileHandler
+     * Only use for OSMParser
      */
     public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
         outerCoords = new CoordArrayList();
@@ -142,7 +142,7 @@ public class Way {
     }
 
     /**
-     * Also only used in fileHandler
+     * Also only used in fileHandler gg
      */
     public void addRelatedWay(Way way, long id) {
         if (tempOuterWays == null || tempInnerWays == null)

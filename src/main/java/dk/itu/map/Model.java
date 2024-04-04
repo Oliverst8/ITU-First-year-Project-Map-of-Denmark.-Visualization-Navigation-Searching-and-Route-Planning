@@ -1,7 +1,7 @@
 package dk.itu.map;
 
 import dk.itu.map.structures.Way;
-import dk.itu.map.parser.FileHandler;
+import dk.itu.map.parser.OSMParser;
 import dk.itu.map.parser.ChunkHandler;
 
 import java.io.File;
@@ -17,13 +17,12 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamException;
 
 public class Model implements Serializable {
-    private final String dataPath = "maps";
-
+    private final String dataPath;
     public List<Map<Integer,List<Way>>> chunkLayers;
     public ChunkHandler chunkHandler;
 
     public Model() {
-        chunkHandler = null;
+        dataPath = "maps";
         chunkLayers = new ArrayList<>();
         for(int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
@@ -33,8 +32,8 @@ public class Model implements Serializable {
     public void importMap(String filePath, String name) {
         try {            
             if (!new File(dataPath + "/" + name + "/config").exists()) {
-                FileHandler fileHandler = new FileHandler(new File(filePath), dataPath + "/" + name);
-                fileHandler.load();
+                OSMParser OSMParser = new OSMParser(new File(filePath), dataPath + "/" + name);
+                OSMParser.load();
                 System.out.println("Finished importing map!");
             };
 
@@ -57,9 +56,9 @@ public class Model implements Serializable {
         for (int chunk : chunkSet) {
             newChunks[c++] = chunk;
         }
-        if(chunkSet.isEmpty()) {
-            return;
-        }
+
+        if(chunkSet.isEmpty()) return;
+
         chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
     }
 

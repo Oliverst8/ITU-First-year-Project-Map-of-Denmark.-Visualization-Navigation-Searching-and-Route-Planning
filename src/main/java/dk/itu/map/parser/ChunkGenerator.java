@@ -37,7 +37,7 @@ public class ChunkGenerator implements Runnable {
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
 
-    private Thread chunkingThread;
+    private final Thread chunkingThread;
 
     public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
         this.dataPath = dataPath;
@@ -62,6 +62,10 @@ public class ChunkGenerator implements Runnable {
 
         System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
+        createFiles(dataPath);
+    }
+
+    private void createFiles(String dataPath) {
         try {
             File folder = new File(dataPath);
             folder.mkdirs();
@@ -81,7 +85,7 @@ public class ChunkGenerator implements Runnable {
     }
 
     private void resetChunks() {
-        zoomLayers = new ArrayList<ZoomLayer>(chunkAmount);
+        zoomLayers = new ArrayList<>(chunkAmount);
         for (int i = 0; i < amountOfZoomLayers; i++) {
             zoomLayers.add(new ZoomLayer());
             for (int j = 0; j < chunkAmount; j++) {
@@ -173,9 +177,10 @@ public class ChunkGenerator implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         hasMoreWork = true;
-        while (hasMoreWork || rawWays.size() > 0) {
+        while (hasMoreWork || !rawWays.isEmpty()) {
             if (rawWays.size() < 100_000 && hasMoreWork) {
                 try {
                     Thread.sleep(10);
@@ -205,8 +210,6 @@ public class ChunkGenerator implements Runnable {
                         way.stream(stream);
                     }
                     stream.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NullPointerException e) {
@@ -225,29 +228,16 @@ public class ChunkGenerator implements Runnable {
 
     private void writeConfig() throws IOException {
         FileWriter writer = new FileWriter(dataPath + "/config");
-        StringBuilder builder = new StringBuilder();
-        builder.append("minlat: ").append(minlat).append("\n")
-            .append("maxlat: ").append(maxlat).append("\n")
-            .append("minlon: ").append(minlon).append("\n")
-            .append("maxlon: ").append(maxlon).append("\n")
-            .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
-            .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
-            .append("chunkAmount: ").append(chunkAmount).append("\n")
-            .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
-        writer.write(builder.toString());
+        String builder = "minlat: " + minlat + "\n" +
+                "maxlat: " + maxlat + "\n" +
+                "minlon: " + minlon + "\n" +
+                "maxlon: " + maxlon + "\n" +
+                "chunkColumnAmount: " + chunkColumnAmount + "\n" +
+                "chunkRowAmount: " + chunkRowAmount + "\n" +
+                "chunkAmount: " + chunkAmount + "\n" +
+                "CHUNK_SIZE: " + CHUNK_SIZE + "\n";
+        writer.write(builder);
         writer.close();
-    }
-
-    public void printAll() {
-        for (int i = 0; i < zoomLayers.size(); i++) {
-            // System.out.println(chunks.get(i);
-            System.out.println("nr " + i + ": " + zoomLayers.get(i).size());
-        }
-        System.out.println(tempCounter);
-    }
-
-    public void setWays(ArrayList<MapElement> rawWay) {
-        this.rawWays = rawWay;
     }
 
     public void finishWork() {

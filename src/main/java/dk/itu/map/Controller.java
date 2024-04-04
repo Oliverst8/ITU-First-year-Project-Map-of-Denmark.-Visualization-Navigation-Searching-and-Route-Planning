@@ -5,13 +5,16 @@ import javafx.stage.Stage;
 
 public class Controller {
 
+    private final Stage stage;
+    private final Model model;
     private final ViewBuilder viewBuilder;
-    private Model model = new Model();
-    private Stage stage;
+
 
     public Controller(Stage stage) {
-        viewBuilder = new ViewBuilder(this, model, "home");
+
         this.stage = stage;
+        this.model = new Model();
+        this.viewBuilder = new ViewBuilder(this, this.model, "home");
 
         setView("home");
     }

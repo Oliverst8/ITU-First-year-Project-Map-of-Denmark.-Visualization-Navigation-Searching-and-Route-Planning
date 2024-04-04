@@ -24,7 +24,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
-public class FileHandler {
+public class OSMParser {
     private final File file;
     private final String dataPath;
 
@@ -40,7 +40,7 @@ public class FileHandler {
      *
      * @param file
      */
-    public FileHandler(File file, String dataPath) {
+    public OSMParser(File file, String dataPath) {
         this.file = file;
         this.dataPath = dataPath;
 
@@ -62,11 +62,12 @@ public class FileHandler {
         }
     }
 
-    private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
+    private void parse(InputStream inputStream) throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         nodes = new LongFloatArrayHashMap();
         long startLoadTime = System.nanoTime();
 
+        whileLoop:
         while (input.hasNext()) {
             int tagKind = input.next();
 
@@ -83,7 +84,7 @@ public class FileHandler {
 
                     case "node" -> {
                         float[] cords = new float[2];
-                        Long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                        long id = Long.parseLong(input.getAttributeValue(null, "id"));
                         cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                         cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                         nodes.put(id, cords);
@@ -92,6 +93,10 @@ public class FileHandler {
                     case "way" -> {
                         long id = Long.parseLong(input.getAttributeValue(null, "id"));
                         createWay(input, nodes, id);
+                    }
+
+                    case "relation" -> {
+                        break whileLoop; //All relations are parsed in the first pass
                     }
                 }
             }
@@ -177,7 +182,7 @@ public class FileHandler {
             String innerType = input.getLocalName();
             if (innerType.equals("nd")) {
 
-                Long node = Long.parseLong(input.getAttributeValue(null, "ref"));
+                long node = Long.parseLong(input.getAttributeValue(null, "ref"));
 
                 if (nodeIds[0] == -1) {
                     nodeIds[0] = node;
@@ -205,10 +210,8 @@ public class FileHandler {
             });
         }
 
-        if (chunkGenerator == null) {
-            System.err.println("Chunkgenerator han not been made yet");
-        } else {
-            chunkGenerator.addWay(way);
-        }
+
+        chunkGenerator.addWay(way);
+
     }
 }

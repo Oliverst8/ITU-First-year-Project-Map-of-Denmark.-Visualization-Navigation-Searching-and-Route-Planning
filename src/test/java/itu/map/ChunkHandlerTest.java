@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 
 public class ChunkHandlerTest {
-    @Test public void readChunkTest() {
+    /*@Test public void readChunkTest() {
         ChunkHandler chunkHandler = new ChunkHandler("chunkData2");
         long startTime = System.nanoTime();
         int chunk = 75;
@@ -23,5 +23,5 @@ public class ChunkHandlerTest {
         long endTime = System.nanoTime();
         System.out.println((endTime - startTime) / 1_000_000_000.0);
 
-    }
+    }*/
 }

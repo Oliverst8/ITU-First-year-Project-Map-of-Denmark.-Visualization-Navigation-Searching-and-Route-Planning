@@ -29,8 +29,6 @@ public class ChunkHandler {
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
     public float CHUNK_SIZE;
 
-    // Temp variable to save loaded ways
-    public ArrayList<Way> ways;
 
     /**
      * Initialises the filehandler
@@ -39,7 +37,10 @@ public class ChunkHandler {
      */
     public ChunkHandler(String dataPath) {
         this.dataPath = dataPath;
+        loadConfig();
+    }
 
+    private void loadConfig() {
         try {
             File file = new File(this.dataPath + "/config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -59,8 +60,6 @@ public class ChunkHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        ways = new ArrayList<>();
     }
 
     public int latLonToChunkIndex(float lat, float lon) {
@@ -79,10 +78,6 @@ public class ChunkHandler {
         chunkIndex = Math.min(chunkIndex, chunkAmount-1);
         chunkIndex = Math.max(chunkIndex, 0);
         return chunkIndex;
-    }
-
-    public Map<Integer, List<Way>> loadBytes(int chunk, int zoomLevel) {
-        return loadBytes(new int[] { chunk }, zoomLevel);
     }
 
     public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {

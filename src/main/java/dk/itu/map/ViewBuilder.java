@@ -44,7 +44,7 @@ public class ViewBuilder implements Builder<Region> {
             System.out.println("Error loading fxml");
             e.printStackTrace();
 
-            return new BorderPane();
+            throw new RuntimeException(e);
         }
     }
 
