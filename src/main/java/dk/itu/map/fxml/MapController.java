@@ -51,9 +51,9 @@ public class MapController extends ViewController {
         gc.setLineJoin(StrokeLineJoin.ROUND);
         trans = new Affine();
 
-        trans.prependTranslation(-0.56*this.viewModel.chunkLoader.minlon, this.viewModel.chunkLoader.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
+        trans.prependTranslation(-0.56*this.viewModel.chunkLoader.minLon, this.viewModel.chunkLoader.maxLat); //Calling the code of pan, to prevent redraw before zoom has been run
         //This is done to avoid getheight and getwidth from canvas, returning way to big values
-        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkLoader.maxlat - this.viewModel.chunkLoader.minlat));
+        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkLoader.maxLat - this.viewModel.chunkLoader.minLat));
 
         startZoom = getZoomDistance();
         redraw();
