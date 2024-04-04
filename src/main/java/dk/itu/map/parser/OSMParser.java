@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ public class OSMParser {
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
-    private float minlat, maxlat, minlon, maxlon;
     private LongFloatArrayHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 
@@ -74,12 +72,13 @@ public class OSMParser {
             if (tagKind == XMLStreamConstants.START_ELEMENT) {
                 String type = input.getLocalName();
                 switch (type) {
+
                     case "bounds" -> {
-                        minlat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
-                        maxlat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
-                        minlon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
-                        maxlon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                        chunkGenerator = new ChunkGenerator(dataPath, minlat, maxlat, minlon, maxlon);
+                        float minLat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
+                        float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
+                        float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
+                        float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
+                        chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon);
                     }
 
                     case "node" -> {
