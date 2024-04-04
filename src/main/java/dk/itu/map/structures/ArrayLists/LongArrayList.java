@@ -17,7 +17,7 @@ public class LongArrayList extends PrimitiveArrayList {
     /**
      * Constructor for the LongArrayList class
      * Initializes the array with the given size
-     * @param init_size
+     * @param init_size size of the array
      */
     public LongArrayList(int init_size) {
         super();
@@ -27,7 +27,7 @@ public class LongArrayList extends PrimitiveArrayList {
     /**
      * Adds a value to the empty spot in the array.
      * If the array is full, it will resize the array.
-     * @param value
+     * @param value to be inserted
      */
     public void add(long value) {
         if (size >= list.length) {
@@ -39,8 +39,8 @@ public class LongArrayList extends PrimitiveArrayList {
 
     /**
      * Returns the value at the given index.
-     * @param index
-     * @return float
+     * @param index to be gotten
+     * @return long the value at the index
      */
     public long get(int index) {
         return list[index];

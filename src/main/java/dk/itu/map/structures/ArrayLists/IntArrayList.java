@@ -17,7 +17,7 @@ public class IntArrayList extends PrimitiveArrayList {
     /**
      * Constructor for the IntArrayList class
      * Initializes the array with the given size
-     * @param init_size
+     * @param init_size to be initialized
      */
     public IntArrayList(int init_size) {
         super();
@@ -38,7 +38,7 @@ public class IntArrayList extends PrimitiveArrayList {
     /**
      * Adds a value to the empty spot in the array.
      * If the array is full, it will resize the array.
-     * @param value
+     * @param value to be inserted
      */
     public void add(int value) {
         if(size + 1 > array.length) {
@@ -50,8 +50,8 @@ public class IntArrayList extends PrimitiveArrayList {
 
     /**
      * Returns the value at the given index.
-     * @param index
-     * @return float
+     * @param index to be gotten
+     * @return int the value at the given index
      */
     public int get(int index) {
         return array[index];

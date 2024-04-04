@@ -48,7 +48,7 @@ public class CoordArrayList extends PrimitiveArrayList {
     /**
      * Adds a value to the empty spot in the array.
      * If the array is full, it will resize the array.
-     * @param value
+     * @param value to be inserted
      */
     public void add(float value) {
         if (size + 1 > array.length) {
@@ -61,7 +61,7 @@ public class CoordArrayList extends PrimitiveArrayList {
     /**
      * Adds an array of values to the empty spots in the array.
      * If the array is full, it will resize the array.
-     * @param values
+     * @param values to be inserted
      */
     public void addAll(float[] values) {
         while (size + values.length > array.length) {
@@ -100,8 +100,8 @@ public class CoordArrayList extends PrimitiveArrayList {
 
     /**
      * Returns the value at the given index.
-     * @param index
-     * @return float
+     * @param index to be gotten
+     * @return float value at the index
      */
     public float get(int index) {
         if (index < 0)
