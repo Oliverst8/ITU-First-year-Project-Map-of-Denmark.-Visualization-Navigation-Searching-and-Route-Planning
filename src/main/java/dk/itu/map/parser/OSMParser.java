@@ -1,13 +1,12 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.LongFloatArrayHashMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import java.util.List;
 import java.util.Map;

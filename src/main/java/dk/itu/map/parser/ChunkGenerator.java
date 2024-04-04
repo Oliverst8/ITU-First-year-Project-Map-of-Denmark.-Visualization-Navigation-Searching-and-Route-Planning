@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 
 import java.util.List;
 import java.util.HashSet;

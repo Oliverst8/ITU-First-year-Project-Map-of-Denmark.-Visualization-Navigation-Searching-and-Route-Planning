@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.LinkedListSimple.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

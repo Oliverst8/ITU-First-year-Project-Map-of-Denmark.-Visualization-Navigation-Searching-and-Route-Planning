@@ -4,7 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import dk.itu.map.structures.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 class Way extends MapElement {
     private CoordArrayList coords;
