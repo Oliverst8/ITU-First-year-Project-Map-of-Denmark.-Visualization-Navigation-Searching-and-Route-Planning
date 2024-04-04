@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.LongFloatArrayHashMap;
 
 import java.io.File;

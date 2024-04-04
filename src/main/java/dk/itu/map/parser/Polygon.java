@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.util.List;
 import java.util.Arrays;
 
-import dk.itu.map.structures.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.LinkedListSimple;
 import dk.itu.map.structures.LinkedListSimple.Node;
 

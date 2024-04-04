@@ -2,8 +2,7 @@ package itu.map;
 
 import org.junit.jupiter.api.Test;
 
-import dk.itu.map.structures.CoordArrayList;
-import dk.itu.map.structures.LongFloatArrayHashMap;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 

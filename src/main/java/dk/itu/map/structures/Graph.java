@@ -1,5 +1,9 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
+
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -13,10 +17,10 @@ public class Graph implements Runnable {
     private boolean running = true;
 
     public Graph() {
-        edges = new CoordArrayList();
+        edges = new CoordArrayList(50_000);
         ways = Collections.synchronizedList(new ArrayList<>());
         idToIndex = new HashMap<>();
-        ids = new LongArrayList(); 
+        ids = new LongArrayList(50_000);
     }
 
     private float calcWeight(Way way) {
