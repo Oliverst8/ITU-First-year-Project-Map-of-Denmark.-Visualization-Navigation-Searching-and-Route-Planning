@@ -49,12 +49,14 @@ class NavigationTest {
         Way path = navigation.getPath(0, 10);
         assertNotNull(path);
         FloatArrayList expectedCoords = new FloatArrayList();
-        expectedCoords.add(0f);
-        expectedCoords.add(0f);
-        expectedCoords.add(1f);
-        expectedCoords.add(1f);
+
         expectedCoords.add(1f);
         expectedCoords.add(2f);
+        expectedCoords.add(1f);
+        expectedCoords.add(1f);
+        expectedCoords.add(0f);
+        expectedCoords.add(0f);
+
 
         LongArrayList pathIDs = new LongArrayList();
         pathIDs.add(10);

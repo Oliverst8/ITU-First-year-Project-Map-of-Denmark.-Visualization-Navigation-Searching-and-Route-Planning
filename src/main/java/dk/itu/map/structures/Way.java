@@ -65,7 +65,27 @@ public class Way implements Serializable {
         this.nodeIDs = nodeIDs;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Way) {
+            Way other = (Way) obj;
+            if (other.outerCoords.size() != outerCoords.size() || other.innerCoords.size() != innerCoords.size()) {
+                return false;
+            }
+            for (int i = 0; i < outerCoords.size(); i++) {
+                if (other.outerCoords.get(i) != outerCoords.get(i)) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < innerCoords.size(); i++) {
+                if (other.innerCoords.get(i) != innerCoords.get(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
