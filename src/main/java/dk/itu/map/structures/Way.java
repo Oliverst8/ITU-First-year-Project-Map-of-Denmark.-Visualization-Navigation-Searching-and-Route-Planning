@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import dk.itu.map.structures.LinkedListSimple.Node;
+import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -169,7 +169,7 @@ public class Way {
             }
         }
         if (filled) {
-            LinkedListSimple<Way> queuedWays = new LinkedListSimple<>(Arrays.asList(tempOuterWays));
+            SimpleLinkedList<Way> queuedWays = new SimpleLinkedList<>(Arrays.asList(tempOuterWays));
             if (tempOuterWays.length == 0) return;
 
             Node<Way> current = queuedWays.getFirst();

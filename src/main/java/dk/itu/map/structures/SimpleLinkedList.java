@@ -2,13 +2,13 @@ package dk.itu.map.structures;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class LinkedListSimple<E> implements Iterable<E> {
+public class SimpleLinkedList<E> implements Iterable<E> {
     private int size = 0;
     private Node<E> first;
 
-    public LinkedListSimple() {}
+    public SimpleLinkedList() {}
     
-    public LinkedListSimple(Collection<E> c) {
+    public SimpleLinkedList(Collection<E> c) {
         addAll(c);
     }
 

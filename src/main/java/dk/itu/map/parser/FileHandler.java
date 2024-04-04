@@ -1,7 +1,7 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.CoordArrayList;
-import dk.itu.map.structures.LongFloatArrayHashMap;
+import dk.itu.map.structures.LongCoordHashMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class FileHandler {
 
     private ArrayList<MapElement> relations;
     private float minlat, maxlat, minlon, maxlon;
-    private LongFloatArrayHashMap nodes;
+    private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 
     private ChunkGenerator chunkGenerator;
@@ -64,7 +64,7 @@ public class FileHandler {
 
     private void parse(InputStream inputStream) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        nodes = new LongFloatArrayHashMap();
+        nodes = new LongCoordHashMap();
         long startLoadTime = System.nanoTime();
 
         while (input.hasNext()) {
@@ -163,7 +163,7 @@ public class FileHandler {
         }
     }
 
-    private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
+    private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
         long[] nodeIds = new long[]{-1,0};

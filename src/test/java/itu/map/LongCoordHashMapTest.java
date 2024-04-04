@@ -2,13 +2,13 @@ package itu.map;
 
 import org.junit.jupiter.api.Test;
 
-import dk.itu.map.structures.LongFloatArrayHashMap;
+import dk.itu.map.structures.LongCoordHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LongFloatArrayHashMapTest {
+public class LongCoordHashMapTest {
     @Test public void addOneMillionSmallNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 0; i < 1_000_000; i++) {
             map.put(i, new float[] {i, i});
         }
@@ -17,7 +17,7 @@ public class LongFloatArrayHashMapTest {
     }
 
     @Test public void addOneMillionLargeNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 30_000_000_000l; i < 30_000_000_000l + 1_000_000; i++) {
             map.put(i, new float[] {i, i});
         }
@@ -26,7 +26,7 @@ public class LongFloatArrayHashMapTest {
     }
 
     @Test public void addTwentyMillionLargeNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 30_000_000_000l; i < 30_000_000_000l + 20_000_000; i++) {
             map.put(i, new float[] {i, i});
         }
@@ -35,7 +35,7 @@ public class LongFloatArrayHashMapTest {
     }
 
     @Test public void addAndRemoveOneMillionLargeNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 30_000_000_000l; i < 30_000_000_000l + 1_000_000; i++) {
             map.put(i, new float[] {i, i});
         }
@@ -48,7 +48,7 @@ public class LongFloatArrayHashMapTest {
     }
 
     @Test public void addAndRemoveTenMillionLargeNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 30_000_000_000l; i < 30_000_000_000l + 10_000_000; i++) {
             map.put(i, new float[] {i, i});
         }
@@ -61,7 +61,7 @@ public class LongFloatArrayHashMapTest {
     }
 
     @Test public void addAndRemoveTwentyMillionLargeNumbers() {
-        LongFloatArrayHashMap map = new LongFloatArrayHashMap();
+        LongCoordHashMap map = new LongCoordHashMap();
         for (long i = 30_000_000_000l; i < 30_000_000_000l + 20_000_000; i++) {
             map.put(i, new float[] {i, i});
         }

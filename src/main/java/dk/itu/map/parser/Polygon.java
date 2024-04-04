@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Arrays;
 
 import dk.itu.map.structures.CoordArrayList;
-import dk.itu.map.structures.LinkedListSimple;
-import dk.itu.map.structures.LinkedListSimple.Node;
+import dk.itu.map.structures.SimpleLinkedList;
+import dk.itu.map.structures.SimpleLinkedList.Node;
 
 class Polygon extends MapElement {
     private final int totalWays;
@@ -18,8 +18,8 @@ class Polygon extends MapElement {
 
     private final Way[] stagedOuterWays;
     private final Way[] stagedInnerWays;
-    private LinkedListSimple<Way> outerWays;
-    private LinkedListSimple<Way> innerWays;
+    private SimpleLinkedList<Way> outerWays;
+    private SimpleLinkedList<Way> innerWays;
     
     public Polygon(long id, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
         super(id, tags);
@@ -29,8 +29,8 @@ class Polygon extends MapElement {
         this.innerRef = innerRef;
         this.stagedOuterWays = new Way[outerRef.size()];
         this.stagedInnerWays = new Way[innerRef.size()];
-        this.outerWays = new LinkedListSimple<>();
-        this.innerWays = new LinkedListSimple<>();
+        this.outerWays = new SimpleLinkedList<>();
+        this.innerWays = new SimpleLinkedList<>();
         this.totalWays = outerRef.size() + innerRef.size();
     }
 
@@ -97,7 +97,7 @@ class Polygon extends MapElement {
         if (stagedInnerWays.length > 0) innerWays = orderWays(stagedInnerWays);
     }
 
-    private int countCoords(LinkedListSimple<Way> ways) {
+    private int countCoords(SimpleLinkedList<Way> ways) {
         int count = 0;
 
         if (ways == null) return count;
@@ -108,8 +108,8 @@ class Polygon extends MapElement {
         return count;
     }
 
-    private LinkedListSimple<Way> orderWays(Way[] ways) {
-        LinkedListSimple<Way> orderedWays = new LinkedListSimple<Way>(Arrays.asList(ways));
+    private SimpleLinkedList<Way> orderWays(Way[] ways) {
+        SimpleLinkedList<Way> orderedWays = new SimpleLinkedList<Way>(Arrays.asList(ways));
 
         Node<Way> current = orderedWays.getFirst();
         float[] initialNode = current.getValue().getFirstCoords(); // First node in each separate shape.

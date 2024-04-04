@@ -3,7 +3,6 @@ package itu.map;
 import org.junit.jupiter.api.Test;
 
 import dk.itu.map.structures.CoordArrayList;
-import dk.itu.map.structures.LongFloatArrayHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
