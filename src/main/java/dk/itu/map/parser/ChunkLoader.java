@@ -38,7 +38,9 @@ public class ChunkLoader {
         this.dataPath = dataPath;
         loadConfig();
     }
-
+    /**
+     * Load the config file, and set the variables
+     */
     private void loadConfig() {
         try {
             File file = new File(this.dataPath + "/config");
@@ -60,11 +62,24 @@ public class ChunkLoader {
             e.printStackTrace();
         }
     }
+    /**
+     * Converts a latitude and longitude to a chunk index
+     *
+     * @param lat The latitude
+     * @param lon The longitude
+     * @return The chunk index
+     */
 
     public int latLonToChunkIndex(float lat, float lon) {
         return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
             (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
     }
+    /**
+     * Converts a javaFX-point to a chunk index
+     *
+     * @param p The point
+     * @return The chunk index
+     */
 
     public int pointToChunkIndex(Point2D p) {
         float X = (float) p.getX()/0.56f;
@@ -78,6 +93,13 @@ public class ChunkLoader {
         chunkIndex = Math.max(chunkIndex, 0);
         return chunkIndex;
     }
+    /**
+     * Load the data from the chunkfiles
+     *
+     * @param chunks The chunks to load
+     * @param zoomLevel The zoom level
+     * @return The ways
+     */
 
     public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
         Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());

@@ -37,6 +37,16 @@ public class ChunkGenerator implements Runnable {
 
     private final Thread chunkingThread;
 
+
+    /**
+     * Constructor for the ChunkGenerator class
+     *
+     * @param dataPath The path to the data folder
+     * @param minLat The minimum latitude
+     * @param maxLat The maximum latitude
+     * @param minLon The minimum longitude
+     * @param maxLon The maximum longitude
+     */
     public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
         this.dataPath = dataPath;
         this.hasMoreWork = false;
@@ -63,6 +73,11 @@ public class ChunkGenerator implements Runnable {
         createFiles(dataPath);
     }
 
+   /**
+     * Create the files for the chunks
+     *
+     * @param dataPath The path to the data folder
+     */
     private void createFiles(String dataPath) {
         try {
             File folder = new File(dataPath);
@@ -81,6 +96,9 @@ public class ChunkGenerator implements Runnable {
             System.out.println("failed " + e.getMessage());
         }
     }
+    /**
+     * Removes the chunks that have been parsed, and makes room for new chunks to be added.
+     */
 
     private void resetChunks() {
         zoomLayers = new ArrayList<>(chunkAmount);
@@ -91,16 +109,29 @@ public class ChunkGenerator implements Runnable {
             }
         }
     }
-
+    /**
+     * Converts coordinates to a chunk index
+     *
+     * @param lat The latitude
+     * @param lon The longitude
+     * @return The chunk index
+     */
     private int coordsToChunkIndex(float lat, float lon) {
         return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
             (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
     }
+    /**
+     * Adds a way to the list of ways to be chunked
+     *
+     * @param way The way to be added
+     */
 
     public void addWay(MapElement way) {
         rawWays.add(way);
     }
-
+    /**
+     * Sort ways into chunks and zoom levels
+     */
     public void chunkWays() {
         List<MapElement> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
@@ -170,6 +201,9 @@ public class ChunkGenerator implements Runnable {
         }
     }
 
+    /**
+     * The main loop of the ChunkGenerator
+     */
     @Override
     public void run() {
         hasMoreWork = true;
@@ -191,7 +225,9 @@ public class ChunkGenerator implements Runnable {
         }
         System.out.println("Finished while loop");
     }
-
+    /**
+     * Write the chunks to binaryfiles
+     */
     public void writeFiles() {
         IntStream.range(0, amountOfZoomLayers).forEach(i -> {
             IntStream.range(0, zoomLayers.get(i).size()).parallel().forEach(j -> {
@@ -218,6 +254,9 @@ public class ChunkGenerator implements Runnable {
             e.printStackTrace();
         }
     }
+    /**
+     * Write the configuration file, with map constants
+     */
 
     private void writeConfig() throws IOException {
         FileWriter writer = new FileWriter(dataPath + "/config");
@@ -232,7 +271,9 @@ public class ChunkGenerator implements Runnable {
                 "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
-
+    /**
+     * Used to mark the finish of ChunkGenerator and prevent it from continuing
+     */
     public void finishWork() {
         hasMoreWork = false;
         try {

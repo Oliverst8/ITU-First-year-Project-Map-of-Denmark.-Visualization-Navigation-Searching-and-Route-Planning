@@ -34,9 +34,10 @@ public class OSMParser {
     private ChunkGenerator chunkGenerator;
 
     /**
-     * Initialises the filehandler
+     * Constructor for the OSMParser class
      *
-     * @param file
+     * @param file The file to be parsed
+     * @param dataPath The path to the data folder
      */
     public OSMParser(File file, String dataPath) {
         this.file = file;
@@ -45,6 +46,10 @@ public class OSMParser {
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
     }
+
+    /**
+     * Load the file and parse it
+     */
 
     public void load() throws IOException, XMLStreamException {
         if (file.getName().contains("bz2")) {
@@ -59,6 +64,11 @@ public class OSMParser {
             parse(new FileInputStream(file));
         }
     }
+    /**
+     * Parse the input stream
+     *
+     * @param inputStream The input stream to be parsed
+     */
 
     private void parse(InputStream inputStream) throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
@@ -112,6 +122,11 @@ public class OSMParser {
         long endWriteTime = System.nanoTime();
         System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
     }
+    /**
+     * Parse the relations
+     *
+     * @param reader The reader to be parsed
+     */
 
     private void parseRelations(ReversedLinesFileReader reader) throws IOException {
         nextRelation:
@@ -167,6 +182,13 @@ public class OSMParser {
         }
     }
 
+    /**
+     * Create a way
+     *
+     * @param input The input from the OSM-file
+     * @param nodes The nodes of the way
+     * @param id The id of the way
+     */
     private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
