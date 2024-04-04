@@ -39,6 +39,14 @@ public class Graph implements Runnable, Serializable {
 
     public void run() {
         while(running || !ways.isEmpty()){
+            if(running && ways.size() < 100_000){
+                try {
+                    Thread.sleep(30);
+                    continue;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             while(!ways.isEmpty()){
                 Way way = ways.remove(0);
                 float[] coords = way.getCoords();
