@@ -1,6 +1,5 @@
 package dk.itu.map;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 import javafx.util.Builder;
@@ -13,6 +12,17 @@ public class ViewBuilder implements Builder<Region> {
     private final Model viewModel;
     private String view;
 
+    public enum Views {
+        Home,
+        Map;
+    }
+
+    /**
+     * The view builder is responsible for building the views, this includes loading the FXML files and setting the controller.
+     * @param controller The controller of the application
+     * @param viewModel The view model of the application
+     * @param initialView The initial view to be displayed
+     */
     public ViewBuilder(Controller controller, Model viewModel, String initialView) {
         this.controller = controller;
         this.viewModel = viewModel;
@@ -23,7 +33,7 @@ public class ViewBuilder implements Builder<Region> {
     public Region build() {
         FXMLLoader loader = new FXMLLoader();
 
-        loader.setLocation(getClass().getResource("/scenes/" + view + ".fxml"));
+        loader.setLocation(getClass().getResource("/scenes/" + view.toLowerCase() + ".fxml"));
 
         // Set the controller based on the viewname
         try {
@@ -34,21 +44,22 @@ public class ViewBuilder implements Builder<Region> {
             Object instance = constructor.newInstance(controller, viewModel);
 
             loader.setController(instance);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        try {
             return loader.load();
-        } catch (IOException e) {
-            System.out.println("Error loading fxml");
+        } catch (Exception e) {
+            // Improved logging should be implemented
+            System.out.println("Could not load view: " + view);
             e.printStackTrace();
 
             throw new RuntimeException(e);
         }
     }
 
-    public void setView(String view) {
-        this.view = view;
+    /**
+     * Set the view to be displayed
+     * @param view The view to be displayed
+     */
+    public void setView(Views view) {
+        this.view = view.name();
     }
 }

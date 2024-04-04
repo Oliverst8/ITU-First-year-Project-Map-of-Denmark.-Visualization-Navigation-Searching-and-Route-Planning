@@ -1,5 +1,7 @@
 package dk.itu.map;
 
+import dk.itu.map.ViewBuilder.Views;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -24,14 +26,14 @@ public class Controller {
         this.model = new Model();
         this.viewBuilder = new ViewBuilder(this, this.model, "home");
 
-        setView("home");
+        setView(Views.Home);
     }
 
     /**
      * Sets the view of the application
      * @param view The view to set
      */
-    public void setView(String view) {
+    public void setView(Views view) {
         viewBuilder.setView(view);
         stage.setScene(new Scene(viewBuilder.build()));
     }

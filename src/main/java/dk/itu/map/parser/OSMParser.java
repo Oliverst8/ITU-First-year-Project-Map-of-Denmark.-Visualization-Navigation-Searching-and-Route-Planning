@@ -1,7 +1,8 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.LongFloatArrayHashMap;
+import dk.itu.map.structures.LongCoordHashMap;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,8 @@ public class OSMParser {
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
-    private LongFloatArrayHashMap nodes;
+    private float minlat, maxlat, minlon, maxlon;
+    private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 
     private ChunkGenerator chunkGenerator;
@@ -72,7 +74,7 @@ public class OSMParser {
 
     private void parse(InputStream inputStream) throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        nodes = new LongFloatArrayHashMap();
+        nodes = new LongCoordHashMap();
         long startLoadTime = System.nanoTime();
 
         whileLoop:
@@ -189,7 +191,7 @@ public class OSMParser {
      * @param nodes The nodes of the way
      * @param id The id of the way
      */
-    private void createWay(XMLStreamReader input, LongFloatArrayHashMap nodes, long id) throws XMLStreamException {
+    private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
         long[] nodeIds = new long[]{-1,0};
