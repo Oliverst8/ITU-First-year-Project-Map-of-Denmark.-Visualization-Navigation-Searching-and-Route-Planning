@@ -253,17 +253,7 @@ public class ChunkGenerator implements Runnable {
     }
 
     private void writeUtilities(){
-        try {
-            FileOutputStream graphStream = new FileOutputStream(dataPath + "/utilities/graph.txt");
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(graphStream);
-            objectOutputStream.writeObject(graph);
-            objectOutputStream.flush();
-            objectOutputStream.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        graph.writeToFile(dataPath + "/utilities");
     }
 
     public void printAll() {

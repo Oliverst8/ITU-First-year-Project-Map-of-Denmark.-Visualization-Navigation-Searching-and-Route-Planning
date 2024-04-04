@@ -1,9 +1,9 @@
 package dk.itu.map.structures;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 
-public class LongArrayList implements Serializable {
+public class LongArrayList implements Serializable, WriteAble {
     private long[] list;
     private int size;
     private final int ARRAY_INIT_SIZE = 100_000;
@@ -44,5 +44,18 @@ public class LongArrayList implements Serializable {
 
     public long[] toArray() {
         return Arrays.copyOf(list, size);
+    }
+
+    @Override
+    public void write(String path) throws FileNotFoundException, IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            stream.writeLong(list[i]);
+        }
     }
 }

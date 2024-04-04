@@ -1,10 +1,13 @@
 package dk.itu.map.structures;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.IntStream;
 
 
 public class Graph implements Runnable, Serializable {
@@ -12,7 +15,7 @@ public class Graph implements Runnable, Serializable {
 
     private List<Way> ways;
     private final HashMap<Long, Integer> idToIndex;
-    private final ArrayList<IntArrayList> vertexList;
+    private final WriteAbleArrayList<IntArrayList> vertexList;
     private final IntArrayList edgeDestinations;
     private final FloatArrayList edgeWeights;
     private final FloatArrayList coords;
@@ -21,7 +24,7 @@ public class Graph implements Runnable, Serializable {
 
     public Graph() {
         idToIndex = new HashMap<>();
-        vertexList = new ArrayList<>();
+        vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList();
         coords = new FloatArrayList();
@@ -161,5 +164,38 @@ public class Graph implements Runnable, Serializable {
 
     public int idToVertexId(long id){
         return idToIndex.get(id);
+    }
+
+    public void writeToFile(String path){
+        String folderPath = path + "/graph";
+        (new File(folderPath)).mkdirs();
+
+        File[] files = new File[]{
+                new File(folderPath + "/idToIndex.txt"),
+                new File(folderPath + "/vertexList.txt"),
+                new File(folderPath + "/edgeDestinations.txt"),
+                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/wayIDs.txt")
+        };
+
+        WriteAble[] instanceVariables = new WriteAble[]{
+            //IDTOINDEX,
+            vertexList,
+            edgeDestinations,
+            edgeWeights,
+            coords,
+            wayIDs
+        };
+
+        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
+            files[i].mkdirs();
+            try {
+                instanceVariables[i].write(files[i].getAbsolutePath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 }

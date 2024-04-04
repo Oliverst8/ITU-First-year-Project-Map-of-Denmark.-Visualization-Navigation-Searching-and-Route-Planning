@@ -1,9 +1,11 @@
 package dk.itu.map.structures;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class FloatArrayList implements Serializable {
+public class FloatArrayList implements Serializable, WriteAble {
     private final int ARRAY_INIT_SIZE = 100_000;
     private float[] array;
     private int size;
@@ -65,5 +67,10 @@ public class FloatArrayList implements Serializable {
 
     public int size() {
         return size;
+    }
+
+    @Override
+    public void write(String path) throws FileNotFoundException, IOException {
+
     }
 }

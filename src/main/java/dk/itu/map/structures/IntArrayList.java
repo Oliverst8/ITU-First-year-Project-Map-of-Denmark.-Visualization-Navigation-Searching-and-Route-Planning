@@ -3,7 +3,7 @@ package dk.itu.map.structures;
 import java.io.Serializable;
 import java.util.Iterator;
 
-public class IntArrayList implements Serializable {
+public class IntArrayList implements Serializable, WriteAble {
     private int[] array;
     private int size;
     private final int ARRAY_INIT_SIZE = 100_000;
@@ -45,4 +45,8 @@ public class IntArrayList implements Serializable {
         return size;
     }
 
+    @Override
+    public void write(String path) {
+
+    }
 }
