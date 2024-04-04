@@ -3,33 +3,37 @@ package dk.itu.map.structures;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
 
 public class Way implements Serializable {
     private List<Long> outerRef;
     private List<Long> innerRef;
-    private final FloatArrayList outerCoords;
-    private final FloatArrayList innerCoords;
-    private String[] tags;
+    private Way[] tempOuterWays;
+    private Way[] tempInnerWays;
+    private final CoordArrayList outerCoords;
+    private final CoordArrayList innerCoords;
+    private final String[] tags;
 
-    private Way[] tempWays;
 
     private long id;
     private long[] nodeIDs;
 
     /**
-     * Only use for FileHandler
+     * Only use for OSMParser
      */
     public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new FloatArrayList(10);
-        innerCoords = new FloatArrayList(10);
+        outerCoords = new CoordArrayList();
+        innerCoords = new CoordArrayList();
         this.outerRef = outerRef;
         this.innerRef = innerRef;
-        this.tempWays = new Way[outerRef.size() + innerRef.size()];
+        this.tempOuterWays = new Way[outerRef.size()];
+        this.tempInnerWays = new Way[innerRef.size()];
         this.tags = new String[tags.size()];
 
         for (float node : nodes) {
@@ -53,14 +57,14 @@ public class Way implements Serializable {
      * Only used for ChunkHandler
      */
     public Way(float[] outerCoords, float[] innerCoords, String[] tags) {
-        this.outerCoords = new FloatArrayList(outerCoords);
-        this.innerCoords = new FloatArrayList(innerCoords);
+        this.outerCoords = new CoordArrayList(outerCoords);
+        this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
     }
 
     public Way(float[] outerCoords, float[] innerCoords, String[] tags, long[] nodeIDs) {
-        this.outerCoords = new FloatArrayList(outerCoords);
-        this.innerCoords = new FloatArrayList(innerCoords);
+        this.outerCoords = new CoordArrayList(outerCoords);
+        this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
         this.nodeIDs = nodeIDs;
     }
@@ -138,77 +142,114 @@ public class Way implements Serializable {
     }
 
     public void draw(GraphicsContext gc, float scaleFactor) {
-        gc.setFillRule(FillRule.EVEN_ODD);
+        if (Arrays.asList(tags).contains("island")) return;
         gc.beginPath();
-        gc.moveTo(0.56f * outerCoords.get(1), -outerCoords.get(0));
-        for (int i = 2; i < outerCoords.size(); i += 2) {
-            gc.lineTo(0.56f * outerCoords.get(i + 1), -outerCoords.get(i));
-        }
-        if (innerCoords.size() > 0) { 
-            float prevX = 0f;
-            float prevY = 0f;
-            boolean move = true;
-            // gc.moveTo(0.56f * innerCoords.get(1), -innerCoords.get(0));
-            for (int i = 0; i < innerCoords.size(); i += 2) {
-                if (move) {
-                    gc.moveTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
-                    if (i+2 > innerCoords.size()) {
-                        prevX = innerCoords.get(i + 2);
-                        prevY = innerCoords.get(i + 3);
-                    }
-
-                } else {
-                    gc.lineTo(0.56f * innerCoords.get(i + 1), -innerCoords.get(i));
-                    if (prevX == innerCoords.get(i) && prevY == innerCoords.get(i + 1)) {
-                        move = true;
-                    }
-                }
-            }
-        }
+        drawCoords(gc, outerCoords);
+        // drawCoords(gc, outerCoords);
         if (setColors(gc, tags, scaleFactor)) {
             gc.fill();
             gc.stroke();
         } else {
             gc.stroke();
         }
-        // if (innerCoords.size() == 0) {
-        //     gc.stroke();
-        // } else {
-        //     gc.fill();
-        //     gc.stroke();
-        // }
+        gc.closePath();
         
     }
 
+    public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
+        if (coords.size() == 0) return;
+        float startX = 0f, startY = 0f;
+        boolean startNew = true;
+        for (int i = 0; i < coords.size(); i += 2) {
+            if (startNew) {
+                gc.moveTo(0.56f * coords.get(i + 1), -coords.get(i));
+                startNew = false;
+                startX = coords.get(i + 1);
+                startY = coords.get(i);
+                continue;
+            }
+            gc.lineTo(0.56f * coords.get(i + 1), -coords.get(i));
+            if (startX == coords.get(i + 1) && startY == coords.get(i)) {
+                startNew = true;
+            }
+        }
+    }
+
     /**
-     * Also only used in fileHandler
+     * Also only used in fileHandler gg
      */
     public void addRelatedWay(Way way, long id) {
-        if (tempWays == null)
+        if (tempOuterWays == null || tempInnerWays == null)
             throw new RuntimeException("Related ways cannot be added to fully filled ways");
 
         if (outerRef.contains(id)) {
-            tempWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
+            tempOuterWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
         }
         if (innerRef.contains(id)) {
-            tempWays[outerRef.size() + innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
+            tempInnerWays[innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
         }
 
         boolean filled = true;
-        for (int i = 0; i < tempWays.length; i++) {
-            if (tempWays[i] == null) {
+        for (int i = 0; i < tempOuterWays.length; i++) {
+            if (tempOuterWays[i] == null) {
+                filled = false;
+                break;
+            }
+        }
+        for (int i = 0; i < tempInnerWays.length; i++) {
+            if (tempInnerWays[i] == null) {
                 filled = false;
                 break;
             }
         }
         if (filled) {
-            for (int i = 0; i < outerRef.size(); i++) {
-                this.outerCoords.addAll(tempWays[i].outerCoords.toArray());
-            }
-            for (int i = 0; i < innerRef.size(); i++) {
-                this.innerCoords.addAll(tempWays[outerRef.size()+i].outerCoords.toArray());
-                // outercoords are used here cause Ways use outer by default.
-                // FIXME: what happens if relation has relation with inner ways inside
+            SimpleLinkedList<Way> queuedWays = new SimpleLinkedList<>(Arrays.asList(tempOuterWays));
+            if (tempOuterWays.length == 0) return;
+
+            Node<Way> current = queuedWays.getFirst();
+            Way currentWay;
+            Way initialWay = current.getValue();
+            while (current != null) {
+                currentWay = current.getValue();
+                Node<Way> preSearch = current;
+                Node<Way> search = current;
+
+                if (current.getNext() == null) {
+                    this.outerCoords.addAll(current.getValue().getCoords());
+                    break;
+                }
+
+                if (currentWay.outerCoords.get(-2) == initialWay.outerCoords.get(0) &&
+                currentWay.outerCoords.get(-1) == initialWay.outerCoords.get(1)) {
+                    this.outerCoords.addAll(current.getValue().getCoords());
+                    initialWay = current.getNext().getValue();
+                    current = current.getNext();
+
+                    continue;
+                }
+
+                while (currentWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) ||
+                currentWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
+                    // Check if way fits if it is reversed.
+                    if (currentWay.outerCoords.get(-2) == search.getValue().outerCoords.get(-2) &&
+                    currentWay.outerCoords.get(-1) == search.getValue().outerCoords.get(-1) && currentWay != search.getValue()) {
+                        search.getValue().outerCoords.reverse();
+                        break;
+                    }
+
+                    preSearch = search;
+                    search = search.getNext();
+                    if (search == null) {
+                        System.out.println("Could not find next way in relation");
+                    }
+                }
+
+                if (search != current) {
+                    queuedWays.move(current, preSearch);
+                }
+
+                this.outerCoords.addAll(current.getValue().getCoords());
+                current = current.getNext();
             }
         }
     }
@@ -328,8 +369,17 @@ public class Way implements Serializable {
                     gc.setFill(Color.LIGHTGOLDENRODYELLOW);
                     shouldFill = true;
                     break forLoop;
+                case "island":
+                    lineWidth = 0.00001f;
+                    gc.setStroke(Color.LIGHTGREEN);
+                    gc.setFill(Color.LIGHTGREEN);
+                    shouldFill = true;
+                    break forLoop;
                 case "highway":
             }
+            // switch (tag) {
+
+            // }
         }
         gc.setLineWidth(lineWidth * scaleFactor * 0.50);
         return shouldFill;

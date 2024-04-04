@@ -2,6 +2,7 @@ package dk.itu.map.fxml;
 
 import dk.itu.map.Controller;
 import dk.itu.map.Model;
+import dk.itu.map.ViewBuilder.Views;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public abstract class ViewController {
+abstract class ViewController {
 
     @FXML
     private MenuButton mapList;
@@ -36,24 +37,24 @@ public abstract class ViewController {
         String mapName = getMapName();
 
         viewModel.importMap(selectedFile.getAbsolutePath(), mapName);
-        controller.setView("map");
+        controller.setView(Views.Map);
     }
 
     protected void loadMaps() {
         File directoryPath = new File("maps/");
 
-        String maps[] = directoryPath.list();
+        String[] maps = directoryPath.list();
 
         // If the directory is empty, return.
         if (maps == null) return;
 
-        for(int i=0; i < maps.length; i++) {
-            MenuItem item = new MenuItem(maps[i]);
+        for (String map : maps) {
+            MenuItem item = new MenuItem(map);
             mapList.getItems().add(item);
 
             item.setOnAction(e -> {
                 viewModel.importMap("maps/" + item.getText(), item.getText());
-                controller.setView("map");
+                controller.setView(Views.Map);
             });
         }
     }

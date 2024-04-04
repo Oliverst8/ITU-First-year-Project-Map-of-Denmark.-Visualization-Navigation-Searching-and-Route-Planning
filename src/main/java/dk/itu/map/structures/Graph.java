@@ -1,6 +1,11 @@
 package dk.itu.map.structures;
 
-import java.io.*;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
+
+import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +14,6 @@ import java.util.stream.IntStream;
 
 
 public class Graph implements Runnable {
-
-
     private List<Way> ways;
     private final HashMap<Long, Integer> idToIndex;
     private final WriteAbleArrayList<IntArrayList> vertexList;
@@ -24,13 +27,13 @@ public class Graph implements Runnable {
         idToIndex = new HashMap<>();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
-        edgeWeights = new FloatArrayList();
+        edgeWeights = new FloatArrayList(50_000);
         coords = new FloatArrayList();
         //wayIDs = new LongArrayList();
         ways = Collections.synchronizedList(new ArrayList<>());
     }
 
-    //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader? 
+    //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
     private float calcWeight(Way way, int firstNode) {
         float[] coords = way.getCoords();

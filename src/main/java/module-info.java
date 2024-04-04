@@ -16,4 +16,6 @@ module dk.itu.map {
     exports dk.itu.map.parser;
     exports dk.itu.map.structures;
     opens dk.itu.map.structures to javafx.fxml;
+    exports dk.itu.map.structures.ArrayLists;
+    opens dk.itu.map.structures.ArrayLists to javafx.fxml;
 }
