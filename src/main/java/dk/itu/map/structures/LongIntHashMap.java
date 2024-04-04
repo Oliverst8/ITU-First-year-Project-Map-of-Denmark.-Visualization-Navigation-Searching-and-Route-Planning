@@ -1,6 +1,8 @@
 package dk.itu.map.structures;
 
-public class LongIntHashMap extends PrimitiveHashMap {
+import java.io.*;
+
+public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     long[] keys;
     int[] value;
 
@@ -110,5 +112,46 @@ public class LongIntHashMap extends PrimitiveHashMap {
 
     protected int getIndex(long key) {
         return (int) (key % (long) capacity);
+    }
+
+    @Override
+    public void write(String path) throws FileNotFoundException, IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
+
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+                stream.writeLong(keys[i]);
+                stream.writeInt(value[i]);
+        }
+    }
+
+    @Override
+    public void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        keys = new long[size];
+        value = new int[size];
+        for (int i = 0; i < size; i++) {
+            keys[i] = stream.readLong();
+            value[i] = stream.readInt();
+        }
     }
 }

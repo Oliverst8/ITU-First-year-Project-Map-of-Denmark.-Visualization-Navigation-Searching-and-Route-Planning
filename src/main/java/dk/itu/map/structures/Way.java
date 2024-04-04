@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

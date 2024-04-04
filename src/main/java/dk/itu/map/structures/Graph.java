@@ -1,21 +1,21 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.parser.MapElement;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
+import java.io.*;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.stream.IntStream;
 
 
 public class Graph implements Runnable {
-    private List<Way> ways;
-    private final HashMap<Long, Integer> idToIndex;
+    private List<MapElement> ways;
+    private final HashMap<Long,Integer> idToIndex;
     private final WriteAbleArrayList<IntArrayList> vertexList;
     private final IntArrayList edgeDestinations;
     private final FloatArrayList edgeWeights;
@@ -35,10 +35,10 @@ public class Graph implements Runnable {
 
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
-    private float calcWeight(Way way, int firstNode) {
-        float[] coords = way.getCoords();
+    private float calcWeight(MapElement way, int firstNode) {
+        CoordArrayList coords = way.getCoords();
 
-        return (float) Math.sqrt(Math.pow(coords[firstNode] - coords[firstNode+2], 2) + Math.pow(coords[firstNode+1] - coords[firstNode+3], 2));
+        return (float) Math.sqrt(Math.pow(coords.get(firstNode) - coords.get(firstNode+2), 2) + Math.pow(coords.get(firstNode+1) - coords.get(firstNode+3), 2));
     }
 
     public void run() {
@@ -52,22 +52,21 @@ public class Graph implements Runnable {
                 }
             }
             while(!ways.isEmpty()){
-                Way way = ways.remove(0);
-                float[] coords = way.getCoords();
+                MapElement way = ways.remove(0);
                 addVertices(way.getNodeIDs(), way.getCoords());
                 addEdge(way);
             }
         }
     }
 
-    private void addVertices(long[] vertexID, float[] coords) {
+    private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
-                this.coords.add(coords[i*2]);
-                this.coords.add(coords[i*2+1]);
+                this.coords.add(coords.get(i*2));
+                this.coords.add(coords.get(i*2+1));
                 //coords.add();
                 //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
                 // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
@@ -77,7 +76,7 @@ public class Graph implements Runnable {
         }
     }
 
-    private void addEdge(Way way) {
+    private void addEdge(MapElement way) {
         /*
         int node1 = idToIndex.get(way.getNodeIDs()[0]);
         int node2 = idToIndex.get(way.getNodeIDs()[1]);
@@ -131,7 +130,7 @@ public class Graph implements Runnable {
         return idToIndex.size();
     }
 
-    public void addWay(Way way) {
+    public void addWay(MapElement way) {
         ways.add(way);
     }
 
@@ -182,12 +181,12 @@ public class Graph implements Runnable {
         };
 
         WriteAble[] instanceVariables = new WriteAble[]{
-            //IDTOINDEX,
-            vertexList,
-            edgeDestinations,
-            edgeWeights,
-            coords,
-            //wayIDs
+                //IDTOINDEX,
+                vertexList,
+                edgeDestinations,
+                edgeWeights,
+                coords,
+                //wayIDs
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
@@ -240,7 +239,7 @@ public class Graph implements Runnable {
                 //wayIDs
         };
 
-        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
+        IntStream.range(0, instanceVariables.length).forEach(i -> {
             try {
                 instanceVariables[i].read(streams[i]);
             } catch (IOException e) {

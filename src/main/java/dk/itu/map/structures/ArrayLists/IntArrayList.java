@@ -1,6 +1,10 @@
 package dk.itu.map.structures.ArrayLists;
 
-public class IntArrayList extends PrimitiveArrayList {
+import dk.itu.map.structures.WriteAble;
+
+import java.io.*;
+
+public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     // The array that holds the values
     private int[] array;
 
@@ -55,6 +59,44 @@ public class IntArrayList extends PrimitiveArrayList {
      */
     public int get(int index) {
         return array[index];
+    }
+
+    @Override
+    public void write(String path) throws IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
+
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            stream.writeInt(array[i]);
+        }
+    }
+
+    @Override
+    public void read(String path) throws IOException {
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = stream.readInt();
+        }
     }
 
 }

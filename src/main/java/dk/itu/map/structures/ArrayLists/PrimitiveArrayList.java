@@ -1,5 +1,7 @@
 package dk.itu.map.structures.ArrayLists;
 
+import dk.itu.map.structures.WriteAble;
+
 public abstract class PrimitiveArrayList {
 
     //The current size of the list

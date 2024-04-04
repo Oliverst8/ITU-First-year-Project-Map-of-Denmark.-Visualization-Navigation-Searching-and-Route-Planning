@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.util.List;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 class Way extends MapElement {
     private CoordArrayList coords;
 
-    public Way(long id, List<String> tags, CoordArrayList coords) {
-        super(id, tags);
+    public Way(long id, List<String> tags, CoordArrayList coords, LongArrayList nodeIDs) {
+        super(id, tags, nodeIDs);
 
         this.coords = coords;
     }

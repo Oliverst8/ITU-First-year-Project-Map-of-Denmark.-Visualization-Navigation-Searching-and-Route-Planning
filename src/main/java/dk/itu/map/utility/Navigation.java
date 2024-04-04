@@ -1,6 +1,8 @@
 package dk.itu.map.utility;
 
 import dk.itu.map.structures.*;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 import java.util.Arrays;
 import java.util.HashMap;

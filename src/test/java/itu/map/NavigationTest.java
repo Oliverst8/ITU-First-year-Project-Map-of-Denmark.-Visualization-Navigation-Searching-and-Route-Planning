@@ -1,7 +1,7 @@
 package itu.map;
 
 import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.LongArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.Way;
 import dk.itu.map.utility.Navigation;
 import dk.itu.map.structures.FloatArrayList;
