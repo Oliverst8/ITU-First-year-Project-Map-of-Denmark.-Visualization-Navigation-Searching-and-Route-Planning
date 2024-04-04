@@ -20,8 +20,9 @@ class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-    // chunk size in coordinate size
+
     private final String dataPath;
+    // chunk size in coordinate size
     private final float CHUNK_SIZE = 0.25f;
     private final byte amountOfZoomLayers = 5;
 
@@ -31,8 +32,6 @@ public class ChunkGenerator implements Runnable {
 
     private ArrayList<ZoomLayer> zoomLayers;
     private File[][] files;
-
-    private int tempCounter = 0;
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
@@ -41,26 +40,26 @@ public class ChunkGenerator implements Runnable {
 
     public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
         this.dataPath = dataPath;
-        hasMoreWork = false;
-        rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        chunkingThread = new Thread(this);
-        chunkingThread.start();
+        this.hasMoreWork = false;
+        this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
+        this.chunkingThread = new Thread(this);
+        this.chunkingThread.start();
 
         this.minlat = minlat;
         this.maxlat = maxlat;
         this.minlon = minlon;
         this.maxlon = maxlon;
 
-        chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / CHUNK_SIZE);
-        chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / CHUNK_SIZE);
+        this.chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / CHUNK_SIZE);
+        this.chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / CHUNK_SIZE);
 
-        chunkAmount = chunkColumnAmount * chunkRowAmount;
+        this.chunkAmount = chunkColumnAmount * chunkRowAmount;
 
         resetChunks();
 
         files = new File[amountOfZoomLayers][chunkAmount];
 
-        System.out.println(chunkRowAmount + " " + chunkColumnAmount);
+        //System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         createFiles(dataPath);
     }
