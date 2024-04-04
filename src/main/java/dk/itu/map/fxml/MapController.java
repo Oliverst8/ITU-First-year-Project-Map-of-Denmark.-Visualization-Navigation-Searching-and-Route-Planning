@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
@@ -52,9 +51,9 @@ public class MapController extends ViewController {
         gc.setLineJoin(StrokeLineJoin.ROUND);
         trans = new Affine();
 
-        trans.prependTranslation(-0.56*this.viewModel.chunkHandler.minlon, this.viewModel.chunkHandler.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
+        trans.prependTranslation(-0.56*this.viewModel.chunkLoader.minlon, this.viewModel.chunkLoader.maxlat); //Calling the code of pan, to prevent redraw before zoom has been run
         //This is done to avoid getheight and getwidth from canvas, returning way to big values
-        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkHandler.maxlat - this.viewModel.chunkHandler.minlat));
+        zoom(0, 0, canvas.getHeight() / (this.viewModel.chunkLoader.maxlat - this.viewModel.chunkLoader.minlat));
 
         startZoom = getZoomDistance();
         redraw();
@@ -124,12 +123,12 @@ public class MapController extends ViewController {
         Point2D upperLeftCorner = getUpperLeftCorner();
         Point2D lowerRightCorner = getLowerRightCorner();
 
-        int upperLeftChunk = viewModel.chunkHandler.pointToChunkIndex(upperLeftCorner);
-        int lowerRightChunk = viewModel.chunkHandler.pointToChunkIndex(lowerRightCorner);
+        int upperLeftChunk = viewModel.chunkLoader.pointToChunkIndex(upperLeftCorner);
+        int lowerRightChunk = viewModel.chunkLoader.pointToChunkIndex(lowerRightCorner);
 
-        Set<Integer> chunks = getSmallestRect(upperLeftChunk, lowerRightChunk, viewModel.chunkHandler.chunkColumnAmount, viewModel.chunkHandler.chunkRowAmount);
+        Set<Integer> chunks = getSmallestRect(upperLeftChunk, lowerRightChunk, viewModel.chunkLoader.chunkColumnAmount, viewModel.chunkLoader.chunkRowAmount);
 
-        currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY()) / viewModel.chunkHandler.CHUNK_SIZE);
+        currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY()) / viewModel.chunkLoader.CHUNK_SIZE);
 
         viewModel.updateChunks(chunks, getDetailLevel());
     }
@@ -178,7 +177,7 @@ public class MapController extends ViewController {
 
     private void updateZoomLevel(){
         float newZoom = getZoomDistance();
-        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen * viewModel.chunkHandler.chunkAmount;
+        zoomLevel = (newZoom/startZoom) * 100 * currentChunkAmountSeen * viewModel.chunkLoader.chunkAmount;
     }
 
     private Point2D convertTo2DPoint(double lastX, double lastY) {

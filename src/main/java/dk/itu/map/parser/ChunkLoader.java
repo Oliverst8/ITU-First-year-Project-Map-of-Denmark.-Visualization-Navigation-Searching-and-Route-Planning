@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 import javafx.geometry.Point2D;
 
-public class ChunkHandler {
+public class ChunkLoader {
     private final String dataPath;
 
     public float minlat, maxlat, minlon, maxlon;
@@ -35,7 +35,7 @@ public class ChunkHandler {
      *
      * @param dataPath
      */
-    public ChunkHandler(String dataPath) {
+    public ChunkLoader(String dataPath) {
         this.dataPath = dataPath;
         loadConfig();
     }
