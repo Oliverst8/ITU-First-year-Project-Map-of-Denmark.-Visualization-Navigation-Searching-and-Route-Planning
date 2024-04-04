@@ -59,4 +59,10 @@ public class LongIntHashMapTest {
 
         assertEquals(0, map.size());
     }
+
+    @Test
+    void testContainsKey283509867() {
+        LongIntHashMap map = new LongIntHashMap();
+        assertFalse(map.containsKey(283509867));
+    }
 }

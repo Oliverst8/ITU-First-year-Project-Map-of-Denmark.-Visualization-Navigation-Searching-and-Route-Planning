@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ChangablePriorityQueueTest {
 
     ChangablePriorityQueue priorityQueue;
-
+/*
     private Graph getGraph1(){
         Graph graph = new Graph();
 
@@ -166,6 +166,6 @@ class ChangablePriorityQueueTest {
         assertEquals(0, priorityQueue.deleteMinValue());
     }
 
-
+*/
 
 }

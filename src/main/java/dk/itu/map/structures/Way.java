@@ -269,7 +269,7 @@ public class Way implements Serializable {
             switch (tag) {
 
                 case "navigationPath":
-                    lineWidth = 0.0003f;
+                    lineWidth = 0.003f;
                     gc.setStroke(Color.TURQUOISE);
                     shouldFill = false;
                     break forLoop;

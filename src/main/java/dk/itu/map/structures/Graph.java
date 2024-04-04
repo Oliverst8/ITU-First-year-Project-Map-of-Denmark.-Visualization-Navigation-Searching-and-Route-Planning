@@ -4,6 +4,7 @@ import dk.itu.map.parser.MapElement;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
+import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class Graph implements Runnable {
     private List<MapElement> ways;
-    private final HashMap<Long,Integer> idToIndex;
+    private final tempHashMapLongToInt idToIndex;
     private final WriteAbleArrayList<IntArrayList> vertexList;
     private final IntArrayList edgeDestinations;
     private final FloatArrayList edgeWeights;
@@ -24,7 +25,7 @@ public class Graph implements Runnable {
     private boolean running = true;
 
     public Graph() {
-        idToIndex = new HashMap<>();
+        idToIndex = new tempHashMapLongToInt();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
@@ -172,7 +173,7 @@ public class Graph implements Runnable {
         (new File(folderPath)).mkdirs();
 
         File[] files = new File[]{
-                //new File(folderPath + "/idToIndex.txt"),
+                new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
@@ -181,7 +182,7 @@ public class Graph implements Runnable {
         };
 
         WriteAble[] instanceVariables = new WriteAble[]{
-                //IDTOINDEX,
+                idToIndex,
                 vertexList,
                 edgeDestinations,
                 edgeWeights,
@@ -201,7 +202,7 @@ public class Graph implements Runnable {
     public void loadFromDataPath(String path) throws IOException {
         String folderPath = path + "/graph";
         File[] files = new File[]{
-                //new File(folderPath + "/idToIndex.txt"),
+                new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
@@ -222,16 +223,26 @@ public class Graph implements Runnable {
                 throw new RuntimeException(e);
             }
         }
-
-        int sizeOfIdToIndex = streams[1].readInt();
-        for(int i = 0; i < sizeOfIdToIndex; i++){
-            vertexList.add(new IntArrayList(0));
+        try{
+            DataInputStream stream = new DataInputStream(
+                    new BufferedInputStream(
+                            new FileInputStream(files[1].getAbsolutePath())
+                    )
+            );
+            int sizeOfIdToIndex = stream.readInt();
+            for(int i = 0; i < sizeOfIdToIndex; i++){
+                vertexList.add(new IntArrayList(0));
+            }
+            vertexList.trimToSize();
+            stream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        vertexList.trimToSize();
+
 
 
         WriteAble[] instanceVariables = new WriteAble[]{
-                //IDTOINDEX,
+                idToIndex,
                 vertexList,
                 edgeDestinations,
                 edgeWeights,
@@ -239,7 +250,7 @@ public class Graph implements Runnable {
                 //wayIDs
         };
 
-        IntStream.range(0, instanceVariables.length).forEach(i -> {
+        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
             try {
                 instanceVariables[i].read(streams[i]);
             } catch (IOException e) {

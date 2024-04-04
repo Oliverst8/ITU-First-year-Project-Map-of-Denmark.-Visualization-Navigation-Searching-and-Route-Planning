@@ -46,6 +46,7 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
 
         while (keys[index] != key) {
             index = probe(index, offset);
+            if(index > capacity || index < 0) return false;
             offset++;
         }
 
