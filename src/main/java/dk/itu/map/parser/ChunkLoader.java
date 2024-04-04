@@ -21,11 +21,10 @@ import java.util.stream.IntStream;
 
 import javafx.geometry.Point2D;
 
-public class ChunkHandler {
+public class ChunkLoader {
     private final String dataPath;
 
-    public float minlat, maxlat, minlon, maxlon;
-
+    public float minLat, maxLat, minLon, maxLon;
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
     public float CHUNK_SIZE;
 
@@ -35,7 +34,7 @@ public class ChunkHandler {
      *
      * @param dataPath
      */
-    public ChunkHandler(String dataPath) {
+    public ChunkLoader(String dataPath) {
         this.dataPath = dataPath;
         loadConfig();
     }
@@ -44,10 +43,10 @@ public class ChunkHandler {
         try {
             File file = new File(this.dataPath + "/config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            this.minlat = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.maxlat = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.minlon = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.maxlon = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.minLon = Float.parseFloat(reader.readLine().split(" ")[1]);
+            this.maxLon = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkRowAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
             this.chunkAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
@@ -63,17 +62,17 @@ public class ChunkHandler {
     }
 
     public int latLonToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
-            (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
+            (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
     public int pointToChunkIndex(Point2D p) {
         float X = (float) p.getX()/0.56f;
-        X = Math.min(X,maxlon);
-        X = Math.max(X,minlon);
+        X = Math.min(X, maxLon);
+        X = Math.max(X, minLon);
         float Y = (float) p.getY()*-1;
-        Y = Math.min(Y,maxlat);
-        Y = Math.max(Y,minlat);
+        Y = Math.min(Y, maxLat);
+        Y = Math.max(Y, minLat);
         int chunkIndex = latLonToChunkIndex(Y, X);
         chunkIndex = Math.min(chunkIndex, chunkAmount-1);
         chunkIndex = Math.max(chunkIndex, 0);

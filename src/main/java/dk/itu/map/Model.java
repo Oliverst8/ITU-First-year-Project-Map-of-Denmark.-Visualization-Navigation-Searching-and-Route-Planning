@@ -2,7 +2,7 @@ package dk.itu.map;
 
 import dk.itu.map.structures.Way;
 import dk.itu.map.parser.OSMParser;
-import dk.itu.map.parser.ChunkHandler;
+import dk.itu.map.parser.ChunkLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import javax.xml.stream.XMLStreamException;
 public class Model implements Serializable {
     private final String dataPath;
     public List<Map<Integer,List<Way>>> chunkLayers;
-    public ChunkHandler chunkHandler;
+    public ChunkLoader chunkLoader;
 
     public Model() {
         dataPath = "maps";
@@ -37,7 +37,7 @@ public class Model implements Serializable {
                 System.out.println("Finished importing map!");
             };
 
-            chunkHandler = new ChunkHandler(dataPath + "/" + name);
+            chunkLoader = new ChunkLoader(dataPath + "/" + name);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {
@@ -59,7 +59,7 @@ public class Model implements Serializable {
 
         if(chunkSet.isEmpty()) return;
 
-        chunks.putAll(chunkHandler.loadBytes(newChunks, zoomLevel));
+        chunks.putAll(chunkLoader.loadBytes(newChunks, zoomLevel));
     }
 
     public void updateChunks(Set<Integer> chunks, int zoomLevel) {

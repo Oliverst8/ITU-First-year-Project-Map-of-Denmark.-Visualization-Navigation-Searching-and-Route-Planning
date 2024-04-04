@@ -1,13 +1,5 @@
 package itu.map;
 
-import org.junit.jupiter.api.Test;
-
-import dk.itu.map.parser.ChunkHandler;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.IOException;
-
 public class ChunkHandlerTest {
     /*@Test public void readChunkTest() {
         ChunkHandler chunkHandler = new ChunkHandler("chunkData2");

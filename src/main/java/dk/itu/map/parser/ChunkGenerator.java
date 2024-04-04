@@ -19,47 +19,46 @@ class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-    // chunk size in coordinate size
+
     private final String dataPath;
+    // chunk size in coordinate size
     private final float CHUNK_SIZE = 0.25f;
     private final byte amountOfZoomLayers = 5;
 
-    public float minlat, maxlat, minlon, maxlon;
+    public float minLat, maxLat, minLon, maxLon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
 
     private ArrayList<ZoomLayer> zoomLayers;
-    private File[][] files;
-
-    private int tempCounter = 0;
+    private final File[][] files;
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
 
     private final Thread chunkingThread;
 
-    public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
+    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
         this.dataPath = dataPath;
-        hasMoreWork = false;
-        rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        chunkingThread = new Thread(this);
-        chunkingThread.start();
+        this.hasMoreWork = false;
+        this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
+        this.chunkingThread = new Thread(this);
+        this.chunkingThread.start();
 
-        this.minlat = minlat;
-        this.maxlat = maxlat;
-        this.minlon = minlon;
-        this.maxlon = maxlon;
+        this.minLat = minLat;
+        this.maxLat = maxLat;
+        this.minLon = minLon;
+        this.maxLon = maxLon;
 
-        chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / CHUNK_SIZE);
-        chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / CHUNK_SIZE);
+        this.chunkColumnAmount = (int) Math.ceil(Math.abs(maxLon - minLon) / CHUNK_SIZE);
+        this.chunkRowAmount = (int) Math.ceil(Math.abs(maxLat - minLat) / CHUNK_SIZE);
 
-        chunkAmount = chunkColumnAmount * chunkRowAmount;
+        this.chunkAmount = chunkColumnAmount * chunkRowAmount;
+
+        System.out.println("Beginning" + chunkRowAmount + " " + chunkColumnAmount);
 
         resetChunks();
 
         files = new File[amountOfZoomLayers][chunkAmount];
-
-        System.out.println(chunkRowAmount + " " + chunkColumnAmount);
 
         createFiles(dataPath);
     }
@@ -94,11 +93,11 @@ public class ChunkGenerator implements Runnable {
     }
 
     private int coordsToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
-            (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
+            (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
     }
 
-    public void addWay(MapElement way) { // main
+    public void addWay(MapElement way) {
         rawWays.add(way);
     }
 
@@ -155,12 +154,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                 }
             }
-            if (way instanceof Polygon && zoomLevel == -1) {
-                zoomLevel = 3;
-            }
             if (zoomLevel == -1) continue;
-            // if (zoomLevel == -1) zoomLevel = 0;
-            // way.setZoomLevel( zoomLevel);
 
             CoordArrayList coords = way.getCoords();
             for (int i = 0; i < coords.size(); i += 2) {
@@ -227,15 +221,15 @@ public class ChunkGenerator implements Runnable {
 
     private void writeConfig() throws IOException {
         FileWriter writer = new FileWriter(dataPath + "/config");
-        String builder = "minlat: " + minlat + "\n" +
-                "maxlat: " + maxlat + "\n" +
-                "minlon: " + minlon + "\n" +
-                "maxlon: " + maxlon + "\n" +
+        writer.write(
+                "minLat: " + minLat + "\n" +
+                "maxLat: " + maxLat + "\n" +
+                "minLon: " + minLon + "\n" +
+                "maxLon: " + maxLon + "\n" +
                 "chunkColumnAmount: " + chunkColumnAmount + "\n" +
                 "chunkRowAmount: " + chunkRowAmount + "\n" +
                 "chunkAmount: " + chunkAmount + "\n" +
-                "CHUNK_SIZE: " + CHUNK_SIZE + "\n";
-        writer.write(builder);
+                "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
 
