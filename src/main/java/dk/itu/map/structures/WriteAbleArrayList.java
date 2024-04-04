@@ -1,14 +1,44 @@
 package dk.itu.map.structures;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> implements WriteAble {
+
     @Override
-    public void write(String path) throws FileNotFoundException, IOException {
+    public void write(String path) throws IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path, true)));
+        write(stream);
+    }
+
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size());
         for (WriteAble writeAble : this) {
-            writeAble.write(path);
+            writeAble.write(stream);
         }
+        stream.close();
+    }
+
+    @Override
+    public void read(String path) throws IOException {
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+            int size = stream.readInt();
+            for(int i = 0; i < size; i++){
+                get(i).read(stream);
+            }
     }
 }

@@ -1,6 +1,6 @@
 package dk.itu.map.structures;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Iterator;
 
 public class IntArrayList implements Serializable, WriteAble {
@@ -46,7 +46,40 @@ public class IntArrayList implements Serializable, WriteAble {
     }
 
     @Override
-    public void write(String path) {
+    public void write(String path) throws IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
 
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            stream.writeInt(array[i]);
+        }
+    }
+
+    @Override
+    public void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = stream.readInt();
+        }
     }
 }

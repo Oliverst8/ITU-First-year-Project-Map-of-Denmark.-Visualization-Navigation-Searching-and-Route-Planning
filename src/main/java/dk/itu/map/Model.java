@@ -17,13 +17,14 @@ import javax.xml.stream.XMLStreamException;
 
 public class Model implements Serializable {
     private final String dataPath = "maps";
-    private Graph graph;
+    private final Graph graph;
 
     public List<Map<Integer,List<Way>>> chunkLayers;
     public ChunkHandler chunkHandler;
 
     public Model() {
         chunkHandler = null;
+        graph = new Graph();
         chunkLayers = new ArrayList<>();
         for(int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
@@ -36,17 +37,13 @@ public class Model implements Serializable {
                 FileHandler fileHandler = new FileHandler(new File(filePath), dataPath + "/" + name);
                 fileHandler.load();
             };
-            FileInputStream fileInputStream = new FileInputStream(dataPath + "/" + name + "/utilities/graph.txt");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            graph = (Graph) objectInputStream.readObject();
-            objectInputStream.close();
-            chunkHandler = new ChunkHandler(dataPath + "/" + name);
+            String path = dataPath + "/" + name;
+            chunkHandler = new ChunkHandler(path);
+            graph.loadFromDataPath(path + "/utilities");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 

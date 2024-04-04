@@ -1,8 +1,6 @@
 package dk.itu.map.structures;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,7 +8,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 
-public class Graph implements Runnable, Serializable {
+public class Graph implements Runnable {
 
 
     private List<Way> ways;
@@ -19,7 +17,7 @@ public class Graph implements Runnable, Serializable {
     private final IntArrayList edgeDestinations;
     private final FloatArrayList edgeWeights;
     private final FloatArrayList coords;
-    private final LongArrayList wayIDs;
+    //private final LongArrayList wayIDs;
     private boolean running = true;
 
     public Graph() {
@@ -28,7 +26,7 @@ public class Graph implements Runnable, Serializable {
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList();
         coords = new FloatArrayList();
-        wayIDs = new LongArrayList();
+        //wayIDs = new LongArrayList();
         ways = Collections.synchronizedList(new ArrayList<>());
     }
 
@@ -143,7 +141,8 @@ public class Graph implements Runnable, Serializable {
     }
 
     public LongArrayList getIds() {
-        return wayIDs;
+        //return wayIDs;
+        throw new UnsupportedOperationException();
     }
     public IntArrayList getEdgeList(int vertex){return vertexList.get(vertex);}
 
@@ -171,12 +170,12 @@ public class Graph implements Runnable, Serializable {
         (new File(folderPath)).mkdirs();
 
         File[] files = new File[]{
-                new File(folderPath + "/idToIndex.txt"),
+                //new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
-                new File(folderPath + "/wayIDs.txt")
+                //new File(folderPath + "/wayIDs.txt")
         };
 
         WriteAble[] instanceVariables = new WriteAble[]{
@@ -185,17 +184,70 @@ public class Graph implements Runnable, Serializable {
             edgeDestinations,
             edgeWeights,
             coords,
-            wayIDs
+            //wayIDs
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
-            files[i].mkdirs();
             try {
                 instanceVariables[i].write(files[i].getAbsolutePath());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public void loadFromDataPath(String path) throws IOException {
+        String folderPath = path + "/graph";
+        File[] files = new File[]{
+                //new File(folderPath + "/idToIndex.txt"),
+                new File(folderPath + "/vertexList.txt"),
+                new File(folderPath + "/edgeDestinations.txt"),
+                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/coords.txt"),
+                //new File(folderPath + "/wayIDs.txt")
+        };
+
+        DataInputStream[] streams = new DataInputStream[files.length];
+
+        for(int i = 0; i < files.length; i++){
+            try {
+                streams[i] = new DataInputStream(
+                        new BufferedInputStream(
+                                new FileInputStream(files[i].getAbsolutePath())
+                        )
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        int sizeOfIdToIndex = streams[1].readInt();
+        for(int i = 0; i < sizeOfIdToIndex; i++){
+            vertexList.add(new IntArrayList(0));
+        }
+        vertexList.trimToSize();
+
+
+        WriteAble[] instanceVariables = new WriteAble[]{
+                //IDTOINDEX,
+                vertexList,
+                edgeDestinations,
+                edgeWeights,
+                coords,
+                //wayIDs
+        };
+
+        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
+            try {
+                instanceVariables[i].read(streams[i]);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        for(DataInputStream stream : streams){
+            stream.close();
+        }
 
     }
 }
