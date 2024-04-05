@@ -8,38 +8,43 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     private final long DEFAULT_KEY_VALUE = 0;
     private final int REMOVED_VALUE = Integer.MIN_VALUE;
 
+    private int total;
+
     public LongIntHashMap() {
         super();
+        total = 0;
         keys = new long[INITIAL_CAPACITY];
         value = new int[INITIAL_CAPACITY];
     }
 
-    private boolean validateKey(long key) {
+    private void validateKey(long key) {
         if(key == DEFAULT_KEY_VALUE) throw new IllegalArgumentException("Key cannot be " + key);
-        else return false;
     }
 
-    private boolean validateValue(int value) {
+    private void validateValue(int value) {
         if(value == REMOVED_VALUE) throw new IllegalArgumentException("Value cannot be " + value);
-        else return false;
     }
 
     public void put(long key, int value) {
         validateKey(key);
         validateValue(value);
-        if (size >= capacity * 0.75) resize();
+        if (total >= capacity * 0.75) resize();
 
         int index = getIndex(key);
         int offset = 1;
 
-        while (keys[index] != 0) {
+        while (keys[index] != 0 && keys[index] != key) {
             index = probe(index, offset);
             offset++;
         }
 
+        if(keys[index] != key) {
+            size++;
+            total++;
+        }
+
         this.keys[index] = key;
         this.value[index] = value;
-        size++;
     }
 
     public int get(long key) {
@@ -47,8 +52,12 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
         int index = getIndex(key);
         int offset = 1;
 
-        while (keys[index] != key) {
+        long keyFound = keys[index];
+
+        while (keyFound != key) {
             index = probe(index, offset);
+            keyFound = keys[index];
+            if(keys[index] == DEFAULT_KEY_VALUE) throw new IllegalArgumentException("Key not found");
             offset++;
         }
 
