@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LongIntHashMapTest {
     @Test public void addOneMillionSmallNumbers() {
         LongIntHashMap map = new LongIntHashMap();
-        for (int i = 0; i < 1_000_000; i++) {
+        for (int i = 1; i < 1_000_000; i++) {
             map.put(i, i);
         }
 
-        assertEquals(1_000_000, map.size());
+        assertEquals(1_000_000-1, map.size());
     }
 
     @Test public void addOneMillionLargeNumbers() {
@@ -64,5 +64,13 @@ public class LongIntHashMapTest {
     void testContainsKey283509867() {
         LongIntHashMap map = new LongIntHashMap();
         assertFalse(map.containsKey(283509867));
+    }
+
+    @Test
+    void testContainsKey0(){
+        LongIntHashMap map = new LongIntHashMap();
+        assertThrows(IllegalArgumentException.class,() -> {
+            map.containsKey(0);
+        });
     }
 }

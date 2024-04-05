@@ -5,6 +5,8 @@ import java.io.*;
 public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     long[] keys;
     int[] value;
+    private final long DEFAULT_KEY_VALUE = 0;
+    private final int REMOVED_VALUE = Integer.MIN_VALUE;
 
     public LongIntHashMap() {
         super();
@@ -12,7 +14,19 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
         value = new int[INITIAL_CAPACITY];
     }
 
+    private boolean validateKey(long key) {
+        if(key == DEFAULT_KEY_VALUE) throw new IllegalArgumentException("Key cannot be " + key);
+        else return false;
+    }
+
+    private boolean validateValue(int value) {
+        if(value == REMOVED_VALUE) throw new IllegalArgumentException("Value cannot be " + value);
+        else return false;
+    }
+
     public void put(long key, int value) {
+        validateKey(key);
+        validateValue(value);
         if (size >= capacity * 0.75) resize();
 
         int index = getIndex(key);
@@ -29,6 +43,7 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     }
 
     public int get(long key) {
+        validateKey(key);
         int index = getIndex(key);
         int offset = 1;
 
@@ -41,19 +56,23 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     }
 
     public boolean containsKey(long key) {
+        validateKey(key);
         int index = getIndex(key);
         int offset = 1;
 
         while (keys[index] != key) {
             index = probe(index, offset);
-            if(index > capacity || index < 0) return false;
+            if(keys[index] == DEFAULT_KEY_VALUE) return false;
             offset++;
         }
+
+        if(value[index] == REMOVED_VALUE) return false;
 
         return keys[index] == key;
     }
 
     public void remove(long key) {
+        validateKey(key);
         int index = getIndex(key);
         int offset = 1;
 
@@ -63,8 +82,7 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
         }
 
         if (keys[index] == key) {
-            keys[index] = 0;
-            value[index] = 0;
+            value[index] = REMOVED_VALUE;
             size--;
         }
     }
@@ -77,14 +95,17 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
 
         for (int i = 0; i < capacity / 2; i++) {
             if (keys[i] != 0) {
+
+                if(keys[i] == REMOVED_VALUE) continue;
+
                 int index = getIndex(keys[i]);
                 int offset = 1;
+
 
                 while (newKeys[index] != 0) {
                     index = probe(index, offset);
                     offset++;
                 }
-
                 newKeys[index] = keys[i];
                 newValues[index] = value[i];
             }
