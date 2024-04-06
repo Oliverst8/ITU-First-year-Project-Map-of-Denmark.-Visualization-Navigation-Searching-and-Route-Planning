@@ -1,5 +1,6 @@
 package dk.itu.map;
 
+import dk.itu.map.parser.UtilityLoader;
 import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.Way;
 import dk.itu.map.parser.OSMParser;
@@ -21,7 +22,7 @@ public class Model implements Serializable {
     private final List<Map<Integer,List<Way>>> chunkLayers;
     // The chunk loader
     private ChunkLoader chunkLoader;
-    private final Graph graph;
+    private Graph graph;
 
     /**
      * Constructor for the Model class
@@ -49,8 +50,13 @@ public class Model implements Serializable {
                 System.out.println("Finished importing map!");
             };
             String path = dataPath + "/" + name;
+
+            UtilityLoader utilityLoader = new UtilityLoader(path);
+            utilityLoader.start();
+
             chunkLoader = new ChunkLoader(dataPath + "/" + name);
-            graph.loadFromDataPath(path + "/utilities");
+
+            setUtilities(utilityLoader);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {
@@ -108,6 +114,15 @@ public class Model implements Serializable {
         if(chunkSet.isEmpty()) return;
 
         chunks.putAll(chunkLoader.loadBytes(newChunks, zoomLevel));
+    }
+
+    private void setUtilities(UtilityLoader utilityLoader) {
+        try {
+            utilityLoader.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        graph = utilityLoader.getGraph();
     }
 
     /**
@@ -189,4 +204,6 @@ public class Model implements Serializable {
     public Graph getGraph() {
         return graph;
     }
+
+
 }
