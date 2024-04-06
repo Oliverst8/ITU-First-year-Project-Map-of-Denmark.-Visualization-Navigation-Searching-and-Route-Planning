@@ -48,7 +48,7 @@ public class Model implements Serializable {
                 OSMParser OSMParser = new OSMParser(new File(filePath), dataPath + "/" + name);
                 OSMParser.load();
                 System.out.println("Finished importing map!");
-            };
+            }
             String path = dataPath + "/" + name;
 
             UtilityLoader utilityLoader = new UtilityLoader(path);
@@ -57,9 +57,7 @@ public class Model implements Serializable {
             chunkLoader = new ChunkLoader(dataPath + "/" + name);
 
             setUtilities(utilityLoader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
+        } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
     }
