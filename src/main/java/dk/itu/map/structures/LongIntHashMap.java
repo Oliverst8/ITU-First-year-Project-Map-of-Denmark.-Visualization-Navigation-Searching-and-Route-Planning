@@ -1,6 +1,7 @@
 package dk.itu.map.structures;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     long[] keys;
@@ -145,6 +146,14 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
         return (int) (key % (long) capacity);
     }
 
+    public long[] getKeys(){
+        return keys;
+    }
+
+    public int[] getValues(){
+        return value;
+    }
+
     @Override
     public void write(String path) throws FileNotFoundException, IOException {
         DataOutputStream stream = new DataOutputStream(
@@ -159,7 +168,9 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     @Override
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
-        for (int i = 0; i < size; i++) {
+        stream.writeInt(capacity);
+        stream.writeInt(total);
+        for (int i = 0; i < capacity; i++) {
                 stream.writeLong(keys[i]);
                 stream.writeInt(value[i]);
         }
@@ -178,11 +189,22 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
-        keys = new long[size];
-        value = new int[size];
-        for (int i = 0; i < size; i++) {
+        capacity = stream.readInt();
+        total = stream.readInt();
+        keys = new long[capacity];
+        value = new int[capacity];
+        for (int i = 0; i < capacity; i++) {
             keys[i] = stream.readLong();
             value[i] = stream.readInt();
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof LongIntHashMap)) return false;
+        LongIntHashMap other = (LongIntHashMap) obj;
+        if (other.size() != size) return false;
+        return Arrays.equals(keys, other.keys) && Arrays.equals(value, other.value);
     }
 }

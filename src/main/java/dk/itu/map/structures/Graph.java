@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class Graph implements Runnable {
     private List<MapElement> ways;
-    private final tempHashMapLongToInt idToIndex;
+    private final LongIntHashMap idToIndex;
     private final WriteAbleArrayList<IntArrayList> vertexList;
     private final IntArrayList edgeDestinations;
     private final FloatArrayList edgeWeights;
@@ -25,7 +25,7 @@ public class Graph implements Runnable {
     private boolean running = true;
 
     public Graph() {
-        idToIndex = new tempHashMapLongToInt();
+        idToIndex = new LongIntHashMap();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);

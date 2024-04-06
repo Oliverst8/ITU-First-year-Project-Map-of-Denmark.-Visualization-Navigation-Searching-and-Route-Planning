@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import dk.itu.map.structures.LongIntHashMap;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LongIntHashMapTest {
@@ -72,5 +76,30 @@ public class LongIntHashMapTest {
         assertThrows(IllegalArgumentException.class,() -> {
             map.containsKey(0);
         });
+    }
+
+    @Test
+    void testEquals() {
+        LongIntHashMap map = new LongIntHashMap();
+        LongIntHashMap map2 = new LongIntHashMap();
+        for(int i = 1; i < 1_000_000; i++){
+            map.put(i,i);
+            map2.put(i,i);
+        }
+        assertEquals(map,map2);
+    }
+
+    @Test
+    void testWriteAndRead() throws IOException {
+        LongIntHashMap map = new LongIntHashMap();
+        for (int i = 1; i < 10000; i++) {
+            map.put(i, i);
+        }
+        String path = "src/test/java/itu/map/testFiles/testWriteAndReadOfHashMapInt.txt";
+        map.write(path);
+        LongIntHashMap map2 = new LongIntHashMap();
+        map2.read(path);
+        Files.deleteIfExists(Paths.get(path));
+        assertEquals(map, map2);
     }
 }
