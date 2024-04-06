@@ -79,7 +79,7 @@ public class OSMParser {
         long startLoadTime = System.nanoTime();
 
         whileLoop:
-        while (input.hasNext()) {
+        while (true) {
             int tagKind = input.next();
 
             if (tagKind == XMLStreamConstants.START_ELEMENT) {
