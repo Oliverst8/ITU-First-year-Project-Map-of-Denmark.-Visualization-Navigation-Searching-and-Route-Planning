@@ -139,7 +139,7 @@ public class MapController extends ViewController {
         gc.setStroke(Color.BLACK);
         gc.setFill(Color.GRAY);
 
-        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
+        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks (The first time it loads), we dont know why (mvh August & Oliver)
         updateZoomLevel();
         currentChunkAmountSeen = this.viewModel.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
