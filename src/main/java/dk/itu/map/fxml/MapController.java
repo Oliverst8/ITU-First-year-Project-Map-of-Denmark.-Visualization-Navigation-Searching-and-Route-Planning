@@ -142,8 +142,9 @@ public class MapController extends ViewController {
         for(int i = getDetailLevel(); i <= 4; i++){
             Map<Integer, List<Way>> chunkLayer = viewModel.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
+                List<Way> currentChunk = chunkLayer.get(chunk);
                 for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
-                    chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/ startDist *100);
+                    currentChunk.get(j).draw(gc, getZoomDistance()/ startDist *100);
                 }
             }
         }
