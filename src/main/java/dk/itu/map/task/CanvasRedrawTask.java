@@ -3,6 +3,8 @@ package dk.itu.map.task;
 import dk.itu.map.structures.Way;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
@@ -31,8 +33,6 @@ public class CanvasRedrawTask extends Task<Void> {
         wipeCanvas(gc);
 
         // Draw the chunks
-
-
         for (Way way : ways) {
             way.draw(gc, zoom);
         }

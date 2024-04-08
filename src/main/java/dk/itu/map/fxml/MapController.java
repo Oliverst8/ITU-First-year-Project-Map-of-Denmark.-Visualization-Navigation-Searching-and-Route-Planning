@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.HashMap;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -17,6 +18,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -25,23 +29,11 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class MapController extends ViewController {
 
-    //JavaFX canvas
     @FXML
-    private Canvas canvasBuilding;
-    @FXML
-    private Canvas canvasHighway;
-    @FXML
-    private Canvas canvasAmenity;
-    @FXML
-    private Canvas canvasLeisure;
-    @FXML
-    private Canvas canvasAeroway;
-    @FXML
-    private Canvas canvasLanduse;
-    @FXML
-    private Canvas canvasNatural;
-    @FXML
-    private Canvas canvasPlace;
+    private AnchorPane root;
+    private String[] mapLayers;
+
+    private Map<String, Canvas> canvas;
 
     private Affine trans;
     //Zoom level
@@ -55,6 +47,8 @@ public class MapController extends ViewController {
     private float lastY;
     //Amount of chunks seen
     private float currentChunkAmountSeen = 1;
+
+    private AnimationTimer render;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -73,90 +67,66 @@ public class MapController extends ViewController {
      */
     @FXML
     public void initialize() {
-        GraphicsContext gcBuilding = canvasBuilding.getGraphicsContext2D();
-        gcBuilding.setFillRule(FillRule.EVEN_ODD);
-        gcBuilding.setLineCap(StrokeLineCap.ROUND);
-        gcBuilding.setLineJoin(StrokeLineJoin.ROUND);
+        mapLayers = new String[]{"building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
 
-        GraphicsContext gcHighway = canvasHighway.getGraphicsContext2D();
-        gcHighway.setFillRule(FillRule.EVEN_ODD);
-        gcHighway.setLineCap(StrokeLineCap.ROUND);
-        gcHighway.setLineJoin(StrokeLineJoin.ROUND);
+        canvas = new HashMap<>();
+        for(String key : mapLayers){
+            canvas.put(key, (Canvas) root.lookup("#canvas" + key.substring(0, 1).toUpperCase() + key.substring(1)));
 
-        GraphicsContext gcAmenity = canvasAmenity.getGraphicsContext2D();
-        gcAmenity.setFillRule(FillRule.EVEN_ODD);
-        gcAmenity.setLineCap(StrokeLineCap.ROUND);
-        gcAmenity.setLineJoin(StrokeLineJoin.ROUND);
+            GraphicsContext gc = canvas.get(key).getGraphicsContext2D();
 
-        GraphicsContext gcLeisure = canvasLeisure.getGraphicsContext2D();
-        gcLeisure.setFillRule(FillRule.EVEN_ODD);
-        gcLeisure.setLineCap(StrokeLineCap.ROUND);
-        gcLeisure.setLineJoin(StrokeLineJoin.ROUND);
+            gc.setFillRule(FillRule.EVEN_ODD);
+            gc.setLineCap(StrokeLineCap.ROUND);
+            gc.setLineJoin(StrokeLineJoin.ROUND);
+        }
 
-        GraphicsContext gcAeroway = canvasAeroway.getGraphicsContext2D();
-        gcAeroway.setFillRule(FillRule.EVEN_ODD);
-        gcAeroway.setLineCap(StrokeLineCap.ROUND);
-        gcAeroway.setLineJoin(StrokeLineJoin.ROUND);
-
-        GraphicsContext gcLanduse = canvasLanduse.getGraphicsContext2D();
-        gcLanduse.setFillRule(FillRule.EVEN_ODD);
-        gcLanduse.setLineCap(StrokeLineCap.ROUND);
-        gcLanduse.setLineJoin(StrokeLineJoin.ROUND);
-
-        GraphicsContext gcNatural = canvasNatural.getGraphicsContext2D();
-        gcNatural.setFillRule(FillRule.EVEN_ODD);
-        gcNatural.setLineCap(StrokeLineCap.ROUND);
-        gcNatural.setLineJoin(StrokeLineJoin.ROUND);
-
-        GraphicsContext gcPlace = canvasPlace.getGraphicsContext2D();
-        gcPlace.setFillRule(FillRule.EVEN_ODD);
-        gcPlace.setLineCap(StrokeLineCap.ROUND);
-        gcPlace.setLineJoin(StrokeLineJoin.ROUND);
-        
         trans = new Affine();
-
         trans.prependTranslation(-0.56*this.viewModel.getMinLon(), this.viewModel.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
         //This is done to avoid getheight and getwidth from canvas, returning way to big values
-        zoom(0, 0, canvasPlace.getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
+        zoom(0, 0, canvas.get("building").getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
 
         startDist = getZoomDistance();
         redraw();
 
-        AnimationTimer animationTimer = new AnimationTimer() {
+        render = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 redraw();
             }
         };
+    }
 
-        canvasBuilding.setOnMousePressed(e -> {
-            lastX = (float) e.getX();
-            lastY = (float) e.getY();
+    @FXML
+    void canvasPressed(MouseEvent e){
+        lastX = (float) e.getX();
+        lastY = (float) e.getY();
 
-            animationTimer.start();
-        });
+        render.start();
+    }
 
-        canvasBuilding.setOnMouseReleased(e -> {
-            animationTimer.stop();
-        });
+    @FXML
+    void canvasReleased(MouseEvent e){
+        render.stop();
+    }
 
-        canvasBuilding.setOnMouseDragged(e -> {
-            if (e.isPrimaryButtonDown()) {
+    @FXML
+    void canvasDragged(MouseEvent e){
+        if (e.isPrimaryButtonDown()) {
 
-                double dx = e.getX() - lastX;
-                double dy = e.getY() - lastY;
-                pan(dx, dy);
-            }
+            double dx = e.getX() - lastX;
+            double dy = e.getY() - lastY;
+            pan(dx, dy);
+        }
 
-            lastX = (float) e.getX();
-            lastY = (float) e.getY();
-        });
+        lastX = (float) e.getX();
+        lastY = (float) e.getY();
+    }
 
-        canvasBuilding.setOnScroll(e -> {
-            double factor = e.getDeltaY();
-            zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
-            redraw();
-        });
+    @FXML
+    void canvasScroll(ScrollEvent e){
+        double factor = e.getDeltaY();
+        zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
+        redraw();
     }
 
     /**
@@ -170,7 +140,7 @@ public class MapController extends ViewController {
      * @return Point2D the lower right corner of the canvas
      */
     private Point2D getLowerRightCorner() {
-        return convertTo2DPoint(canvasPlace.getWidth(), canvasPlace.getHeight());
+        return convertTo2DPoint(canvas.get("building").getWidth(), canvas.get("building").getHeight());
     }
 
     /**
@@ -191,14 +161,11 @@ public class MapController extends ViewController {
         currentChunkAmountSeen = this.viewModel.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
 
-        Set<Way> waysPlace = new HashSet<>();
-        Set<Way> waysNatural = new HashSet<>();
-        Set<Way> waysLanduse = new HashSet<>();
-        Set<Way> waysAeroway = new HashSet<>();
-        Set<Way> waysLeisure = new HashSet<>();
-        Set<Way> waysAmenity = new HashSet<>();
-        Set<Way> waysHighway = new HashSet<>();
-        Set<Way> waysBuilding = new HashSet<>();
+        Map<String, Set<Way>> ways = new HashMap<>();
+        
+        for(String key : mapLayers){
+            ways.put(key, new HashSet<>());
+        }
 
         float zoom = getZoomDistance() / startDist * 100;
 
@@ -210,43 +177,20 @@ public class MapController extends ViewController {
                     Way way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building":
-                            waysBuilding.add(way);
-                            break;
-                        case "highway":
-                            waysHighway.add(way);
-                            break;
-                        case "amenity":
-                            waysAmenity.add(way);
-                            break;
-                        case "leisure":
-                            waysLeisure.add(way);
-                            break;
-                        case "aeroway":
-                            waysAeroway.add(way);
-                            break;
-                        case "landuse":
-                            waysLanduse.add(way);
-                            break;
-                        case "natural":
-                            waysNatural.add(way);
-                            break;
-                        case "place":
-                            waysPlace.add(way);
+                        case "building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
+                            ways.get(way.getPrimaryType()).add(way);
                             break;
                     }
                 }
             }
         }
 
-        new CanvasRedrawTask(canvasPlace, waysPlace, trans, zoom).run();
-        new CanvasRedrawTask(canvasNatural, waysNatural, trans, zoom).run();
-        new CanvasRedrawTask(canvasLanduse, waysLanduse, trans, zoom).run();
-        new CanvasRedrawTask(canvasAeroway, waysAeroway, trans, zoom).run();
-        new CanvasRedrawTask(canvasAmenity, waysAmenity, trans, zoom).run();
-        new CanvasRedrawTask(canvasLeisure, waysLeisure, trans, zoom).run();
-        new CanvasRedrawTask(canvasHighway, waysHighway, trans, zoom).run();
-        new CanvasRedrawTask(canvasBuilding, waysBuilding, trans, zoom).run();
+        for (Map.Entry<String, Set<Way>> entry : ways.entrySet()) {
+            
+            Canvas canvas = this.canvas.get(entry.getKey());
+
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom).run();
+        }
     }
 
     /**

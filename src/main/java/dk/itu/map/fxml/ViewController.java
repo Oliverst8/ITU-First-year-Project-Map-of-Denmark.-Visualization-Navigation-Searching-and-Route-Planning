@@ -27,8 +27,6 @@ abstract class ViewController {
         this.controller = controller;
     }
 
-
-
     @FXML
     void importMap(ActionEvent event) {
         File selectedFile = getMapFile();

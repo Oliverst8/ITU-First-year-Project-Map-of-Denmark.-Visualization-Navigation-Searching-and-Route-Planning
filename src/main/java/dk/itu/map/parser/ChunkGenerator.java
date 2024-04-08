@@ -173,16 +173,17 @@ public class ChunkGenerator implements Runnable {
                     case "highway":
                         switch (tags.get(i + 1)) {
                             case "trunk":
-                            case "trunk_link":
                             case "primary":
-                            case "primary_link":
+                            case "secondary":
                             case "motorway":
-                            case "motorway_link":
                                 if (zoomLevel < 4) zoomLevel = 4;
                                 break;
 
                             case "tertiary":
                             case "tertiary_link":
+                            case "motorway_link":
+                            case "primary_link":
+                            case "trunk_link":
                                 if (zoomLevel < 3) zoomLevel = 3;
                                 break;
                             
@@ -214,22 +215,21 @@ public class ChunkGenerator implements Runnable {
                         }
                         break;
                     
-                    // case "landuse":
-                    //     switch (tags.get(i + 1)) {
-                    //         case "grass":
-                    //         case "forest":
-                    //         case "meadow":
-                    //         case "farmland":
-                    //         case "military":
-                    //         case "allotments":
-                    //         case "industrial":
-                    //         case "residential":
-                    //         case "construction":
-                    //         case "recreation_ground":
-                    //             if (zoomLevel < 3) zoomLevel = 3;
-                    //             break;
-                    //     }
-                    //     break;
+                    case "landuse":
+                        switch (tags.get(i + 1)) {
+                            case "grass":
+                            case "forest":
+                            case "meadow":
+                            case "military":
+                            case "allotments":
+                            case "industrial":
+                            case "residential":
+                            case "construction":
+                            case "recreation_ground":
+                                if (zoomLevel < 3) zoomLevel = 3;
+                                break;
+                        }
+                        break;
 
                     case "leisure":
                         switch (tags.get(i + 1)) {

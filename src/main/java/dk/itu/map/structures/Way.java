@@ -298,22 +298,21 @@ public class Way {
                         case "trunk_link":
                         case "primary":
                         case "primary_link":
-                            lineWidth = 0.0002f;
+                            lineWidth = 0.001f;
                             gc.setStroke(Color.DARKGRAY);
+                            shouldFill = false;
+                            break forLoop;
+                        
+                        case "secondary":
+                        case "secondary_link":
+                            lineWidth = 0.0005f;
+                            gc.setStroke(Color.GRAY);
                             shouldFill = false;
                             break forLoop;
                     }
 
                 case "natural":
                     switch (tags[i + 1]) {
-                        case "meadow":
-                        case "grassland":
-                            lineWidth = 0.00001f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.GREEN);
-                            shouldFill = true;
-                            break forLoop;
-
                         case "wood":
                             lineWidth = 0.0003f;
                             gc.setStroke(Color.GREEN);
@@ -357,29 +356,6 @@ public class Way {
 
                 case "landuse":
                     switch (tags[i + 1]) {
-                        //case "grass":
-                        case "meadow":
-                        case "recreation_ground":
-                            lineWidth = 0f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.GREEN);
-                            shouldFill = true;
-                            break forLoop;
-
-                        case "forest":
-                            lineWidth = 0.00001f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.LIGHTGREEN);
-                            shouldFill = true;
-                            break forLoop;
-                        
-                        case "farmland":
-                            lineWidth = 0.00005f;
-                            gc.setStroke(Color.web("#545400"));
-                            gc.setFill(Color.web("#6f6f00"));
-                            shouldFill = true;
-                            break forLoop;
-
                         case "allotments":
                         case "industrial":
                         case "residential":
