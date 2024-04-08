@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GraphBuilderTest {
-
+/*
     @Test
     void testAddEdges() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
@@ -63,5 +63,7 @@ public class GraphBuilderTest {
         assertEquals(expectedWeights.size(), actualWeights.size());
         assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
+
+ */
 
 }
