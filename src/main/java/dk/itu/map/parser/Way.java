@@ -27,6 +27,7 @@ class Way extends MapElement {
         for (int i = 0; i < getTags().size(); i++) {
             stream.writeUTF(getTags().get(i));
         }
+        stream.writeUTF(primaryType);
     }
 
     @Override

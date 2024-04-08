@@ -130,7 +130,8 @@ public class ChunkLoader {
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
-                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags, id));
+                    String primaryType = stream.readUTF();
+                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags, id, primaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

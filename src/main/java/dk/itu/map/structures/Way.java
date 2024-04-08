@@ -18,6 +18,7 @@ public class Way {
     private final CoordArrayList outerCoords;
     private final CoordArrayList innerCoords;
     private final String[] tags;
+    private String primaryType;
 
 
     private final long id;
@@ -54,9 +55,9 @@ public class Way {
     /**
      * Only used for ChunkHandler
      */
-    public Way(float[] outerCoords, float[] innerCoords, String[] tags, long id) {
+    public Way(float[] outerCoords, float[] innerCoords, String[] tags, long id, String primaryType) {
         this.id = id;
-
+        this.primaryType = primaryType;
         this.outerCoords = new CoordArrayList(outerCoords);
         this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
@@ -95,6 +96,10 @@ public class Way {
         }
 
         return builder.toString();
+    }
+
+    public String getPrimaryType(){
+        return primaryType;
     }
 
     public void stream(DataOutputStream stream) throws IOException {

@@ -167,19 +167,30 @@ public class MapController extends ViewController {
         for(int i = getDetailLevel(); i <= 4; i++) {
             Map<Integer, List<Way>> chunkLayer = viewModel.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
-                for(int j = 0; j < chunkLayer.get(chunk).size(); j++) {
-                    Way way = chunkLayer.get(chunk).get(j);
+                List<Way> chunkLayerList = chunkLayer.get(chunk);
+                for(int j = 0; j < chunkLayerList.size(); j++) {
+                    Way way = chunkLayerList.get(j);
 
-                    if(way.containsTag("highway")) 
-                        waysHighway.add(way);
-                    else if(way.containsTag("aeroway")) 
-                        waysAeroway.add(way);
-                    else if(way.containsTag("landuse"))
-                        waysLanduse.add(way);
-                    else if(way.containsTag("natural"))
-                        waysNatural.add(way);
-                    else if(way.containsTag("place"))
-                        waysPlace.add(way);
+                    switch (way.getPrimaryType()) {
+                        case "highway":
+                            waysHighway.add(way);
+                            break;
+                        case "aeroway":
+                            waysAeroway.add(way);
+                            break;
+                        case "landuse":
+                            waysLanduse.add(way);
+                            break;
+                        case "natural":
+                            waysNatural.add(way);
+                            break;
+                        case "place":
+                            waysPlace.add(way);
+                            break;
+                        default:
+                            // Handle the case where the tag is not any of the above
+                            throw new RuntimeException("Unknown primary type: " + way.getPrimaryType());
+                    }
                 }
             }
         }
