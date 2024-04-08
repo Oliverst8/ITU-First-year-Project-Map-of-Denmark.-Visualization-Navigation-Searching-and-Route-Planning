@@ -62,7 +62,10 @@
         <Canvas fx:id="canvasLanduse" height="373.0" width="640.0" />
         <Canvas fx:id="canvasNatural" height="373.0" width="640.0" />
         <Canvas fx:id="canvasAeroway" height="373.0" width="640.0" />
+        <Canvas fx:id="canvasLeisure" height="373.0" width="640.0" />
+        <Canvas fx:id="canvasAmenity" height="373.0" width="640.0" />
         <Canvas fx:id="canvasHighway" height="373.0" width="640.0" />
+        <Canvas fx:id="canvasBuilding" height="373.0" width="640.0" />
         
         <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
       </children>

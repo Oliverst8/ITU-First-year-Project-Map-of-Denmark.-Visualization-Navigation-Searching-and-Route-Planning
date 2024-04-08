@@ -28,7 +28,13 @@ public class MapController extends ViewController {
 
     //JavaFX canvas
     @FXML
+    private Canvas canvasBuilding;
+    @FXML
     private Canvas canvasHighway;
+    @FXML
+    private Canvas canvasAmenity;
+    @FXML
+    private Canvas canvasLeisure;
     @FXML
     private Canvas canvasAeroway;
     @FXML
@@ -51,8 +57,6 @@ public class MapController extends ViewController {
     //Amount of chunks seen
     private float currentChunkAmountSeen = 1;
 
-    private AnimationTimer animationTimer;
-
     /**
      * Constructor for the MapController, set the following variables
      * @param controller
@@ -70,10 +74,25 @@ public class MapController extends ViewController {
      */
     @FXML
     public void initialize() {
+        GraphicsContext gcBuilding = canvasBuilding.getGraphicsContext2D();
+        gcBuilding.setFillRule(FillRule.EVEN_ODD);
+        gcBuilding.setLineCap(StrokeLineCap.ROUND);
+        gcBuilding.setLineJoin(StrokeLineJoin.ROUND);
+
         GraphicsContext gcHighway = canvasHighway.getGraphicsContext2D();
         gcHighway.setFillRule(FillRule.EVEN_ODD);
         gcHighway.setLineCap(StrokeLineCap.ROUND);
         gcHighway.setLineJoin(StrokeLineJoin.ROUND);
+
+        GraphicsContext gcAmenity = canvasAmenity.getGraphicsContext2D();
+        gcAmenity.setFillRule(FillRule.EVEN_ODD);
+        gcAmenity.setLineCap(StrokeLineCap.ROUND);
+        gcAmenity.setLineJoin(StrokeLineJoin.ROUND);
+
+        GraphicsContext gcLeisure = canvasLeisure.getGraphicsContext2D();
+        gcLeisure.setFillRule(FillRule.EVEN_ODD);
+        gcLeisure.setLineCap(StrokeLineCap.ROUND);
+        gcLeisure.setLineJoin(StrokeLineJoin.ROUND);
 
         GraphicsContext gcAeroway = canvasAeroway.getGraphicsContext2D();
         gcAeroway.setFillRule(FillRule.EVEN_ODD);
@@ -104,25 +123,25 @@ public class MapController extends ViewController {
         startDist = getZoomDistance();
         redraw();
 
-        animationTimer = new AnimationTimer() {
+        AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 redraw();
             }
         };
 
-        canvasHighway.setOnMousePressed(e -> {
+        canvasBuilding.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
 
             animationTimer.start();
         });
 
-        canvasHighway.setOnMouseReleased(e -> {
+        canvasBuilding.setOnMouseReleased(e -> {
             animationTimer.stop();
         });
 
-        canvasHighway.setOnMouseDragged(e -> {
+        canvasBuilding.setOnMouseDragged(e -> {
             if (e.isPrimaryButtonDown()) {
 
                 double dx = e.getX() - lastX;
@@ -134,7 +153,7 @@ public class MapController extends ViewController {
             lastY = (float) e.getY();
         });
 
-        canvasHighway.setOnScroll(e -> {
+        canvasBuilding.setOnScroll(e -> {
             double factor = e.getDeltaY();
             zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
             redraw();
@@ -177,7 +196,10 @@ public class MapController extends ViewController {
         Set<Way> waysNatural = new HashSet<>();
         Set<Way> waysLanduse = new HashSet<>();
         Set<Way> waysAeroway = new HashSet<>();
+        Set<Way> waysLeisure = new HashSet<>();
+        Set<Way> waysAmenity = new HashSet<>();
         Set<Way> waysHighway = new HashSet<>();
+        Set<Way> waysBuilding = new HashSet<>();
 
         float zoom = getZoomDistance() / startDist * 100;
 
@@ -189,8 +211,17 @@ public class MapController extends ViewController {
                     Way way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
+                        case "building":
+                            waysBuilding.add(way);
+                            break;
                         case "highway":
                             waysHighway.add(way);
+                            break;
+                        case "amenity":
+                            waysAmenity.add(way);
+                            break;
+                        case "leisure":
+                            waysLeisure.add(way);
                             break;
                         case "aeroway":
                             waysAeroway.add(way);
@@ -204,9 +235,6 @@ public class MapController extends ViewController {
                         case "place":
                             waysPlace.add(way);
                             break;
-                        default:
-                            // Handle the case where the tag is not any of the above
-                            throw new RuntimeException("Unknown primary type: " + way.getPrimaryType());
                     }
                 }
             }
@@ -216,7 +244,10 @@ public class MapController extends ViewController {
         new CanvasRedrawTask(canvasNatural, waysNatural, trans, zoom).run();
         new CanvasRedrawTask(canvasLanduse, waysLanduse, trans, zoom).run();
         new CanvasRedrawTask(canvasAeroway, waysAeroway, trans, zoom).run();
+        new CanvasRedrawTask(canvasAmenity, waysAmenity, trans, zoom).run();
+        new CanvasRedrawTask(canvasLeisure, waysLeisure, trans, zoom).run();
         new CanvasRedrawTask(canvasHighway, waysHighway, trans, zoom).run();
+        new CanvasRedrawTask(canvasBuilding, waysBuilding, trans, zoom).run();
     }
 
     /**

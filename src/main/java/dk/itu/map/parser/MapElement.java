@@ -12,10 +12,19 @@ abstract class MapElement {
     public MapElement(long id, List<String> tags) {
         this.id = id;
         this.tags = tags;
-        for(String tag : tags) {
-            switch (tag) {
+        for(int i = 0; i < tags.size(); i += 2) {
+            switch (tags.get(i)) {
                 case "highway":
                     primaryType = "highway";
+                    return;
+                case "leisure":
+                    primaryType = "leisure";
+                    return;
+                case "amenity":
+                    primaryType = "amenity";
+                    return;
+                case "building":
+                    primaryType = "building";
                     return;
                 case "aeroway":
                     primaryType = "aeroway";
@@ -30,7 +39,6 @@ abstract class MapElement {
                     primaryType = "place";
                     return;
                 default:
-                    // Handle the case where the tag is not any of the above
                     primaryType = "null";
                     break;
             }
