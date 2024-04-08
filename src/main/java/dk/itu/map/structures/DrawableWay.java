@@ -46,14 +46,6 @@ public class DrawableWay implements Serializable {
         }
     }
 
-    public DrawableWay(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, LongArrayList nodeIds) {
-        this(nodes, tags, outerRef, innerRef);
-        this.nodeIDs = new long[nodeIds.size()];
-        for (int i = 0; i < nodeIds.size(); i++) {
-            this.nodeIDs[i] = nodeIds.get(i);
-        }
-    }
-
     /**
      * Only used for ChunkHandler
      */
@@ -63,12 +55,10 @@ public class DrawableWay implements Serializable {
         this.tags = tags;
     }
 
-    public DrawableWay(float[] outerCoords, float[] innerCoords, String[] tags, long[] nodeIDs) {
-        this.outerCoords = new CoordArrayList(outerCoords);
-        this.innerCoords = new CoordArrayList(innerCoords);
-        this.tags = tags;
-        this.nodeIDs = nodeIDs;
+    public DrawableWay(CoordArrayList coords){
+        this.outerCoords = coords;
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -156,7 +146,7 @@ public class DrawableWay implements Serializable {
         gc.closePath();
         
     }
-
+     
     public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
