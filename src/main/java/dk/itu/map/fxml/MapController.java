@@ -108,8 +108,6 @@ public class MapController extends ViewController {
             @Override
             public void handle(long now) {
                 redraw();
-
-                System.out.println("Zoom level: " + zoomLevel);
             }
         };
 
@@ -139,6 +137,7 @@ public class MapController extends ViewController {
         canvasHighway.setOnScroll(e -> {
             double factor = e.getDeltaY();
             zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
+            redraw();
         });
     }
 
@@ -212,13 +211,6 @@ public class MapController extends ViewController {
                 }
             }
         }
-
-        System.out.println("Ways " + (waysPlace.size() + waysNatural.size() + waysLanduse.size() + waysAeroway.size() + waysHighway.size()));
-        System.out.println("Highway " + waysHighway.size());
-        System.out.println("Aeroway " + waysAeroway.size());
-        System.out.println("Landuse " + waysLanduse.size());
-        System.out.println("Natural " + waysNatural.size());
-        System.out.println("Place " + waysPlace.size());
 
         new CanvasRedrawTask(canvasPlace, waysPlace, trans, zoom).run();
         new CanvasRedrawTask(canvasNatural, waysNatural, trans, zoom).run();
