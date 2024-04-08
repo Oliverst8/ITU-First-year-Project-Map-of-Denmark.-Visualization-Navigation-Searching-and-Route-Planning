@@ -35,7 +35,7 @@ public class ChunkGenerator implements Runnable {
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
-    private final Graph graph;
+    private final GraphBuilder graph;
     private final Thread graphThread;
 
     private final Thread chunkingThread;
@@ -51,7 +51,7 @@ public class ChunkGenerator implements Runnable {
      * @param maxLon The maximum longitude
      */
     public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
-        graph = new Graph();
+        graph = new GraphBuilder();
         this.dataPath = dataPath;
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));

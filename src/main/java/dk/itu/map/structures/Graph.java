@@ -4,26 +4,23 @@ import dk.itu.map.parser.MapElement;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
-import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.IntStream;
 
 
-public class Graph implements Runnable {
-    private List<MapElement> ways;
-    private final LongIntHashMap idToIndex;
-    private final WriteAbleArrayList<IntArrayList> vertexList;
-    private final IntArrayList edgeDestinations;
-    private final FloatArrayList edgeWeights;
-    private final FloatArrayList coords;
-    //private final LongArrayList wayIDs;
-    private boolean running = true;
+public class Graph {
+    protected final LongIntHashMap idToIndex;
+    protected final WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
+    protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
+    protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
+    protected final FloatArrayList coords; //List that holds the coordinates of each vertex
 
+    /**
+     * Constructor for the Graph class
+     * Initializes the idToIndex, vertexList, edgeDestinations, edgeWeights and coords
+     */
     public Graph() {
         idToIndex = new LongIntHashMap();
         vertexList = new WriteAbleArrayList<>();
@@ -31,113 +28,12 @@ public class Graph implements Runnable {
         edgeWeights = new FloatArrayList(50_000);
         coords = new FloatArrayList();
         //wayIDs = new LongArrayList();
-        ways = Collections.synchronizedList(new ArrayList<>());
-    }
-
-    //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
-    // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
-    private float calcWeight(MapElement way, int firstNode) {
-        CoordArrayList coords = way.getCoords();
-
-        return (float) Math.sqrt(Math.pow(coords.get(firstNode) - coords.get(firstNode+2), 2) + Math.pow(coords.get(firstNode+1) - coords.get(firstNode+3), 2));
-    }
-
-    public void run() {
-        while(running || !ways.isEmpty()){
-            if(running && ways.size() < 100_000){
-                try {
-                    Thread.sleep(30);
-                    continue;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            while(!ways.isEmpty()){
-                MapElement way = ways.remove(0);
-                addVertices(way.getNodeIDs(), way.getCoords());
-                addEdge(way);
-            }
-        }
-    }
-
-    private void addVertices(long[] vertexID, CoordArrayList coords) {
-        for (int i = 0; i < vertexID.length; i++) {
-            if(!idToIndex.containsKey(vertexID[i])){
-                int index = vertexList.size();
-                idToIndex.put(vertexID[i], index);
-                vertexList.add(new IntArrayList(2));
-                this.coords.add(coords.get(i*2));
-                this.coords.add(coords.get(i*2+1));
-                //coords.add();
-                //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
-                // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
-
-                //Here we could add node ids to an nodeIDArray, if we want them later
-            }
-        }
-    }
-
-    private void addEdge(MapElement way) {
-        /*
-        int node1 = idToIndex.get(way.getNodeIDs()[0]);
-        int node2 = idToIndex.get(way.getNodeIDs()[1]);
-        int edgeNumberFrom1 = edgeDestinations.size();
-        int edgeNumberFrom2 = edgeNumberFrom1+1;
-        //Weight should be differentiated later, but currently nothing can change it, so ill keep it in one variable
-        float edgeWeight = calcWeight(way);
-
-        vertexList.get(node1).add(edgeNumberFrom1);
-        vertexList.get(node2).add(edgeNumberFrom2);
-
-        edgeDestinations.add(node2);
-        edgeDestinations.add(node1);
-
-        edgeWeights.add(edgeWeight);
-        edgeWeights.add(edgeWeight);
-
-        wayIDs.add(way.getId());
-        wayIDs.add(way.getId());
-        */
-
-        //This is the new version of the above code, which should be more efficient
-        long[] nodeIDs = way.getNodeIDs();
-
-        for(int i = 0; i < nodeIDs.length-1; i++){
-            int node1 = idToIndex.get(nodeIDs[i]);
-            int node2 = idToIndex.get(nodeIDs[(i+1)]);
-
-            int edgeNumberFrom1 = edgeDestinations.size();
-            int edgeNumberFrom2 = edgeNumberFrom1+1;
-
-            vertexList.get(node1).add(edgeNumberFrom1);
-            vertexList.get(node2).add(edgeNumberFrom2);
-
-            edgeDestinations.add(node2);
-            edgeDestinations.add(node1);
-
-
-            float weight = calcWeight(way, i);
-
-            edgeWeights.add(weight);
-            edgeWeights.add(weight);
-
-        }
-
-       //Maybe for all these we should add at the specific index to make sure no mistakes are made,
-        // but as long as we just call these methods here, we should be okay I think
     }
 
     public int size(){
         return idToIndex.size();
     }
 
-    public void addWay(MapElement way) {
-        ways.add(way);
-    }
-
-    public void stop(){
-        running = false;
-    }
     //This test needs refactoring, since it is now split up in new Arrays
     public IntArrayList getEdges() {
         return edgeDestinations;
@@ -166,37 +62,6 @@ public class Graph implements Runnable {
 
     public int idToVertexId(long id){
         return idToIndex.get(id);
-    }
-
-    public void writeToFile(String path){
-        String folderPath = path + "/graph";
-        (new File(folderPath)).mkdirs();
-
-        File[] files = new File[]{
-                new File(folderPath + "/idToIndex.txt"),
-                new File(folderPath + "/vertexList.txt"),
-                new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/edgeWeights.txt"),
-                new File(folderPath + "/coords.txt"),
-                //new File(folderPath + "/wayIDs.txt")
-        };
-
-        WriteAble[] instanceVariables = new WriteAble[]{
-                idToIndex,
-                vertexList,
-                edgeDestinations,
-                edgeWeights,
-                coords,
-                //wayIDs
-        };
-
-        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
-            try {
-                instanceVariables[i].write(files[i].getAbsolutePath());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public void loadFromDataPath(String path) throws IOException {
