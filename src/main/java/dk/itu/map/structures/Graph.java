@@ -1,12 +1,8 @@
 package dk.itu.map.structures;
 
-import dk.itu.map.parser.MapElement;
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
-import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 import java.io.*;
-import java.util.*;
 import java.util.stream.IntStream;
 
 
@@ -30,40 +26,56 @@ public class Graph {
         //wayIDs = new LongArrayList();
     }
 
+    /**
+     * @return the number of vertices in the graph
+     */
     public int size(){
         return idToIndex.size();
     }
 
-    //This test needs refactoring, since it is now split up in new Arrays
-    public IntArrayList getEdges() {
-        return edgeDestinations;
-    }
-
-    public LongArrayList getIds() {
-        //return wayIDs;
-        throw new UnsupportedOperationException();
-    }
+    /**
+     * @param vertex to be gotten edge list of
+     * @return A list of vertices edge indexes. These indexes refer to the edgeDestinations and edgeWeights lists
+     */
     public IntArrayList getEdgeList(int vertex){return vertexList.get(vertex);}
 
+    /**
+     * @param edge the index of the edges destination to be gotten
+     * @return the destination of the edge
+     */
     public int getDestination(int edge){
         return edgeDestinations.get(edge);
     }
+
+    /**
+     * @param edge the index of the edge weight to be gotten
+     * @return the weight of the edge
+     */
     public float getWeight(int edge){
         return edgeWeights.get(edge);
     }
 
-    public FloatArrayList getWeights() {
-        return edgeWeights;
-    }
-
+    /**
+     * @param index the index of the vertex coords to be gotten
+     * @return the coordinates of the vertex
+     */
     public float[] getCoords(int index){
         return new float[]{coords.get(index*2), coords.get(index*2+1)};
     }
 
+    /**
+     * @param id the id of the vertex
+     * @return the index of the vertex
+     */
     public int idToVertexId(long id){
         return idToIndex.get(id);
     }
 
+    /**
+     * Loads the graph from a given folder
+     * @param path the path where the graph folder is located
+     * @throws IOException
+     */
     public void loadFromDataPath(String path) throws IOException {
         String folderPath = path + "/graph";
         File[] files = new File[]{

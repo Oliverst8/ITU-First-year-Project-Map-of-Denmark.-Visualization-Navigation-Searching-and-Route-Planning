@@ -14,25 +14,47 @@ import java.util.stream.IntStream;
 
 public class GraphBuilder extends Graph implements Runnable {
 
-    private final List<MapElement> ways;
-    private boolean running = true;
+    private final List<MapElement> ways; //List of ways to be added to the graph
+    private boolean running = true; //Boolean to keep the thread running
+
+    /**
+     * Constructor for the GraphBuilder class
+     * Initializes the ways list
+     */
     public GraphBuilder(){
         super();
         ways = Collections.synchronizedList(new LinkedList<>());
     }
 
+    /**
+     * Calculates the distance between two points
+     * @param x1 the x coordinate of the first point
+     * @param y1 the y coordinate of the first point
+     * @param x2 the x coordinate of the second point
+     * @param y2 the y coordinate of the second point
+     * @return the distance between the two points
+     */
     private float dist(float x1, float y1, float x2, float y2){
         return (float) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
     }
 
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
+    //ADVARSEL FUNGERER IKKE
+    /**
+     * Calculates the weight of a way
+     * @param way the way to calculate the weight of
+     * @return the weight of the way
+     */
     private float calcWeight(MapElement way, int firstNode) {
         CoordArrayList coords = way.getCoords();
         return dist(coords.get(firstNode), coords.get(firstNode+1), coords.get(firstNode+2), coords.get(firstNode+3));
         //return (float) Math.sqrt(Math.pow(coords.get(firstNode) - coords.get(firstNode+2), 2) + Math.pow(coords.get(firstNode+1) - coords.get(firstNode+3), 2));
     }
 
+    /**
+     * Parses ways added to the graph
+     */
     public void run() {
         while(running || !ways.isEmpty()){
             if(running && ways.size() < 100_000){
@@ -51,6 +73,11 @@ public class GraphBuilder extends Graph implements Runnable {
         }
     }
 
+    /**
+     * Adds vertices to the graph
+     * @param vertexID the ids of the vertices to be added
+     * @param coords the coordinates of the vertices to be added
+     */
     private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
@@ -68,6 +95,10 @@ public class GraphBuilder extends Graph implements Runnable {
         }
     }
 
+    /**
+     * Adds an edge to the graph
+     * @param way the way to add an edge from
+     */
     private void addEdge(MapElement way) {
         /*
         int node1 = idToIndex.get(way.getNodeIDs()[0]);
@@ -118,14 +149,25 @@ public class GraphBuilder extends Graph implements Runnable {
         // but as long as we just call these methods here, we should be okay I think
     }
 
+    /**
+     * Adds a way to the graph, to be parsed by run()
+     * @param way the way to be added
+     */
     public void addWay(MapElement way) {
         ways.add(way);
     }
 
+    /**
+     * Stops the thread
+     */
     public void stop(){
         running = false;
     }
 
+    /**
+     * Writes the graph to a file
+     * @param path the path to write the graph to (Do not include /graph in the path)
+     */
     public void writeToFile(String path){
         String folderPath = path + "/graph";
         (new File(folderPath)).mkdirs();
