@@ -2,7 +2,7 @@ package dk.itu.map.fxml;
 
 import dk.itu.map.Model;
 import dk.itu.map.Controller;
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.DrawableWay;
 
 
 import java.util.Map;
@@ -79,7 +79,7 @@ public class MapController extends ViewController {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
             Navigation navigation = new Navigation(this.viewModel.getGraph());
-            Way path = navigation.getPath(814157l,2395042472l); //this works
+            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
             System.out.println(path);
             path.draw(gc, getZoomDistance()/startDist*100);
         });
@@ -145,7 +145,7 @@ public class MapController extends ViewController {
         updateZoomLevel();
 
         for(int i = getDetailLevel(); i <= 4; i++){
-            Map<Integer, List<Way>> chunkLayer = viewModel.getChunksInZoomLevel(i);
+            Map<Integer, List<DrawableWay>> chunkLayer = viewModel.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 for(int j = 0; j < chunkLayer.get(chunk).size(); j++){
                     chunkLayer.get(chunk).get(j).draw(gc, getZoomDistance()/ startDist *100);

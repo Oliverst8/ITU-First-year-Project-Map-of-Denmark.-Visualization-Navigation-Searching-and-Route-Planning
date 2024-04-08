@@ -1,8 +1,8 @@
 package dk.itu.map;
 
 import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.Way;
 import dk.itu.map.parser.OSMParser;
 import dk.itu.map.parser.ChunkLoader;
 import javafx.geometry.Point2D;
@@ -19,7 +19,7 @@ public class Model implements Serializable {
     // The path to the data folder
     private final String dataPath;
     // A list that holds the different zoom levels, and their chunks
-    private final List<Map<Integer,List<Way>>> chunkLayers;
+    private final List<Map<Integer,List<DrawableWay>>> chunkLayers;
     // The chunk loader
     private ChunkLoader chunkLoader;
     private Graph graph;
@@ -98,7 +98,7 @@ public class Model implements Serializable {
      * @param zoomLevel the zoom level of the chunks
      */
     private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
+        Map<Integer, List<DrawableWay>> chunks = chunkLayers.get(zoomLevel);
 
         chunkSet.removeAll(chunks.keySet());
 
@@ -129,7 +129,7 @@ public class Model implements Serializable {
      * @param zoomLevel the zoom level to be updated
      */
     private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        for(Map<Integer, List<Way>> chunkLayers : chunkLayers) {
+        for(Map<Integer, List<DrawableWay>> chunkLayers : chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
         }
 
@@ -195,7 +195,7 @@ public class Model implements Serializable {
      * @return A map of the chunks in the given zoom level
      * The key is the chunk index, and the value is a list of ways in the chunk
      */
-    public Map<Integer, List<Way>> getChunksInZoomLevel(int zoomLevel) {
+    public Map<Integer, List<DrawableWay>> getChunksInZoomLevel(int zoomLevel) {
         return chunkLayers.get(zoomLevel);
     }
 

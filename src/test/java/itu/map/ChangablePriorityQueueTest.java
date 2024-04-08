@@ -1,18 +1,6 @@
 package itu.map;
 
 import dk.itu.map.structures.ChangablePriorityQueue;
-import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.Way;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ChangablePriorityQueueTest {
 

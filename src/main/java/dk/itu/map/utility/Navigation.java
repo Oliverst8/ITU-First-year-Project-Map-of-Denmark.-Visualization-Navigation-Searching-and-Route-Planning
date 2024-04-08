@@ -4,10 +4,6 @@ import dk.itu.map.structures.*;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Stack;
-
 public class Navigation {
     private final Graph graph;
     //private ChangablePriorityQueue queue;
@@ -60,7 +56,7 @@ public class Navigation {
         vertexTo[vertex] = vertexFrom;
     }
 
-    public Way getPath(long startPoint, long endPoint){
+    public DrawableWay getPath(long startPoint, long endPoint){
 
         int startPointID = graph.idToVertexId(startPoint);
         int endPointID = graph.idToVertexId(endPoint);
@@ -83,7 +79,7 @@ public class Navigation {
         path.add(coords[1]);
         pathIDs.add(current);
 
-        return new Way(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
+        return new DrawableWay(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
 
 
         //return path;
