@@ -1,9 +1,12 @@
 package itu.map;
 
+import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.*;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import org.junit.jupiter.api.Test;
+import dk.itu.map.parser.Way;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,17 +14,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GraphTest {
-/*
-    @Test
-    void testGraph() {
-        Graph graph = new Graph();
-        assertNotNull(graph);
-    }
+public class GraphBuilderTest {
 
     @Test
     void testAddEdges() throws InterruptedException {
-        Graph graph = new Graph();
+        GraphBuilder graph = new GraphBuilder();
         List<Float> nodes1 = Arrays.asList(0f,0f,1f,1f);
         List<String> stringList = new ArrayList<>();
         List<Float> nodes2 = Arrays.asList(1f,1f,3f,1f);
@@ -66,5 +63,5 @@ public class GraphTest {
         assertEquals(expectedWeights.size(), actualWeights.size());
         assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
-*/
+
 }
