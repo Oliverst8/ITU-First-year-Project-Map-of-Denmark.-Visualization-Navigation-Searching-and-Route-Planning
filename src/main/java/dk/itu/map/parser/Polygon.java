@@ -36,6 +36,7 @@ public class Polygon extends MapElement {
 
     @Override
     public void stream(DataOutputStream stream) throws IOException {
+        stream.writeLong(getId());
         stream.writeInt(countCoords(outerWays));
         for (Way way : outerWays) {
             for (float coord : way.getCoords().toArray()) {

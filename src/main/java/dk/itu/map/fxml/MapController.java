@@ -22,7 +22,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
-
 public class MapController extends ViewController {
 
     //JavaFX canvas
@@ -185,9 +184,14 @@ public class MapController extends ViewController {
             }
         }
 
-        System.out.println("Place: " + waysPlace.size());
+        System.out.println("Ways " + (waysPlace.size() + waysNatural.size() + waysLanduse.size() + waysAeroway.size() + waysHighway.size()));
+        System.out.println("Highway " + waysHighway.size());
+        System.out.println("Aeroway " + waysAeroway.size());
+        System.out.println("Landuse " + waysLanduse.size());
+        System.out.println("Natural " + waysNatural.size());
+        System.out.println("Place " + waysPlace.size());
 
-        //new CanvasRedrawTask(canvasPlace, waysPlace, trans, zoom).run();
+        new CanvasRedrawTask(canvasPlace, waysPlace, trans, zoom).run();
         new CanvasRedrawTask(canvasNatural, waysNatural, trans, zoom).run();
         new CanvasRedrawTask(canvasLanduse, waysLanduse, trans, zoom).run();
         new CanvasRedrawTask(canvasAeroway, waysAeroway, trans, zoom).run();

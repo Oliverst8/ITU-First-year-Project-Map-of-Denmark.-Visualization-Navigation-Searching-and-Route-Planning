@@ -17,6 +17,7 @@ class Way extends MapElement {
 
     @Override
     public void stream(DataOutputStream stream) throws IOException {
+        stream.writeLong(getId());
         stream.writeInt(coords.size());
         for (int i = 0; i < coords.size(); i++) {
             stream.writeFloat(coords.get(i));

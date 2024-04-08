@@ -111,11 +111,13 @@ public class ChunkLoader {
 
             File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
+            long id;
             float[] outerCoords;
             float[] innerCoords;
             String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
+                    id = stream.readLong();
                     outerCoords = new float[stream.readInt()];
                     for (int j = 0; j < outerCoords.length; j++) {
                         outerCoords[j] = stream.readFloat();
@@ -128,7 +130,7 @@ public class ChunkLoader {
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
-                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags));
+                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags, id));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

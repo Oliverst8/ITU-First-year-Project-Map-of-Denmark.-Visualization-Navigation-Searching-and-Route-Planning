@@ -148,6 +148,15 @@ public class ChunkGenerator implements Runnable {
                                 continue forWay;
                         }
 
+                    case "place":
+                        switch (tags.get(i + 1)) {
+                            case "island":
+                            case "islet":
+                                if (zoomLevel < 4) zoomLevel = 4;
+                                break;
+                        }
+                        break;
+
                     case "aeroway":
                         switch (tags.get(i + 1)) {
                             case "aerodrome":
@@ -187,6 +196,12 @@ public class ChunkGenerator implements Runnable {
 
                     case "natural":
                         switch (tags.get(i + 1)) {
+                            case "peninsula":
+                                if (zoomLevel < 4) zoomLevel = 4;
+                                break;
+                        }
+
+                        switch (tags.get(i + 1)) {
                             case "wood":
                             case "water":
                             case "scrub":
@@ -199,30 +214,22 @@ public class ChunkGenerator implements Runnable {
                         }
                         break;
                     
-                    case "place":
-                        switch (tags.get(i + 1)) {
-                            case "island":
-                                if (zoomLevel < 4) zoomLevel = 4;
-                                break;
-                        }
-                        break;
-                    
-                    case "landuse":
-                        switch (tags.get(i + 1)) {
-                            case "grass":
-                            case "forest":
-                            case "meadow":
-                            case "farmland":
-                            case "military":
-                            case "allotments":
-                            case "industrial":
-                            case "residential":
-                            case "construction":
-                            case "recreation_ground":
-                                if (zoomLevel < 3) zoomLevel = 3;
-                                break;
-                        }
-                        break;
+                    // case "landuse":
+                    //     switch (tags.get(i + 1)) {
+                    //         case "grass":
+                    //         case "forest":
+                    //         case "meadow":
+                    //         case "farmland":
+                    //         case "military":
+                    //         case "allotments":
+                    //         case "industrial":
+                    //         case "residential":
+                    //         case "construction":
+                    //         case "recreation_ground":
+                    //             if (zoomLevel < 3) zoomLevel = 3;
+                    //             break;
+                    //     }
+                    //     break;
 
                     case "leisure":
                         switch (tags.get(i + 1)) {

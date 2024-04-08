@@ -20,13 +20,15 @@ public class Way {
     private final String[] tags;
 
 
-    private long id;
+    private final long id;
     private long[] nodeIDs;
 
     /**
      * Only use for OSMParser
      */
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
+    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long id) {
+        this.id = id;
+
         outerCoords = new CoordArrayList();
         innerCoords = new CoordArrayList();
         this.outerRef = outerRef;
@@ -44,15 +46,17 @@ public class Way {
         }
     }
 
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long[] nodeIds) {
-        this(nodes, tags, outerRef, innerRef);
+    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long[] nodeIds, long id) {
+        this(nodes, tags, outerRef, innerRef, id);
         this.nodeIDs = nodeIds;
     }
 
     /**
      * Only used for ChunkHandler
      */
-    public Way(float[] outerCoords, float[] innerCoords, String[] tags) {
+    public Way(float[] outerCoords, float[] innerCoords, String[] tags, long id) {
+        this.id = id;
+
         this.outerCoords = new CoordArrayList(outerCoords);
         this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
@@ -109,7 +113,6 @@ public class Way {
     }
 
     public void draw(GraphicsContext gc, float scaleFactor) {
-        if (Arrays.asList(tags).contains("island")) return;
         gc.beginPath();
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
@@ -327,14 +330,22 @@ public class Way {
                             gc.setFill(Color.LIGHTBLUE);
                             shouldFill = true;
                             break forLoop;
+
+                        case "peninsula":
+                            lineWidth = 0.0001f;
+                            gc.setStroke(Color.LIGHTGREEN);
+                            gc.setFill(Color.LIGHTGREEN);
+                            shouldFill = true;
+                            break forLoop;
                     }
                 
                 case "place":
                     switch (tags[i + 1]) {
                         case "island":
+                        case "islet":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.GREEN);
+                            gc.setStroke(Color.LIGHTGREEN);
+                            gc.setFill(Color.LIGHTGREEN);
                             shouldFill = true;
                             break forLoop;
                     }
@@ -459,4 +470,16 @@ public class Way {
         return nodeIDs;
     }
 
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Way) {
+            return ((Way) obj).id == id;
+        }
+        return false;
+    }
 }

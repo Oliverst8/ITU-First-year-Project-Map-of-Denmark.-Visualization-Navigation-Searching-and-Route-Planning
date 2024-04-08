@@ -5,7 +5,6 @@ import java.lang.reflect.Constructor;
 import javafx.util.Builder;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.BorderPane;
 
 public class ViewBuilder implements Builder<Region> {
     private final Controller controller;
