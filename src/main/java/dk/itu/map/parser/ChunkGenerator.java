@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 
 import java.util.List;
 import java.util.HashSet;
@@ -16,52 +15,69 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
-class Chunk extends HashSet<Way> {}
+class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-    // chunk size in coordinate size
+
     private final String dataPath;
     private final float CHUNK_SIZE = 0.05f;
     private final byte amountOfZoomLayers = 5;
 
-    public float minlat, maxlat, minlon, maxlon;
+    public float minLat, maxLat, minLon, maxLon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
 
     private ArrayList<ZoomLayer> zoomLayers;
-    private File[][] files;
-
-    private int tempCounter = 0;
-    private List<Way> rawWays;
+    private final File[][] files;
+    private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
 
-    private Thread chunkingThread;
+    private final Thread chunkingThread;
 
-    public ChunkGenerator(String dataPath, float minlat, float maxlat, float minlon, float maxlon) {
+
+    /**
+     * Constructor for the ChunkGenerator class
+     *
+     * @param dataPath The path to the data folder
+     * @param minLat The minimum latitude
+     * @param maxLat The maximum latitude
+     * @param minLon The minimum longitude
+     * @param maxLon The maximum longitude
+     */
+    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
         this.dataPath = dataPath;
-        hasMoreWork = false;
-        rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        chunkingThread = new Thread(this);
-        chunkingThread.start();
+        this.hasMoreWork = false;
+        this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
+        this.chunkingThread = new Thread(this);
+        this.chunkingThread.start();
 
-        this.minlat = minlat;
-        this.maxlat = maxlat;
-        this.minlon = minlon;
-        this.maxlon = maxlon;
+        this.minLat = minLat;
+        this.maxLat = maxLat;
+        this.minLon = minLon;
+        this.maxLon = maxLon;
 
-        chunkColumnAmount = (int) Math.ceil(Math.abs(maxlon - minlon) / CHUNK_SIZE);
-        chunkRowAmount = (int) Math.ceil(Math.abs(maxlat - minlat) / CHUNK_SIZE);
+        this.chunkColumnAmount = (int) Math.ceil(Math.abs(maxLon - minLon) / CHUNK_SIZE);
+        this.chunkRowAmount = (int) Math.ceil(Math.abs(maxLat - minLat) / CHUNK_SIZE);
 
-        chunkAmount = chunkColumnAmount * chunkRowAmount;
+        this.chunkAmount = chunkColumnAmount * chunkRowAmount;
+
+        System.out.println("Beginning" + chunkRowAmount + " " + chunkColumnAmount);
 
         resetChunks();
 
         files = new File[amountOfZoomLayers][chunkAmount];
 
-        System.out.println(chunkRowAmount + " " + chunkColumnAmount);
+        createFiles(dataPath);
+    }
 
+   /**
+     * Create the files for the chunks
+     *
+     * @param dataPath The path to the data folder
+     */
+    private void createFiles(String dataPath) {
         try {
             File folder = new File(dataPath);
             folder.mkdirs();
@@ -79,9 +95,12 @@ public class ChunkGenerator implements Runnable {
             System.out.println("failed " + e.getMessage());
         }
     }
+    /**
+     * Removes the chunks that have been parsed, and makes room for new chunks to be added.
+     */
 
     private void resetChunks() {
-        zoomLayers = new ArrayList<ZoomLayer>(chunkAmount);
+        zoomLayers = new ArrayList<>(chunkAmount);
         for (int i = 0; i < amountOfZoomLayers; i++) {
             zoomLayers.add(new ZoomLayer());
             for (int j = 0; j < chunkAmount; j++) {
@@ -89,35 +108,48 @@ public class ChunkGenerator implements Runnable {
             }
         }
     }
-
+    /**
+     * Converts coordinates to a chunk index
+     *
+     * @param lat The latitude
+     * @param lon The longitude
+     * @return The chunk index
+     */
     private int coordsToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minlon) / CHUNK_SIZE) +
-            (int) Math.floor((lat - minlat) / CHUNK_SIZE) * chunkColumnAmount;
+        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
+            (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
     }
+    /**
+     * Adds a way to the list of ways to be chunked
+     *
+     * @param way The way to be added
+     */
 
-    public void addWay(Way way) { // main
+    public void addWay(MapElement way) {
         rawWays.add(way);
     }
-
+    /**
+     * Sort ways into chunks and zoom levels
+     */
     public void chunkWays() {
-        List<Way> newWays = rawWays;
+        List<MapElement> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         forWay:
-        for (Way way : newWays) {
+        for (MapElement way : newWays) {
             byte zoomLevel = -1;
-            String[] tags = way.getTags();
-            for (int i = 0; i < tags.length; i += 2) {
-                switch (tags[i]) {
+            List<String> tags = way.getTags();
+            for (int i = 0; i < tags.size(); i += 2) {
+                switch (tags.get(i)) {
                     case "route":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "ferry":
                             case "ferry_link":
                                 continue forWay;
                         }
 
                     case "aeroway":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "aerodrome":
                                 if (zoomLevel < 3) zoomLevel = 3;
 
@@ -130,7 +162,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                     
                     case "highway":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "trunk":
                             case "trunk_link":
                             case "primary":
@@ -154,7 +186,7 @@ public class ChunkGenerator implements Runnable {
                         break;
 
                     case "natural":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "wood":
                             case "water":
                             case "scrub":
@@ -168,7 +200,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                     
                     case "place":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "island":
                                 if (zoomLevel < 4) zoomLevel = 4;
                                 break;
@@ -176,7 +208,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                     
                     case "landuse":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "grass":
                             case "forest":
                             case "meadow":
@@ -193,7 +225,7 @@ public class ChunkGenerator implements Runnable {
                         break;
 
                     case "leisure":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "park":
                             case "golf_course":
                             case "sports_centre":
@@ -203,7 +235,7 @@ public class ChunkGenerator implements Runnable {
                         break;
 
                     case "amenity":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "parking":
                                 if (zoomLevel < 2) zoomLevel = 2;
                                 break;
@@ -211,80 +243,20 @@ public class ChunkGenerator implements Runnable {
                         break;
                     
                     case "building":
-                        switch (tags[i + 1]) {
+                        switch (tags.get(i + 1)) {
                             case "yes":
                             if (zoomLevel < 0) zoomLevel = 0;
                         }
                         break;
                 }
-
-                // switch (tags[i]) {
-                //     case "ferry":
-                //         continue forWay;
-
-                //     case "motorway":
-                //     case "motorway_link":
-                //     case "trunk":
-                //     case "trunk_link":
-                //     case "primary":
-                //     case "primary_link":
-                //     case "coastline":
-                //     // case "land_area":
-                //     // case "peninsula":
-                //     // case "island":
-                //         zoomLevel = 4;
-                //         break;
-
-                //     case "aerodrome":
-                //     case "secondary":
-                //     case "secondary_link":
-                //     case "rail":
-                //     case "light_rail":
-                //         if (zoomLevel < 3) zoomLevel = 3;
-                //         break;
-
-                //     case "forest":
-                //     case "wetland":
-                //     case "runway":
-                //     case "tertiary":
-                //     case "tertiary_link":
-                //     case "heath":
-                //     case "grassland":
-                //     case "farmland":
-                //     case "wood":
-                //     case "meadow":
-                //     case "scrub":
-                //     case "fell":
-                //     case "recreation_ground":
-                //     case "beach":
-                //     case "water":
-                //     case "residential":
-                //     case "industrial":
-                //     case "park":
-                //         if (zoomLevel < 2) zoomLevel = 2;
-                //         break;
-                        
-                //     case "unclassified":
-                //         if (zoomLevel < 1) zoomLevel = 1;
-                //         break;
-
-                //     case "building":
-                //     case "highway":
-                //         if (zoomLevel < 0) zoomLevel = 0;
-                //         break;
-                // }
             }
-            if (way.isRelation() && zoomLevel == -1) {
-                zoomLevel = 3;
-            }
+
             if (zoomLevel == -1) continue;
-            // if (zoomLevel == -1) zoomLevel = 0;
-            // way.setZoomLevel( zoomLevel);
 
-            float[] coords = way.getCoords();
-            for (int i = 0; i < coords.length; i += 2) {
-                float lat = coords[i];
-                float lon = coords[i + 1];
+            CoordArrayList coords = way.getCoords();
+            for (int i = 0; i < coords.size(); i += 2) {
+                float lat = coords.get(i);
+                float lon = coords.get(i + 1);
 
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 
@@ -295,9 +267,13 @@ public class ChunkGenerator implements Runnable {
         }
     }
 
+    /**
+     * The main loop of the ChunkGenerator
+     */
+    @Override
     public void run() {
         hasMoreWork = true;
-        while (hasMoreWork || rawWays.size() > 0) {
+        while (hasMoreWork || !rawWays.isEmpty()) {
             if (rawWays.size() < 100_000 && hasMoreWork) {
                 try {
                     Thread.sleep(10);
@@ -315,7 +291,9 @@ public class ChunkGenerator implements Runnable {
         }
         System.out.println("Finished while loop");
     }
-
+    /**
+     * Write the chunks to binaryfiles
+     */
     public void writeFiles() {
         IntStream.range(0, amountOfZoomLayers).forEach(i -> {
             IntStream.range(0, zoomLayers.get(i).size()).parallel().forEach(j -> {
@@ -323,12 +301,10 @@ public class ChunkGenerator implements Runnable {
                     DataOutputStream stream = new DataOutputStream(
                             new BufferedOutputStream(
                                 new FileOutputStream(files[i][j], true)));
-                    for (Way way : zoomLayers.get(i).get(j)) {
+                    for (MapElement way : zoomLayers.get(i).get(j)) {
                         way.stream(stream);
                     }
                     stream.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NullPointerException e) {
@@ -344,34 +320,26 @@ public class ChunkGenerator implements Runnable {
             e.printStackTrace();
         }
     }
+    /**
+     * Write the configuration file, with map constants
+     */
 
     private void writeConfig() throws IOException {
         FileWriter writer = new FileWriter(dataPath + "/config");
-        StringBuilder builder = new StringBuilder();
-        builder.append("minlat: ").append(minlat).append("\n")
-            .append("maxlat: ").append(maxlat).append("\n")
-            .append("minlon: ").append(minlon).append("\n")
-            .append("maxlon: ").append(maxlon).append("\n")
-            .append("chunkColumnAmount: ").append(chunkColumnAmount).append("\n")
-            .append("chunkRowAmount: ").append(chunkRowAmount).append("\n")
-            .append("chunkAmount: ").append(chunkAmount).append("\n")
-            .append("CHUNK_SIZE: ").append(CHUNK_SIZE).append("\n");
-        writer.write(builder.toString());
+        writer.write(
+                "minLat: " + minLat + "\n" +
+                "maxLat: " + maxLat + "\n" +
+                "minLon: " + minLon + "\n" +
+                "maxLon: " + maxLon + "\n" +
+                "chunkColumnAmount: " + chunkColumnAmount + "\n" +
+                "chunkRowAmount: " + chunkRowAmount + "\n" +
+                "chunkAmount: " + chunkAmount + "\n" +
+                "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
-
-    public void printAll() {
-        for (int i = 0; i < zoomLayers.size(); i++) {
-            // System.out.println(chunks.get(i);
-            System.out.println("nr " + i + ": " + zoomLayers.get(i).size());
-        }
-        System.out.println(tempCounter);
-    }
-
-    public void setWays(ArrayList<Way> rawWay) {
-        this.rawWays = rawWay;
-    }
-
+    /**
+     * Used to mark the finish of ChunkGenerator and prevent it from continuing
+     */
     public void finishWork() {
         hasMoreWork = false;
         try {

@@ -1,31 +1,19 @@
 package dk.itu.map.structures;
 
 /**
- * <pre>LongFloatArrayHashMap is a hash map that uses longs as keys and float arrays as values.
+ * <pre>LongCoordHashMap is a hash map that uses longs as keys and float arrays as values.
  * Note: The key cannot be 0.</pre>
  */
-public class LongFloatArrayHashMap {
-    private final int INITIAL_CAPACITY = 1_000_000;
+public class LongCoordHashMap extends PrimitiveHashMap {
 
-    private int capacity;
-    private int size;
     private long[] keys;
-    private float[] value0;
-    private float[] value1;
+    private float[] valueX;
+    private float[] valueY;
 
-    public LongFloatArrayHashMap() {
-        capacity = INITIAL_CAPACITY;
+    public LongCoordHashMap() {
         keys = new long[INITIAL_CAPACITY];
-        value0 = new float[INITIAL_CAPACITY];
-        value1 = new float[INITIAL_CAPACITY];
-        size = 0;
-    }
-
-    /**
-     * @return the number of elements in the map
-     */
-    public int size() {
-        return size;
+        valueX = new float[INITIAL_CAPACITY];
+        valueY = new float[INITIAL_CAPACITY];
     }
 
     /**
@@ -36,21 +24,19 @@ public class LongFloatArrayHashMap {
      * @param value to put in the map.
      */
     public void put(long key, float[] value) {
-        if (size >= capacity * 0.75) {
-            resizeArrays();
-        }
+        if (size >= capacity * 0.75) resize();
 
         int index = getIndex(key);
         int offset = 1;
         
         while (keys[index] != 0) {
-            index = (index + offset * offset) % capacity;
+            index = probe(index, offset);
             offset++;
         }
 
         keys[index] = key;
-        value0[index] = value[0];
-        value1[index] = value[1];
+        valueX[index] = value[0];
+        valueY[index] = value[1];
         size++;
     }
 
@@ -61,15 +47,14 @@ public class LongFloatArrayHashMap {
      */
     public float[] get(long key) {
         int index = getIndex(key);
-
         int offset = 1;
 
         while (keys[index] != key && keys[index] != 0) {
-            index = (index + offset * offset) % capacity;
+            index = probe(index, offset);
             offset++;
         }
 
-        return new float[] {value0[index], value1[index]};
+        return new float[] {valueX[index], valueY[index]};
     }
 
     /**
@@ -82,7 +67,7 @@ public class LongFloatArrayHashMap {
         int offset = 1;
 
         while (keys[index] != key && keys[index] != 0) {
-            index = (index + offset * offset) % capacity;
+            index = probe(index, offset);
             offset++;
         }
 
@@ -98,14 +83,14 @@ public class LongFloatArrayHashMap {
         int offset = 1;
 
         while (keys[index] != key && keys[index] != 0) {
-            index = (index + offset * offset) % capacity;
+            index = probe(index, offset);
             offset++;
         }
 
         if (keys[index] == key) {
             keys[index] = 0;
-            value0[index] = 0;
-            value1[index] = 0;
+            valueX[index] = 0;
+            valueY[index] = 0;
             size--;
         }
     }
@@ -114,33 +99,32 @@ public class LongFloatArrayHashMap {
      * <pre>Resizes the arrays in the map.
      * Note: The capacity will be doubled.</pre>
      */
-    private void resizeArrays() {
-        int newCapacity = capacity * 2;
+    private void resize() {
+        capacity *= 2;
 
-        long[] newKeys = new long[newCapacity];
-        float[] newValues0 = new float[newCapacity];
-        float[] newValues1 = new float[newCapacity];
+        long[] newKeys = new long[capacity];
+        float[] newValues0 = new float[capacity];
+        float[] newValues1 = new float[capacity];
 
-        for (int i = 0; i < capacity; i++) {
+        for (int i = 0; i < capacity / 2; i++) {
             if (keys[i] != 0) {
-                int index = getIndex(keys[i], newCapacity);
+                int index = getIndex(keys[i]);
                 int offset = 1;
 
                 while (newKeys[index] != 0) {
-                    index = (index + offset * offset) % newCapacity;
+                    index = probe(index, offset);
                     offset++;
                 }
 
                 newKeys[index] = keys[i];
-                newValues0[index] = value0[i];
-                newValues1[index] = value1[i];
+                newValues0[index] = valueX[i];
+                newValues1[index] = valueY[i];
             }
         }
 
         keys = newKeys;
-        value0 = newValues0;
-        value1 = newValues1;
-        capacity = newCapacity;
+        valueX = newValues0;
+        valueY = newValues1;
     }
 
     /**
@@ -149,16 +133,6 @@ public class LongFloatArrayHashMap {
      * @return the index of the key.
      */
     private int getIndex(long key) {
-        return (int) (key % (long) capacity);
-    }
-
-    /**
-     * Gets the index of a key in the map.
-     * @param key to get the index for.
-     * @param capacity of the map.
-     * @return the index of the key.
-     */
-    private int getIndex(long key, int capacity) {
         return (int) (key % (long) capacity);
     }
 }

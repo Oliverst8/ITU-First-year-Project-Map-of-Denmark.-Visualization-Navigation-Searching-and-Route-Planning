@@ -1,6 +1,8 @@
 package itu.map;
 
 import dk.itu.map.structures.*;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class GraphTest {
         Thread.sleep(10);
         graph.stop();
         thread.join();
-        FloatArrayList expected = new FloatArrayList();
+        CoordArrayList expected = new CoordArrayList();
         expected.add(1f);
         expected.add(1f);
         expected.add((float) Math.sqrt(2));
@@ -46,7 +48,7 @@ public class GraphTest {
         expected.add(1f);
         expected.add(2f);
 
-        FloatArrayList actual = graph.getEdges();
+        CoordArrayList actual = graph.getEdges();
 
         for(int i = 0; i < expected.size(); i++){
             assertEquals(expected.get(i), actual.get(i));

@@ -1,5 +1,9 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
+
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -8,15 +12,15 @@ import java.util.Collections;
 public class Graph implements Runnable {
     private List<Way> ways;
     private final HashMap<Long, IntArrayList> idToIndex;
-    private final FloatArrayList edges;
+    private final CoordArrayList edges;
     private final LongArrayList ids;
     private boolean running = true;
 
     public Graph() {
-        edges = new FloatArrayList();
+        edges = new CoordArrayList(50_000);
         ways = Collections.synchronizedList(new ArrayList<>());
         idToIndex = new HashMap<>();
-        ids = new LongArrayList(); 
+        ids = new LongArrayList(50_000);
     }
 
     private float calcWeight(Way way) {
@@ -69,7 +73,7 @@ public class Graph implements Runnable {
         running = false;
     }
 
-    public FloatArrayList getEdges() {
+    public CoordArrayList getEdges() {
         return edges;
     }
 
