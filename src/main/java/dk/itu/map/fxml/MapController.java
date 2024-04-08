@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
