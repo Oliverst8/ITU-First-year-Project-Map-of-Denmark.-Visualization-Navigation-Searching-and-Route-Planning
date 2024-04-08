@@ -99,4 +99,15 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         }
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof IntArrayList)) return false;
+        IntArrayList other = (IntArrayList) obj;
+        if(size != other.size) return false;
+        for(int i = 0; i < size; i++){
+            if(array[i] != other.array[i]) return false;
+        }
+        return true;
+    }
+
 }

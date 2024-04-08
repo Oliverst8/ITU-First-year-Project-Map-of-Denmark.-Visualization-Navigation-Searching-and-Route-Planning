@@ -140,4 +140,26 @@ public class Graph {
         }
 
     }
+
+    public IntArrayList getEdges() {
+        return edgeDestinations;
+    }
+
+    public FloatArrayList getWeights() {
+        return edgeWeights;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Graph){
+            Graph other = (Graph) obj;
+            if(!idToIndex.equals(other.idToIndex)) return false;
+            if(!vertexList.equals(other.vertexList)) return false;
+            if(!edgeDestinations.equals(other.edgeDestinations)) return false;
+            if(!edgeWeights.equals(other.edgeWeights)) return false;
+            if(!coords.equals(other.coords)) return false;
+            return true;
+        }
+        return false;
+    }
 }

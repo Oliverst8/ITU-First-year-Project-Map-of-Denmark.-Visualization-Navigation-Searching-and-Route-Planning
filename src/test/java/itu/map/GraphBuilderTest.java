@@ -2,34 +2,42 @@ package itu.map;
 
 import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.*;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import dk.itu.map.parser.Way;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GraphBuilderTest {
+    GraphBuilder graphBuilder;
+    @BeforeEach
+    void setUp(){
+        graphBuilder = new GraphBuilder();
+    }
 
     @Test
     void testAddEdges() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
-        List<Float> nodes1 = Arrays.asList(0f,0f,1f,1f);
+        CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
         List<String> stringList = new ArrayList<>();
-        List<Float> nodes2 = Arrays.asList(1f,1f,3f,1f);
+        CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
         LongArrayList nodeIDs1 = new LongArrayList();
-        nodeIDs1.add(0);
         nodeIDs1.add(1);
+        nodeIDs1.add(2);
         LongArrayList nodeIDs2 = new LongArrayList();
-        nodeIDs2.add(1);
         nodeIDs2.add(2);
-        Way way1 = new Way(nodes1, stringList, new ArrayList<>(), new ArrayList<>(), nodeIDs1);
-        Way way2 = new Way(nodes2, stringList, new ArrayList<>(), new ArrayList<>(), nodeIDs2);
+        nodeIDs2.add(3);
+        Way way1 = new Way(0, stringList, nodes1, nodeIDs1);
+        Way way2 = new Way(0, stringList, nodes2, nodeIDs2);
+
         graph.addWay(way1);
         graph.addWay(way2);
         Thread thread = new Thread(graph);
@@ -62,6 +70,41 @@ public class GraphBuilderTest {
         }
         assertEquals(expectedWeights.size(), actualWeights.size());
         assertEquals(expectedDestinations.size(), actualDestinations.size());
+    }
+
+    @Test
+    void testWriteAndRead() throws InterruptedException, IOException {
+        String dataPath = TestUtilities.getTestFilesPath();
+        graphBuilder = getGraph();
+        graphBuilder.writeToFile(dataPath);
+        GraphBuilder graph = new GraphBuilder();
+        graph.loadFromDataPath(dataPath);
+        assertTrue(graph.equals(graphBuilder));
+    }
+
+
+    public GraphBuilder getGraph() throws InterruptedException {
+        GraphBuilder graph = new GraphBuilder();
+        CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
+        List<String> stringList = new ArrayList<>();
+        CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
+        LongArrayList nodeIDs1 = new LongArrayList();
+        nodeIDs1.add(1);
+        nodeIDs1.add(2);
+        LongArrayList nodeIDs2 = new LongArrayList();
+        nodeIDs2.add(2);
+        nodeIDs2.add(3);
+        Way way1 = new Way(0, stringList, nodes1, nodeIDs1);
+        Way way2 = new Way(0, stringList, nodes2, nodeIDs2);
+
+        graph.addWay(way1);
+        graph.addWay(way2);
+        Thread thread = new Thread(graph);
+        thread.start();
+        Thread.sleep(10);
+        graph.stop();
+        thread.join();
+        return graph;
     }
 
 }

@@ -104,4 +104,15 @@ public class FloatArrayList implements Serializable, WriteAble {
             array[i] = stream.readFloat();
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof FloatArrayList)) return false;
+        FloatArrayList other = (FloatArrayList) obj;
+        if(size != other.size) return false;
+        for(int i = 0; i < size; i++){
+            if(array[i] != other.array[i]) return false;
+        }
+        return true;
+    }
 }
