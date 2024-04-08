@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
+import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,6 +50,8 @@ public class MapController extends ViewController {
     private float lastY;
     //Amount of chunks seen
     private float currentChunkAmountSeen = 1;
+
+    private AnimationTimer animationTimer;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -100,9 +104,24 @@ public class MapController extends ViewController {
         startDist = getZoomDistance();
         redraw();
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                redraw();
+
+                System.out.println("Zoom level: " + zoomLevel);
+            }
+        };
+
         canvasHighway.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
+
+            animationTimer.start();
+        });
+
+        canvasHighway.setOnMouseReleased(e -> {
+            animationTimer.stop();
         });
 
         canvasHighway.setOnMouseDragged(e -> {
@@ -144,7 +163,6 @@ public class MapController extends ViewController {
      */
     private void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
-        redraw();
     }
 
     /**

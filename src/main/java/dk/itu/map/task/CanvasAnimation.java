@@ -4,27 +4,28 @@ import dk.itu.map.structures.Way;
 
 import java.util.Set;
 
-import javafx.concurrent.Task;
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
-public class CanvasRedrawTask extends Task<Void> {
+public class CanvasAnimation extends AnimationTimer {
     private final Canvas canvas;
     private final Affine trans;
     private final float zoom;
+
     private Set<Way> ways = null;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Way> ways, Affine trans, float zoom) {
+    public CanvasAnimation(Canvas canvas, Affine trans, float zoom, Set<Way> ways) {
         this.canvas = canvas;
-        this.ways = ways;
         this.trans = trans;
         this.zoom = zoom;
+        this.ways = ways;
     }
 
     @Override
-    protected Void call() throws Exception {
+    public void handle(long now) {
         // Redraw the canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -32,12 +33,9 @@ public class CanvasRedrawTask extends Task<Void> {
 
         // Draw the chunks
 
-
         for (Way way : ways) {
             way.draw(gc, zoom);
         }
-
-        return null;
     }
 
     private void wipeCanvas(GraphicsContext gc) {
