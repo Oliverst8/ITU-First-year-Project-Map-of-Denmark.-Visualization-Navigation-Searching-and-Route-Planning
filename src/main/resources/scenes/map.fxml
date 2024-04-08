@@ -41,7 +41,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar useSystemMenuBar="true" VBox.vgrow="NEVER">
       <menus>
@@ -56,18 +56,18 @@
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane fx:id="root" style="-fx-background-color: lightblue;">
+    <AnchorPane fx:id="canvasParent" style="-fx-background-color: lightblue;" VBox.vgrow="ALWAYS">
       <children>
-        <Canvas fx:id="canvasPlace" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasNatural" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasLanduse" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasAeroway" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasLeisure" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasAmenity" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasHighway" height="373.0" width="640.0" />
-        <Canvas fx:id="canvasBuilding" height="373.0" width="640.0" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onMouseDragged="#canvasDragged" onScroll="#canvasScroll" />
+        <Canvas fx:id="canvasPlace" height="373.0" />
+        <Canvas fx:id="canvasNatural" height="373.0" />
+        <Canvas fx:id="canvasLanduse" height="373.0" />
+        <Canvas fx:id="canvasAeroway" height="373.0" />
+        <Canvas fx:id="canvasLeisure" height="373.0" />
+        <Canvas fx:id="canvasAmenity" height="373.0" />
+        <Canvas fx:id="canvasHighway" height="373.0" />
+        <Canvas fx:id="canvasBuilding" height="373.0" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onMouseDragged="#canvasDragged" onScroll="#canvasScroll" />
         
-        <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+        <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
       </children>
     </AnchorPane>
   </children>

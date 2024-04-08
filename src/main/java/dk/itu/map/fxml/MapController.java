@@ -21,6 +21,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -28,9 +29,11 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
 public class MapController extends ViewController {
+    @FXML
+    private VBox root;
 
     @FXML
-    private AnchorPane root;
+    private AnchorPane canvasParent;
     private String[] mapLayers;
 
     private Map<String, Canvas> canvas;
@@ -71,13 +74,16 @@ public class MapController extends ViewController {
 
         canvas = new HashMap<>();
         for(String key : mapLayers){
-            canvas.put(key, (Canvas) root.lookup("#canvas" + key.substring(0, 1).toUpperCase() + key.substring(1)));
+            canvas.put(key, (Canvas) canvasParent.lookup("#canvas" + key.substring(0, 1).toUpperCase() + key.substring(1)));
 
             GraphicsContext gc = canvas.get(key).getGraphicsContext2D();
 
             gc.setFillRule(FillRule.EVEN_ODD);
             gc.setLineCap(StrokeLineCap.ROUND);
             gc.setLineJoin(StrokeLineJoin.ROUND);
+
+            canvas.get(key).widthProperty().bind(canvasParent.widthProperty());
+            // canvas.get(key).heightProperty().bind(canvasParent.heightProperty());
         }
 
         trans = new Affine();
