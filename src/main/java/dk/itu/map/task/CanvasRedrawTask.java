@@ -34,8 +34,8 @@ public class CanvasRedrawTask extends Task<Void> {
         int nodes = 0;
 
         for (Way way : ways) {
-            nodes += way.outerCoords.size();
-            nodes += way.innerCoords.size();
+            nodes += way.getOuterCoords().length / 2;
+            nodes += way.getInnerCoords().length / 2;
             way.draw(gc, zoom);
         }
 

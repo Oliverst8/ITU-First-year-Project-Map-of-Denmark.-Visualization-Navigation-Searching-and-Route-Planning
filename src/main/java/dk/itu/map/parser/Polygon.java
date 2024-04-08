@@ -9,7 +9,7 @@ import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.SimpleLinkedList;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 
-class Polygon extends MapElement {
+public class Polygon extends MapElement {
     private final int totalWays;
     private int stagedWays;
 

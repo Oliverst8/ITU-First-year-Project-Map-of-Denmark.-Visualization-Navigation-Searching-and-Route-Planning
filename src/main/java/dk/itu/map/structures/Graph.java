@@ -24,9 +24,9 @@ public class Graph implements Runnable {
     }
 
     private float calcWeight(Way way) {
-        float[] coords = way.getCoords();
+        float[] coords = way.getOuterCoords();
         float distSum = 0;
-        for(int i = 0; i < way.getCoords().length-2; i +=2) {
+        for(int i = 0; i < way.getOuterCoords().length-2; i +=2) {
             distSum += (float) Math.sqrt(Math.pow(coords[i] - coords[i+2], 2) + Math.pow(coords[i+1] - coords[i+3], 2));
         }
 
@@ -54,7 +54,7 @@ public class Graph implements Runnable {
         idToIndex.get(way.getNodeIDs()[1]).add(ids.size());
         ids.add(way.getId());
 
-        float[] nodes = way.getCoords();
+        float[] nodes = way.getOuterCoords();
 
         edges.add(nodes[nodes.length-2]);
         edges.add(nodes[nodes.length-1]);

@@ -182,13 +182,13 @@ public class Way {
                 Node<Way> search = current;
 
                 if (current.getNext() == null) {
-                    this.outerCoords.addAll(current.getValue().getCoords());
+                    this.outerCoords.addAll(current.getValue().getOuterCoords());
                     break;
                 }
 
                 if (currentWay.outerCoords.get(-2) == initialWay.outerCoords.get(0) &&
                 currentWay.outerCoords.get(-1) == initialWay.outerCoords.get(1)) {
-                    this.outerCoords.addAll(current.getValue().getCoords());
+                    this.outerCoords.addAll(current.getValue().getOuterCoords());
                     initialWay = current.getNext().getValue();
                     current = current.getNext();
 
@@ -215,7 +215,7 @@ public class Way {
                     queuedWays.move(current, preSearch);
                 }
 
-                this.outerCoords.addAll(current.getValue().getCoords());
+                this.outerCoords.addAll(current.getValue().getOuterCoords());
                 current = current.getNext();
             }
         }
@@ -439,8 +439,12 @@ public class Way {
         return innerCoords.size() != 0;
     }
 
-    public float[] getCoords() {
+    public float[] getOuterCoords() {
         return outerCoords.toArray();
+    }
+
+    public float[] getInnerCoords() {
+        return innerCoords.toArray();
     }
 
     public String[] getTags() {
