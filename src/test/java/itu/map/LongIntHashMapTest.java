@@ -2,7 +2,7 @@ package itu.map;
 
 import org.junit.jupiter.api.Test;
 
-import dk.itu.map.structures.LongIntHashMap;
+import dk.itu.map.structures.HashMaps.LongIntHashMap;
 
 import java.io.IOException;
 import java.nio.file.Files;

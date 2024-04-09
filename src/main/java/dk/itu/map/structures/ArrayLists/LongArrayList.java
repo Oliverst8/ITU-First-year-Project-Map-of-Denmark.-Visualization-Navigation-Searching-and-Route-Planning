@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     // The array that holds the values
-    private long[] list;
+    private long[] array;
 
     /**
      * Constructor for the LongArrayList class
@@ -16,7 +16,7 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
      */
     public LongArrayList() {
         super();
-        list = new long[ARRAY_INIT_SIZE];
+        array = new long[ARRAY_INIT_SIZE];
     }
 
     /**
@@ -26,7 +26,7 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
      */
     public LongArrayList(int init_size) {
         super();
-        list = new long[init_size];
+        array = new long[init_size];
     }
 
     /**
@@ -35,10 +35,10 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
      * @param value to be inserted
      */
     public void add(long value) {
-        if (size >= list.length) {
+        if (size >= array.length) {
             resize();
         }
-        list[size] = value;
+        array[size] = value;
         size++;
     }
 
@@ -48,18 +48,17 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
      * @return long the value at the index
      */
     public long get(int index) {
-        return list[index];
+        return array[index];
     }
 
     /**
      * Resizes the array to double the size
      */
+    @Override
     protected void resize() {
-        long[] newList = new long[list.length * 2];
-        for (int i = 0; i < list.length; i++) {
-            newList[i] = list[i];
-        }
-        list = newList;
+        long[] newList = new long[array.length * 2];
+        System.arraycopy(array, 0, newList, 0, array.length);
+        array = newList;
     }
 
     @Override
@@ -77,7 +76,7 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
-            stream.writeLong(list[i]);
+            stream.writeLong(array[i]);
         }
     }
 
@@ -94,13 +93,20 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
-        list = new long[size];
+        array = new long[size];
         for (int i = 0; i < size; i++) {
-            list[i] = stream.readLong();
+            array[i] = stream.readLong();
         }
     }
 
     public long[] toArray() {
-        return Arrays.copyOfRange(list, 0, size);
+        return Arrays.copyOfRange(array, 0, size);
+    }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        long temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
     }
 }

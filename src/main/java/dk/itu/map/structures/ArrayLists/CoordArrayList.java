@@ -37,11 +37,10 @@ public class CoordArrayList extends PrimitiveArrayList {
     /**
      * Resizes the array to double the size.
      */
+    @Override
     protected void resize() {
         float[] newArray = new float[array.length * 2];
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
+        System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
     }
 
@@ -109,5 +108,19 @@ public class CoordArrayList extends PrimitiveArrayList {
         else
             return array[index];
     }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        float tempX = array[index1];
+        float tempY = array[index1 + 1];
+
+        array[index1] = array[index2];
+        array[index1 + 1] = array[index2 + 1];
+
+        array[index2] = tempX;
+        array[index2 + 1] = tempY;
+    }
+
+
 
 }

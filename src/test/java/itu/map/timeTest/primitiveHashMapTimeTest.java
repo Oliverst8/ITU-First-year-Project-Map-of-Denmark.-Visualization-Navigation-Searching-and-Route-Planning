@@ -1,6 +1,6 @@
 package itu.map.timeTest;
 
-import dk.itu.map.structures.LongIntHashMap;
+import dk.itu.map.structures.HashMaps.LongIntHashMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

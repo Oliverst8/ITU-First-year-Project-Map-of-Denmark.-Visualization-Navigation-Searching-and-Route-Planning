@@ -1,9 +1,9 @@
-package dk.itu.map.structures;
+package dk.itu.map.structures.ArrayLists;
+
+import dk.itu.map.structures.WriteAble;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> implements WriteAble {
 

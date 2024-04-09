@@ -7,7 +7,6 @@ import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.parser.Way;
 import dk.itu.map.utility.Navigation;
-import dk.itu.map.structures.FloatArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

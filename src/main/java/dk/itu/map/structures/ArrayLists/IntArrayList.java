@@ -31,11 +31,10 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     /**
      * Resizes the array to double the size
      */
+    @Override
     protected void resize() {
         int[] newArray = new int[array.length*2];
-        for(int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
+        System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
     }
 
@@ -108,6 +107,13 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
             if(array[i] != other.array[i]) return false;
         }
         return true;
+    }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        int temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
     }
 
 }

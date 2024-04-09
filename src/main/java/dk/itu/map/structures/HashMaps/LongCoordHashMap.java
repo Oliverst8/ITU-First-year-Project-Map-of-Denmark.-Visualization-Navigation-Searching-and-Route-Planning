@@ -1,4 +1,4 @@
-package dk.itu.map.structures;
+package dk.itu.map.structures.HashMaps;
 
 /**
  * <pre>LongCoordHashMap is a hash map that uses longs as keys and float arrays as values.

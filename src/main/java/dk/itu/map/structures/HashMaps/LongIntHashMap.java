@@ -1,9 +1,11 @@
-package dk.itu.map.structures;
+package dk.itu.map.structures.HashMaps;
+
+import dk.itu.map.structures.WriteAble;
 
 import java.io.*;
 import java.util.Arrays;
 
-public class LongIntHashMap extends PrimitiveHashMap implements WriteAble{
+public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
     long[] keys;
     int[] value;
     private final long DEFAULT_KEY_VALUE = 0;

@@ -23,6 +23,8 @@ public abstract class PrimitiveArrayList {
      */
     abstract void resize();
 
+    abstract void exchange(int index1, int index2);
+
     /**
      * Returns the size of the list
      * @return size

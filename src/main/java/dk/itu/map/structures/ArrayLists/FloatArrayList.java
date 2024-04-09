@@ -1,10 +1,11 @@
-package dk.itu.map.structures;
+package dk.itu.map.structures.ArrayLists;
+
+import dk.itu.map.structures.WriteAble;
 
 import java.io.*;
 import java.util.Arrays;
 
-public class FloatArrayList implements Serializable, WriteAble {
-    private final int ARRAY_INIT_SIZE = 100_000;
+public class FloatArrayList extends PrimitiveArrayList implements Serializable, WriteAble {
     private float[] array;
     private int size;
 
@@ -23,11 +24,10 @@ public class FloatArrayList implements Serializable, WriteAble {
         size = array.length;
     }
 
-    private void resize() {
+    @Override
+    protected void resize() {
         float[] newArray = new float[array.length*2];
-        for(int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
+        System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
     }
 
@@ -114,5 +114,12 @@ public class FloatArrayList implements Serializable, WriteAble {
             if(array[i] != other.array[i]) return false;
         }
         return true;
+    }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        float temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
     }
 }

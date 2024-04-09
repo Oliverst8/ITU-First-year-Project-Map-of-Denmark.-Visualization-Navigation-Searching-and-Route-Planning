@@ -1,8 +1,8 @@
 package itu.map;
 
 import dk.itu.map.parser.GraphBuilder;
-import dk.itu.map.structures.*;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package dk.itu.map.structures;
+package dk.itu.map.structures.HashMaps;
 
 abstract class PrimitiveHashMap {
     final int INITIAL_CAPACITY = 10;

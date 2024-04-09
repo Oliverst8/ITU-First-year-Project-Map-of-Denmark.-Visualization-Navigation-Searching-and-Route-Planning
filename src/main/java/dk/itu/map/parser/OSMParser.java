@@ -2,7 +2,7 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
-import dk.itu.map.structures.LongCoordHashMap;
+import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
 
 import java.io.File;

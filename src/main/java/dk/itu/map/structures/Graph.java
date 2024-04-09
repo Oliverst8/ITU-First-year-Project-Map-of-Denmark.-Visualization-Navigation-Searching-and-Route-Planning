@@ -1,6 +1,9 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
+import dk.itu.map.structures.HashMaps.LongIntHashMap;
 
 import java.io.*;
 import java.util.stream.IntStream;
