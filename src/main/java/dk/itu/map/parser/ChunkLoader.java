@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
 import java.io.FileReader;
@@ -101,8 +101,8 @@ public class ChunkLoader {
      * @return The ways
      */
 
-    public Map<Integer, List<Way>> loadBytes(int[] chunks, int zoomLevel) {
-        Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
+    public Map<Integer, List<DrawableWay>> loadBytes(int[] chunks, int zoomLevel) {
+        Map<Integer, List<DrawableWay>> ways = Collections.synchronizedMap(new HashMap<>());
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
             if (chunk < 0 || chunk >= chunkAmount) return;
@@ -130,8 +130,9 @@ public class ChunkLoader {
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
+
                     String primaryType = stream.readUTF();
-                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags, id, primaryType));
+                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

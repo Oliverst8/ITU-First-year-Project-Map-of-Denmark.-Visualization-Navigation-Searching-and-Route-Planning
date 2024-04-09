@@ -33,6 +33,8 @@ public class ChunkGenerator implements Runnable {
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
+    private final GraphBuilder graph;
+    private final Thread graphThread;
 
     private final Thread chunkingThread;
 
@@ -47,11 +49,14 @@ public class ChunkGenerator implements Runnable {
      * @param maxLon The maximum longitude
      */
     public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
+        graph = new GraphBuilder();
         this.dataPath = dataPath;
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         this.chunkingThread = new Thread(this);
         this.chunkingThread.start();
+        graphThread = new Thread(graph);
+        graphThread.start();
 
         this.minLat = minLat;
         this.maxLat = maxLat;
@@ -90,6 +95,7 @@ public class ChunkGenerator implements Runnable {
                     new FileOutputStream(files[i][j]).close();
                 }
             }
+            (new File(dataPath + "/utilities")).mkdir();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -171,6 +177,7 @@ public class ChunkGenerator implements Runnable {
                         break;
                     
                     case "highway":
+                        if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
                         switch (tags.get(i + 1)) {
                             case "trunk":
                             case "primary":
@@ -274,7 +281,16 @@ public class ChunkGenerator implements Runnable {
 
             writeFiles();
         }
-        System.out.println("Finished while loop");
+        long startTime = System.nanoTime();
+        graph.stop();
+        try {
+            graphThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        writeUtilities();
+        long endTime = System.nanoTime();
+        System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
     }
     /**
      * Write the chunks to binaryfiles
@@ -322,6 +338,10 @@ public class ChunkGenerator implements Runnable {
                 "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
+    private void writeUtilities(){
+        graph.writeToFile(dataPath + "/utilities");
+    }
+
     /**
      * Used to mark the finish of ChunkGenerator and prevent it from continuing
      */

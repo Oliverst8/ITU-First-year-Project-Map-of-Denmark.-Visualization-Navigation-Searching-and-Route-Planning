@@ -1,5 +1,7 @@
 package dk.itu.map.structures.ArrayLists;
 
+import dk.itu.map.structures.WriteAble;
+
 public abstract class PrimitiveArrayList {
 
     //The current size of the list
@@ -20,6 +22,8 @@ public abstract class PrimitiveArrayList {
      * Resizes the array to double the size
      */
     abstract void resize();
+
+    abstract void exchange(int index1, int index2);
 
     /**
      * Returns the size of the list

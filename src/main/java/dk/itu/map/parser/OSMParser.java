@@ -1,7 +1,8 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.LongCoordHashMap;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
+import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class OSMParser {
         long startLoadTime = System.nanoTime();
 
         whileLoop:
-        while (input.hasNext()) {
+        while (true) {
             int tagKind = input.next();
 
             if (tagKind == XMLStreamConstants.START_ELEMENT) {
@@ -194,7 +195,7 @@ public class OSMParser {
     private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
-        long[] nodeIds = new long[]{-1,0};
+        LongArrayList nodeIds = new LongArrayList();
         while (input.hasNext()) {
             int eventType = input.next();
             if (eventType != XMLStreamConstants.START_ELEMENT) {
@@ -207,11 +208,7 @@ public class OSMParser {
 
                 long node = Long.parseLong(input.getAttributeValue(null, "ref"));
 
-                if (nodeIds[0] == -1) {
-                    nodeIds[0] = node;
-                } else {
-                    nodeIds[1] = node;
-                }
+                nodeIds.add(node);
 
                 float[] temp = nodes.get(node);
 
@@ -225,7 +222,7 @@ public class OSMParser {
             }
         }
 
-        Way way = new Way(id, tags, coords);
+        Way way = new Way(id, tags, coords, nodeIds);
 
         if (relationMap.containsKey(id)) {
             relationMap.get(id).forEach(relation -> {

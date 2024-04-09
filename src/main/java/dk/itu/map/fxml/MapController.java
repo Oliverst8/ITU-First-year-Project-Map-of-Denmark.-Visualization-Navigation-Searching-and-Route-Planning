@@ -2,8 +2,9 @@ package dk.itu.map.fxml;
 
 import dk.itu.map.Model;
 import dk.itu.map.Controller;
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.task.CanvasRedrawTask;
+import dk.itu.map.utility.Navigation;
 
 import java.util.Map;
 import java.util.Set;
@@ -166,7 +167,7 @@ public class MapController extends ViewController {
         currentChunkAmountSeen = this.viewModel.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
 
-        Map<String, Set<Way>> ways = new HashMap<>();
+        Map<String, Set<DrawableWay>> ways = new HashMap<>();
         
         for(String key : mapLayers){
             ways.put(key, new HashSet<>());
@@ -175,11 +176,11 @@ public class MapController extends ViewController {
         float zoom = getZoomDistance() / startDist * 100;
 
         for(int i = getDetailLevel(); i <= 4; i++) {
-            Map<Integer, List<Way>> chunkLayer = viewModel.getChunksInZoomLevel(i);
+            Map<Integer, List<DrawableWay>> chunkLayer = viewModel.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
-                List<Way> chunkLayerList = chunkLayer.get(chunk);
+                List<DrawableWay> chunkLayerList = chunkLayer.get(chunk);
                 for(int j = 0; j < chunkLayerList.size(); j++) {
-                    Way way = chunkLayerList.get(j);
+                    DrawableWay way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
                         case "building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
@@ -190,7 +191,7 @@ public class MapController extends ViewController {
             }
         }
 
-        for (Map.Entry<String, Set<Way>> entry : ways.entrySet()) {
+        for (Map.Entry<String, Set<DrawableWay>> entry : ways.entrySet()) {
             
             Canvas canvas = this.canvas.get(entry.getKey());
 

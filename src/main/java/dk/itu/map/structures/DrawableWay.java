@@ -2,6 +2,7 @@ package dk.itu.map.structures;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,11 +11,11 @@ import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Way {
+public class DrawableWay implements Serializable {
     private List<Long> outerRef;
     private List<Long> innerRef;
-    private Way[] tempOuterWays;
-    private Way[] tempInnerWays;
+    private DrawableWay[] tempOuterDrawableWays;
+    private DrawableWay[] tempInnerDrawableWays;
     private final CoordArrayList outerCoords;
     private final CoordArrayList innerCoords;
     private final String[] tags;
@@ -27,15 +28,15 @@ public class Way {
     /**
      * Only use for OSMParser
      */
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long id) {
+    public DrawableWay(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long id, String primaryType) {
         this.id = id;
-
+        this.primaryType = primaryType;
         outerCoords = new CoordArrayList();
         innerCoords = new CoordArrayList();
         this.outerRef = outerRef;
         this.innerRef = innerRef;
-        this.tempOuterWays = new Way[outerRef.size()];
-        this.tempInnerWays = new Way[innerRef.size()];
+        this.tempOuterDrawableWays = new DrawableWay[outerRef.size()];
+        this.tempInnerDrawableWays = new DrawableWay[innerRef.size()];
         this.tags = new String[tags.size()];
 
         for (float node : nodes) {
@@ -47,21 +48,20 @@ public class Way {
         }
     }
 
-    public Way(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef, long[] nodeIds, long id) {
-        this(nodes, tags, outerRef, innerRef, id);
-        this.nodeIDs = nodeIds;
-    }
-
     /**
      * Only used for ChunkHandler
      */
-    public Way(float[] outerCoords, float[] innerCoords, String[] tags, long id, String primaryType) {
+    public DrawableWay(float[] outerCoords, float[] innerCoords, String[] tags, long id, String primaryType) {
         this.id = id;
         this.primaryType = primaryType;
         this.outerCoords = new CoordArrayList(outerCoords);
         this.innerCoords = new CoordArrayList(innerCoords);
         this.tags = tags;
     }
+
+    // public DrawableWay(CoordArrayList coords){
+    //     this.outerCoords = coords;
+    // }
 
     @Override
     public String toString() {
@@ -130,7 +130,7 @@ public class Way {
         gc.closePath();
         
     }
-
+     
     public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
@@ -154,61 +154,61 @@ public class Way {
     /**
      * Also only used in fileHandler gg
      */
-    public void addRelatedWay(Way way, long id) {
-        if (tempOuterWays == null || tempInnerWays == null)
+    public void addRelatedWay(DrawableWay drawableWay, long id) {
+        if (tempOuterDrawableWays == null || tempInnerDrawableWays == null)
             throw new RuntimeException("Related ways cannot be added to fully filled ways");
 
         if (outerRef.contains(id)) {
-            tempOuterWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = way;
+            tempOuterDrawableWays[outerRef.size() - (outerRef.indexOf(id) + 1)] = drawableWay;
         }
         if (innerRef.contains(id)) {
-            tempInnerWays[innerRef.size() - (innerRef.indexOf(id) + 1) ] = way;
+            tempInnerDrawableWays[innerRef.size() - (innerRef.indexOf(id) + 1) ] = drawableWay;
         }
 
         boolean filled = true;
-        for (int i = 0; i < tempOuterWays.length; i++) {
-            if (tempOuterWays[i] == null) {
+        for (int i = 0; i < tempOuterDrawableWays.length; i++) {
+            if (tempOuterDrawableWays[i] == null) {
                 filled = false;
                 break;
             }
         }
-        for (int i = 0; i < tempInnerWays.length; i++) {
-            if (tempInnerWays[i] == null) {
+        for (int i = 0; i < tempInnerDrawableWays.length; i++) {
+            if (tempInnerDrawableWays[i] == null) {
                 filled = false;
                 break;
             }
         }
         if (filled) {
-            SimpleLinkedList<Way> queuedWays = new SimpleLinkedList<>(Arrays.asList(tempOuterWays));
-            if (tempOuterWays.length == 0) return;
+            SimpleLinkedList<DrawableWay> queuedWays = new SimpleLinkedList<>(Arrays.asList(tempOuterDrawableWays));
+            if (tempOuterDrawableWays.length == 0) return;
 
-            Node<Way> current = queuedWays.getFirst();
-            Way currentWay;
-            Way initialWay = current.getValue();
+            Node<DrawableWay> current = queuedWays.getFirst();
+            DrawableWay currentDrawableWay;
+            DrawableWay initialDrawableWay = current.getValue();
             while (current != null) {
-                currentWay = current.getValue();
-                Node<Way> preSearch = current;
-                Node<Way> search = current;
+                currentDrawableWay = current.getValue();
+                Node<DrawableWay> preSearch = current;
+                Node<DrawableWay> search = current;
 
                 if (current.getNext() == null) {
                     this.outerCoords.addAll(current.getValue().getOuterCoords());
                     break;
                 }
 
-                if (currentWay.outerCoords.get(-2) == initialWay.outerCoords.get(0) &&
-                currentWay.outerCoords.get(-1) == initialWay.outerCoords.get(1)) {
+                if (currentDrawableWay.outerCoords.get(-2) == initialDrawableWay.outerCoords.get(0) &&
+                currentDrawableWay.outerCoords.get(-1) == initialDrawableWay.outerCoords.get(1)) {
                     this.outerCoords.addAll(current.getValue().getOuterCoords());
-                    initialWay = current.getNext().getValue();
+                    initialDrawableWay = current.getNext().getValue();
                     current = current.getNext();
 
                     continue;
                 }
 
-                while (currentWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) ||
-                currentWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
+                while (currentDrawableWay.outerCoords.get(-2) != search.getValue().outerCoords.get(0) ||
+                currentDrawableWay.outerCoords.get(-1) != search.getValue().outerCoords.get(1)) {
                     // Check if way fits if it is reversed.
-                    if (currentWay.outerCoords.get(-2) == search.getValue().outerCoords.get(-2) &&
-                    currentWay.outerCoords.get(-1) == search.getValue().outerCoords.get(-1) && currentWay != search.getValue()) {
+                    if (currentDrawableWay.outerCoords.get(-2) == search.getValue().outerCoords.get(-2) &&
+                    currentDrawableWay.outerCoords.get(-1) == search.getValue().outerCoords.get(-1) && currentDrawableWay != search.getValue()) {
                         search.getValue().outerCoords.reverse();
                         break;
                     }
@@ -242,6 +242,12 @@ public class Way {
         forLoop:
         for (int i = 0; i < tags.length; i += 2) {
             switch (tags[i]) {
+                case "navigationPath":
+                    lineWidth = 0.003f;
+                    gc.setStroke(Color.TURQUOISE);
+                    shouldFill = false;
+                    break forLoop;
+
                 case "aeroway":
                     switch (tags[i + 1]) {
                         case "aerodrome":
@@ -422,8 +428,8 @@ public class Way {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Way) {
-            return ((Way) obj).id == id;
+        if (obj instanceof DrawableWay) {
+            return ((DrawableWay) obj).id == id;
         }
         return false;
     }

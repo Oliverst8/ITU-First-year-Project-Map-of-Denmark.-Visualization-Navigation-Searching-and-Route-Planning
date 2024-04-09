@@ -1,6 +1,8 @@
 package dk.itu.map;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.structures.Graph;
 import dk.itu.map.parser.OSMParser;
 import dk.itu.map.parser.ChunkLoader;
 import javafx.geometry.Point2D;
@@ -17,15 +19,17 @@ public class Model implements Serializable {
     // The path to the data folder
     private final String dataPath;
     // A list that holds the different zoom levels, and their chunks
-    private final List<Map<Integer,List<Way>>> chunkLayers;
+    private final List<Map<Integer,List<DrawableWay>>> chunkLayers;
     // The chunk loader
     private ChunkLoader chunkLoader;
+    private Graph graph;
 
     /**
      * Constructor for the Model class
      * Initializes the dataPath and the chunkLayers
      */
     public Model() {
+        graph = new Graph();
         dataPath = "maps";
         chunkLayers = new ArrayList<>();
         for(int i = 0; i <= 4; i++) {
@@ -44,11 +48,16 @@ public class Model implements Serializable {
                 OSMParser OSMParser = new OSMParser(new File(filePath), dataPath + "/" + name);
                 OSMParser.load();
                 System.out.println("Finished importing map!");
-            };
+            }
+            String path = dataPath + "/" + name;
+
+            UtilityLoader utilityLoader = new UtilityLoader(path);
+            utilityLoader.start();
+
             chunkLoader = new ChunkLoader(dataPath + "/" + name);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
+
+            setUtilities(utilityLoader);
+        } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
     }
@@ -89,7 +98,7 @@ public class Model implements Serializable {
      * @param zoomLevel the zoom level of the chunks
      */
     private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<Way>> chunks = chunkLayers.get(zoomLevel);
+        Map<Integer, List<DrawableWay>> chunks = chunkLayers.get(zoomLevel);
 
         chunkSet.removeAll(chunks.keySet());
 
@@ -105,13 +114,22 @@ public class Model implements Serializable {
         chunks.putAll(chunkLoader.loadBytes(newChunks, zoomLevel));
     }
 
+    private void setUtilities(UtilityLoader utilityLoader) {
+        try {
+            utilityLoader.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        graph = utilityLoader.getGraph();
+    }
+
     /**
      * Updates the given zoom level with the given chunks
      * @param chunks the chunks to be updated
      * @param zoomLevel the zoom level to be updated
      */
     private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        for(Map<Integer, List<Way>> chunkLayers : chunkLayers) {
+        for(Map<Integer, List<DrawableWay>> chunkLayers : chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
         }
 
@@ -177,7 +195,13 @@ public class Model implements Serializable {
      * @return A map of the chunks in the given zoom level
      * The key is the chunk index, and the value is a list of ways in the chunk
      */
-    public Map<Integer, List<Way>> getChunksInZoomLevel(int zoomLevel) {
+    public Map<Integer, List<DrawableWay>> getChunksInZoomLevel(int zoomLevel) {
         return chunkLayers.get(zoomLevel);
     }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+
 }
