@@ -1,7 +1,6 @@
 package dk.itu.map.fxml;
 
 import dk.itu.map.Model;
-import dk.itu.map.Controller;
 import dk.itu.map.structures.Way;
 
 
@@ -22,7 +21,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
 
-public class MapController extends ViewController {
+public class MapController extends Controller {
 
     //JavaFX canvas
     @FXML
@@ -46,11 +45,10 @@ public class MapController extends ViewController {
 
     /**
      * Constructor for the MapController, set the following variables
-     * @param controller
      * @param viewModel
      */
-    public MapController(Controller controller, Model viewModel) {
-        super(controller, viewModel);
+    public MapController(Model viewModel) {
+        super(viewModel);
     }
 
     /**

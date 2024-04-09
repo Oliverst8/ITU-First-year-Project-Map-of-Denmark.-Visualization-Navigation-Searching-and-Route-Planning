@@ -1,8 +1,8 @@
 package dk.itu.map.fxml;
 
-import dk.itu.map.Controller;
+import dk.itu.map.App;
 import dk.itu.map.Model;
-import dk.itu.map.ViewBuilder.Views;
+import dk.itu.map.fxml.parent.MapScreen;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
@@ -14,17 +14,15 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-abstract class ViewController {
+public abstract class Controller {
 
     @FXML
     private MenuButton mapList;
     protected final Model viewModel;
-    protected final Controller controller;
 
 
-    public ViewController(Controller controller, Model viewModel) {
+    public Controller(Model viewModel) {
         this.viewModel = viewModel;
-        this.controller = controller;
     }
 
 
@@ -37,7 +35,7 @@ abstract class ViewController {
         String mapName = getMapName();
 
         viewModel.importMap(selectedFile.getAbsolutePath(), mapName);
-        controller.setView(Views.Map);
+        App.setView(new MapScreen("needs to be updated"));
     }
 
     protected void loadMaps() {
@@ -54,7 +52,7 @@ abstract class ViewController {
 
             item.setOnAction(e -> {
                 viewModel.importMap("maps/" + item.getText(), item.getText());
-                controller.setView(Views.Map);
+                App.setView(new MapScreen(""));
             });
         }
     }
