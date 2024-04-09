@@ -3,7 +3,7 @@ package dk.itu.map.fxml.parent;
 import dk.itu.map.Model;
 import dk.itu.map.fxml.HomeController;
 
-public class HomeScreen extends Screen {
+public class HomeScreen extends Screen<Model> {
     
     public HomeScreen() {
         this.fxml = "home.fxml";

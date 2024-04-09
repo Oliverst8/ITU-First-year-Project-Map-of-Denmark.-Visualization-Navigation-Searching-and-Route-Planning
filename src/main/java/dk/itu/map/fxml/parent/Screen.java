@@ -1,12 +1,9 @@
 package dk.itu.map.fxml.parent;
 
-import dk.itu.map.Model;
-import dk.itu.map.fxml.Controller;
-
-public abstract class Screen {
+public abstract class Screen<M> {
     public String fxml;
-    public Model model; // state
-    public Controller controller; // functions
-    public /*View */ Screen view; // drawing
+    public M model; // state
+    public Object controller; // functions
+    public /*View */ /*Screen*/ Object view; // drawing
 
 }

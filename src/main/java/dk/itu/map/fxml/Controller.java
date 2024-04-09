@@ -27,17 +27,6 @@ public abstract class Controller {
 
 
 
-    @FXML
-    void importMap(ActionEvent event) {
-        File selectedFile = getMapFile();
-        if (selectedFile == null) return;
-
-        String mapName = getMapName();
-
-        viewModel.importMap(selectedFile.getAbsolutePath(), mapName);
-        App.setView(new MapScreen("needs to be updated"));
-    }
-
     protected void loadMaps() {
         File directoryPath = new File("maps/");
 
@@ -55,26 +44,5 @@ public abstract class Controller {
                 App.setView(new MapScreen(""));
             });
         }
-    }
-
-    protected File getMapFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Import Map File");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("OSM", "*.osm"));
-
-        Stage dialog = new Stage();
-        return fileChooser.showOpenDialog(dialog);
-    }
-
-    protected String getMapName() {
-        TextInputDialog dialog = new TextInputDialog("Map Name");
-        dialog.setTitle("Map Name");
-        dialog.setHeaderText(null);
-        dialog.setGraphic(null);
-        dialog.setContentText("Map Name:");
-        dialog.resizableProperty().setValue(false);
-
-        return dialog.showAndWait().get();
     }
 }
