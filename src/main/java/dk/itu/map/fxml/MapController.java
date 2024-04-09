@@ -104,20 +104,29 @@ public class MapController extends ViewController {
     }
 
     @FXML
-    void canvasPressed(MouseEvent e){
-        lastX = (float) e.getX();
-        lastY = (float) e.getY();
+    void canvasPressed(MouseEvent e) {
+        if(e.isPrimaryButtonDown()) {
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
 
-        render.start();
+            render.start();
+        } else if(e.isSecondaryButtonDown()) {
+            Navigation navigation = new Navigation(this.viewModel.getGraph());
+            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
+            System.out.println(path);
+            path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100);
+        }
     }
 
     @FXML
-    void canvasReleased(MouseEvent e){
-        render.stop();
+    void canvasReleased(MouseEvent e) {
+        if(e.isPrimaryButtonDown()) {
+            render.stop();
+        }
     }
 
     @FXML
-    void canvasDragged(MouseEvent e){
+    void canvasDragged(MouseEvent e) {
         if (e.isPrimaryButtonDown()) {
 
             double dx = e.getX() - lastX;
@@ -130,7 +139,7 @@ public class MapController extends ViewController {
     }
 
     @FXML
-    void canvasScroll(ScrollEvent e){
+    void canvasScroll(ScrollEvent e) {
         double factor = e.getDeltaY();
         zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
     }

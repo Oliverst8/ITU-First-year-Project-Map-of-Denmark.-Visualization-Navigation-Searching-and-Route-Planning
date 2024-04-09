@@ -15,6 +15,17 @@ public abstract class MapElement {
     public MapElement(long id, List<String> tags) {
         this.id = id;
         this.tags = tags;
+        setPrimaryType();
+    }
+
+    public MapElement(long id, List<String> tags, LongArrayList nodeIDs) {
+        this.id = id;
+        this.tags = tags;
+        this.nodeIDs = nodeIDs.toArray();
+        setPrimaryType();
+    }
+
+    private void setPrimaryType() {
         for(int i = 0; i < tags.size(); i += 2) {
             switch (tags.get(i)) {
                 case "highway":
@@ -46,12 +57,6 @@ public abstract class MapElement {
                     break;
             }
         }
-    }
-
-    public MapElement(long id, List<String> tags, LongArrayList nodeIDs) {
-        this.id = id;
-        this.tags = tags;
-        this.nodeIDs = nodeIDs.toArray();
     }
 
     public long getId() {
