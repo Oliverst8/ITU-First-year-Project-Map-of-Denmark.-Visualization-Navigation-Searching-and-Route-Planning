@@ -197,19 +197,15 @@ public class ChunkGenerator implements Runnable {
 
                     case "natural":
                         switch (tags.get(i + 1)) {
+                            case "water":
                             case "peninsula":
                                 if (zoomLevel < 4) zoomLevel = 4;
                                 break;
                         }
 
                         switch (tags.get(i + 1)) {
-                            case "wood":
-                            case "water":
                             case "scrub":
                             case "beach":
-                            case "meadow":
-                            case "coastline":
-                            case "grassland":
                                 if (zoomLevel < 3) zoomLevel = 3;
                                 break;
                         }
@@ -217,34 +213,10 @@ public class ChunkGenerator implements Runnable {
                     
                     case "landuse":
                         switch (tags.get(i + 1)) {
-                            case "grass":
-                            case "forest":
-                            case "meadow":
-                            case "military":
                             case "allotments":
                             case "industrial":
                             case "residential":
-                            case "construction":
-                            case "recreation_ground":
                                 if (zoomLevel < 3) zoomLevel = 3;
-                                break;
-                        }
-                        break;
-
-                    case "leisure":
-                        switch (tags.get(i + 1)) {
-                            case "park":
-                            case "golf_course":
-                            case "sports_centre":
-                                if (zoomLevel < 2) zoomLevel = 2;
-                                break;
-                        }
-                        break;
-
-                    case "amenity":
-                        switch (tags.get(i + 1)) {
-                            case "parking":
-                                if (zoomLevel < 2) zoomLevel = 2;
                                 break;
                         }
                         break;
@@ -252,6 +224,12 @@ public class ChunkGenerator implements Runnable {
                     case "building":
                         switch (tags.get(i + 1)) {
                             case "yes":
+                            case "shed":
+                            case "office":
+                            case "detached":
+                            case "university":
+                            case "apartments":
+                            case "allotment_house":
                             if (zoomLevel < 0) zoomLevel = 0;
                         }
                         break;

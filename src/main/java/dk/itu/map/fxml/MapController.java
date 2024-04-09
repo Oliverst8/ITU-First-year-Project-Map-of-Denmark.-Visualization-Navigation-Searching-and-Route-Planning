@@ -83,7 +83,7 @@ public class MapController extends ViewController {
             gc.setLineJoin(StrokeLineJoin.ROUND);
 
             canvas.get(key).widthProperty().bind(canvasParent.widthProperty());
-            // canvas.get(key).heightProperty().bind(canvasParent.heightProperty());
+            //canvas.get(key).heightProperty().bind(canvasParent.heightProperty());
         }
 
         trans = new Affine();
@@ -132,7 +132,6 @@ public class MapController extends ViewController {
     void canvasScroll(ScrollEvent e){
         double factor = e.getDeltaY();
         zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
-        redraw();
     }
 
     /**

@@ -135,6 +135,7 @@ public class Way {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
+
         for (int i = 0; i < coords.size(); i += 2) {
             if (startNew) {
                 gc.moveTo(0.56f * coords.get(i + 1), -coords.get(i));
@@ -245,27 +246,27 @@ public class Way {
                     switch (tags[i + 1]) {
                         case "aerodrome":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.DARKGRAY);
-                            gc.setFill(Color.DARKGRAY);
+                            gc.setStroke(Color.web("#E6EDF8"));
+                            gc.setFill(Color.web("#E6EDF8"));
                             shouldFill = true;
                             break forLoop;
 
                         case "runway":
                             lineWidth = 0.0008f;
-                            gc.setStroke(Color.GRAY);
+                            gc.setStroke(Color.web("#F3F6FF"));
                             shouldFill = false;
                             break forLoop;
 
                         case "taxiway":
                             lineWidth = 0.0003f;
-                            gc.setStroke(Color.GRAY);
+                            gc.setStroke(Color.web("#F3F6FF")   );
                             shouldFill = false;
                             break forLoop;
                         
                         case "apron":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.DARKGRAY);
-                            gc.setFill(Color.DARKGRAY);
+                            gc.setStroke(Color.web("#E6EDF8"));
+                            gc.setFill(Color.web("#E6EDF8"));
                             shouldFill = true;
                             break forLoop;
                     }
@@ -275,22 +276,22 @@ public class Way {
                         case "motorway":
                         case "motorway_link":
                             lineWidth = 0.001f;
-                            gc.setStroke(Color.DARKRED);
+                            gc.setStroke(Color.web("#8BA5C1"));
                             shouldFill = false;
                             break forLoop;
 
                         case "tertiary":
                         case "tertiary_link":
-                            lineWidth = 0.00025f;
-                            gc.setStroke(Color.GRAY);
+                            lineWidth = 0.0005f;
+                            gc.setStroke(Color.web("#B1C0CF"));
                             shouldFill = false;
                             break forLoop;
                         
                         case "service":
                         case "residential":
                         case "unclassified":
-                            lineWidth = 0.0001f;
-                            gc.setStroke(Color.GRAY);
+                            lineWidth = 0.0005f;
+                            gc.setStroke(Color.web("#B1C0CF"));
                             shouldFill = false;
                             break forLoop;
 
@@ -299,46 +300,39 @@ public class Way {
                         case "primary":
                         case "primary_link":
                             lineWidth = 0.001f;
-                            gc.setStroke(Color.DARKGRAY);
+                            gc.setStroke(Color.web("#B1C0CF"));
                             shouldFill = false;
                             break forLoop;
                         
                         case "secondary":
                         case "secondary_link":
                             lineWidth = 0.0005f;
-                            gc.setStroke(Color.GRAY);
+                            gc.setStroke(Color.web("#B1C0CF"));
                             shouldFill = false;
                             break forLoop;
                     }
 
                 case "natural":
-                    switch (tags[i + 1]) {
-                        case "wood":
-                            lineWidth = 0.0003f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.LIGHTGREEN);
-                            shouldFill = true;
-                            break forLoop;
-                        
+                    switch (tags[i + 1]) {                        
                         case "scrub":
                         case "beach":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.web("#ffe97c"));
-                            gc.setFill(Color.web("#ffe97c"));
+                            gc.setStroke(Color.web("#F7ECCF"));
+                            gc.setFill(Color.web("#F7ECCF"));
                             shouldFill = true;
                             break forLoop;
                         
                         case "water":
                             lineWidth = 0.00001f;
-                            gc.setStroke(Color.BLUE);
-                            gc.setFill(Color.LIGHTBLUE);
+                            gc.setStroke(Color.web("#8AD8EC"));
+                            gc.setFill(Color.web("#8AD8EC"));
                             shouldFill = true;
                             break forLoop;
 
                         case "peninsula":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.LIGHTGREEN);
-                            gc.setFill(Color.LIGHTGREEN);
+                            gc.setStroke(Color.web("#C9F5DB"));
+                            gc.setFill(Color.web("#C9F5DB"));
                             shouldFill = true;
                             break forLoop;
                     }
@@ -348,56 +342,20 @@ public class Way {
                         case "island":
                         case "islet":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.LIGHTGREEN);
-                            gc.setFill(Color.LIGHTGREEN);
+                            gc.setStroke(Color.web("#C9F5DB"));
+                            gc.setFill(Color.web("#C9F5DB"));
                             shouldFill = true;
                             break forLoop;
                     }
-
+                
                 case "landuse":
                     switch (tags[i + 1]) {
                         case "allotments":
                         case "industrial":
                         case "residential":
                             lineWidth = 0.0001f;
-                            gc.setStroke(Color.web("#383737"));
-                            gc.setFill(Color.web("#383737"));
-                            shouldFill = true;
-                            break forLoop;
-
-                        case "military":
-                            lineWidth = 0.0001f;
-                            gc.setStroke(Color.web("#381212"));
-                            gc.setFill(Color.web("#381212"));
-                            shouldFill = true;
-                            break forLoop;
-
-                        case "construction":
-                            lineWidth = 0.0001f;
-                            gc.setStroke(Color.web("#676b36"));
-                            gc.setFill(Color.web("#676b36"));
-                            shouldFill = true;
-                            break forLoop;
-                    }
-
-                case "leisure":
-                    switch (tags[i + 1]) {
-                        case "park":
-                        // case "golf_course":
-                        // case "sports_centre":
-                            lineWidth = 0.00001f;
-                            gc.setStroke(Color.GREEN);
-                            gc.setFill(Color.LIGHTGREEN);
-                            shouldFill = true;
-                            break forLoop;
-                    }
-
-                case "amenity":
-                    switch (tags[i + 1]) {
-                        case "parking":
-                            lineWidth = 0.00001f;
-                            gc.setStroke(Color.web("#383737"));
-                            gc.setFill(Color.web("#383737"));
+                            gc.setStroke(Color.web("#F5F3F3"));
+                            gc.setFill(Color.web("#F5F3F3"));
                             shouldFill = true;
                             break forLoop;
                     }
@@ -405,16 +363,22 @@ public class Way {
                 case "building":
                     switch (tags[i + 1]) {
                         case "yes":
+                        case "shed":
+                        case "office":
+                        case "detached":
+                        case "university":
+                        case "apartments":
+                        case "allotment_house":
                             lineWidth = 0.00001f;
-                            gc.setStroke(Color.GRAY);
-                            gc.setStroke(Color.GRAY);
+                            gc.setStroke(Color.web("#DBDDE8"));
+                            gc.setFill(Color.web("#E8E9ED"));
                             shouldFill = true;
                             break forLoop;
                     }
             }
         }
 
-        gc.setLineWidth(lineWidth);
+        gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 0.75, 0.1));
         return shouldFill;
     }
 
