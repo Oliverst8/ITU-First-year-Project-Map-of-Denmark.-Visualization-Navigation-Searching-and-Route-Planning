@@ -79,8 +79,8 @@ public class Navigation {
         path.add(coords[1]);
         pathIDs.add(current);
 
-        return new DrawableWay(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
-
+        //return new DrawableWay(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
+        throw new UnsupportedOperationException("Not implemented yet");
 
         //return path;
 

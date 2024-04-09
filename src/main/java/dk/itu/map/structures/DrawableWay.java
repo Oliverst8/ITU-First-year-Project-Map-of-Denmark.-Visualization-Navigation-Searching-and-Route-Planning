@@ -18,8 +18,8 @@ public class DrawableWay implements Serializable {
     private DrawableWay[] tempOuterDrawableWays;
     private DrawableWay[] tempInnerDrawableWays;
     private final CoordArrayList outerCoords;
-    private final CoordArrayList innerCoords;
-    private final String[] tags;
+    private CoordArrayList innerCoords;
+    private String[] tags;
 
 
     private long id;

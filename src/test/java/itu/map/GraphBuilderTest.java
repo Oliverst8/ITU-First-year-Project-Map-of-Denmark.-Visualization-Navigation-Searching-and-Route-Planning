@@ -8,8 +8,10 @@ import dk.itu.map.structures.ArrayLists.LongArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import dk.itu.map.parser.Way;
+import org.apache.commons.io.FileUtils;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +81,8 @@ public class GraphBuilderTest {
         graphBuilder.writeToFile(dataPath);
         GraphBuilder graph = new GraphBuilder();
         graph.loadFromDataPath(dataPath);
-        assertTrue(graph.equals(graphBuilder));
+        FileUtils.deleteDirectory(new File(dataPath + "/graph"));
+        assertEquals(graph, graphBuilder);
     }
 
 
