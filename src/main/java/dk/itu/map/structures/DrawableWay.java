@@ -48,9 +48,9 @@ public class DrawableWay implements Serializable {
     /**
      * Only used for ChunkHandler
      */
-    public DrawableWay(float[] outerCoords, float[] innerCoords, String[] tags) {
-        this.outerCoords = new CoordArrayListV2(outerCoords);
-        this.innerCoords = new CoordArrayListV2(innerCoords);
+    public DrawableWay(CoordArrayListV2 outerCoords, CoordArrayListV2 innerCoords, String[] tags) {
+        this.outerCoords = outerCoords;
+        this.innerCoords = innerCoords;
         this.tags = tags;
     }
 
