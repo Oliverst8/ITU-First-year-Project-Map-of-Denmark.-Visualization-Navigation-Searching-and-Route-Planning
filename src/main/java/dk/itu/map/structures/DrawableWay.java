@@ -6,8 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.ArrayLists.LongArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -17,8 +16,8 @@ public class DrawableWay implements Serializable {
     private List<Long> innerRef;
     private DrawableWay[] tempOuterDrawableWays;
     private DrawableWay[] tempInnerDrawableWays;
-    private final CoordArrayList outerCoords;
-    private CoordArrayList innerCoords;
+    private final CoordArrayListV2 outerCoords;
+    private CoordArrayListV2 innerCoords;
     private String[] tags;
 
 
@@ -29,16 +28,16 @@ public class DrawableWay implements Serializable {
      * Only use for OSMParser
      */
     public DrawableWay(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new CoordArrayList();
-        innerCoords = new CoordArrayList();
+        outerCoords = new CoordArrayListV2();
+        innerCoords = new CoordArrayListV2();
         this.outerRef = outerRef;
         this.innerRef = innerRef;
         this.tempOuterDrawableWays = new DrawableWay[outerRef.size()];
         this.tempInnerDrawableWays = new DrawableWay[innerRef.size()];
         this.tags = new String[tags.size()];
 
-        for (float node : nodes) {
-            outerCoords.add(node);
+        for(int i = 0; i < nodes.size(); i += 2) {
+            outerCoords.add(nodes.get(i), nodes.get(i + 1));
         }
 
         for (int i = 0; i < this.tags.length; i++) {
@@ -50,12 +49,12 @@ public class DrawableWay implements Serializable {
      * Only used for ChunkHandler
      */
     public DrawableWay(float[] outerCoords, float[] innerCoords, String[] tags) {
-        this.outerCoords = new CoordArrayList(outerCoords);
-        this.innerCoords = new CoordArrayList(innerCoords);
+        this.outerCoords = new CoordArrayListV2(outerCoords);
+        this.innerCoords = new CoordArrayListV2(innerCoords);
         this.tags = tags;
     }
 
-    public DrawableWay(CoordArrayList coords){
+    public DrawableWay(CoordArrayListV2 coords){
         this.outerCoords = coords;
     }
 
@@ -120,11 +119,15 @@ public class DrawableWay implements Serializable {
     public void stream(DataOutputStream stream) throws IOException {
         stream.writeInt(outerCoords.size());
         for (int i = 0; i < outerCoords.size(); i++) {
-            stream.writeFloat(outerCoords.get(i));
+            float[] coord = outerCoords.get(i);
+            stream.writeFloat(coord[0]);
+            stream.writeFloat(coord[1]);
         }
         stream.writeInt(innerCoords.size());
         for (int i = 0; i < innerCoords.size(); i++) {
-            stream.writeFloat(innerCoords.get(i));
+            float[] coord = innerCoords.get(i);
+            stream.writeFloat(coord[0]);
+            stream.writeFloat(coord[1]);
         }
         stream.writeInt(tags.length);
         for (int i = 0; i < tags.length; i++) {
@@ -147,20 +150,21 @@ public class DrawableWay implements Serializable {
         
     }
      
-    public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
+    public void drawCoords(GraphicsContext gc, CoordArrayListV2 coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
         for (int i = 0; i < coords.size(); i += 2) {
+            float[] coord = coords.get(i);
             if (startNew) {
-                gc.moveTo(0.56f * coords.get(i + 1), -coords.get(i));
+                gc.moveTo(0.56f * coord[1], -coord[0]);
                 startNew = false;
-                startX = coords.get(i + 1);
-                startY = coords.get(i);
+                startX = coord[1];
+                startY = coord[0];
                 continue;
             }
-            gc.lineTo(0.56f * coords.get(i + 1), -coords.get(i));
-            if (startX == coords.get(i + 1) && startY == coords.get(i)) {
+            gc.lineTo(0.56f * coord[1], -coord[0]);
+            if (startX == coord[1] && startY == coord[0]) {
                 startNew = true;
             }
         }
