@@ -116,11 +116,11 @@ public class ChunkLoader {
             String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
-                    outerCoords = new float[stream.readInt()];
+                    outerCoords = new float[stream.readInt()*2];
                     for (int j = 0; j < outerCoords.length; j++) {
                         outerCoords[j] = stream.readFloat();
                     }
-                    innerCoords = new float[stream.readInt()];
+                    innerCoords = new float[stream.readInt()*2];
                     for (int j = 0; j < innerCoords.length; j++) {
                         innerCoords[j] = stream.readFloat();
                     }

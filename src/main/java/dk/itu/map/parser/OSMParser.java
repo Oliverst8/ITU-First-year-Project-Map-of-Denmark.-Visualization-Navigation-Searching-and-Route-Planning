@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
@@ -193,7 +193,7 @@ public class OSMParser {
      * @param id The id of the way
      */
     private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
-        CoordArrayList coords = new CoordArrayList();
+        CoordArrayListV2 coords = new CoordArrayListV2();
         List<String> tags = new ArrayList<>();
         LongArrayList nodeIds = new LongArrayList();
         while (input.hasNext()) {
@@ -212,8 +212,8 @@ public class OSMParser {
 
                 float[] temp = nodes.get(node);
 
-                coords.add(temp[0]);
-                coords.add(temp[1]);
+                coords.add(temp[0], temp[1]);
+
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));

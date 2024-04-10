@@ -4,13 +4,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 public class Way extends MapElement {
-    private CoordArrayList coords;
+    private CoordArrayListV2 coords;
 
-    public Way(long id, List<String> tags, CoordArrayList coords, LongArrayList nodeIDs) {
+    public Way(long id, List<String> tags, CoordArrayListV2 coords, LongArrayList nodeIDs) {
         super(id, tags, nodeIDs);
 
         this.coords = coords;
@@ -20,7 +20,9 @@ public class Way extends MapElement {
     public void stream(DataOutputStream stream) throws IOException {
         stream.writeInt(coords.size());
         for (int i = 0; i < coords.size(); i++) {
-            stream.writeFloat(coords.get(i));
+            float[] coord = coords.get(i);
+            stream.writeFloat(coord[0]);
+            stream.writeFloat(coord[1]);
         }
         stream.writeInt(0); // Ways dont have inner coords
         stream.writeInt(getTags().size());
@@ -30,15 +32,15 @@ public class Way extends MapElement {
     }
 
     @Override
-    public CoordArrayList getCoords() {
+    public CoordArrayListV2 getCoords() {
         return coords;
     }
 
     public float[] getFirstCoords() {
-        return new float[]{coords.get(0), coords.get(1)};
+        return coords.get(0);
     }
 
     public float[] getLastCoords() {
-        return new float[]{coords.get(-2), coords.get(-1)};
+        return coords.get(-1);
     }
 }
