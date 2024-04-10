@@ -1,7 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
-import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -199,7 +198,7 @@ public class ChunkGenerator implements Runnable {
             }
             if (zoomLevel == -1) continue;
 
-            CoordArrayListV2 coords = way.getCoords();
+            CoordArrayList coords = way.getCoords();
             for (int i = 0; i < coords.size(); i++) {
                 float[] coord = coords.get(i);
                 float lat = coord[0];

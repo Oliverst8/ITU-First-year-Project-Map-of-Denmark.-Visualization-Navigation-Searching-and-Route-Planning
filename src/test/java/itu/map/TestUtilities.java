@@ -1,6 +1,6 @@
 package itu.map;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 public class TestUtilities {
@@ -12,8 +12,8 @@ public class TestUtilities {
         return list;
     }
 
-    public static CoordArrayListV2 createCoordArrayList(float... values) {
-        CoordArrayListV2 list = new CoordArrayListV2();
+    public static CoordArrayList createCoordArrayList(float... values) {
+        CoordArrayList list = new CoordArrayList();
         for (int i = 0; i < values.length; i += 2) {
             list.add(values[i], values[i + 1]);
         }

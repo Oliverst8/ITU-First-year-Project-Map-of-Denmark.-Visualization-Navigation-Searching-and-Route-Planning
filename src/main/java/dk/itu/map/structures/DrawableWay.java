@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -16,8 +16,8 @@ public class DrawableWay implements Serializable {
     private List<Long> innerRef;
     private DrawableWay[] tempOuterDrawableWays;
     private DrawableWay[] tempInnerDrawableWays;
-    private final CoordArrayListV2 outerCoords;
-    private CoordArrayListV2 innerCoords;
+    private final CoordArrayList outerCoords;
+    private CoordArrayList innerCoords;
     private String[] tags;
 
 
@@ -28,8 +28,8 @@ public class DrawableWay implements Serializable {
      * Only use for OSMParser
      */
     public DrawableWay(List<Float> nodes, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
-        outerCoords = new CoordArrayListV2();
-        innerCoords = new CoordArrayListV2();
+        outerCoords = new CoordArrayList();
+        innerCoords = new CoordArrayList();
         this.outerRef = outerRef;
         this.innerRef = innerRef;
         this.tempOuterDrawableWays = new DrawableWay[outerRef.size()];
@@ -48,13 +48,13 @@ public class DrawableWay implements Serializable {
     /**
      * Only used for ChunkHandler
      */
-    public DrawableWay(CoordArrayListV2 outerCoords, CoordArrayListV2 innerCoords, String[] tags) {
+    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags) {
         this.outerCoords = outerCoords;
         this.innerCoords = innerCoords;
         this.tags = tags;
     }
 
-    public DrawableWay(CoordArrayListV2 coords){
+    public DrawableWay(CoordArrayList coords){
         this.outerCoords = coords;
     }
 
@@ -150,7 +150,7 @@ public class DrawableWay implements Serializable {
         
     }
      
-    public void drawCoords(GraphicsContext gc, CoordArrayListV2 coords) {
+    public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;

@@ -4,13 +4,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 public class Way extends MapElement {
-    private CoordArrayListV2 coords;
+    private CoordArrayList coords;
 
-    public Way(long id, List<String> tags, CoordArrayListV2 coords, LongArrayList nodeIDs) {
+    public Way(long id, List<String> tags, CoordArrayList coords, LongArrayList nodeIDs) {
         super(id, tags, nodeIDs);
 
         this.coords = coords;
@@ -32,7 +32,7 @@ public class Way extends MapElement {
     }
 
     @Override
-    public CoordArrayListV2 getCoords() {
+    public CoordArrayList getCoords() {
         return coords;
     }
 

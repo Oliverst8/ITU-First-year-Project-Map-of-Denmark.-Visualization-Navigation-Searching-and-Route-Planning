@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
 import java.io.DataOutputStream;
@@ -32,7 +32,7 @@ public abstract class MapElement {
 
     abstract void stream(DataOutputStream stream) throws java.io.IOException;
     
-    public abstract CoordArrayListV2 getCoords();
+    public abstract CoordArrayList getCoords();
 
     public long[] getNodeIDs() {
         return nodeIDs;

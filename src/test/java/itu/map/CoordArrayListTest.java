@@ -1,12 +1,12 @@
 package itu.map;
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CoordArrayListV2Test {
+public class CoordArrayListTest {
     @Test public void createListAndAdd() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
         list.add(3.0f, 7.0f);
@@ -15,12 +15,12 @@ public class CoordArrayListV2Test {
     }
 
     @Test public void createListWithArray() {
-        CoordArrayListV2 list = new CoordArrayListV2(new float[]{1.0f, 5.0f, 2.0f, 6.0f, 3.0f, 7.0f, 4.0f, 8.0f});
+        CoordArrayList list = new CoordArrayList(new float[]{1.0f, 5.0f, 2.0f, 6.0f, 3.0f, 7.0f, 4.0f, 8.0f});
         assertArrayEquals(new float[]{1.0f, 5.0f, 2.0f, 6.0f, 3.0f, 7.0f, 4.0f, 8.0f}, list.toArray());
     }
 
     @Test public void createListAndGet() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
         list.add(3.0f, 7.0f);
@@ -36,7 +36,7 @@ public class CoordArrayListV2Test {
     }
 
     @Test public void createListAndExchange() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
         list.add(3.0f, 7.0f);
@@ -46,13 +46,13 @@ public class CoordArrayListV2Test {
     }
 
     @Test public void createListAndAddAll() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.addAll(new float[]{1.0f, 5.0f, 2.0f, 6.0f, 3.0f, 7.0f, 4.0f, 8.0f});
         assertArrayEquals(new float[]{1.0f, 5.0f, 2.0f, 6.0f, 3.0f, 7.0f, 4.0f, 8.0f}, list.toArray());
     }
 
     @Test public void createListAndReverseOddList() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
         list.add(3.0f, 7.0f);
@@ -63,7 +63,7 @@ public class CoordArrayListV2Test {
     }
 
     @Test public void createListAndReverseEvenList() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
         list.add(3.0f, 7.0f);
@@ -73,7 +73,7 @@ public class CoordArrayListV2Test {
     }
 
     @Test public void createListAndReverseTuple() {
-        CoordArrayListV2 list = new CoordArrayListV2();
+        CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.reverse();
         assertArrayEquals(new float[]{1.0f, 5.0f}, list.toArray());

@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.WriteAble;
@@ -47,7 +47,7 @@ public class GraphBuilder extends Graph implements Runnable {
      * @return the weight of the way
      */
     private float calcWeight(MapElement way, int firstNode) {
-        CoordArrayListV2 coords = way.getCoords();
+        CoordArrayList coords = way.getCoords();
         float[] coord1 = coords.get(firstNode);
         float[] coord2 = coords.get(firstNode+1);
         return dist(coord1[0], coord1[1], coord2[0], coord2[1]);
@@ -80,7 +80,7 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param vertexID the ids of the vertices to be added
      * @param coords the coordinates of the vertices to be added
      */
-    private void addVertices(long[] vertexID, CoordArrayListV2 coords) {
+    private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
                 int index = vertexList.size();

@@ -4,7 +4,7 @@ import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.parser.Way;
 import dk.itu.map.utility.Navigation;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ class    NavigationTest {
         ArrayList tags = new ArrayList();
         tags.add("navigationPath");
 
-        CoordArrayListV2 coords = TestUtilities.createCoordArrayList(new float[]{0f, 0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f, 9f, 9f});
+        CoordArrayList coords = TestUtilities.createCoordArrayList(new float[]{0f, 0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f, 9f, 9f});
 
         LongArrayList nodeIDs = TestUtilities.createLongArrayList(new long[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 

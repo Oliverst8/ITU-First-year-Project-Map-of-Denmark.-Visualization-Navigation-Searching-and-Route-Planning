@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
@@ -112,18 +112,18 @@ public class ChunkLoader {
 
             File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
-            CoordArrayListV2 outerCoords;
-            CoordArrayListV2 innerCoords;
+            CoordArrayList outerCoords;
+            CoordArrayList innerCoords;
             String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
                     int outerCoordsLength = stream.readInt();
-                    outerCoords = new CoordArrayListV2(outerCoordsLength);
+                    outerCoords = new CoordArrayList(outerCoordsLength);
                     for (int j = 0; j < outerCoordsLength; j++) {
                         outerCoords.add(stream.readFloat(), stream.readFloat());
                     }
                     int innerCoordsLength = stream.readInt();
-                    innerCoords = new CoordArrayListV2(innerCoordsLength);
+                    innerCoords = new CoordArrayList(innerCoordsLength);
                     for (int j = 0; j < innerCoordsLength; j++) {
                         innerCoords.add(stream.readFloat(), stream.readFloat());
                     }

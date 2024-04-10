@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.util.List;
 import java.util.Arrays;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.SimpleLinkedList;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 
@@ -55,8 +55,8 @@ class Polygon extends MapElement {
     }
 
     @Override
-    public CoordArrayListV2 getCoords() {
-        CoordArrayListV2 coords = new CoordArrayListV2();
+    public CoordArrayList getCoords() {
+        CoordArrayList coords = new CoordArrayList();
 
         for (Way way : outerWays) {
             coords.addAll(way.getCoords().toArray());

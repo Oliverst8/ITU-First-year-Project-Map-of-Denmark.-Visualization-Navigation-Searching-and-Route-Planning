@@ -1,7 +1,7 @@
 package itu.map;
 
 import dk.itu.map.parser.GraphBuilder;
-import dk.itu.map.structures.ArrayLists.CoordArrayListV2;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
@@ -28,9 +28,9 @@ public class GraphBuilderTest {
     @Test
     void testAddEdges() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
-        CoordArrayListV2 nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
+        CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
         List<String> stringList = new ArrayList<>();
-        CoordArrayListV2 nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
+        CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
         LongArrayList nodeIDs1 = new LongArrayList();
         nodeIDs1.add(1);
         nodeIDs1.add(2);
@@ -88,9 +88,9 @@ public class GraphBuilderTest {
 
     public GraphBuilder getGraph() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
-        CoordArrayListV2 nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
+        CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
         List<String> stringList = new ArrayList<>();
-        CoordArrayListV2 nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
+        CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
         LongArrayList nodeIDs1 = new LongArrayList();
         nodeIDs1.add(1);
         nodeIDs1.add(2);
