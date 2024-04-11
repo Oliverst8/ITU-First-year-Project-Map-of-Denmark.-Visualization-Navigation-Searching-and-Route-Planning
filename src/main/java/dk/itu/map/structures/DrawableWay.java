@@ -87,19 +87,21 @@ public class DrawableWay implements Serializable {
         builder.append("Nodes:\n");
         builder.append(outerCoords.size());
         builder.append("\n");
-        for (int i = 0; i < outerCoords.size(); i += 2) {
-            builder.append(outerCoords.get(i));
+        for (int i = 0; i < outerCoords.size(); i++) {
+            float[] coord = outerCoords.get(i);
+            builder.append(coord[0]);
             builder.append(" ");
-            builder.append(outerCoords.get(i + 1));
+            builder.append(coord[1]);
             builder.append("\n");
         }
         builder.append("Inner nodes:\n");
         builder.append(innerCoords.size());
         builder.append("\n");
-        for (int i = 0; i < innerCoords.size(); i += 2) {
-            builder.append(innerCoords.get(i));
+        for (int i = 0; i < innerCoords.size(); i++) {
+            float[] coord = innerCoords.get(i);
+            builder.append(coord[0]);
             builder.append(" ");
-            builder.append(innerCoords.get(i + 1));
+            builder.append(coord[1]);
             builder.append("\n");
         }
 
@@ -154,7 +156,7 @@ public class DrawableWay implements Serializable {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
-        for (int i = 0; i < coords.size(); i += 2) {
+        for (int i = 0; i < coords.size(); i++) {
             float[] coord = coords.get(i);
             if (startNew) {
                 gc.moveTo(0.56f * coord[1], -coord[0]);
