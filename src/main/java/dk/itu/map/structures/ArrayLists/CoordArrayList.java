@@ -184,4 +184,24 @@ public class CoordArrayList extends PrimitiveArrayList {
             arrayY[i] = stream.readFloat();
         }
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CoordArrayList that = (CoordArrayList) obj;
+        if (this.size != that.size) {
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (this.arrayX[i] != that.arrayX[i] || this.arrayY[i] != that.arrayY[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -78,7 +78,7 @@ public class GraphBuilder extends Graph implements Runnable {
         TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
         treeBuilder.build();
         int[] treeIndexes = treeBuilder.getTree();
-        sortCoordsAndIndexes(treeIndexes);
+        //sortCoordsAndIndexes(treeIndexes);
     }
 
     private void sortCoordsAndIndexes(int[] treeIndexes) {
