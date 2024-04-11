@@ -1,12 +1,12 @@
 package dk.itu.map;
 
 import javafx.stage.Stage;
-import dk.itu.map.fxml.parent.HomeScreen;
-import dk.itu.map.fxml.parent.Screen;
+import dk.itu.map.fxml.Screen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 
 public class App extends Application {
+    static final String dataPath = "maps/";
     // The stage is the window that the application is running in
     private static Stage stage;
     // The view builder is responsible for creating the view
@@ -31,7 +31,7 @@ public class App extends Application {
         App.stage = stage;
         App.viewBuilder = new ViewBuilder();
 
-        setView(new HomeScreen());
+        setView(new Screen.Home());
         
         stage.setTitle("MapIT");
         stage.show();
@@ -41,7 +41,7 @@ public class App extends Application {
      * Sets the view of the application
      * @param view The view to set
      */
-    public static void setView(Screen view) {
+    public static void setView(Screen<?, ?> view) {
         viewBuilder.setView(view);
         stage.setScene(new Scene(viewBuilder.build()));
     }

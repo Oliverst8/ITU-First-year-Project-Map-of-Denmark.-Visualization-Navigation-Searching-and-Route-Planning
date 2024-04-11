@@ -1,36 +1,33 @@
-package dk.itu.map.fxml;
+package dk.itu.map.fxml.controllers;
 
 import java.io.File;
 
 import dk.itu.map.App;
-import dk.itu.map.Model;
-import dk.itu.map.fxml.parent.ChunkScreen;
-import dk.itu.map.fxml.parent.MapScreen;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
+import dk.itu.map.fxml.Screen;
+import dk.itu.map.fxml.models.HomeModel;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class HomeController extends Controller {
+public class HomeController {
 
-    public HomeController(Model viewModel) {
-        super(viewModel);
+    private final HomeModel model;
+
+    
+    public HomeController(HomeModel model) {
+        this.model = model;
     }
 
-    @FXML
-    public void initialize() {
-        loadMaps();
-    }
 
-    @FXML
-    void importMap(ActionEvent event) {
+    public void importMap() {
         File selectedFile = getMapFile();
         if (selectedFile == null) return;
 
         String mapName = getMapName();
 
-        App.setView(new ChunkScreen(selectedFile.getAbsolutePath(), mapName));
+        App.setView(new Screen.Parse(selectedFile.getAbsolutePath(), mapName));
     }
 
     protected File getMapFile() {
@@ -52,6 +49,24 @@ public class HomeController extends Controller {
         dialog.resizableProperty().setValue(false);
 
         return dialog.showAndWait().get();
+    }
+
+    public void loadSavedMaps(MenuButton mapList) {
+        File directoryPath = new File(model.getDataPath());
+
+        String[] maps = directoryPath.list();
+
+        // If the directory is empty, return.
+        if (maps == null) return;
+
+        for (String map : maps) {
+            MenuItem item = new MenuItem(map);
+            mapList.getItems().add(item);
+
+            item.setOnAction(e -> {
+                App.setView(new Screen.Map(item.getText()));
+            });
+        }
     }
 
 }

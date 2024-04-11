@@ -1,12 +1,12 @@
 package dk.itu.map;
 
-import dk.itu.map.fxml.parent.Screen;
 import javafx.util.Builder;
+import dk.itu.map.fxml.Screen;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Region;
 
 public class ViewBuilder implements Builder<Region> {
-    private Screen view;
+    private Screen<?, ?> view;
 
     /**
      * The view builder is responsible for building the views, this includes loading the FXML files and setting the controller.
@@ -17,11 +17,15 @@ public class ViewBuilder implements Builder<Region> {
     public Region build() {
         FXMLLoader loader = new FXMLLoader();
 
+        if (getClass().getResource("/scenes/" + view.fxml) == null) {
+            throw new RuntimeException("Could not find view: " + view.fxml);
+        }
+
         loader.setLocation(getClass().getResource("/scenes/" + view.fxml));
 
         try {
 
-            loader.setController(view.controller);
+            loader.setController(view.view);
 
             return loader.load();
             
@@ -38,7 +42,7 @@ public class ViewBuilder implements Builder<Region> {
      * Set the view to be displayed
      * @param view The view to be displayed
      */
-    public void setView(Screen view) {
+    public void setView(Screen<?, ?> view) {
         this.view = view;
     }
 }
