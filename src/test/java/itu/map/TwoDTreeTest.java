@@ -19,7 +19,7 @@ public class TwoDTreeTest {
             twoDtree.add(coordArrayList.get(tree[i]));
         }
         int nearest = twoDtree.nearestNeighbour(new float[]{1, 1});
-        assertEquals(tree[0], nearest);
+        assertEquals(0, nearest);
     }
 
     @Test
@@ -33,7 +33,7 @@ public class TwoDTreeTest {
             twoDtree.add(coordArrayList.get(tree[i]));
         }
         int nearest = twoDtree.nearestNeighbour(new float[]{0, 0});
-        assertEquals(tree[1], nearest);
+        assertEquals(1, nearest);
     }
 
     @Test
