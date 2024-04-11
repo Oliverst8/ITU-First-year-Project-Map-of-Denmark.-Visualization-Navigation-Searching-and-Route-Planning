@@ -78,6 +78,10 @@ public class CoordArrayList extends PrimitiveArrayList {
         size++;
     }
 
+    public void add(float[] coords){
+        add(coords[0], coords[1]);
+    }
+
     /**
      * Adds an array of values to the empty spots in the array.
      * If the array is full, it will resize the array.

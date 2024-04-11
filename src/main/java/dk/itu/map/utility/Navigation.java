@@ -1,6 +1,7 @@
 package dk.itu.map.utility;
 
 import dk.itu.map.structures.*;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
@@ -64,24 +65,19 @@ public class Navigation {
 
         if(!buildPaths(startPointID, endPointID)) return null;
 
-        FloatArrayList path = new FloatArrayList();
+        CoordArrayList path = new CoordArrayList();
         LongArrayList pathIDs = new LongArrayList();
         int current = endPointID;
         while(current != startPointID){
-            float[] coords = graph.getCoords(current);
-            path.add(coords[0]);
-            path.add(coords[1]);
+            path.add(graph.getCoords(current));
             pathIDs.add(current);
             current = vertexTo[current];
         }
 
-        float[] coords = graph.getCoords(current);
-        path.add(coords[0]);
-        path.add(coords[1]);
+        path.add(graph.getCoords(current));
         pathIDs.add(current);
 
-        //return new DrawableWay(path.toArray(), new float[]{}, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
 
         //return path;
 
