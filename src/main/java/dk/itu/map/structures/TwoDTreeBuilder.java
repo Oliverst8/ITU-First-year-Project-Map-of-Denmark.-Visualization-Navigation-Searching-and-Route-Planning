@@ -90,7 +90,7 @@ public class TwoDTreeBuilder {
             setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
         }
 
-        else if(range > 3) {
+        else if(range >= 3) {
             setLeftChild(rootIndex, partition(start,rangeLeft,leftChildIndex,primaryAxis, writeArray, readArray));
             setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
         }

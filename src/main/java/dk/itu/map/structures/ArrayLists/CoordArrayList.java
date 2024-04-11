@@ -1,5 +1,7 @@
 package dk.itu.map.structures.ArrayLists;
 
+import java.io.*;
+
 public class CoordArrayList extends PrimitiveArrayList {
 
     // The array that holds the values
@@ -142,5 +144,44 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
 
+    @Override
+    public void write(String path) throws FileNotFoundException, IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
 
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            stream.writeFloat(arrayX[i]);
+            stream.writeFloat(arrayY[i]);
+        }
+    }
+
+    @Override
+    public void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        arrayX = new float[size];
+        arrayY = new float[size];
+        for (int i = 0; i < size; i++) {
+            arrayX[i] = stream.readFloat();
+            arrayY[i] = stream.readFloat();
+        }
+    }
 }

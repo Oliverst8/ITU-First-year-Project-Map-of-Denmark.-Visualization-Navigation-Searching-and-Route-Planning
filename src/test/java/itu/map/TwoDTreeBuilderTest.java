@@ -24,11 +24,6 @@ public class TwoDTreeBuilderTest {
     }
 
     @Test
-    void testCreateSubSections(){
-        kdTreeBuilder = new TwoDTreeBuilder(coords);
-    }
-
-    @Test
     void testCreateKDTree() {
         CoordArrayList coords = TestUtilities.createCoordArrayList(0,0,1,1,2,2,3,3,7,7,8,8,9,9,10,10,11,11,12,12,13,13);
         kdTreeBuilder = new TwoDTreeBuilder(coords);
@@ -39,6 +34,26 @@ public class TwoDTreeBuilderTest {
         int[] expected = new int[]{5,2,8,0,3,6,9,-1,1,-1,4,-1,7,-1,10};
         int[] actual = kdTreeBuilder.getTree();
         //CoordArrayList acutal = kdTreeBuilder.getTree();
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void buildTree() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2, 3, 3, 4, 4, 5, 5});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{2,0,4,-1,1,3,5};
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void buildTree2() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2, 3, 3, 4, 4, 5, 5,6,6,7,7});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{3,1,5,0,2,4,6,-1,-1,-1,-1,-1,-1,-1,7};
         assertArrayEquals(expected, actual);
     }
 }

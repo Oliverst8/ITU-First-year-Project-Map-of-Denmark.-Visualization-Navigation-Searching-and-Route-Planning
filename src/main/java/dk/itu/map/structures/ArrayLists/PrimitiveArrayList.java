@@ -2,7 +2,7 @@ package dk.itu.map.structures.ArrayLists;
 
 import dk.itu.map.structures.WriteAble;
 
-public abstract class PrimitiveArrayList {
+public abstract class PrimitiveArrayList implements WriteAble{
 
     //The current size of the list
     protected int size;

@@ -6,7 +6,12 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> implements WriteAble {
-
+    public WriteAbleArrayList(){
+        super();
+    }
+    public WriteAbleArrayList(int size){
+        super(size);
+    }
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(

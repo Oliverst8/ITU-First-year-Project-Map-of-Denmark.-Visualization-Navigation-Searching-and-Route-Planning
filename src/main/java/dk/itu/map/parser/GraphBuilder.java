@@ -2,7 +2,9 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.TwoDTreeBuilder;
 import dk.itu.map.structures.WriteAble;
 
 import java.io.File;
@@ -73,6 +75,24 @@ public class GraphBuilder extends Graph implements Runnable {
                 addEdge(way);
             }
         }
+        TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
+        treeBuilder.build();
+        int[] treeIndexes = treeBuilder.getTree();
+        sortCoordsAndIndexes(treeIndexes);
+    }
+
+    private void sortCoordsAndIndexes(int[] treeIndexes) {
+        CoordArrayList coords = new CoordArrayList(this.coords.size());
+        WriteAbleArrayList<IntArrayList> vertexList = new WriteAbleArrayList<>(this.vertexList.size());
+        /*for(int i = 0; i < treeIndexes.length; i++){
+            int index = treeIndexes[i];
+            if(index != -1) coords.add(this.coords.get(index));
+            else coords.add(new float[]{-1,-1});
+            vertexList.add(this.vertexList.get(index));
+        }
+        this.coords = coords;
+        this.vertexList = vertexList;*/
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -87,8 +107,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
                 float[] coord = coords.get(i);
-                this.coords.add(coord[0]);
-                this.coords.add(coord[1]);
+                this.coords.add(coord);
                 //coords.add();
                 //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
                 // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments

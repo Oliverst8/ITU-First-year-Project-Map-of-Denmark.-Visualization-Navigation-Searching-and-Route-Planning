@@ -1,5 +1,6 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
@@ -11,10 +12,10 @@ import java.util.stream.IntStream;
 
 public class Graph {
     protected final LongIntHashMap idToIndex;
-    protected final WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
+    protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
     protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
-    protected final FloatArrayList coords; //List that holds the coordinates of each vertex
+    protected CoordArrayList coords; //List that holds the coordinates of each vertex
 
     /**
      * Constructor for the Graph class
@@ -25,7 +26,7 @@ public class Graph {
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
-        coords = new FloatArrayList();
+        coords = new CoordArrayList();
         //wayIDs = new LongArrayList();
     }
 
@@ -63,7 +64,7 @@ public class Graph {
      * @return the coordinates of the vertex
      */
     public float[] getCoords(int index){
-        return new float[]{coords.get(index*2), coords.get(index*2+1)};
+        return coords.get(index);
     }
 
     /**
