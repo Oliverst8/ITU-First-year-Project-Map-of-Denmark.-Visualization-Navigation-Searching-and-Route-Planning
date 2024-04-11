@@ -198,6 +198,7 @@ public class ChunkGenerator implements Runnable {
                     break;
                 
                 case "highway":
+                    if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
                     switch (tags.get(i + 1)) {
                         case "trunk", "primary", "secondary", "motorway":
                             if (zoomLevel < 4) zoomLevel = 4;
@@ -208,7 +209,7 @@ public class ChunkGenerator implements Runnable {
                             break;
                         
                         case "service", "residential", "unclassified":
-                            if (zoomLevel < 0) zoomLevel = 0;
+                            if (zoomLevel < 1) zoomLevel = 0;
                             break;
                     }
                     break;
@@ -278,6 +279,8 @@ public class ChunkGenerator implements Runnable {
             e.printStackTrace();
         }
         writeUtilities();
+
+        System.out.println(graph.size());
         long endTime = System.nanoTime();
         System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
     }

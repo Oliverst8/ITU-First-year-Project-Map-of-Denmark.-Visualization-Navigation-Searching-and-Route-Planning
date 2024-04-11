@@ -6,8 +6,7 @@ import dk.itu.map.Controller;
 
 import javafx.fxml.FXML;
 
-public class HomeController extends ViewController{
-
+public class HomeController extends ViewController {
     public HomeController(Controller controller, Model viewModel) {
         super(controller, viewModel);
     }
@@ -16,5 +15,4 @@ public class HomeController extends ViewController{
     public void initialize(){
         loadMaps();
     }
-
 }

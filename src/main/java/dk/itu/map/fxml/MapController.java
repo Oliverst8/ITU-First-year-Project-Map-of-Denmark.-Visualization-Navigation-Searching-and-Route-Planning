@@ -74,7 +74,7 @@ public class MapController extends ViewController {
         mapLayers = new String[]{"building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
 
         canvas = new HashMap<>();
-        for(String key : mapLayers){
+        for(String key : mapLayers) {
             canvas.put(key, (Canvas) canvasParent.lookup("#canvas" + key.substring(0, 1).toUpperCase() + key.substring(1)));
 
             GraphicsContext gc = canvas.get(key).getGraphicsContext2D();
@@ -83,17 +83,22 @@ public class MapController extends ViewController {
             gc.setLineCap(StrokeLineCap.ROUND);
             gc.setLineJoin(StrokeLineJoin.ROUND);
 
-            canvas.get(key).widthProperty().bind(canvasParent.widthProperty());
-            //canvas.get(key).heightProperty().bind(canvasParent.heightProperty());
+            canvas.get(key).widthProperty().bind(root.widthProperty());
+            canvas.get(key).heightProperty().bind(root.heightProperty());
         }
 
         trans = new Affine();
-        trans.prependTranslation(-0.56*this.viewModel.getMinLon(), this.viewModel.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
-        //This is done to avoid getheight and getwidth from canvas, returning way to big values
-        zoom(0, 0, canvas.get("building").getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
+        trans.prependTranslation(-0.56 * viewModel.getMinLon(), viewModel.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
+
+        // Zoom to the initial view
+        Platform.runLater(() -> {
+            zoom(0, 0, canvas.get("building").getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
+
+            redraw();
+        });
 
         startDist = getZoomDistance();
-        redraw();
+
 
         render = new AnimationTimer() {
             @Override
@@ -120,9 +125,7 @@ public class MapController extends ViewController {
 
     @FXML
     void canvasReleased(MouseEvent e) {
-        if(e.isPrimaryButtonDown()) {
-            render.stop();
-        }
+        render.stop();
     }
 
     @FXML
@@ -212,10 +215,10 @@ public class MapController extends ViewController {
      * @return int the detail level of the map
      */
     private int getDetailLevel(){
-        if(zoomLevel > 300000) return 4;
-        if(zoomLevel > 150000) return 3;
-        if(zoomLevel > 29000) return 2;
-        if(zoomLevel > 250) return 1;
+        if(zoomLevel > 0.07) return 4;
+        if(zoomLevel > 0.01) return 3;
+        if(zoomLevel > 0.01) return 2;
+        if(zoomLevel > 6.9539517E-4) return 1;
         return 0;
     }
 
@@ -246,7 +249,7 @@ public class MapController extends ViewController {
      */
     private void updateZoomLevel(){
         float newZoom = getZoomDistance();
-        zoomLevel = (newZoom/ startDist) * 100 * currentChunkAmountSeen * viewModel.getChunkAmount();
+        zoomLevel = (newZoom / startDist) * 100;
     }
 
     /**

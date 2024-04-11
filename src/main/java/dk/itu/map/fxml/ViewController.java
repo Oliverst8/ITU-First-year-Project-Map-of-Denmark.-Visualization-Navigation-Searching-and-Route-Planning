@@ -51,6 +51,8 @@ abstract class ViewController {
             mapList.getItems().add(item);
 
             item.setOnAction(e -> {
+                mapList.hide();
+
                 viewModel.importMap("maps/" + item.getText(), item.getText());
                 controller.setView(Views.Map);
             });
