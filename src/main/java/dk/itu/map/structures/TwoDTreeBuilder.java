@@ -69,8 +69,8 @@ public class TwoDTreeBuilder {
 
         for(int i = start; i < start + range; i++) {
             int index = readArray[(primaryAxis+1)%2][i];
-            if(index == median) continue;
-            int cmp = compare(index, median, primaryAxis);
+            if(index == medianIndex) continue;
+            int cmp = compare(index, medianIndex, primaryAxis);
             if(cmp > 0) {
                 writeArray[(primaryAxis+1)%2][rightStart++] = index;
             } else if(cmp < 0) {

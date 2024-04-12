@@ -56,4 +56,37 @@ public class TwoDTreeBuilderTest {
         int[] expected = new int[]{3,1,5,0,2,4,6,-1,-1,-1,-1,-1,-1,-1,7};
         assertArrayEquals(expected, actual);
     }
+
+    @Test
+    void buildTree3() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{5, 5, 7, 7, 3,3, 2, 2, 0, 0, 4, 4,6,6,1,1});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{2,7,0,4,3,5,6,-1,-1,-1,-1,-1,-1,-1,1};
+        assertArrayEquals(expected, actual);
+    }
+
+
+    @Test
+    void buildTree4() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{2,2,3,3,1,1});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{0,2,1};
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void buildTree5() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{2,2,3,3});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{0,-1,1};
+        assertArrayEquals(expected, actual);
+    }
+
+
 }
