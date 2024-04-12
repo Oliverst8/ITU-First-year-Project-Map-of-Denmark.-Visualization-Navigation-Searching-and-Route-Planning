@@ -78,21 +78,29 @@ public class GraphBuilder extends Graph implements Runnable {
         TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
         treeBuilder.build();
         int[] treeIndexes = treeBuilder.getTree();
-        //sortCoordsAndIndexes(treeIndexes);
+        sortCoordsAndIndexes(treeIndexes);
     }
 
-    private void sortCoordsAndIndexes(int[] treeIndexes) {
-        CoordArrayList coords = new CoordArrayList(this.coords.size());
-        WriteAbleArrayList<IntArrayList> vertexList = new WriteAbleArrayList<>(this.vertexList.size());
-        /*for(int i = 0; i < treeIndexes.length; i++){
-            int index = treeIndexes[i];
-            if(index != -1) coords.add(this.coords.get(index));
-            else coords.add(new float[]{-1,-1});
-            vertexList.add(this.vertexList.get(index));
+    private void sortCoordsAndIndexes(int[] newVertices) {
+        oldToNewVertexIndex = new IntArrayList(vertexList.size());
+
+
+        WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
+        CoordArrayList newCoords = new CoordArrayList(newVertices.length);
+
+        for(int i = 0; i < newVertices.length; i++){
+
+            if(newVertices[i] == -1){
+                newVertexList.set(i, null);
+                newCoords.add(new float[]{-1,-1});
+            } else{
+                oldToNewVertexIndex.set(newVertices[i], i);
+                newVertexList.set(i, vertexList.get(newVertices[i]));
+                newCoords.add(coords.get(i));
+            }
         }
-        this.coords = coords;
-        this.vertexList = vertexList;*/
-        throw new UnsupportedOperationException("Not implemented yet");
+        vertexList = newVertexList;
+        coords = newCoords;
     }
 
     /**
@@ -200,6 +208,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -209,6 +218,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 edgeDestinations,
                 edgeWeights,
                 coords,
+                oldToNewVertexIndex
                 //wayIDs
         };
 
