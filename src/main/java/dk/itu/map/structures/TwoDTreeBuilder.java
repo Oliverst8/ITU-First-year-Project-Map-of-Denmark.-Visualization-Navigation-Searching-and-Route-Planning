@@ -67,8 +67,23 @@ public class TwoDTreeBuilder {
         int leftStart = start;
         int rightStart = medianIndex + 1;
 
+        if(range == 1) {
+            setLeftChild(rootIndex, -1);
+            setRightChild(rootIndex, -1);
+            return median;
+        }
+
+        else if(range == 2){
+            //Hvordan er vi sikre op at den skal være til højre?
+            setLeftChild(rootIndex, -1);
+            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
+                setLeftChild(rightChildIndex, -1);
+                setRightChild(rightChildIndex, -1);
+            return median;
+        }
+
         for(int i = start; i < start + range; i++) {
-            int index = readArray[(primaryAxis+1)%2][i];
+            int index = readArray[(primaryAxis+1)%2][i]; //i = 7 er hvor den fejler
             if(index == medianIndex) continue;
             int cmp = compare(index, medianIndex, primaryAxis);
             if(cmp > 0) {
@@ -80,20 +95,8 @@ public class TwoDTreeBuilder {
 
         primaryAxis = (primaryAxis + 1) % 2;
 
-        if(range == 1) {
-            setLeftChild(rootIndex, -1);
-            setRightChild(rootIndex, -1);
-        }
-
-        else if(range == 2){
-            setLeftChild(rootIndex, -1);
-            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
-        }
-
-        else if(range >= 3) {
-            setLeftChild(rootIndex, partition(start,rangeLeft,leftChildIndex,primaryAxis, writeArray, readArray));
-            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
-        }
+        setLeftChild(rootIndex, partition(start,rangeLeft,leftChildIndex,primaryAxis, writeArray, readArray));
+        setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
 
         return median;
 

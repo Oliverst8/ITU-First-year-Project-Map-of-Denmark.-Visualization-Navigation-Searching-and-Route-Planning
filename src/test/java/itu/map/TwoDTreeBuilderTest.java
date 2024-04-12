@@ -58,6 +58,24 @@ public class TwoDTreeBuilderTest {
     }
 
     @Test
+    void buildTreeChildShouldBeToTTheRight() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,2,0});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{0,-1,1};
+    }
+
+    @Test
+    void buildTreeChildShouldBeToTTheLeft() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,0,2});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        int[] actual = builder.getTree();
+        int[] expected = new int[]{0,1,-1};
+    }
+
+    @Test
     void buildTree3() {
         CoordArrayList coordArrayList = new CoordArrayList(new float[]{5, 5, 7, 7, 3,3, 2, 2, 0, 0, 4, 4,6,6,1,1});
         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
