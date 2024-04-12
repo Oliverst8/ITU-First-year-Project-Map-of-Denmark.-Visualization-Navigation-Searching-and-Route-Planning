@@ -49,11 +49,33 @@ public class TwoDTreeBuilder {
         sortedIndexes[0] = pointX.getSortedIndexes();
         sortedIndexes[1] = pointY.getSortedIndexes();
 
-        int[][] secondArray = Arrays.copyOf(sortedIndexes, sortedIndexes.length);
+        if(!checkIfSorted(sortedIndexes[0], 0)){
+            System.out.println("X is not sorted");
+        }
+        if(!checkIfSorted(sortedIndexes[1], 1)){
+            System.out.println("Y is not sorted");
+        }
+
+        int[][] secondArray = new int[2][coords.size()];
+
+        for(int i = 0; i < sortedIndexes.length; i++){
+            for(int j = 0; j < sortedIndexes[i].length; j++){
+                secondArray[i][j] = sortedIndexes[i][j];
+            }
+        }
 
         tree[0] = partition(0, coords.size(), 0, 0, sortedIndexes, secondArray);
 
     }
+
+    public boolean checkIfSorted(int[] array, int axis){
+        for(int i = 0; i < array.length - 1; i++){
+            if(compare(array[i] , array[i + 1], axis) > 0) return false;
+        }
+        return true;
+    }
+
+
 
     public int partition(int start, int range, int rootIndex, int primaryAxis, int[][] readArray, int[][] writeArray) {
 
@@ -67,6 +89,8 @@ public class TwoDTreeBuilder {
         int leftStart = start;
         int rightStart = medianIndex + 1;
 
+        int secondaryAxis = (primaryAxis + 1) % 2;
+
         if(range == 1) {
             setLeftChild(rootIndex, -1);
             setRightChild(rootIndex, -1);
@@ -76,24 +100,28 @@ public class TwoDTreeBuilder {
         else if(range == 2){
             //Hvordan er vi sikre op at den skal være til højre?
             setLeftChild(rootIndex, -1);
-            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));
+            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,secondaryAxis, writeArray, readArray));
                 setLeftChild(rightChildIndex, -1);
                 setRightChild(rightChildIndex, -1);
             return median;
         }
-
         for(int i = start; i < start + range; i++) {
-            int index = readArray[(primaryAxis+1)%2][i]; //i = 7 er hvor den fejler
-            if(index == medianIndex) continue;
-            int cmp = compare(index, medianIndex, primaryAxis);
+            int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
+            if(index == median) continue;
+            int cmp = compare(index, median, primaryAxis);
+            if(rightStart >= 111936 && cmp > 0){
+                System.out.println("hej");
+                rightStart++;
+                continue;
+            }
             if(cmp > 0) {
-                writeArray[(primaryAxis+1)%2][rightStart++] = index;
+                writeArray[secondaryAxis][rightStart++] = index;
             } else if(cmp < 0) {
-                writeArray[(primaryAxis+1)%2][leftStart++] = index;
+                writeArray[secondaryAxis][leftStart++] = index;
             }
         }
 
-        primaryAxis = (primaryAxis + 1) % 2;
+        primaryAxis = secondaryAxis;
 
         setLeftChild(rootIndex, partition(start,rangeLeft,leftChildIndex,primaryAxis, writeArray, readArray));
         setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,primaryAxis, writeArray, readArray));

@@ -91,11 +91,11 @@ public class GraphBuilder extends Graph implements Runnable {
         for(int i = 0; i < newVertices.length; i++){
 
             if(newVertices[i] == -1){
-                newVertexList.set(i, null);
+                newVertexList.add(new IntArrayList(0));
                 newCoords.add(new float[]{-1,-1});
             } else{
                 oldToNewVertexIndex.set(newVertices[i], i);
-                newVertexList.set(i, vertexList.get(newVertices[i]));
+                newVertexList.add(vertexList.get(newVertices[i]));
                 newCoords.add(coords.get(i));
             }
         }

@@ -28,6 +28,7 @@ public class Graph {
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
         coords = new CoordArrayList();
+        oldToNewVertexIndex = new IntArrayList();
         //wayIDs = new LongArrayList();
     }
 
