@@ -109,11 +109,6 @@ public class TwoDTreeBuilder {
             int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
             if(index == median) continue;
             int cmp = compare(index, median, primaryAxis);
-            if(rightStart >= 111936 && cmp > 0){
-                System.out.println("hej");
-                rightStart++;
-                continue;
-            }
             if(cmp > 0) {
                 writeArray[secondaryAxis][rightStart++] = index;
             } else if(cmp < 0) {
@@ -137,7 +132,7 @@ public class TwoDTreeBuilder {
         if(cmp == 0) {
             cmp = Float.compare(coord1[(primaryAxis + 1) % 2], coord2[(primaryAxis + 1) % 2]);
         }
-        if(cmp == 0) throw new RuntimeException("Two points are the same\n x_1:" + coord1[0] + " y_1:" + coord1[1] + "\n x_2:" + coord2[0] + " y_2:" + coord2[1]);
+        if(cmp == 0) throw new RuntimeException("Two points are the same\n x_1:" + coord1[0] + " y_1:" + coord1[1] + "\n x_2:" + coord2[0] + " y_2:" + coord2[1] + "\nindex1: " + index1 + " \nindex2: " + index2);
         return cmp;
     }
 

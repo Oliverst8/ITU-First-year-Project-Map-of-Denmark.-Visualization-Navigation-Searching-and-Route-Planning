@@ -78,10 +78,10 @@ public class MapController extends ViewController {
         canvas.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
-            //Navigation navigation = new Navigation(this.viewModel.getGraph());
-            //DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
-            //System.out.println(path);
-            //path.draw(gc, getZoomDistance()/startDist*100);
+            Navigation navigation = new Navigation(this.viewModel.getGraph());
+            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
+            System.out.println(path);
+            path.draw(gc, getZoomDistance()/startDist*100);
         });
 
         canvas.setOnMouseDragged(e -> {

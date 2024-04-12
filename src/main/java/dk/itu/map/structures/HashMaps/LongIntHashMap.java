@@ -4,6 +4,7 @@ import dk.itu.map.structures.WriteAble;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
     long[] keys;
@@ -154,6 +155,16 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
 
     public int[] getValues(){
         return value;
+    }
+
+    public HashSet<Long> getKey(int value){
+        HashSet<Long> set = new HashSet<>();
+        for (int i = 0; i < capacity; i++) {
+            if (this.value[i] == value) {
+                set.add(keys[i]);
+            }
+        }
+        return set;
     }
 
     @Override

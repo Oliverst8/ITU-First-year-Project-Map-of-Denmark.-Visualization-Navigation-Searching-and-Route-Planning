@@ -5,13 +5,14 @@ import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.HashMaps.LongIntHashMap;
+import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
 import java.util.stream.IntStream;
 
 
 public class Graph {
-    protected final LongIntHashMap idToIndex;
+    protected final tempHashMapLongToInt idToIndex;
     protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
     protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
@@ -23,7 +24,7 @@ public class Graph {
      * Initializes the idToIndex, vertexList, edgeDestinations, edgeWeights and coords
      */
     public Graph() {
-        idToIndex = new LongIntHashMap();
+        idToIndex = new tempHashMapLongToInt();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
@@ -76,7 +77,7 @@ public class Graph {
      * @return the index of the vertex
      */
     public int idToVertexId(long id){
-        return idToIndex.get(id);
+        return oldToNewVertexIndex.get(idToIndex.get(id));
     }
 
     /**
