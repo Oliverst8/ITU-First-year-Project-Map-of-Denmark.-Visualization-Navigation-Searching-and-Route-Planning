@@ -101,19 +101,6 @@ public class GraphBuilder extends Graph implements Runnable {
         }
         vertexList = newVertexList;
         coords = newCoords;
-
-        // this is older
-        //CoordArrayList coords = new CoordArrayList(this.coords.size());
-        //WriteAbleArrayList<IntArrayList> vertexList = new WriteAbleArrayList<>(this.vertexList.size());
-        /*for(int i = 0; i < treeIndexes.length; i++){
-            int index = treeIndexes[i];
-            if(index != -1) coords.add(this.coords.get(index));
-            else coords.add(new float[]{-1,-1});
-            vertexList.add(this.vertexList.get(index));
-        }
-        this.coords = coords;
-        this.vertexList = vertexList;*/
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
