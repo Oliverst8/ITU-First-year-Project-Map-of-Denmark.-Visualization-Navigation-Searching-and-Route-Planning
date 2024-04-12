@@ -51,7 +51,7 @@ public class Graph {
      * @return the destination of the edge
      */
     public int getDestination(int edge){
-        return edgeDestinations.get(edge);
+        return oldToNewVertexIndex.get(edgeDestinations.get(edge));
     }
 
     /**
@@ -91,6 +91,7 @@ public class Graph {
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -131,6 +132,7 @@ public class Graph {
                 edgeDestinations,
                 edgeWeights,
                 coords,
+                oldToNewVertexIndex
                 //wayIDs
         };
 
@@ -165,6 +167,7 @@ public class Graph {
             if(!edgeDestinations.equals(other.edgeDestinations)) return false;
             if(!edgeWeights.equals(other.edgeWeights)) return false;
             if(!coords.equals(other.coords)) return false;
+            if(!oldToNewVertexIndex.equals(other.oldToNewVertexIndex)) return false;
             return true;
         }
         return false;

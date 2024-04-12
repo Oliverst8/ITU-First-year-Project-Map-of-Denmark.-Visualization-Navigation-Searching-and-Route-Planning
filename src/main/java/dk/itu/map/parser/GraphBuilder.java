@@ -208,6 +208,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -217,6 +218,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 edgeDestinations,
                 edgeWeights,
                 coords,
+                oldToNewVertexIndex
                 //wayIDs
         };
 
