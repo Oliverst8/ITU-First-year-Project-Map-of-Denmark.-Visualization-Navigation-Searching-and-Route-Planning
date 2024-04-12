@@ -78,12 +78,33 @@ public class GraphBuilder extends Graph implements Runnable {
         TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
         treeBuilder.build();
         int[] treeIndexes = treeBuilder.getTree();
-        //sortCoordsAndIndexes(treeIndexes);
+        sortCoordsAndIndexes(treeIndexes);
     }
 
-    private void sortCoordsAndIndexes(int[] treeIndexes) {
-        CoordArrayList coords = new CoordArrayList(this.coords.size());
-        WriteAbleArrayList<IntArrayList> vertexList = new WriteAbleArrayList<>(this.vertexList.size());
+    private void sortCoordsAndIndexes(int[] newVertices) {
+        oldToNewVertexIndex = new IntArrayList(vertexList.size());
+
+
+        WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
+        CoordArrayList newCoords = new CoordArrayList(newVertices.length);
+
+        for(int i = 0; i < newVertices.length; i++){
+
+            if(newVertices[i] == -1){
+                newVertexList.set(i, null);
+                newCoords.add(new float[]{-1,-1});
+            } else{
+                oldToNewVertexIndex.set(newVertices[i], i);
+                newVertexList.set(i, vertexList.get(newVertices[i]));
+                newCoords.add(coords.get(i));
+            }
+        }
+        vertexList = newVertexList;
+        coords = newCoords;
+
+        // this is older
+        //CoordArrayList coords = new CoordArrayList(this.coords.size());
+        //WriteAbleArrayList<IntArrayList> vertexList = new WriteAbleArrayList<>(this.vertexList.size());
         /*for(int i = 0; i < treeIndexes.length; i++){
             int index = treeIndexes[i];
             if(index != -1) coords.add(this.coords.get(index));

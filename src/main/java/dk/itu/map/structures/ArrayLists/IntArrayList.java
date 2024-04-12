@@ -27,6 +27,11 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         super();
         array = new int[init_size];
     }
+    public IntArrayList(int[] array){
+        super();
+        this.array = array;
+        size = array.length;
+    }
 
     /**
      * Resizes the array to double the size
@@ -49,6 +54,10 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         }
         array[size] = value;
         size++;
+    }
+
+    public void set(int index, int value){
+        array[index] = value;
     }
 
     /**

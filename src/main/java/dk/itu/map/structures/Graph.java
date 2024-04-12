@@ -14,6 +14,7 @@ public class Graph {
     protected final LongIntHashMap idToIndex;
     protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
+    protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
     protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
     protected CoordArrayList coords; //List that holds the coordinates of each vertex
 
@@ -29,6 +30,8 @@ public class Graph {
         coords = new CoordArrayList();
         //wayIDs = new LongArrayList();
     }
+
+
 
     /**
      * @return the number of vertices in the graph
