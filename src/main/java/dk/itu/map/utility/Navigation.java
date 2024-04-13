@@ -58,10 +58,9 @@ public class Navigation {
         vertexTo[vertex] = vertexFrom;
     }
 
-    public DrawableWay getPath(long startPoint, long endPoint){
+    private DrawableWay getPath(int startPointID, int endPointID){
 
-        int startPointID = graph.idToVertexId(startPoint);
-        int endPointID = graph.idToVertexId(endPoint);
+
 
         if(!buildPaths(startPointID, endPointID)) return null;
 
@@ -80,6 +79,17 @@ public class Navigation {
         return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
 
         //return path;
+
+    }
+
+    public DrawableWay getPath(long startID, long endID){
+        int startPointID = graph.idToVertexId(startID);
+        int endPointID = graph.idToVertexId(endID);
+        return getPath(startPointID, endPointID);
+    }
+
+    public DrawableWay getPath(float[] startCoords, float[] endCoords){
+        return getPath(graph.getNearestNeigherborID(startCoords), graph.getNearestNeigherborID(endCoords));
 
     }
 

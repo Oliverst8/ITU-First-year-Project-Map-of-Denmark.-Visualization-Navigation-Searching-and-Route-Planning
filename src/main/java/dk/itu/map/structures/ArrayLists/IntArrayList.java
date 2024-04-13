@@ -54,10 +54,12 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         }
         array[size] = value;
         size++;
+        if(size > biggestIndex) biggestIndex = size;
     }
 
     public void set(int index, int value){
         array[index] = value;
+        if(index > biggestIndex) biggestIndex = index;
     }
 
     /**
@@ -82,8 +84,8 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
 
     @Override
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeInt(size);
-        for (int i = 0; i < size; i++) {
+        stream.writeInt(biggestIndex);
+        for (int i = 0; i < biggestIndex; i++) {
             stream.writeInt(array[i]);
         }
     }
@@ -101,6 +103,7 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
+        biggestIndex = size;
         array = new int[size];
         for (int i = 0; i < size; i++) {
             array[i] = stream.readInt();
@@ -123,6 +126,8 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         int temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
+        if(index1 > biggestIndex) biggestIndex = index1;
+        else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
 }

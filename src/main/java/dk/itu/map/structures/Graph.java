@@ -12,23 +12,23 @@ import java.util.stream.IntStream;
 
 
 public class Graph {
-    protected final tempHashMapLongToInt idToIndex;
+    protected final LongIntHashMap idToIndex;
     protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
     protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
     protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
-    protected CoordArrayList coords; //List that holds the coordinates of each vertex
+    protected TwoDTree coords; //List that holds the coordinates of each vertex
 
     /**
      * Constructor for the Graph class
      * Initializes the idToIndex, vertexList, edgeDestinations, edgeWeights and coords
      */
     public Graph() {
-        idToIndex = new tempHashMapLongToInt();
+        idToIndex = new LongIntHashMap();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
-        coords = new CoordArrayList();
+        coords = new TwoDTree();
         oldToNewVertexIndex = new IntArrayList();
         //wayIDs = new LongArrayList();
     }
@@ -158,6 +158,10 @@ public class Graph {
 
     public FloatArrayList getWeights() {
         return edgeWeights;
+    }
+
+    public int getNearestNeigherborID(float[] coords) {
+        return this.coords.nearestNeighbour(coords);
     }
 
     @Override

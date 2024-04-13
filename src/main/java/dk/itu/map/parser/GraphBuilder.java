@@ -4,6 +4,7 @@ import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.TwoDTree;
 import dk.itu.map.structures.TwoDTreeBuilder;
 import dk.itu.map.structures.WriteAble;
 
@@ -86,7 +87,7 @@ public class GraphBuilder extends Graph implements Runnable {
 
 
         WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
-        CoordArrayList newCoords = new CoordArrayList(newVertices.length);
+        TwoDTree newCoords = new TwoDTree(newVertices.length);
 
         for(int i = 0; i < newVertices.length; i++){
 
@@ -94,7 +95,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 newVertexList.add(new IntArrayList(0));
                 newCoords.add(new float[]{-1,-1});
             } else{
-                oldToNewVertexIndex.set(newVertices[i], i);
+                oldToNewVertexIndex.set(newVertices[i], i); //Hvorfor ikke omvendt???
                 newVertexList.add(vertexList.get(newVertices[i]));
                 newCoords.add(coords.get(i));
             }
@@ -115,6 +116,9 @@ public class GraphBuilder extends Graph implements Runnable {
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
                 float[] coord = coords.get(i);
+                //if(coord[0] == 55.750755f && coord[1] == 12.555152f){
+                //    System.out.println("Found the node");
+                //}
                 this.coords.add(coord);
                 //coords.add();
                 //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,

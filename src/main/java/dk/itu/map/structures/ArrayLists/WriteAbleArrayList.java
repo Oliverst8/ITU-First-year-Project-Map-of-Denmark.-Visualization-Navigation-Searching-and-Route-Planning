@@ -9,9 +9,19 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
     public WriteAbleArrayList(){
         super();
     }
+
+    private int biggestIndex = 0;
     public WriteAbleArrayList(int size){
         super(size);
     }
+
+    @Override
+    public boolean add(T element){
+        boolean result = super.add(element);
+        biggestIndex = Math.max(size(), biggestIndex);
+        return result;
+    }
+
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
@@ -22,7 +32,7 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
 
     @Override
     public void write(DataOutputStream stream) throws IOException {
-        stream.writeInt(size());
+        stream.writeInt(biggestIndex);
         for (WriteAble writeAble : this) {
             writeAble.write(stream);
         }
@@ -42,6 +52,7 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
     @Override
     public void read(DataInputStream stream) throws IOException {
             int size = stream.readInt();
+            biggestIndex = size;
             for(int i = 0; i < size; i++){
                 get(i).read(stream);
             }

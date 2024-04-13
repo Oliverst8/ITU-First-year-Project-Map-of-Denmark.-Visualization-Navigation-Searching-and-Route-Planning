@@ -79,7 +79,7 @@ public class MapController extends ViewController {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
             Navigation navigation = new Navigation(this.viewModel.getGraph());
-            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
+            DrawableWay path = navigation.getPath(1701018341l,1737897384l); //this works
             System.out.println(path);
             path.draw(gc, getZoomDistance()/startDist*100);
         });
