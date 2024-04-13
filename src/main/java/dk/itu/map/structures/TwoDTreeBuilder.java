@@ -26,12 +26,20 @@ public class TwoDTreeBuilder {
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
         if(childIndex >= tree.length && child == -1) return;
+        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
+        if(child == 3){
+            System.out.println("left child is 3");
+        }
         tree[childIndex] = child;
     }
 
     private void setRightChild(int parent, int child) {
         int childIndex = parent * 2 + 2;
         if(childIndex >= tree.length && child == -1) return;
+        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
+        if(child == 3){
+            System.out.println("Right child is 3");
+        }
         tree[childIndex] = child;
     }
 
@@ -68,6 +76,13 @@ public class TwoDTreeBuilder {
 
     }
 
+    public static int getIndexOf(int[] array, int value){
+        for(int i = 0; i < array.length; i++){
+            if(array[i] == value) return i;
+        }
+        return -1;
+    }
+
     public boolean checkIfSorted(int[] array, int axis){
         for(int i = 0; i < array.length - 1; i++){
             if(compare(array[i] , array[i + 1], axis) > 0) return false;
@@ -81,6 +96,11 @@ public class TwoDTreeBuilder {
 
         int medianIndex = start + (range - 1) / 2;
         int median = readArray[primaryAxis][medianIndex];
+        if(median == 3){
+            System.out.println("Median is 3");
+        } else if(medianIndex +1 < readArray[primaryAxis].length &&readArray[primaryAxis][medianIndex+1] == 3){
+            System.out.println("Median + 1 is 3");
+        }
         int leftChildIndex = rootIndex * 2 + 1;
         int rightChildIndex = rootIndex * 2 + 2;
         int rangeLeft = (range - 1) / 2;
@@ -109,6 +129,9 @@ public class TwoDTreeBuilder {
             int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
             if(index == median) continue;
             int cmp = compare(index, median, primaryAxis);
+            if(index == 3){
+                System.out.println("Index is 3");
+            }
             if(cmp > 0) {
                 writeArray[secondaryAxis][rightStart++] = index;
             } else if(cmp < 0) {

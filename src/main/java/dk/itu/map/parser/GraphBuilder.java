@@ -95,13 +95,20 @@ public class GraphBuilder extends Graph implements Runnable {
                 newVertexList.add(new IntArrayList(0));
                 newCoords.add(new float[]{-1,-1});
             } else{
-                oldToNewVertexIndex.set(newVertices[i], i); //Hvorfor ikke omvendt???
+                oldToNewVertexIndex.set(newVertices[i], i); //Not Built corŕectly I think, way to many 0s
                 newVertexList.add(vertexList.get(newVertices[i]));
-                newCoords.add(coords.get(i));
+                newCoords.add(coords.get(newVertices[i]));
             }
         }
         vertexList = newVertexList;
         coords = newCoords;
+    }
+
+    public static int getIndexOf(int[] array, int value){
+        for(int i = 0; i < array.length; i++){
+            if(array[i] == value) return i;
+        }
+        return -1;
     }
 
     /**
