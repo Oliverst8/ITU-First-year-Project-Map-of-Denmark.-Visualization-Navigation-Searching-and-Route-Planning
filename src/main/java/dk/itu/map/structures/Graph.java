@@ -39,7 +39,7 @@ public class Graph {
      * @return the number of vertices in the graph
      */
     public int size(){
-        return idToIndex.size();
+        return vertexList.size();
     }
 
     /**
@@ -53,7 +53,11 @@ public class Graph {
      * @return the destination of the edge
      */
     public int getDestination(int edge){
-        return oldToNewVertexIndex.get(edgeDestinations.get(edge));
+        if(edgeDestinations.get(edge) == 111935){
+            System.out.println();
+        }
+        return oldToNewVertexIndex.get(
+                edgeDestinations.get(edge));
     }
 
     /**

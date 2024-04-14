@@ -10,9 +10,7 @@ import dk.itu.map.structures.WriteAble;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class GraphBuilder extends Graph implements Runnable {
@@ -101,14 +99,44 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
         vertexList = newVertexList;
+        getDifference(newVertices, idToIndex.getValues());
+        getDifference(idToIndex.getValues(), newVertices);
         coords = newCoords;
+
     }
 
-    public static int getIndexOf(int[] array, int value){
+    public static HashSet<Integer> getIndexOf(int[] array, int value){
+        HashSet<Integer> indexes = new HashSet<>();
         for(int i = 0; i < array.length; i++){
-            if(array[i] == value) return i;
+            if(array[i] == value) indexes.add(i);
         }
-        return -1;
+        return indexes;
+    }
+
+    public static HashSet<Integer> getDifference(int[] array1, int[] array2){
+        HashSet<Integer> set1 = new HashSet<>();
+        HashSet<Integer> set2 = new HashSet<>();
+        for(int i = 0; i < array1.length; i++){
+            set1.add(array1[i]);
+        }
+        for(int i = 0; i < array2.length; i++){
+            set2.add(array2[i]);
+        }
+
+        set1.removeAll(set2);
+
+        return set1;
+    }
+
+    public static HashSet<Integer> getDuplicates(int[] array){
+        HashSet<Integer> normalSet = new HashSet<>();
+        HashSet<Integer> duplicates = new HashSet<>();
+        for(int i = 0; i < array.length; i++){
+            if(!normalSet.add(array[i])){
+                duplicates.add(array[i]);
+            }
+        }
+        return duplicates;
     }
 
     /**
@@ -119,6 +147,9 @@ public class GraphBuilder extends Graph implements Runnable {
     private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
+                if(vertexID[i] == 11367582572l){
+                    System.out.println("Found the node");
+                }
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));

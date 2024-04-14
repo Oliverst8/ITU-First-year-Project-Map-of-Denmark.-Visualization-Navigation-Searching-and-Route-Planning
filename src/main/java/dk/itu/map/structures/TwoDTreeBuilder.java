@@ -26,10 +26,10 @@ public class TwoDTreeBuilder {
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
         if(childIndex >= tree.length && child == -1) return;
-        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
-        if(child == 3){
+        if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
             System.out.println("left child is 3");
         }
+        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
         tree[childIndex] = child;
     }
 
@@ -37,8 +37,8 @@ public class TwoDTreeBuilder {
         int childIndex = parent * 2 + 2;
         if(childIndex >= tree.length && child == -1) return;
         if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
-        if(child == 3){
-            System.out.println("Right child is 3");
+        if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
+            System.out.println("left child is 3");
         }
         tree[childIndex] = child;
     }
@@ -90,13 +90,29 @@ public class TwoDTreeBuilder {
         return true;
     }
 
+    public static int[] buildArrayFromRange(int[] array, int start, int range) {
+        int[] newArray = new int[range];
+        for(int i = 0; i < range; i++) {
+            newArray[i] = array[start + i];
+        }
+        return newArray;
+    }
+
+    private int getLeftChildIndex(int parentIndex){
+        return parentIndex * 2 + 1;
+    }
+
+    private int getRightChildIndex(int parentIndex){
+        return parentIndex * 2 + 2;
+    }
+
 
 
     public int partition(int start, int range, int rootIndex, int primaryAxis, int[][] readArray, int[][] writeArray) {
 
         int medianIndex = start + (range - 1) / 2;
         int median = readArray[primaryAxis][medianIndex];
-        if(median == 3){
+        if(median == 3 || start == 44243){
             System.out.println("Median is 3");
         } else if(medianIndex +1 < readArray[primaryAxis].length &&readArray[primaryAxis][medianIndex+1] == 3){
             System.out.println("Median + 1 is 3");
@@ -119,17 +135,31 @@ public class TwoDTreeBuilder {
 
         else if(range == 2){
             //Hvordan er vi sikre op at den skal være til højre?
-            setLeftChild(rootIndex, -1);
-            setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,secondaryAxis, writeArray, readArray));
-                setLeftChild(rightChildIndex, -1);
-                setRightChild(rightChildIndex, -1);
+            //setLeftChild(rootIndex, -1);
+            //setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,secondaryAxis, writeArray, readArray));
+                //setLeftChild(rightChildIndex, -1);
+                //setRightChild(rightChildIndex, -1);
+            int otherIndex = readArray[primaryAxis][medianIndex+1];
+            if(compare(medianIndex, medianIndex+1, secondaryAxis) > 0){
+                setLeftChild(rootIndex, otherIndex);
+                int leftChildIndexOfChild = getLeftChildIndex(rootIndex);
+                setLeftChild(leftChildIndexOfChild, -1);
+                setRightChild(leftChildIndexOfChild, -1);
+
+            } else {
+                setRightChild(rootIndex, otherIndex);
+                int rightChildIndexOfChild = getRightChildIndex(rootIndex);
+                setLeftChild(rightChildIndexOfChild, -1);
+                setRightChild(rightChildIndexOfChild, -1);
+            }
             return median;
         }
         for(int i = start; i < start + range; i++) {
             int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
+            writeArray[primaryAxis][i] = readArray[primaryAxis][i];
             if(index == median) continue;
             int cmp = compare(index, median, primaryAxis);
-            if(index == 3){
+            if(index == 3 && range == 13){
                 System.out.println("Index is 3");
             }
             if(cmp > 0) {
