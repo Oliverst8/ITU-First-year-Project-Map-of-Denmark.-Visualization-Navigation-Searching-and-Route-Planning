@@ -89,7 +89,9 @@ public class Navigation {
     }
 
     public DrawableWay getPath(float[] startCoords, float[] endCoords){
-        return getPath(graph.getNearestNeigherborID(startCoords), graph.getNearestNeigherborID(endCoords));
+        int startPoint = graph.getNearestNeigherborID(startCoords);
+        int endPoint = graph.getNearestNeigherborID(endCoords);
+        return getPath(startPoint, endPoint);
 
     }
 

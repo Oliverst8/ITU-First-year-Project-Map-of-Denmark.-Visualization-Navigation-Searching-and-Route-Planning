@@ -44,6 +44,8 @@ public class MapController extends ViewController {
     private float lastY;
     //Amount of chunks seen
     private float currentChunkAmountSeen = 1;
+    private boolean setStartPoint = false, setEndPoint = false;
+    private float[] startPoint, endPoint;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -78,10 +80,21 @@ public class MapController extends ViewController {
         canvas.setOnMousePressed(e -> {
             lastX = (float) e.getX();
             lastY = (float) e.getY();
-            Navigation navigation = new Navigation(this.viewModel.getGraph());
-            DrawableWay path = navigation.getPath(1701018341l,1737897384l); //this works
-            System.out.println(path);
-            path.draw(gc, getZoomDistance()/startDist*100);
+            //Navigation navigation = new Navigation(this.viewModel.getGraph());
+            //DrawableWay path = navigation.getPath(1701018341l,1737897384l); //this works
+            //System.out.println(path);
+            //path.draw(gc, getZoomDistance()/startDist*100);
+            if(setStartPoint){
+                startPoint = new float[]{(float) e.getX(), (float) e.getY()};
+                startPoint = convertToLatLon(startPoint);
+                System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
+                setStartPoint = false;
+            } else if(setEndPoint){
+                endPoint = new float[]{(float) e.getX(), (float) e.getY()};
+                endPoint = convertToLatLon(endPoint);
+                System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
+                setEndPoint = false;
+            }
         });
 
         canvas.setOnMouseDragged(e -> {
@@ -196,6 +209,11 @@ public class MapController extends ViewController {
         zoomLevel = (newZoom/ startDist) * 100 * currentChunkAmountSeen * viewModel.getChunkAmount();
     }
 
+    private float[] convertToLatLon(float[] startPoint) {
+        Point2D point = convertTo2DPoint(startPoint[0], startPoint[1]);
+        return new float[]{(float) point.getX()/0.56f, (float) point.getY()*-1};
+    }
+
     /**
      * Converts from canvas to JavaFx 2D point
      * @param x the x coordinate
@@ -218,6 +236,26 @@ public class MapController extends ViewController {
     @FXML
     void openRecent(ActionEvent event){
         loadMaps();
+    }
+
+    @FXML
+    void setStartPoint(ActionEvent event){
+        System.out.println("Can now set start point");
+        setStartPoint = true;
+    }
+
+    @FXML
+    void setEndPoint(ActionEvent event){
+        System.out.println("Can now set end point");
+        setEndPoint = true;
+    }
+
+    @FXML
+    void navigateNow(ActionEvent event){
+        Navigation navigation = new Navigation(this.viewModel.getGraph());
+        DrawableWay path = navigation.getPath(startPoint, endPoint);
+        System.out.println(path);
+        path.draw(gc, getZoomDistance()/startDist);
     }
 
 }
