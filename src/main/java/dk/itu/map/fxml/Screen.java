@@ -6,6 +6,7 @@ import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.ChunkModel;
 import dk.itu.map.fxml.models.HomeModel;
 import dk.itu.map.fxml.models.MapModel;
+import dk.itu.map.fxml.views.ChunkView;
 import dk.itu.map.fxml.views.HomeView;
 import dk.itu.map.fxml.views.MapView;
 
@@ -15,10 +16,8 @@ public abstract class Screen<M, C> {
     public C controller; // functions
     public Object view; // drawing
 
-
-
     public static class Home extends Screen<HomeModel, HomeController> {
-        
+
         public Home() {
             this.fxml = "home.fxml";
             this.model = new HomeModel();
@@ -29,24 +28,25 @@ public abstract class Screen<M, C> {
     }
 
     public static class Map extends Screen<MapModel, MapController> {
-    
+
         public Map(String mapName) {
             this.fxml = "map.fxml";
             this.model = new MapModel();
             this.controller = new MapController(model);
             controller.importMap("", mapName);
             this.view = new MapView(controller, model);
-    
+
         }
     }
 
     public static class Parse extends Screen<ChunkModel, ChunkController> {
-        
+
         public Parse(String OSMFile, String mapName) {
             this.fxml = "chunking.fxml";
             this.model = new ChunkModel(OSMFile, mapName);
             this.controller = new ChunkController(model);
-            // this.view = new ChunkScreen();
+            this.view = new ChunkView();
+
         }
-    }    
+    }
 }
