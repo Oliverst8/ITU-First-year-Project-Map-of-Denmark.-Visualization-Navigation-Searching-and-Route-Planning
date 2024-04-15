@@ -10,7 +10,7 @@ module dk.itu.map {
     requires javafx.base;
     
     opens dk.itu.map to javafx.fxml;
-    opens dk.itu.map.fxml to javafx.fxml;
+    opens dk.itu.map.fxml.views to javafx.fxml;
 
     exports dk.itu.map;
     exports dk.itu.map.fxml;

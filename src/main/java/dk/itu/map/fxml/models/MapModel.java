@@ -13,7 +13,7 @@ public class MapModel {
     // The chunk loader
     public ChunkLoader chunkLoader;
     // A list that holds the different zoom levels, and their chunks
-    private final List<Map<Integer, List<Way>>> chunkLayers;
+    public final List<Map<Integer, List<Way>>> chunkLayers;
 
     public int height;
     public int width;

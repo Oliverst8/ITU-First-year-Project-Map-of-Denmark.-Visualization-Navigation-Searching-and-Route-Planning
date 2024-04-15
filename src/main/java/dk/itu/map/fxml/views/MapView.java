@@ -1,6 +1,7 @@
 package dk.itu.map.fxml.views;
 
 import dk.itu.map.fxml.controllers.MapController;
+import dk.itu.map.fxml.models.MapModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,15 +17,21 @@ public class MapView {
     // JavaFX canvas
     @FXML
     private Canvas canvas;
+    // GraphicsContext for drawing on the canvas
+    private GraphicsContext gc;
+    // Affine transformation for panning and zooming
+    private Affine trans;
     private MapController controller;
-    
+    private MapModel model;
+
     // Last mouse position
     private float lastX;
     // Last mouse position
     private float lastY;
 
-    public MapView(MapController controller) {
+    public MapView(MapController controller, MapModel model) {
         this.controller = controller;
+        this.model = model;
     }
 
     /**
@@ -35,7 +42,20 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        controller.setup(canvas);
+        gc = canvas.getGraphicsContext2D();
+        gc.setFillRule(FillRule.EVEN_ODD);
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
+        trans = new Affine();
+
+        trans.prependTranslation(-0.56 * this.model.getMinLon(), this.model.getMaxLat());
+        // Calling the code of pan, to prevent redraw before zoom has been run
+        // This is done to avoid getheight and getwidth from canvas, returning way to
+        // big values
+        zoom(0, 0, canvas.getHeight() / (this.model.getMaxLat() - this.model.getMinLat()));
+
+        startDist = getZoomDistance();
+        redraw();
 
         canvas.setOnMousePressed(e -> {
             lastX = (float)e.getX();
@@ -59,14 +79,18 @@ public class MapView {
             controller.zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
         });
     }
-    
+
     @FXML
     void quitApplication(ActionEvent event) {
         Platform.exit();
     }
 
-    // @FXML
-    // void openRecent(ActionEvent event){
-    //     loadMaps();
-    // }
+    @FXML
+    void openRecent(ActionEvent event){
+        // loadMaps();
+    }
+
+    @FXML
+    void importMap(ActionEvent event) {
+    }
 }

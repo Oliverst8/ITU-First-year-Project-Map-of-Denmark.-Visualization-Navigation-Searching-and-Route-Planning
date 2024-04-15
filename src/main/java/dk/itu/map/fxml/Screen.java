@@ -7,6 +7,7 @@ import dk.itu.map.fxml.models.ChunkModel;
 import dk.itu.map.fxml.models.HomeModel;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.views.HomeView;
+import dk.itu.map.fxml.views.MapView;
 
 public abstract class Screen<M, C> {
     public String fxml;
@@ -32,9 +33,9 @@ public abstract class Screen<M, C> {
         public Map(String mapName) {
             this.fxml = "map.fxml";
             this.model = new MapModel();
-            model.importMap("", mapName);
             this.controller = new MapController(model);
-            // this.view = new MapScreen();
+            controller.importMap("", mapName);
+            this.view = new MapView(controller, model);
     
         }
     }
