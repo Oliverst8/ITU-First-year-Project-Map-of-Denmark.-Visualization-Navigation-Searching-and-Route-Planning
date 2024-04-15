@@ -8,6 +8,7 @@ import dk.itu.map.structures.DrawableWay;
 import java.util.Map;
 import java.util.List;
 
+import dk.itu.map.structures.Point;
 import dk.itu.map.utility.Navigation;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -89,11 +90,15 @@ public class MapController extends ViewController {
                 startPoint = convertToLatLon(startPoint);
                 System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
                 setStartPoint = false;
+                Point point = new Point(startPoint[0], startPoint[1]);
+                point.draw(gc);
             } else if(setEndPoint){
                 endPoint = new float[]{(float) e.getX(), (float) e.getY()};
                 endPoint = convertToLatLon(endPoint);
                 System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
                 setEndPoint = false;
+                Point point = new Point(endPoint[0], endPoint[1]);
+                point.draw(gc);
             }
         });
 
@@ -211,7 +216,7 @@ public class MapController extends ViewController {
 
     private float[] convertToLatLon(float[] startPoint) {
         Point2D point = convertTo2DPoint(startPoint[0], startPoint[1]);
-        return new float[]{(float) point.getX()/0.56f, (float) point.getY()*-1};
+        return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
     /**
@@ -255,7 +260,7 @@ public class MapController extends ViewController {
         Navigation navigation = new Navigation(this.viewModel.getGraph());
         DrawableWay path = navigation.getPath(startPoint, endPoint);
         System.out.println(path);
-        path.draw(gc, getZoomDistance()/startDist);
+        path.draw(gc, getZoomDistance()/startDist*10);
     }
 
 }
