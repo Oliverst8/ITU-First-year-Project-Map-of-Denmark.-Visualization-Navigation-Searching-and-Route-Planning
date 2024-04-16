@@ -9,7 +9,7 @@ public abstract class PrimitiveArrayList implements WriteAble{
 
     //The default size of the array
     protected final int ARRAY_INIT_SIZE = 10;
-    protected int biggestIndex = 0;
+    protected int biggestIndex = -1;
 
     /**
      * Constructor for the PrimitiveArrayList class.

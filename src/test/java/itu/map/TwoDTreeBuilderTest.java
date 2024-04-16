@@ -81,7 +81,7 @@ public class TwoDTreeBuilderTest {
         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
         builder.build();
         int[] actual = builder.getTree();
-        int[] expected = new int[]{2,7,0,4,3,5,6,-1,-1,-1,-1,-1,-1,-1,1};
+        int[] expected = new int[]{2,7,0,4,3,5,6,-1,-1,-1,-1,-1,-1,1,-1};
         assertArrayEquals(expected, actual);
     }
 

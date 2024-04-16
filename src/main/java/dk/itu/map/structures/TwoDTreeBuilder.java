@@ -1,14 +1,17 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import dk.itu.map.utility.Sort;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 
 public class TwoDTreeBuilder {
 
+    int tempCounter = 0;
     private int[][] sortedIndexes;
 
     private CoordArrayList coords;
@@ -25,6 +28,9 @@ public class TwoDTreeBuilder {
 
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
+        if(childIndex == 9){
+            System.out.println("Right child is -1");
+        }
         if(childIndex >= tree.length && child == -1) return;
         if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
             System.out.println("left child is 3");
@@ -35,6 +41,9 @@ public class TwoDTreeBuilder {
 
     private void setRightChild(int parent, int child) {
         int childIndex = parent * 2 + 2;
+        if(childIndex == 9){
+            System.out.println("Right child is -1");
+        }
         if(childIndex >= tree.length && child == -1) return;
         if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
         if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
@@ -90,6 +99,25 @@ public class TwoDTreeBuilder {
         return true;
     }
 
+    public boolean checkIfSorted(int[] array, int axis, int range, int start){
+        for(int i = start; i < start + range - 1; i++){
+            if(compare(array[i] , array[i + 1], axis) >= 0) return false;
+        }
+        return true;
+    }
+
+    public void insertionSort(int[] array, int axis, int range, int start){
+        for(int i = start; i < start + range; i++){
+            int j = i;
+            while(j > start && compare(array[j - 1], array[j], axis) > 0){
+                int temp = array[j];
+                array[j] = array[j - 1];
+                array[j - 1] = temp;
+                j--;
+            }
+        }
+    }
+
     public static int[] buildArrayFromRange(int[] array, int start, int range) {
         int[] newArray = new int[range];
         for(int i = 0; i < range; i++) {
@@ -106,13 +134,23 @@ public class TwoDTreeBuilder {
         return parentIndex * 2 + 2;
     }
 
-
+    public static boolean arrayEquals(int[] array1, int[] array2, int start, int range){
+        int[] array3 = buildArrayFromRange(array1, start, range);
+        int[] array4 = buildArrayFromRange(array2, start, range);
+        HashSet<Integer> one = GraphBuilder.getDifference(array3, array4);
+        HashSet<Integer> two = GraphBuilder.getDifference(array4, array3);
+        return one.isEmpty() && two.isEmpty();
+    }
 
     public int partition(int start, int range, int rootIndex, int primaryAxis, int[][] readArray, int[][] writeArray) {
 
+        if(!arrayEquals(readArray[primaryAxis], readArray[(primaryAxis+1)%2], start, range)){
+            System.out.println(++tempCounter);
+        }
+
         int medianIndex = start + (range - 1) / 2;
         int median = readArray[primaryAxis][medianIndex];
-        if(median == 3 || start == 44243){
+        if(median == 3174149){
             System.out.println("Median is 3");
         } else if(medianIndex +1 < readArray[primaryAxis].length &&readArray[primaryAxis][medianIndex+1] == 3){
             System.out.println("Median + 1 is 3");
@@ -141,12 +179,15 @@ public class TwoDTreeBuilder {
                 //setRightChild(rightChildIndex, -1);
             int otherIndex = readArray[primaryAxis][medianIndex+1];
             if(compare(medianIndex, medianIndex+1, secondaryAxis) > 0){
+                setRightChild(rootIndex, -1);
+                //setLeftChild(rootIndex, partition(medianIndex + 1,rangeRight,leftChildIndex,secondaryAxis, writeArray, readArray));
                 setLeftChild(rootIndex, otherIndex);
                 int leftChildIndexOfChild = getLeftChildIndex(rootIndex);
                 setLeftChild(leftChildIndexOfChild, -1);
                 setRightChild(leftChildIndexOfChild, -1);
-
             } else {
+                setLeftChild(rootIndex, -1);
+                //setRightChild(rootIndex, partition(medianIndex + 1,rangeRight,rightChildIndex,secondaryAxis, writeArray, readArray));
                 setRightChild(rootIndex, otherIndex);
                 int rightChildIndexOfChild = getRightChildIndex(rootIndex);
                 setLeftChild(rightChildIndexOfChild, -1);
@@ -154,10 +195,18 @@ public class TwoDTreeBuilder {
             }
             return median;
         }
+        if(start == 1676896 && range == 5){
+            System.out.println();
+        }
         for(int i = start; i < start + range; i++) {
             int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
             writeArray[primaryAxis][i] = readArray[primaryAxis][i];
             if(index == median) continue;
+            if(index == 58565){
+                if(range == 5){
+                    System.out.println("Other index is 3");
+                }
+            }
             int cmp = compare(index, median, primaryAxis);
             if(index == 3 && range == 13){
                 System.out.println("Index is 3");
@@ -179,6 +228,7 @@ public class TwoDTreeBuilder {
     }
 
     private int compare(int index1, int index2, int primaryAxis) {
+
         float[] coord1 = coords.get(index1);
         float[] coord2 = coords.get(index2);
         int cmp = Float.compare(coord1[primaryAxis], coord2[primaryAxis]);

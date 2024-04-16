@@ -258,6 +258,8 @@ public class MapController extends ViewController {
     @FXML
     void navigateNow(ActionEvent event){
         Navigation navigation = new Navigation(this.viewModel.getGraph());
+        startPoint = new float[]{10.007167f, 57.178802f};
+        endPoint = new float[]{12.226539f, 55.732048f};
         DrawableWay path = navigation.getPath(startPoint, endPoint);
         System.out.println(path);
         path.draw(gc, getZoomDistance()/startDist*10);
