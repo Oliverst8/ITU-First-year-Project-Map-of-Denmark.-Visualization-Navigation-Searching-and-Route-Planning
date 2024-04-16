@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import dk.itu.map.structures.HashMaps.LongIntHashMap;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -99,7 +101,9 @@ public class LongIntHashMapTest {
         map.write(path);
         LongIntHashMap map2 = new LongIntHashMap();
         map2.read(path);
-        Files.deleteIfExists(Paths.get(path));
+        try {
+            Files.deleteIfExists(Paths.get(path));
+        } catch (FileSystemException e) {}
         assertEquals(map, map2);
     }
 }
