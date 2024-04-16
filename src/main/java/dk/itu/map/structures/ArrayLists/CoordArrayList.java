@@ -84,6 +84,10 @@ public class CoordArrayList extends PrimitiveArrayList {
         add(coords[0], coords[1]);
     }
 
+    public void set(int index, float[] coords){
+        arrayX[index] = coords[0];
+        arrayY[index] = coords[1];
+    }
     /**
      * Adds an array of values to the empty spots in the array.
      * If the array is full, it will resize the array.

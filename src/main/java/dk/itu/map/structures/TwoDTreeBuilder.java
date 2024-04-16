@@ -185,7 +185,10 @@ public class TwoDTreeBuilder {
         if(cmp == 0) {
             cmp = Float.compare(coord1[(primaryAxis + 1) % 2], coord2[(primaryAxis + 1) % 2]);
         }
-        if(cmp == 0) throw new RuntimeException("Two points are the same\n x_1:" + coord1[0] + " y_1:" + coord1[1] + "\n x_2:" + coord2[0] + " y_2:" + coord2[1] + "\nindex1: " + index1 + " \nindex2: " + index2);
+        if(cmp == 0){
+            coords.set(index2, new float[]{coord2[0], coord2[1] + 0.0000001f});
+            cmp = -1;
+        }
         return cmp;
     }
 
