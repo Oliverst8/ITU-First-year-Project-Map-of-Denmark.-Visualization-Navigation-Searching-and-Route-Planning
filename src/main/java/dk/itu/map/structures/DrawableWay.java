@@ -20,6 +20,7 @@ public class DrawableWay implements Serializable {
      * Only used for navigation
      */
     public DrawableWay(CoordArrayList outerCoords, String[] tags, long[] nodeId){
+        this.id = -1;
         this.outerCoords = outerCoords;
         this.tags = tags;
         this.nodeIDs = nodeId;
