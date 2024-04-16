@@ -43,7 +43,7 @@ public class Navigation {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
             int destination = graph.getDestination(edges.get(i));
-            float newWeight = distTo[vertex] + graph.getWeight(vertex);
+            float newWeight = distTo[vertex] + graph.getWeight(edges.get(i));
             if(newWeight < distTo[destination]){
                 if(queue.contains(destination)) queue.decreaseKey(destination, newWeight);
                 else queue.insert(destination, newWeight);
