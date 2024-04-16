@@ -3,6 +3,7 @@ package dk.itu.map.structures;
 import java.io.Serializable;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -16,19 +17,25 @@ public class DrawableWay implements Serializable {
     private long[] nodeIDs;
 
     /**
-     * Only used for ChunkHandler
+     * Only used for navigation
      */
-    public DrawableWay(float[] outerCoords, float[] innerCoords, String[] tags, long id, String primaryType) {
-        this.id = id;
-        this.primaryType = primaryType;
-        this.outerCoords = new CoordArrayList(outerCoords);
-        this.innerCoords = new CoordArrayList(innerCoords);
+    public DrawableWay(CoordArrayList outerCoords, String[] tags, long[] nodeId){
+        this.outerCoords = outerCoords;
         this.tags = tags;
+        this.nodeIDs = nodeId;
+        this.innerCoords = new CoordArrayList();
     }
 
-    // public DrawableWay(CoordArrayList coords){
-    //     this.outerCoords = coords;
-    // }
+    /**
+     * Only used for ChunkHandler
+     */
+    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags, long id, String primaryType) {
+        this.id = id;
+        this.primaryType = primaryType;
+        this.outerCoords = outerCoords;
+        this.innerCoords = innerCoords;
+        this.tags = tags;
+    }
 
     @Override
     public String toString() {
@@ -36,19 +43,21 @@ public class DrawableWay implements Serializable {
         builder.append("Nodes:\n");
         builder.append(outerCoords.size());
         builder.append("\n");
-        for (int i = 0; i < outerCoords.size(); i += 2) {
-            builder.append(outerCoords.get(i));
+        for (int i = 0; i < outerCoords.size(); i++) {
+            float[] coord = outerCoords.get(i);
+            builder.append(coord[0]);
             builder.append(" ");
-            builder.append(outerCoords.get(i + 1));
+            builder.append(coord[1]);
             builder.append("\n");
         }
         builder.append("Inner nodes:\n");
         builder.append(innerCoords.size());
         builder.append("\n");
-        for (int i = 0; i < innerCoords.size(); i += 2) {
-            builder.append(innerCoords.get(i));
+        for (int i = 0; i < innerCoords.size(); i++) {
+            float[] coord = innerCoords.get(i);
+            builder.append(coord[0]);
             builder.append(" ");
-            builder.append(innerCoords.get(i + 1));
+            builder.append(coord[1]);
             builder.append("\n");
         }
 
@@ -83,17 +92,17 @@ public class DrawableWay implements Serializable {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
-
-        for (int i = 0; i < coords.size(); i += 2) {
+        for (int i = 0; i < coords.size(); i++) {
+            float[] coord = coords.get(i);
             if (startNew) {
-                gc.moveTo(0.56f * coords.get(i + 1), -coords.get(i));
+                gc.moveTo(0.56f * coord[1], -coord[0]);
                 startNew = false;
-                startX = coords.get(i + 1);
-                startY = coords.get(i);
+                startX = coord[1];
+                startY = coord[0];
                 continue;
             }
-            gc.lineTo(0.56f * coords.get(i + 1), -coords.get(i));
-            if (startX == coords.get(i + 1) && startY == coords.get(i)) {
+            gc.lineTo(0.56f * coord[1], -coord[0]);
+            if (startX == coord[1] && startY == coord[0]) {
                 startNew = true;
             }
         }

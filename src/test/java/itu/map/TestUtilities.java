@@ -14,8 +14,8 @@ public class TestUtilities {
 
     public static CoordArrayList createCoordArrayList(float... values) {
         CoordArrayList list = new CoordArrayList();
-        for (float value : values) {
-            list.add(value);
+        for (int i = 0; i < values.length; i += 2) {
+            list.add(values[i], values[i + 1]);
         }
         return list;
     }

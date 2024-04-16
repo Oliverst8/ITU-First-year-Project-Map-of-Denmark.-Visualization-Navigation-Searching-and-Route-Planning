@@ -21,7 +21,9 @@ public class Way extends MapElement {
         stream.writeLong(getId());
         stream.writeInt(coords.size());
         for (int i = 0; i < coords.size(); i++) {
-            stream.writeFloat(coords.get(i));
+            float[] coord = coords.get(i);
+            stream.writeFloat(coord[0]);
+            stream.writeFloat(coord[1]);
         }
         stream.writeInt(0); // Ways dont have inner coords
         stream.writeInt(getTags().size());
@@ -37,10 +39,10 @@ public class Way extends MapElement {
     }
 
     public float[] getFirstCoords() {
-        return new float[]{coords.get(0), coords.get(1)};
+        return coords.get(0);
     }
 
     public float[] getLastCoords() {
-        return new float[]{coords.get(-2), coords.get(-1)};
+        return coords.get(-1);
     }
 }

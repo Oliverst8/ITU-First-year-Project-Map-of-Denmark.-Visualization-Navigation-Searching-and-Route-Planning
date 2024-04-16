@@ -147,9 +147,10 @@ public class ChunkGenerator implements Runnable {
             if (zoomLevel == -1) continue;
 
             CoordArrayList coords = way.getCoords();
-            for (int i = 0; i < coords.size(); i += 2) {
-                float lat = coords.get(i);
-                float lon = coords.get(i + 1);
+            for (int i = 0; i < coords.size(); i++) {
+                float[] coord = coords.get(i);
+                float lat = coord[0];
+                float lon = coord[1];
 
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 

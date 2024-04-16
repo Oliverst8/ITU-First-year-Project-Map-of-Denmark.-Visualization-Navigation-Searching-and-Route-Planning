@@ -48,7 +48,9 @@ public class GraphBuilder extends Graph implements Runnable {
      */
     private float calcWeight(MapElement way, int firstNode) {
         CoordArrayList coords = way.getCoords();
-        return dist(coords.get(firstNode), coords.get(firstNode+1), coords.get(firstNode+2), coords.get(firstNode+3));
+        float[] coord1 = coords.get(firstNode);
+        float[] coord2 = coords.get(firstNode+1);
+        return dist(coord1[0], coord1[1], coord2[0], coord2[1]);
         //return (float) Math.sqrt(Math.pow(coords.get(firstNode) - coords.get(firstNode+2), 2) + Math.pow(coords.get(firstNode+1) - coords.get(firstNode+3), 2));
     }
 
@@ -84,8 +86,9 @@ public class GraphBuilder extends Graph implements Runnable {
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
-                this.coords.add(coords.get(i*2));
-                this.coords.add(coords.get(i*2+1));
+                float[] coord = coords.get(i);
+                this.coords.add(coord[0]);
+                this.coords.add(coord[1]);
                 //coords.add();
                 //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
                 // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments

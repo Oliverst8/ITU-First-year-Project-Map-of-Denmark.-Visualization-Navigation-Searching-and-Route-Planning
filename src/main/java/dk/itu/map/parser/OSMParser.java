@@ -212,8 +212,8 @@ public class OSMParser {
 
                 float[] temp = nodes.get(node);
 
-                coords.add(temp[0]);
-                coords.add(temp[1]);
+                coords.add(temp[0], temp[1]);
+
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));
