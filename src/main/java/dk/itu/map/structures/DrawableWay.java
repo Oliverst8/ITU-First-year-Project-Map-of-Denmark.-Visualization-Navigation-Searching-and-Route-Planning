@@ -1,13 +1,9 @@
 package dk.itu.map.structures;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

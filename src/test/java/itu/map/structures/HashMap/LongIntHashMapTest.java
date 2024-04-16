@@ -1,4 +1,4 @@
-package itu.map;
+package itu.map.structures.HashMap;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LongIntHashMapTest {
-    @Test public void addOneMillionSmallNumbers() {
+    @Test void addOneMillionSmallNumbers() {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 1; i < 1_000_000; i++) {
             map.put(i, i);
@@ -22,7 +22,7 @@ public class LongIntHashMapTest {
         assertEquals(1_000_000-1, map.size());
     }
 
-    @Test public void addOneMillionLargeNumbers() {
+    @Test void addOneMillionLargeNumbers() {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 30_000_000; i < 30_000_000 + 1_000_000; i++) {
             map.put(i, i);
@@ -31,7 +31,7 @@ public class LongIntHashMapTest {
         assertEquals(1_000_000, map.size());
     }
 
-    @Test public void addTwentyMillionLargeNumbers() {
+    @Test void addTwentyMillionLargeNumbers() {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 30_000_000; i < 30_000_000 + 20_000_000; i++) {
             map.put(i, i);
@@ -40,7 +40,7 @@ public class LongIntHashMapTest {
         assertEquals(20_000_000, map.size());
     }
 
-    @Test public void addAndRemoveOneMillionLargeNumbers() {
+    @Test void addAndRemoveOneMillionLargeNumbers() {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 30_000_000; i < 30_000_000 + 1_000_000; i++) {
             map.put(i, i);
@@ -53,7 +53,7 @@ public class LongIntHashMapTest {
         assertEquals(0, map.size());
     }
 
-    @Test public void addAndRemoveTenMillionLargeNumbers() {
+    @Test void addAndRemoveTenMillionLargeNumbers() {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 30_000_000; i < 30_000_000 + 10_000_000; i++) {
             map.put(i, i);
@@ -66,22 +66,19 @@ public class LongIntHashMapTest {
         assertEquals(0, map.size());
     }
 
-    @Test
-    void testContainsKey283509867() {
+    @Test void testContainsKey283509867() {
         LongIntHashMap map = new LongIntHashMap();
         assertFalse(map.containsKey(283509867));
     }
 
-    @Test
-    void testContainsKey0(){
+    @Test void testContainsKey0(){
         LongIntHashMap map = new LongIntHashMap();
         assertThrows(IllegalArgumentException.class,() -> {
             map.containsKey(0);
         });
     }
 
-    @Test
-    void testEquals() {
+    @Test void testEquals() {
         LongIntHashMap map = new LongIntHashMap();
         LongIntHashMap map2 = new LongIntHashMap();
         for(int i = 1; i < 1_000_000; i++){
@@ -91,8 +88,7 @@ public class LongIntHashMapTest {
         assertEquals(map,map2);
     }
 
-    @Test
-    void testWriteAndRead() throws IOException {
+    @Test void testWriteAndRead() throws IOException {
         LongIntHashMap map = new LongIntHashMap();
         for (int i = 1; i < 10000; i++) {
             map.put(i, i);
@@ -105,5 +101,32 @@ public class LongIntHashMapTest {
             Files.deleteIfExists(Paths.get(path));
         } catch (FileSystemException e) {}
         assertEquals(map, map2);
+    }
+
+    @Test void getElement() {
+        LongIntHashMap map = new LongIntHashMap();
+
+        map.put(1, 1);
+        map.put(2, 2);
+
+        assertEquals(1, map.get(1));
+    }
+
+    @Test void getKeys() {
+        LongIntHashMap map = new LongIntHashMap();
+
+        map.put(1, 1);
+        map.put(2, 2);
+
+        assertArrayEquals(new long[]{1, 2}, map.getKeys());
+    }
+
+    @Test void getValues() {
+        LongIntHashMap map = new LongIntHashMap();
+
+        map.put(1, 1);
+        map.put(2, 2);
+
+        assertArrayEquals(new int[]{1, 2}, map.getValues());
     }
 }

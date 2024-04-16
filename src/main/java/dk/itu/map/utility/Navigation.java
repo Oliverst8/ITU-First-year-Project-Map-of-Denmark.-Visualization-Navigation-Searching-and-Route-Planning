@@ -1,8 +1,9 @@
 package dk.itu.map.utility;
 
-import dk.itu.map.structures.*;
+import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.IndexMinPQ;
+import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 
@@ -14,7 +15,7 @@ public class Navigation {
 
     private final float[] distTo;
 
-    public Navigation(Graph graph){
+    public Navigation(Graph graph) {
         this.graph = graph;
         vertexTo = new int[graph.size()];
         distTo = new float[graph.size()];
@@ -23,10 +24,9 @@ public class Navigation {
             distTo[i] = Float.MAX_VALUE;
             vertexTo[i] = -1;
         }
-
     }
 
-    private boolean buildPaths(int startPoint, int endPoint){
+    private boolean buildPaths(int startPoint, int endPoint) {
         //queue = new ChangablePriorityQueue(graph);
         queue = new IndexMinPQ<>(graph.size());
         queue.insert(startPoint, 0f);
@@ -39,11 +39,11 @@ public class Navigation {
         return false;
     }
 
-    private void relax(int vertex){
+    private void relax(int vertex) {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
             int destination = graph.getDestination(edges.get(i));
-            float newWeight = distTo[vertex] + graph.getWeight(vertex);
+            float newWeight = distTo[vertex] + graph.getWeight(edges.get(i));
             if(newWeight < distTo[destination]){
                 if(queue.contains(destination)) queue.decreaseKey(destination, newWeight);
                 else queue.insert(destination, newWeight);
@@ -53,12 +53,12 @@ public class Navigation {
         }
     }
 
-    private void setDistTo(int vertex, int vertexFrom, float dist){
+    private void setDistTo(int vertex, int vertexFrom, float dist) {
         distTo[vertex] = dist;
         vertexTo[vertex] = vertexFrom;
     }
 
-    public DrawableWay getPath(long startPoint, long endPoint){
+    public DrawableWay getPath(long startPoint, long endPoint) {
 
         int startPointID = graph.idToVertexId(startPoint);
         int endPointID = graph.idToVertexId(endPoint);

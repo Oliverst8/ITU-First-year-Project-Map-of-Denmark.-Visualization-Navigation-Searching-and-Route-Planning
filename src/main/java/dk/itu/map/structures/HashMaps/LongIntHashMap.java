@@ -149,11 +149,33 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
     }
 
     public long[] getKeys(){
+        long[] keys = new long[size];
+
+        int j = 0;
+        for(int i = 0; i < capacity; i++) {
+            long key = this.keys[i];
+            if(key == DEFAULT_KEY_VALUE || key == REMOVED_VALUE) continue;
+
+            keys[j] = key;
+            j++;
+        }
+
         return keys;
     }
 
     public int[] getValues(){
-        return value;
+        int[] values = new int[size];
+
+        int j = 0;
+        for(int i = 0; i < capacity; i++) {
+            int value = this.value[i];
+            if(value == DEFAULT_KEY_VALUE || value == REMOVED_VALUE) continue;
+
+            values[j] = value;
+            j++;
+        }
+
+        return values;
     }
 
     @Override

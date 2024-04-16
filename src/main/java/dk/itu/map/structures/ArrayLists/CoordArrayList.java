@@ -1,7 +1,6 @@
 package dk.itu.map.structures.ArrayLists;
 
 public class CoordArrayList extends PrimitiveArrayList {
-
     // The array that holds the values
     private float[] arrayX;
     private float[] arrayY;
@@ -21,7 +20,7 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param init_size
      */
     public CoordArrayList(int init_size) {
-        super();
+        super(init_size);
         arrayX = new float[init_size];
         arrayY = new float[init_size];
     }
@@ -48,19 +47,19 @@ public class CoordArrayList extends PrimitiveArrayList {
         System.arraycopy(arrayY, 0, newArrayY, 0, arrayY.length);
         arrayX = newArrayX;
         arrayY = newArrayY;
+        capacity = arrayX.length;
     }
 
-    /**
-     * Converts the list to a float array.
-     * @return float[]
-     */
-    public float[] toArray() {
-        float[] output = new float[size*2];
-        for (int i = 0; i < size; i++) {
-            output[i*2] = arrayX[i];
-            output[i*2+1] = arrayY[i];
-        }
-        return output;
+    @Override
+    public void exchange(int index1, int index2) {
+        float tempX = arrayX[index1];
+        float tempY = arrayY[index1];
+
+        arrayX[index1] = arrayX[index2];
+        arrayY[index1] = arrayY[index2];
+
+        arrayX[index2] = tempX;
+        arrayY[index2] = tempY;
     }
 
     /**
@@ -80,6 +79,18 @@ public class CoordArrayList extends PrimitiveArrayList {
 
     public void add(float[] coords){
         add(coords[0], coords[1]);
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return float value at the index
+     */
+    public float[] get(int index) {
+        if (index < 0)
+            return new float[]{arrayX[size+index], arrayY[size+index]};
+        else
+            return new float[]{arrayX[index], arrayY[index]};
     }
 
     /**
@@ -118,29 +129,15 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return float value at the index
+     * Converts the list to a float array.
+     * @return float[]
      */
-    public float[] get(int index) {
-        if (index < 0)
-            return new float[]{arrayX[size+index], arrayY[size+index]};
-        else
-            return new float[]{arrayX[index], arrayY[index]};
+    public float[] toArray() {
+        float[] output = new float[size*2];
+        for (int i = 0; i < size; i++) {
+            output[i*2] = arrayX[i];
+            output[i*2+1] = arrayY[i];
+        }
+        return output;
     }
-
-    @Override
-    public void exchange(int index1, int index2) {
-        float tempX = arrayX[index1];
-        float tempY = arrayY[index1];
-
-        arrayX[index1] = arrayX[index2];
-        arrayY[index1] = arrayY[index2];
-
-        arrayX[index2] = tempX;
-        arrayY[index2] = tempY;
-    }
-
-
-
 }
