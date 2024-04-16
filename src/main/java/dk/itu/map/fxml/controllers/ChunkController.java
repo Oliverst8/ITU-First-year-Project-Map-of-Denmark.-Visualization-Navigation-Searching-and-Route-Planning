@@ -17,7 +17,6 @@ public class ChunkController {
     public ChunkController(ChunkModel model) {
         this.model = model;
 
-        importMap(model.OSMFile, model.mapName);
     }
 
     
@@ -27,17 +26,11 @@ public class ChunkController {
      * @param name The name of the map to be saved to
      */
     public void importMap(String filePath, String name) {
-        try {            
-            if (!new File("maps" + "/" + name + "/config").exists()) {
-                OSMParser OSMParser = new OSMParser(new File(filePath), "maps" + "/" + name); // TODO: put on new thread
-                OSMParser.load();
-                System.out.println("Finished importing map!");
-            };
-            App.setView(new Screen.Map(name));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
+        if (!new File("maps" + "/" + name + "/config").exists()) {
+            OSMParser parser = new OSMParser(new File(filePath), "maps" + "/" + name); // TODO: put on new thread
+            parser.start();
+            System.out.println("Finished importing map!");
+        };
+        App.setView(new Screen.Map(name));
     }
 }

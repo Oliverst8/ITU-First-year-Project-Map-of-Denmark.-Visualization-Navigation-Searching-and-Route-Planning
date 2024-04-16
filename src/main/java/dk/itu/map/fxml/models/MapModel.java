@@ -15,9 +15,6 @@ public class MapModel {
     // A list that holds the different zoom levels, and their chunks
     public final List<Map<Integer, List<Way>>> chunkLayers;
 
-    public int height;
-    public int width;
-
     public MapModel() {
         chunkLayers = new ArrayList<>();
         for (int i = 0; i <= 4; i++) {

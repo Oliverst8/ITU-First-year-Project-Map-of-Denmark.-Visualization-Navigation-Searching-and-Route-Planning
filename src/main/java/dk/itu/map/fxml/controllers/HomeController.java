@@ -27,7 +27,7 @@ public class HomeController {
 
         String mapName = getMapName();
 
-        App.setView(new Screen.Parse(selectedFile.getAbsolutePath(), mapName));
+        App.setView(new Screen.Chunker(selectedFile.getAbsolutePath(), mapName));
     }
 
     protected File getMapFile() {

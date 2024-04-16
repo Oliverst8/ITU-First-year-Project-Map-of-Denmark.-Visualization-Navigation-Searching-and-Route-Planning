@@ -39,13 +39,13 @@ public abstract class Screen<M, C> {
         }
     }
 
-    public static class Parse extends Screen<ChunkModel, ChunkController> {
+    public static class Chunker extends Screen<ChunkModel, ChunkController> {
 
-        public Parse(String OSMFile, String mapName) {
+        public Chunker(String OSMFile, String mapName) {
             this.fxml = "chunking.fxml";
             this.model = new ChunkModel(OSMFile, mapName);
             this.controller = new ChunkController(model);
-            this.view = new ChunkView();
+            this.view = new ChunkView(controller, model);
 
         }
     }
