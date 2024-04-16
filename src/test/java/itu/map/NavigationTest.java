@@ -32,6 +32,21 @@ class    NavigationTest {
         graph.run();
         return graph;
     }
+    private GraphBuilder getGraph2(){
+        GraphBuilder graph = new GraphBuilder();
+        ArrayList tags = new ArrayList();
+        tags.add("navigationPath");
+
+        CoordArrayList coords = TestUtilities.createCoordArrayList(new float[]{0f, 0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f, 9f, 9f});
+
+        LongArrayList nodeIDs = TestUtilities.createLongArrayList(new long[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+        Way way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+        graph.stop();
+        graph.run();
+        return graph;
+    }
 
     @BeforeEach
     void setUp() {
@@ -48,9 +63,10 @@ class    NavigationTest {
         DrawableWay path = navigation.getPath(1, 10);
         assertNotNull(path);
     }
-/*
+
     @Test
     void testGetPathTwoWays() {
+        /*
         GraphBuilder graph = getGraph1();
 
         ArrayList<String> tags = new ArrayList<>();
@@ -74,8 +90,9 @@ class    NavigationTest {
         DrawableWay expectedPath = new DrawableWay();
 
         assertEquals(expectedPath, path);
+        */
     }
-*/
+
     @Test
     void testGetPathNoPath() {
         /*
