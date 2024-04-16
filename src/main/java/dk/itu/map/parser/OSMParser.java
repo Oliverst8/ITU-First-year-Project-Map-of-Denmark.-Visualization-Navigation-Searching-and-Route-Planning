@@ -1,8 +1,7 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.App;
-import dk.itu.map.fxml.Screen;
+import javafx.application.Platform;
 import dk.itu.map.structures.LongCoordHashMap;
 
 
@@ -35,6 +34,8 @@ public class OSMParser extends Thread {
     private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 
+    private Runnable callback;
+
     private ChunkGenerator chunkGenerator;
 
     /**
@@ -49,6 +50,13 @@ public class OSMParser extends Thread {
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
+    }
+
+    /**
+     * Sets the function to call when parsing is done
+     */
+    public void setCallback(Runnable callback) {
+        this.callback = callback;
     }
 
     /**
@@ -130,6 +138,10 @@ public class OSMParser extends Thread {
             chunkGenerator.finishWork();
             long endWriteTime = System.nanoTime();
             System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
+
+            if (callback != null) {
+                Platform.runLater(callback);
+            }
         } catch (XMLStreamException e) {
             e.printStackTrace();
         } catch (FactoryConfigurationError e) {

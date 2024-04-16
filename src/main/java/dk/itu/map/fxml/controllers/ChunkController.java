@@ -1,9 +1,6 @@
 package dk.itu.map.fxml.controllers;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.xml.stream.XMLStreamException;
 
 import dk.itu.map.App;
 import dk.itu.map.fxml.Screen;
@@ -27,10 +24,12 @@ public class ChunkController {
      */
     public void importMap(String filePath, String name) {
         if (!new File("maps" + "/" + name + "/config").exists()) {
-            OSMParser parser = new OSMParser(new File(filePath), "maps" + "/" + name); // TODO: put on new thread
+            OSMParser parser = new OSMParser(new File(filePath), "maps" + "/" + name);
+            parser.setCallback((Runnable)() -> {
+                System.out.println("Finished importing map!");
+                App.setView(new Screen.Map(name));
+            });
             parser.start();
-            System.out.println("Finished importing map!");
         };
-        App.setView(new Screen.Map(name));
     }
 }
