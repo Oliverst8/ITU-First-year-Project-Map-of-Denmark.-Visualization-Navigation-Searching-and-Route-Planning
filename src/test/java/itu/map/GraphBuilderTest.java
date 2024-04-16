@@ -85,7 +85,7 @@ public class GraphBuilderTest {
         assertEquals(graph, graphBuilder);
     }
 
-
+@Test
     public GraphBuilder getGraph() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
         CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
