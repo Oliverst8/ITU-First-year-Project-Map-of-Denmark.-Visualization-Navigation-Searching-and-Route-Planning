@@ -55,6 +55,7 @@ public class IndexMinPQ<Key extends Comparable<Key>> implements Iterable<Integer
      *         {@code maxN - 1}
      * @throws IllegalArgumentException if {@code maxN < 0}
      */
+    @SuppressWarnings("unchecked")
     public IndexMinPQ(int maxN) {
         if (maxN < 0) throw new IllegalArgumentException();
         this.maxN = maxN;
