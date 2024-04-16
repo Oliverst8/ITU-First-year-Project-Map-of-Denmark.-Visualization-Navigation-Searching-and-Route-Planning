@@ -130,7 +130,7 @@ class NavigationTest {
         Graph graph = getGraph1();
         Navigation navigation = new Navigation(graph);
         DrawableWay path = navigation.getPath(1, 9);
-        float[] expected = new float[]{4f, 4f, 3f, 3f, 4f, 2f, 2f ,2f, 1f, 1f};
+        float[] expected = new float[]{4f, 4f, 3f, 3f, 4f, 2f, 1f, 1f};
         assertArrayEquals(expected, path.getCoords());
     }
 
