@@ -12,7 +12,7 @@ public class DrawableWay implements Serializable {
     private final CoordArrayList innerCoords;
     private final String[] tags;
     private String primaryType;
-
+    public boolean randomColors = false;
     private final long id;
     private long[] nodeIDs;
 
@@ -79,12 +79,12 @@ public class DrawableWay implements Serializable {
         return primaryType;
     }
 
-    public void draw(GraphicsContext gc, float scaleFactor) {
+    public void draw(GraphicsContext gc, float scaleFactor, int themeNumber) {
         gc.beginPath();
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
 
-        setColors(gc, tags, scaleFactor);
+        setColors(gc, tags, scaleFactor, themeNumber);
 
         gc.closePath();
     }
@@ -109,7 +109,7 @@ public class DrawableWay implements Serializable {
         }
     }
 
-    private void setColors(GraphicsContext gc, String[] tags, float scaleFactor) {
+    private void setColors(GraphicsContext gc, String[] tags, float scaleFactor, int themeNumber) {
         // 0 = ingen stroke, ingen fill
         // 1 = ingen stroke, fill
         // 2 = stroke, ingen fill
@@ -119,7 +119,9 @@ public class DrawableWay implements Serializable {
             switch (tags[i]) {
                 case "navigationPath":
                     lineWidth = 0.003f;
-                    gc.setStroke(Color.TURQUOISE);
+                    if (themeNumber == 0) {
+                        gc.setStroke(Color.TURQUOISE);
+                    }
                     gc.stroke();
                     continue;
 
@@ -127,25 +129,33 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {
                         case "aerodrome":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#E6EDF8"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E6EDF8"));
+                            }
                             gc.fill();
                             continue;
 
                         case "runway":
                             lineWidth = 0.005f;
-                            gc.setStroke(Color.web("#F3F6FF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#F3F6FF"));
+                            }
                             gc.stroke();
                             continue;
 
                         case "taxiway":
                             lineWidth = 0.001f;
-                            gc.setStroke(Color.web("#F3F6FF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#F3F6FF"));
+                            }
                             gc.stroke();
                             continue;
                         
                         case "apron":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#E6EDF8"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E6EDF8"));
+                            }
                             gc.fill();
                             continue;
                     }
@@ -154,31 +164,41 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {
                         case "motorway", "motorway_link":
                             lineWidth = 0.001f;
-                            gc.setStroke(Color.web("#8BA5C1"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#8BA5C1"));
+                            }
                             gc.stroke();
                             continue;
 
                         case "tertiary", "tertiary_link":
                             lineWidth = 0.0005f;
-                            gc.setStroke(Color.web("#B1C0CF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
                             gc.stroke();
                             continue;
                         
                         case "service", "residential", "unclassified":
                             lineWidth = 0.0005f;
-                            gc.setStroke(Color.web("#B1C0CF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
                             gc.stroke();
                             continue;
 
                         case "trunk", "trunk_link", "primary", "primary_link":
                             lineWidth = 0.001f;
-                            gc.setStroke(Color.web("#B1C0CF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#8BA5C1"));
+                            }
                             gc.stroke();
                             continue;
                         
                         case "secondary", "secondary_link":
                             lineWidth = 0.0005f;
-                            gc.setStroke(Color.web("#B1C0CF"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
                             gc.stroke();
                             continue;
                     }
@@ -187,19 +207,25 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {                        
                         case "scrub", "beach":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#F7ECCF"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#F7ECCF"));
+                            }
                             gc.fill();
                             continue;
                         
                         case "water":
                             lineWidth = 0.00001f;
-                            gc.setFill(Color.web("#90DAEE"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#90DAEE"));
+                            }
                             gc.fill();
                             continue;
 
                         case "peninsula":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#C9F5DB"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#C9F5DB"));
+                            }
                             gc.fill();
                             continue;
                     }
@@ -208,7 +234,9 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {
                         case "island", "islet":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#C9F5DB"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#C9F5DB"));
+                            }
                             gc.fill();
                             continue;
                     }
@@ -217,7 +245,9 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {
                         case "allotments", "industrial", "residential":
                             lineWidth = 0.0001f;
-                            gc.setFill(Color.web("#F5F3F3"));
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#F5F3F3"));
+                            }
                             gc.fill();
                             continue;
                     }
@@ -226,8 +256,12 @@ public class DrawableWay implements Serializable {
                     switch (tags[i + 1]) {
                         case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
                             lineWidth = 0.00001f;
-                            gc.setStroke(Color.web("#DBDDE8"));
-                            gc.setFill(Color.web("#E8E9ED"));
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#DBDDE8"));
+                            }
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E8E9ED"));
+                            }
                             gc.stroke();
                             gc.fill();
                             continue;
@@ -270,6 +304,7 @@ public class DrawableWay implements Serializable {
     public long[] getNodeIDs() {
         return nodeIDs;
     }
+    public void setRandomColors(){ randomColors = !randomColors; }
 
     @Override
     public int hashCode() {

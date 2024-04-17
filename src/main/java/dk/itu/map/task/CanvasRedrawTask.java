@@ -15,12 +15,14 @@ public class CanvasRedrawTask extends Task<Void> {
     private final Affine trans;
     private final float zoom;
     private Set<DrawableWay> ways = null;
+    int themeNumber = 0;
 
-    public CanvasRedrawTask(Canvas canvas, Set<DrawableWay> ways, Affine trans, float zoom) {
+    public CanvasRedrawTask(Canvas canvas, Set<DrawableWay> ways, Affine trans, float zoom, int themeNumber) {
         this.canvas = canvas;
         this.ways = ways;
         this.trans = trans;
         this.zoom = zoom;
+        this.themeNumber = themeNumber;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class CanvasRedrawTask extends Task<Void> {
 
         // Draw the chunks
         for (DrawableWay way : ways) {
-            way.draw(gc, zoom);
+            way.draw(gc, zoom, themeNumber);
         }
 
         return null;

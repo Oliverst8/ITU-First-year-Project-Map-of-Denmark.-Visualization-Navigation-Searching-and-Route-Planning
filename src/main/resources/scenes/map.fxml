@@ -33,25 +33,32 @@
 -->
 
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar useSystemMenuBar="true" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="Import" onAction="#importMap"/>
+            <MenuItem mnemonicParsing="false" onAction="#importMap" text="Import" />
             <MenuItem mnemonicParsing="false" text="Open" />
-            <Menu mnemonicParsing="false" text="Open Recent"/>
+            <Menu mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" onAction="#quitApplication"/>
+                  <Menu mnemonicParsing="false" text="Theme">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Standard Theme" />
+                        <MenuItem mnemonicParsing="false" text="Darkmode" />
+                        <MenuItem mnemonicParsing="false" text="Yet another theme" />
+                    </items>
+                  </Menu>
+            <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
           </items>
         </Menu>
       </menus>
@@ -65,7 +72,8 @@
         <Canvas fx:id="canvasLeisure" />
         <Canvas fx:id="canvasAmenity" />
         <Canvas fx:id="canvasHighway" />
-        <Canvas fx:id="canvasBuilding" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onMouseDragged="#canvasDragged" onScroll="#canvasScroll" />
+        <Canvas fx:id="canvasBuilding" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
+            <Button layoutX="14.0" layoutY="206.0" mnemonicParsing="false" onAction="#switchTheme" text="Button" />
         
         <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
       </children>

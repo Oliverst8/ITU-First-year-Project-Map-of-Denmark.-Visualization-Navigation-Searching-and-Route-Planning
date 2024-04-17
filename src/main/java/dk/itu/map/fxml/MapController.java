@@ -53,6 +53,7 @@ public class MapController extends ViewController {
     private float currentChunkAmountSeen = 1;
 
     private AnimationTimer render;
+    private int themeNumber = 0;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -119,13 +120,19 @@ public class MapController extends ViewController {
             Navigation navigation = new Navigation(this.viewModel.getGraph());
             DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
             System.out.println(path);
-            path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100);
+            path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100, themeNumber);
         }
     }
 
     @FXML
     void canvasReleased(MouseEvent e) {
         render.stop();
+    }
+
+    @FXML
+    void switchTheme(){
+        themeNumber = 1;
+        redraw();
     }
 
     @FXML
@@ -207,7 +214,7 @@ public class MapController extends ViewController {
             
             Canvas canvas = this.canvas.get(entry.getKey());
 
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, themeNumber).run();
         }
     }
 
