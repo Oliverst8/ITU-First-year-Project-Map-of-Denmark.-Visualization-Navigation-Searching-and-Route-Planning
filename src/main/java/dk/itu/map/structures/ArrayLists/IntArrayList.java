@@ -146,19 +146,6 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(int value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-
-        array[size] = value;
-        size++;
-    }
 
     public void addAll(int[] values) {
         while (size + values.length > array.length) {

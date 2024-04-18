@@ -147,30 +147,6 @@ public class CoordArrayList extends PrimitiveArrayList {
         }
     }
 
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return float value at the index
-     */
-    public float[] get(int index) {
-        if (index < 0)
-            return new float[]{arrayX[size+index], arrayY[size+index]};
-        else
-            return new float[]{arrayX[index], arrayY[index]};
-    }
-
-    @Override
-    public void exchange(int index1, int index2) {
-        float tempX = arrayX[index1];
-        float tempY = arrayY[index1];
-
-        arrayX[index1] = arrayX[index2];
-        arrayY[index1] = arrayY[index2];
-
-        arrayX[index2] = tempX;
-        arrayY[index2] = tempY;
-    }
-
 
     @Override
     public void write(String path) throws FileNotFoundException, IOException {

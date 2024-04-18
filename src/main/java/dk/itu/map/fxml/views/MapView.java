@@ -57,6 +57,7 @@ public class MapView {
 
     private AnimationTimer render;
     private int themeNumber = 0;
+    private boolean setStartPoint = false, setEndPoint = false;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -71,7 +72,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
+        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -217,6 +218,8 @@ public class MapView {
             ways.put(key, new HashSet<>());
         }
 
+        ways.put("navigation", model.getNavigationWays());
+
         float zoom = getZoomDistance() / startDist * 100;
 
         for(int i = getDetailLevel(); i <= 4; i++) {
@@ -227,7 +230,7 @@ public class MapView {
                     DrawableWay way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
+                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
                             ways.get(way.getPrimaryType()).add(way);
                             break;
                     }
@@ -298,5 +301,22 @@ public class MapView {
         } catch (NonInvertibleTransformException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    void setStartPoint(ActionEvent event){
+        System.out.println("Can now set start point");
+        setStartPoint = true;
+    }
+
+    @FXML
+    void setEndPoint(ActionEvent event){
+        System.out.println("Can now set end point");
+        setEndPoint = true;
+    }
+
+    @FXML
+    void navigateNow(ActionEvent event){
+        controller.navigate();
     }
 }

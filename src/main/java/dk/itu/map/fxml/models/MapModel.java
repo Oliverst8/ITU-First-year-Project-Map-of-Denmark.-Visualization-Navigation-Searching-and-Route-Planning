@@ -1,9 +1,6 @@
 package dk.itu.map.fxml.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.structures.DrawableWay;
@@ -16,6 +13,9 @@ public class MapModel {
     // The chunk loader
     public ChunkLoader chunkLoader;
     private Graph graph;
+    private float[] startPoint, endPoint;
+
+    private Set<DrawableWay> navigationWays;
 
     public MapModel() {
         graph = new Graph();
@@ -23,6 +23,7 @@ public class MapModel {
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
+        navigationWays = new HashSet<>();
     }
 
     /**
@@ -61,6 +62,22 @@ public class MapModel {
         return chunkLoader.chunkAmount;
     }
 
+    public float[] getStartPoint() {
+        return startPoint;
+    }
+
+    public void setStartPoint(float[] startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    public float[] getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(float[] endPoint) {
+        this.endPoint = endPoint;
+    }
+
     /**
      * Gets the chunks in the given zoom level
      * 
@@ -79,6 +96,14 @@ public class MapModel {
 
     public void setGraph(Graph graph) {
         this.graph = graph;
+    }
+
+    public void setNavigationWays(Set<DrawableWay> set){
+        navigationWays = set;
+    }
+
+    public Set<DrawableWay> getNavigationWays(){
+        return navigationWays;
     }
 
 }

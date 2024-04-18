@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
+import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
 
 public class MapController {
@@ -140,5 +141,13 @@ public class MapController {
         updateZoomLayer(chunks, detailLevel);
 
         return currentChunkAmountSeen;
+    }
+
+    public void navigate(){
+        Navigation navigation = new Navigation(model.getGraph());
+        DrawableWay path = navigation.getPath(model.getStartPoint(), model.getEndPoint());
+        Set<DrawableWay> set = new HashSet<>();
+        set.add(path);
+        model.setNavigationWays(set);
     }
 }
