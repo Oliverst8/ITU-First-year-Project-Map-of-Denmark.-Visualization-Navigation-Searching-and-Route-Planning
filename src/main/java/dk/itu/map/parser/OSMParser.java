@@ -3,8 +3,7 @@ package dk.itu.map.parser;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
-import dk.itu.map.structures.LongCoordHashMap;
-
+import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class OSMParser extends Thread {
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
-    private float minlat, maxlat, minlon, maxlon;
+    // private float minlat, maxlat, minlon, maxlon;
     private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 

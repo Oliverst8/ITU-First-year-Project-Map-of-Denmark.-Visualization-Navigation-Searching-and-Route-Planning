@@ -1,13 +1,10 @@
 package dk.itu.map.fxml.views;
 
-import dk.itu.map.Model;
-import dk.itu.map.Controller;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
-import dk.itu.map.structures.Way;
 
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +60,7 @@ public class MapView {
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
         this.model = model;
-
+    }
 
     /**
      * Initializes the graphics context, and set rules for drawing
@@ -90,11 +87,11 @@ public class MapView {
         }
 
         trans = new Affine();
-        trans.prependTranslation(-0.56 * viewModel.getMinLon(), viewModel.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
+        trans.prependTranslation(-0.56 * model.getMinLon(), model.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
 
         // Zoom to the initial view
         Platform.runLater(() -> {
-            zoom(0, 0, canvas.get("building").getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
+            zoom(0, 0, canvas.get("building").getHeight() / (this.model.getMaxLat() - this.model.getMinLat()));
 
             redraw();
         });
@@ -118,7 +115,7 @@ public class MapView {
 
             render.start();
         } else if(e.isSecondaryButtonDown()) {
-            Navigation navigation = new Navigation(this.viewModel.getGraph());
+            Navigation navigation = new Navigation(model.getGraph());
             DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
             System.out.println(path);
             path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100);
@@ -147,6 +144,7 @@ public class MapView {
     void canvasScroll(ScrollEvent e) {
         double factor = e.getDeltaY();
         zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
+        redraw();
     }
 
     @FXML
@@ -205,7 +203,7 @@ public class MapView {
         float zoom = getZoomDistance() / startDist * 100;
 
         for(int i = getDetailLevel(); i <= 4; i++) {
-            Map<Integer, List<DrawableWay>> chunkLayer = viewModel.getChunksInZoomLevel(i);
+            Map<Integer, List<DrawableWay>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<DrawableWay> chunkLayerList = chunkLayer.get(chunk);
                 for(int j = 0; j < chunkLayerList.size(); j++) {
@@ -239,7 +237,7 @@ public class MapView {
      * @return Point2D the lower right corner of the canvas
      */
     private Point2D getLowerRightCorner() {
-        return convertTo2DPoint(canvas.getWidth(), canvas.getHeight());
+        return convertTo2DPoint(canvas.get("building").getWidth(), canvas.get("building").getHeight());
     }
 
     /**

@@ -6,16 +6,19 @@ import java.util.List;
 import java.util.Map;
 
 import dk.itu.map.parser.ChunkLoader;
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.structures.Graph;
 
 public class MapModel {
     
+    // A list that holds the different zoom levels, and their chunks
+    public final List<Map<Integer, List<DrawableWay>>> chunkLayers;
     // The chunk loader
     public ChunkLoader chunkLoader;
-    // A list that holds the different zoom levels, and their chunks
-    public final List<Map<Integer, List<Way>>> chunkLayers;
+    private Graph graph;
 
     public MapModel() {
+        graph = new Graph();
         chunkLayers = new ArrayList<>();
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
@@ -66,7 +69,16 @@ public class MapModel {
      *         The key is the chunk index, and the value is a list of ways in the
      *         chunk
      */
-    public Map<Integer, List<Way>> getChunksInZoomLevel(int zoomLevel) {
+    public Map<Integer, List<DrawableWay>> getChunksInZoomLevel(int zoomLevel) {
         return chunkLayers.get(zoomLevel);
     }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
 }

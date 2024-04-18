@@ -2,7 +2,8 @@ package dk.itu.map.fxml.controllers;
 
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.parser.ChunkLoader;
-import dk.itu.map.structures.Way;
+import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.DrawableWay;
 
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
 
 public class MapController {
 
@@ -32,7 +32,13 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
+        
+        UtilityLoader utilityLoader = new UtilityLoader("maps/" + mapName);
+        utilityLoader.start();
+        
         model.chunkLoader = new ChunkLoader("maps/" + mapName);
+
+        setUtilities(utilityLoader);
     }
 
     /**
@@ -74,7 +80,7 @@ public class MapController {
      * @param zoomLevel the zoom level of the chunks
      */
     private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<Way>> chunks = model.chunkLayers.get(zoomLevel);
+        Map<Integer, List<DrawableWay>> chunks = model.chunkLayers.get(zoomLevel);
 
         chunkSet.removeAll(chunks.keySet());
 
@@ -91,6 +97,15 @@ public class MapController {
         chunks.putAll(model.chunkLoader.readFiles(newChunks, zoomLevel));
     }
 
+    private void setUtilities(UtilityLoader utilityLoader) {
+        try {
+            utilityLoader.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        model.setGraph(utilityLoader.getGraph());
+    }
+
     /**
      * Updates the given zoom level with the given chunks
      * 
@@ -98,7 +113,7 @@ public class MapController {
      * @param zoomLevel the zoom level to be updated
      */
     private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        for (Map<Integer, List<Way>> chunkLayers : model.chunkLayers) {
+        for (Map<Integer, List<DrawableWay>> chunkLayers : model.chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
         }
 
