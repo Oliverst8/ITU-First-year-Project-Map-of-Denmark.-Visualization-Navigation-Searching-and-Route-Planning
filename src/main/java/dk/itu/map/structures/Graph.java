@@ -1,5 +1,6 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.ByteArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
@@ -15,6 +16,7 @@ public class Graph {
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
     protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
     protected final FloatArrayList coords; //List that holds the coordinates of each vertex
+    protected final ByteArrayList vehicleRestrictions; //List that holds which vehicles are allowed to use each edge
 
     /**
      * Constructor for the Graph class
@@ -26,7 +28,8 @@ public class Graph {
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
         coords = new FloatArrayList();
-        //wayIDs = new LongArrayList();
+        vehicleRestrictions = new ByteArrayList(50_000);
+
     }
 
     /**

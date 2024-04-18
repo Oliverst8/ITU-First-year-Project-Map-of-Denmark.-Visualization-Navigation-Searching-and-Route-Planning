@@ -103,29 +103,9 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param way the way to add an edge from
      */
     private void addEdge(MapElement way) {
-        /*
-        int node1 = idToIndex.get(way.getNodeIDs()[0]);
-        int node2 = idToIndex.get(way.getNodeIDs()[1]);
-        int edgeNumberFrom1 = edgeDestinations.size();
-        int edgeNumberFrom2 = edgeNumberFrom1+1;
-        //Weight should be differentiated later, but currently nothing can change it, so ill keep it in one variable
-        float edgeWeight = calcWeight(way);
-
-        vertexList.get(node1).add(edgeNumberFrom1);
-        vertexList.get(node2).add(edgeNumberFrom2);
-
-        edgeDestinations.add(node2);
-        edgeDestinations.add(node1);
-
-        edgeWeights.add(edgeWeight);
-        edgeWeights.add(edgeWeight);
-
-        wayIDs.add(way.getId());
-        wayIDs.add(way.getId());
-        */
-
-        //This is the new version of the above code, which should be more efficient
         long[] nodeIDs = way.getNodeIDs();
+
+        byte vehicleRestriction = setVehicleRestriction(way);
 
         for(int i = 0; i < nodeIDs.length-1; i++){
             int node1 = idToIndex.get(nodeIDs[i]);
@@ -140,6 +120,8 @@ public class GraphBuilder extends Graph implements Runnable {
             edgeDestinations.add(node2);
             edgeDestinations.add(node1);
 
+            vehicleRestrictions.add(vehicleRestriction);
+            vehicleRestrictions.add(vehicleRestriction);
 
             float weight = calcWeight(way, i);
 
@@ -150,6 +132,56 @@ public class GraphBuilder extends Graph implements Runnable {
 
         //Maybe for all these we should add at the specific index to make sure no mistakes are made,
         // but as long as we just call these methods here, we should be okay I think
+    }
+
+    private byte setVehicleRestriction(MapElement way) {
+        List<String> tags = way.getTags();
+        String secondayType = null;
+        for(int i = 0; i < tags.size(); i += 2){
+            if(tags.get(i).equals("highway")){
+                secondayType = tags.get(i+1);
+                break;
+            }
+        }
+        switch(secondayType){
+            case "escape":
+            case "raceway":
+            case "busway":
+            case "busguideway":
+            case "proposed":
+            case "construction":
+            case "service":
+                return 0;
+            case "pedestrian":
+            case "footway":
+            case "steps":
+            case "corridor":
+                return 1;
+            case "cycleway":
+                return 2;
+            case "bridleway":
+            case "path":
+                return 3;
+            case "motorway":
+            case "motorway_link":
+                return 4;
+            case "trunk":
+            case "trunk_link":
+            case "primary":
+            case "primary_link":
+            case "secondary":
+            case "secondary_link":
+            case "tertiary":
+            case "tertiary_link":
+            case "unclassified":
+            case "residential":
+            case "living_street":
+            case "road":
+            case "track":
+                return 7;
+            default:
+                throw new RuntimeException("Unknown highway type: " + secondayType + " in way: " + way.getId());
+        }
     }
 
     /**
