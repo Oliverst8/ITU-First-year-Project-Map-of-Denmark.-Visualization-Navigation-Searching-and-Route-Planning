@@ -15,19 +15,23 @@ import org.junit.jupiter.api.Test;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.OSMParser;
 import dk.itu.map.structures.DrawableWay;
+import itu.map.TestUtilities;
 
 public class OSMParserTest {
     
     @Test
     public void OSMParserWriteAndReadTest() {
-        String path = "C:/Users/nickl/Downloads/testmap4.osm"; //AAA FIX
-        OSMParser parser = new OSMParser(new File(path), "maps/aaasdsaasads");
+        String path = TestUtilities.getTestFilesPath();
+        OSMParser parser = new OSMParser(new File(path + "testmap.osm"), path + "maps/testmap");
         parser.start();
-        parser.setCallback((Runnable)() -> {
-            ChunkLoader chunkLoader = new ChunkLoader("maps/aaasdsaasads");
-            Map<Integer, List<Drawable>> chunkMap = chunkLoader.readFiles(new int[]{0}, 0);
-            System.out.println(chunkMap.size());
-            assertEquals(chunkMap.get(0).size(), 21);
-        });
+        try {
+            parser.join();
+        } catch (InterruptedException e) {
+
+        }
+        ChunkLoader chunkLoader = new ChunkLoader(path + "maps/testmap");
+        Map<Integer, List<Drawable>> chunkMap = chunkLoader.readFiles(new int[]{0}, 0);
+        System.out.println(chunkMap.size());
+        assertEquals(chunkMap.get(0).size(), 16);
     }
 }
