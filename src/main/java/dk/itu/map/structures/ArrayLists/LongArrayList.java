@@ -2,8 +2,15 @@ package dk.itu.map.structures.ArrayLists;
 
 import dk.itu.map.structures.WriteAble;
 
-import java.io.*;
 import java.util.Arrays;
+
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.io.FileOutputStream;
+import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 
 public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     // The array that holds the values
@@ -25,30 +32,8 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
      * @param init_size size of the array
      */
     public LongArrayList(int init_size) {
-        super();
+        super(init_size);
         array = new long[init_size];
-    }
-
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(long value) {
-        if (size >= array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return long the value at the index
-     */
-    public long get(int index) {
-        return array[index];
     }
 
     /**
@@ -59,15 +44,17 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
         long[] newList = new long[array.length * 2];
         System.arraycopy(array, 0, newList, 0, array.length);
         array = newList;
+        capacity = array.length;
     }
 
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
+
         write(stream);
         stream.close();
     }
@@ -83,10 +70,11 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(String path) throws IOException{
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
+
         read(stream);
     }
 
@@ -99,14 +87,37 @@ public class LongArrayList extends PrimitiveArrayList implements WriteAble {
         }
     }
 
-    public long[] toArray() {
-        return Arrays.copyOfRange(array, 0, size);
-    }
-
     @Override
     public void exchange(int index1, int index2) {
         long temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
+    }
+
+    public long[] toArray() {
+        return Arrays.copyOfRange(array, 0, size);
+    }
+
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(long value) {
+        if (size >= array.length) {
+            resize();
+        }
+
+        array[size] = value;
+        size++;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return long the value at the index
+     */
+    public long get(int index) {
+        return array[index];
     }
 }

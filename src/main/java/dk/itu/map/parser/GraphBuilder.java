@@ -47,12 +47,11 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param way the way to calculate the weight of
      * @return the weight of the way
      */
-    private float calcWeight(MapElement way, int firstNode) {
+    private float calcWeight(MapElement way, int nodeId) {
         CoordArrayList coords = way.getCoords();
-        float[] coord1 = coords.get(firstNode);
-        float[] coord2 = coords.get(firstNode+1);
+        float[] coord1 = coords.get(nodeId);
+        float[] coord2 = coords.get(nodeId+1);
         return dist(coord1[0], coord1[1], coord2[0], coord2[1]);
-        //return (float) Math.sqrt(Math.pow(coords.get(firstNode) - coords.get(firstNode+2), 2) + Math.pow(coords.get(firstNode+1) - coords.get(firstNode+3), 2));
     }
 
     /**

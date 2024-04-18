@@ -18,6 +18,7 @@ public class Way extends MapElement {
 
     @Override
     public void stream(DataOutputStream stream) throws IOException {
+        stream.writeLong(getId());
         stream.writeInt(coords.size());
         for (int i = 0; i < coords.size(); i++) {
             float[] coord = coords.get(i);
@@ -29,6 +30,7 @@ public class Way extends MapElement {
         for (int i = 0; i < getTags().size(); i++) {
             stream.writeUTF(getTags().get(i));
         }
+        stream.writeUTF(primaryType);
     }
 
     @Override

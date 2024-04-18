@@ -9,7 +9,7 @@ import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.SimpleLinkedList;
 import dk.itu.map.structures.SimpleLinkedList.Node;
 
-class Polygon extends MapElement {
+public class Polygon extends MapElement {
     private final int totalWays;
     private int stagedWays;
 
@@ -36,6 +36,7 @@ class Polygon extends MapElement {
 
     @Override
     public void stream(DataOutputStream stream) throws IOException {
+        stream.writeLong(getId());
         stream.writeInt(countCoords(outerWays));
         for (Way way : outerWays) {
             for (float coord : way.getCoords().toArray()) {
@@ -52,6 +53,7 @@ class Polygon extends MapElement {
         for (int i = 0; i < getTags().size(); i++) {
             stream.writeUTF(getTags().get(i));
         }
+        stream.writeUTF(primaryType);
     }
 
     @Override

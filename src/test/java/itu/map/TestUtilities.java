@@ -23,5 +23,4 @@ public class TestUtilities {
     public static String getTestFilesPath() {
         return "src/test/java/itu/map/testFiles/";
     }
-
 }

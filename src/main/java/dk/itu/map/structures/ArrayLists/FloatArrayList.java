@@ -2,12 +2,20 @@ package dk.itu.map.structures.ArrayLists;
 
 import dk.itu.map.structures.WriteAble;
 
-import java.io.*;
 import java.util.Arrays;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 
 public class FloatArrayList extends PrimitiveArrayList implements Serializable, WriteAble {
     private float[] array;
-    private int size;
 
     public FloatArrayList() {
         array = new float[ARRAY_INIT_SIZE];
@@ -31,42 +39,6 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable, 
         array = newArray;
     }
 
-    public void add(float value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-    }
-
-    public void addAll(float[] values) {
-        while (size + values.length > array.length) {
-            resize();
-        }
-        System.arraycopy(values, 0, array, size, values.length);
-        size += values.length;
-    }
-
-    public float[] toArray() {
-        return Arrays.copyOf(array, size);
-    }
-
-    public double[] toDoubleArray() {
-        double[] output = new double[size];
-        for (int i = 0; i < size; i++) {
-            output[i] = array[i];
-        }
-        return output;
-    }
-
-    public float get(int index) {
-        return array[index];
-    }
-
-    public int size() {
-        return size;
-    }
-
     @Override
     public void write(String path) throws FileNotFoundException, IOException {
         DataOutputStream stream = new DataOutputStream(
@@ -74,6 +46,7 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable, 
                         new FileOutputStream(path)
                 )
         );
+
         write(stream);
         stream.close();
     }
@@ -93,6 +66,7 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable, 
                         new FileInputStream(path)
                 )
         );
+
         read(stream);
     }
 
@@ -113,6 +87,7 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable, 
         for(int i = 0; i < size; i++){
             if(array[i] != other.array[i]) return false;
         }
+
         return true;
     }
 
@@ -121,5 +96,44 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable, 
         float temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
+    }
+
+    public void add(float value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+
+        array[size] = value;
+        size++;
+    }
+
+    public void addAll(float[] values) {
+        while (size + values.length > array.length) {
+            resize();
+        }
+
+        System.arraycopy(values, 0, array, size, values.length);
+        size += values.length;
+    }
+
+    public float[] toArray() {
+        return Arrays.copyOf(array, size);
+    }
+
+    public double[] toDoubleArray() {
+        double[] output = new double[size];
+        for (int i = 0; i < size; i++) {
+            output[i] = array[i];
+        }
+
+        return output;
+    }
+
+    public float get(int index) {
+        return array[index];
+    }
+
+    public int size() {
+        return size;
     }
 }

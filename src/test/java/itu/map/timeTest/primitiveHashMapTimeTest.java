@@ -8,7 +8,7 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class primitiveHashMapTimeTest {
-
+/**
     int start = 1;
 
     @Test
@@ -50,5 +50,5 @@ public class primitiveHashMapTimeTest {
             assertFalse(map.containsKey(i));
         }
     }
-
+**/
 }

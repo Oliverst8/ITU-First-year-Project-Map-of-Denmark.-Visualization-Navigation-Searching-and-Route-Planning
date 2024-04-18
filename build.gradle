@@ -39,7 +39,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.26.1'
     
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.15.1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
 
 }
 
@@ -47,6 +47,10 @@ test {
     maxHeapSize = "4096m" // maximum heap size
     useJUnitPlatform()
     finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacoco {
+    toolVersion = '0.8.12'
 }
 
 jacocoTestReport {

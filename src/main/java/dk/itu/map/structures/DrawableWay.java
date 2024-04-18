@@ -1,30 +1,25 @@
 package dk.itu.map.structures;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class DrawableWay implements Serializable {
-
     private final CoordArrayList outerCoords;
     private final CoordArrayList innerCoords;
-    private String[] tags;
-
-
-    private long id;
+    private final String[] tags;
+    private String primaryType;
+    public boolean randomColors = false;
+    private final long id;
     private long[] nodeIDs;
 
     /**
      * Only used for navigation
      */
     public DrawableWay(CoordArrayList outerCoords, String[] tags, long[] nodeId){
+        this.id = -1;
         this.outerCoords = outerCoords;
         this.tags = tags;
         this.nodeIDs = nodeId;
@@ -34,33 +29,12 @@ public class DrawableWay implements Serializable {
     /**
      * Only used for ChunkHandler
      */
-    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags) {
+    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags, long id, String primaryType) {
+        this.id = id;
+        this.primaryType = primaryType;
         this.outerCoords = outerCoords;
         this.innerCoords = innerCoords;
         this.tags = tags;
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof DrawableWay) {
-            DrawableWay other = (DrawableWay) obj;
-            if (other.outerCoords.size() != outerCoords.size() || other.innerCoords.size() != innerCoords.size()) {
-                return false;
-            }
-            for (int i = 0; i < outerCoords.size(); i++) {
-                if (other.outerCoords.get(i) != outerCoords.get(i)) {
-                    return false;
-                }
-            }
-            for (int i = 0; i < innerCoords.size(); i++) {
-                if (other.innerCoords.get(i) != innerCoords.get(i)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -100,21 +74,20 @@ public class DrawableWay implements Serializable {
         return builder.toString();
     }
 
-    public void draw(GraphicsContext gc, float scaleFactor) {
-        if (Arrays.asList(tags).contains("island")) return;
+    public String getPrimaryType(){
+        return primaryType;
+    }
+
+    public void draw(GraphicsContext gc, float scaleFactor, int themeNumber) {
         gc.beginPath();
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
-        if (setColors(gc, tags, scaleFactor)) {
-            gc.fill();
-            gc.stroke();
-        } else {
-            gc.stroke();
-        }
+
+        setColors(gc, tags, scaleFactor, themeNumber);
+
         gc.closePath();
-        
     }
-     
+
     public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
@@ -135,143 +108,236 @@ public class DrawableWay implements Serializable {
         }
     }
 
-    private boolean setColors(GraphicsContext gc, String[] tags, float scaleFactor) {
+    private void setColors(GraphicsContext gc, String[] tags, float scaleFactor, int themeNumber) {
         // 0 = ingen stroke, ingen fill
         // 1 = ingen stroke, fill
         // 2 = stroke, ingen fill
         // 3 = stroke, fill
-        gc.setStroke(Color.ORANGE);
-        gc.setFill(Color.ORANGE);
         float lineWidth = 0.00001f;
-        boolean shouldFill = false;
-        forLoop:
-        for (String tag : tags) {
-            switch (tag) {
-
+        for (int i = 0; i < tags.length; i += 2) {
+            switch (tags[i]) {
                 case "navigationPath":
                     lineWidth = 0.003f;
-                    gc.setStroke(Color.TURQUOISE);
-                    shouldFill = false;
-                    break forLoop;
+                    if (themeNumber == 0) {
+                        gc.setStroke(Color.TURQUOISE);
+                    }
+                    if (themeNumber == 2) {
+                        gc.setStroke(Color.web("#00FF00"));
+                    }
+                    gc.stroke();
+                    continue;
 
-                case "motorway_link":
-                case "motorway":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKRED);
-                    shouldFill = false;
-                    break forLoop;
-                case "trunk":
-                case "trunk_link":
-                
-                case "primary":
-                case "primary_link":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKGRAY);
-                    shouldFill = false;
-                    break forLoop;
+                case "aeroway":
+                    switch (tags[i + 1]) {
+                        case "aerodrome":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E6EDF8"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF69B4"));
+                            }
+                            gc.fill();
+                            continue;
 
-                    
-                case "coastline":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.web("#332020"));
-                    shouldFill = false;
-                    break forLoop;
-                    
-                case "secondary":
-                case "secondary_link":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-                case "rail":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-                case "light_rail":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    shouldFill = false;
-                    break forLoop;
-                case "grassland":
-                    lineWidth = 0.0003f;
-                    gc.setStroke(Color.DARKGREEN);
-                    gc.setFill(Color.GREEN);
-                    shouldFill = true;
-                    break forLoop;
-                case "runway":
-                    lineWidth = 0.0008f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
+                        case "runway":
+                            lineWidth = 0.005f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#F3F6FF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#00BFFF"));
+                            }
+                            gc.stroke();
+                            continue;
 
-                case "tertiary":
-                case "tertiary_link":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.GRAY);
-                    shouldFill = false;
-                    break forLoop;
-                case "heath":
-                case "scrub":
-                case "fell":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.DARKMAGENTA);
-                    gc.setFill(Color.PURPLE);
-                    shouldFill = true;
-                    break forLoop;
-                case "beach":
-                    
-                    lineWidth = 0.00000001f;
-                    gc.setFill(Color.YELLOW);
-                    shouldFill = true;
-                    break forLoop;
+                        case "taxiway":
+                            lineWidth = 0.001f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#F3F6FF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#00BFFF"));
+                            }
+                            gc.stroke();
+                            continue;
+                        
+                        case "apron":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E6EDF8"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF69B4"));
+                            }
+                            gc.fill();
+                            continue;
+                    }
 
-                case "forest":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.GREEN);
-                    gc.setFill(Color.LIGHTGREEN);
-                    shouldFill = true;
-                    break forLoop;
-                case "water":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.BLUE);
-                    gc.setFill(Color.LIGHTBLUE);
-                    shouldFill = true;
-                    break forLoop;
-                case "unclassified":
-                case "residential":
-                    lineWidth = 0.0001f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    shouldFill = false;
-                    break forLoop;
-                case "building":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.LIGHTGRAY);
-                    gc.setFill(Color.LIGHTGOLDENRODYELLOW);
-                    shouldFill = true;
-                    break forLoop;
-                case "island":
-                    lineWidth = 0.00001f;
-                    gc.setStroke(Color.LIGHTGREEN);
-                    gc.setFill(Color.LIGHTGREEN);
-                    shouldFill = true;
-                    break forLoop;
                 case "highway":
-            }
-            // switch (tag) {
+                    switch (tags[i + 1]) {
+                        case "motorway", "motorway_link":
+                            lineWidth = 0.001f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#8BA5C1"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFD700"));
+                            }
+                            gc.stroke();
+                            continue;
 
-            // }
+                        case "tertiary", "tertiary_link":
+                            lineWidth = 0.0005f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
+                            }
+                            gc.stroke();
+                            continue;
+                        
+                        case "service", "residential", "unclassified":
+                            lineWidth = 0.0005f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
+                            }
+                            gc.stroke();
+                            continue;
+
+                        case "trunk", "trunk_link", "primary", "primary_link":
+                            lineWidth = 0.001f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#8BA5C1"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFD700"));
+                            }
+                            gc.stroke();
+                            continue;
+                        
+                        case "secondary", "secondary_link":
+                            lineWidth = 0.0005f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#B1C0CF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
+                            }
+                            gc.stroke();
+                            continue;
+                    }
+
+                case "natural":
+                    switch (tags[i + 1]) {                        
+                        case "scrub", "beach":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#F7ECCF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FFD700"));
+                            }
+                            gc.fill();
+                            continue;
+                        
+                        case "water":
+                            lineWidth = 0.00001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#90DAEE"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#00CED1"));
+                            }
+                            gc.fill();
+                            continue;
+
+                        case "peninsula":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#C9F5DB"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#7FFFD4"));
+                            }
+                            gc.fill();
+                            continue;
+                    }
+                
+                case "place":
+                    switch (tags[i + 1]) {
+                        case "island", "islet":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#C9F5DB"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#7FFFD4"));
+                            }
+                            gc.fill();
+                            continue;
+                    }
+                
+                case "landuse":
+                    switch (tags[i + 1]) {
+                        case "allotments", "industrial", "residential":
+                            lineWidth = 0.0001f;
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#F5F3F3"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF4500"));
+                            }
+                            gc.fill();
+                            continue;
+                    }
+                
+                case "building":
+                    switch (tags[i + 1]) {
+                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
+                            lineWidth = 0.00001f;
+                            if (themeNumber == 0) {
+                                gc.setStroke(Color.web("#DBDDE8"));
+                            }
+                            if (themeNumber == 0) {
+                                gc.setFill(Color.web("#E8E9ED"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF007F"));
+                            }
+                            gc.stroke();
+                            gc.fill();
+                            continue;
+                    }
+            }
         }
-        gc.setLineWidth(lineWidth * scaleFactor * 0.50);
-        return shouldFill;
+
+        gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 0.75, 0.1));
+    }
+
+    public boolean containsTag(String tag) {
+        for (int i = 0; i < tags.length; i += 2) {
+            if (tags[i].equals(tag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isRelation() {
         return innerCoords.size() != 0;
     }
 
-    public float[] getCoords() {
+    public float[] getOuterCoords() {
         return outerCoords.toArray();
+    }
+
+    public float[] getInnerCoords() {
+        return innerCoords.toArray();
     }
 
     public String[] getTags() {
@@ -285,5 +351,18 @@ public class DrawableWay implements Serializable {
     public long[] getNodeIDs() {
         return nodeIDs;
     }
+    public void setRandomColors(){ randomColors = !randomColors; }
 
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DrawableWay) {
+            return ((DrawableWay) obj).id == id;
+        }
+        return false;
+    }
 }
