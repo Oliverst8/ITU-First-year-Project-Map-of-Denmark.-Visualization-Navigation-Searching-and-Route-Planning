@@ -1,6 +1,7 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
@@ -72,8 +73,8 @@ public class ChunkLoader {
      * @return The ways
      */
 
-    public Map<Integer, List<DrawableWay>> readFiles(int[] chunks, int zoomLevel) {
-        Map<Integer, List<DrawableWay>> ways = Collections.synchronizedMap(new HashMap<>());
+    public Map<Integer, List<Drawable>> readFiles(int[] chunks, int zoomLevel) {
+        Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
             if (chunk < 0 || chunk >= chunkAmount) return;

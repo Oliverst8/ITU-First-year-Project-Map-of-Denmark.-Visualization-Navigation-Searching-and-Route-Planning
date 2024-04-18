@@ -1,6 +1,8 @@
 package dk.itu.map.structures.ArrayLists;
 
-public abstract class PrimitiveArrayList {
+import dk.itu.map.structures.WriteAble;
+
+public abstract class PrimitiveArrayList implements WriteAble{
 
     //The current size of the list
     protected int size;
@@ -8,6 +10,7 @@ public abstract class PrimitiveArrayList {
 
     //The default size of the array
     protected final int ARRAY_INIT_SIZE = 10;
+    protected int biggestIndex = -1;
 
     /**
      * Constructor for the PrimitiveArrayList class.

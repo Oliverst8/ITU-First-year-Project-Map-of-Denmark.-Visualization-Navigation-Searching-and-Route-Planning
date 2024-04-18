@@ -1,10 +1,13 @@
 package dk.itu.map.structures;
 
 import dk.itu.map.structures.ArrayLists.ByteArrayList;
+import dk.itu.map.parser.GraphBuilder;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.HashMaps.LongIntHashMap;
+import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
 import java.util.stream.IntStream;
@@ -12,11 +15,12 @@ import java.util.stream.IntStream;
 
 public class Graph {
     protected final LongIntHashMap idToIndex;
-    protected final WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
+    protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
+    protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
     protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
-    protected final FloatArrayList coords; //List that holds the coordinates of each vertex
     protected final ByteArrayList vehicleRestrictions; //List that holds which vehicles are allowed to use each edge
+    protected TwoDTree coords; //List that holds the coordinates of each vertex
 
     /**
      * Constructor for the Graph class
@@ -27,16 +31,19 @@ public class Graph {
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
         edgeWeights = new FloatArrayList(50_000);
-        coords = new FloatArrayList();
         vehicleRestrictions = new ByteArrayList(50_000);
-
+        coords = new TwoDTree();
+        oldToNewVertexIndex = new IntArrayList();
+        //wayIDs = new LongArrayList();
     }
+
+
 
     /**
      * @return the number of vertices in the graph
      */
     public int size(){
-        return idToIndex.size();
+        return vertexList.size();
     }
 
     /**
@@ -50,7 +57,11 @@ public class Graph {
      * @return the destination of the edge
      */
     public int getDestination(int edge){
-        return edgeDestinations.get(edge);
+        if(edgeDestinations.get(edge) == 111935){
+            System.out.println();
+        }
+        return oldToNewVertexIndex.get(
+                edgeDestinations.get(edge));
     }
 
     /**
@@ -66,7 +77,7 @@ public class Graph {
      * @return the coordinates of the vertex
      */
     public float[] getCoords(int index){
-        return new float[]{coords.get(index*2), coords.get(index*2+1)};
+        return coords.get(index);
     }
 
     /**
@@ -74,7 +85,7 @@ public class Graph {
      * @return the index of the vertex
      */
     public int idToVertexId(long id){
-        return idToIndex.get(id);
+        return oldToNewVertexIndex.get(idToIndex.get(id));
     }
 
     /**
@@ -90,6 +101,7 @@ public class Graph {
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -130,6 +142,7 @@ public class Graph {
                 edgeDestinations,
                 edgeWeights,
                 coords,
+                oldToNewVertexIndex
                 //wayIDs
         };
 
@@ -144,7 +157,6 @@ public class Graph {
         for(DataInputStream stream : streams){
             stream.close();
         }
-
     }
 
     public IntArrayList getEdges() {
@@ -153,6 +165,10 @@ public class Graph {
 
     public FloatArrayList getWeights() {
         return edgeWeights;
+    }
+
+    public int getNearestNeigherborID(float[] coords) {
+        return this.coords.nearestNeighbour(coords);
     }
 
     @Override
@@ -164,6 +180,7 @@ public class Graph {
             if(!edgeDestinations.equals(other.edgeDestinations)) return false;
             if(!edgeWeights.equals(other.edgeWeights)) return false;
             if(!coords.equals(other.coords)) return false;
+            if(!oldToNewVertexIndex.equals(other.oldToNewVertexIndex)) return false;
             return true;
         }
         return false;

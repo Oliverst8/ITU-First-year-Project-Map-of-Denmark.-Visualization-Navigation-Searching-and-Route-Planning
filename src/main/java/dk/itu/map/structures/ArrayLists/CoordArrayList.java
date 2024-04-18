@@ -1,5 +1,7 @@
 package dk.itu.map.structures.ArrayLists;
 
+import java.io.*;
+
 public class CoordArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private float[] arrayX;
@@ -63,6 +65,19 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     /**
+     * Converts the list to a float array.
+     * @return float[]
+     */
+    public float[] toArray() {
+        float[] output = new float[size*2];
+        for (int i = 0; i < size; i++) {
+            output[i*2] = arrayX[i];
+            output[i*2+1] = arrayY[i];
+        }
+        return output;
+    }
+
+    /**
      * Adds a value to the empty spot in the array.
      * If the array is full, it will resize the array.
      * @param valueX to be inserted
@@ -81,6 +96,10 @@ public class CoordArrayList extends PrimitiveArrayList {
         add(coords[0], coords[1]);
     }
 
+    public void set(int index, float[] coords){
+        arrayX[index] = coords[0];
+        arrayY[index] = coords[1];
+    }
     /**
      * Returns the value at the given index.
      * @param index to be gotten
@@ -128,16 +147,65 @@ public class CoordArrayList extends PrimitiveArrayList {
         }
     }
 
-    /**
-     * Converts the list to a float array.
-     * @return float[]
-     */
-    public float[] toArray() {
-        float[] output = new float[size*2];
+
+    @Override
+    public void write(String path) throws FileNotFoundException, IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
+
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
         for (int i = 0; i < size; i++) {
-            output[i*2] = arrayX[i];
-            output[i*2+1] = arrayY[i];
+            stream.writeFloat(arrayX[i]);
+            stream.writeFloat(arrayY[i]);
         }
-        return output;
+    }
+
+    @Override
+    public void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        arrayX = new float[size];
+        arrayY = new float[size];
+        for (int i = 0; i < size; i++) {
+            arrayX[i] = stream.readFloat();
+            arrayY[i] = stream.readFloat();
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CoordArrayList that = (CoordArrayList) obj;
+        if (this.size != that.size) {
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (this.arrayX[i] != that.arrayX[i] || this.arrayY[i] != that.arrayY[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 }

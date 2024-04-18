@@ -2,14 +2,15 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
+import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.TwoDTree;
+import dk.itu.map.structures.TwoDTreeBuilder;
 import dk.itu.map.structures.WriteAble;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class GraphBuilder extends Graph implements Runnable {
@@ -72,6 +73,33 @@ public class GraphBuilder extends Graph implements Runnable {
                 addEdge(way);
             }
         }
+        TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
+        treeBuilder.build();
+        int[] treeIndexes = treeBuilder.getTree();
+        sortCoordsAndIndexes(treeIndexes);
+    }
+
+    private void sortCoordsAndIndexes(int[] newVertices) {
+        oldToNewVertexIndex = new IntArrayList(vertexList.size());
+
+
+        WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
+        TwoDTree newCoords = new TwoDTree(newVertices.length);
+
+        for(int i = 0; i < newVertices.length; i++){
+
+            if(newVertices[i] == -1){
+                newVertexList.add(new IntArrayList(0));
+                newCoords.add(new float[]{-1,-1});
+            } else{
+                oldToNewVertexIndex.set(newVertices[i], i); //Not Built corŕectly I think, way to many 0s
+                newVertexList.add(vertexList.get(newVertices[i]));
+                newCoords.add(coords.get(newVertices[i]));
+            }
+        }
+        vertexList = newVertexList;
+        coords = newCoords;
+
     }
 
     /**
@@ -82,17 +110,28 @@ public class GraphBuilder extends Graph implements Runnable {
     private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
+                if(vertexID[i] == 11367582572l){
+                    System.out.println("Found the node");
+                }
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
                 float[] coord = coords.get(i);
-                this.coords.add(coord[0]);
-                this.coords.add(coord[1]);
+                //if(coord[0] == 55.750755f && coord[1] == 12.555152f){
+                //    System.out.println("Found the node");
+                //}
+                this.coords.add(coord);
                 //coords.add();
                 //Here we should add coords, but I dont know how to get them currently, as I should either give this method a way,
                 // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
 
                 //Here we could add node ids to an nodeIDArray, if we want them later
+
+                //55.821827 12.313429
+                //57.01456 9.979408
+                if(coord[0] == 55.821827f && coord[1] == 12.313429f || coord[0] == 57.01456f && coord[1] == 9.979408f){
+                    System.out.println("Found the node");
+                }
             }
         }
     }
@@ -126,6 +165,12 @@ public class GraphBuilder extends Graph implements Runnable {
 
             edgeWeights.add(weight);
             edgeWeights.add(weight);
+
+            //mystisk vej fra 10837361538
+            //til 1275653523
+            if(nodeIDs[i] == 10837361538l || nodeIDs[i+1] == 1275653523l || nodeIDs[i] == 1275653523l || nodeIDs[i+1] == 10837361538l){
+                System.out.println("Found the edge");
+            }
 
         }
 
@@ -212,6 +257,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/edgeDestinations.txt"),
                 new File(folderPath + "/edgeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
+                new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -221,6 +267,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 edgeDestinations,
                 edgeWeights,
                 coords,
+                oldToNewVertexIndex
                 //wayIDs
         };
 

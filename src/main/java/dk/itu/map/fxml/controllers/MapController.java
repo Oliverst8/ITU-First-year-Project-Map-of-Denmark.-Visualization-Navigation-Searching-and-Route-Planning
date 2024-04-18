@@ -3,6 +3,7 @@ package dk.itu.map.fxml.controllers;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
 import java.util.Map;
@@ -10,7 +11,11 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
+import dk.itu.map.structures.Point;
+import dk.itu.map.task.CanvasRedrawTask;
+import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Alert;
 
 public class MapController {
 
@@ -80,7 +85,7 @@ public class MapController {
      * @param zoomLevel the zoom level of the chunks
      */
     private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<DrawableWay>> chunks = model.chunkLayers.get(zoomLevel);
+        Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(zoomLevel);
 
         chunkSet.removeAll(chunks.keySet());
 
@@ -113,7 +118,7 @@ public class MapController {
      * @param zoomLevel the zoom level to be updated
      */
     private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        for (Map<Integer, List<DrawableWay>> chunkLayers : model.chunkLayers) {
+        for (Map<Integer, List<Drawable>> chunkLayers : model.chunkLayers) {
             chunkLayers.keySet().retainAll(chunks);
         }
 
@@ -140,5 +145,29 @@ public class MapController {
         updateZoomLayer(chunks, detailLevel);
 
         return currentChunkAmountSeen;
+    }
+
+    public void navigate(){
+        Point startPoint = model.getStartPoint();
+        Point endPoint = model.getEndPoint();
+        if(startPoint == null || endPoint == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Start or end point missing");
+            alert.setContentText("Please select a start and end point before navigating");
+            alert.showAndWait();
+            return;
+        }
+        Navigation navigation = new Navigation(model.getGraph());
+        DrawableWay path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
+        if(path == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No path found");
+            alert.setContentText("No path found between the selected points");
+            alert.showAndWait();
+            return;
+        }
+        model.setRoute(path);
     }
 }

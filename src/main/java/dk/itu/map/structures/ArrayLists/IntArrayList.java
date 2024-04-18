@@ -56,6 +56,25 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     }
 
     /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(int value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+        if(size > biggestIndex) biggestIndex = size-1;
+    }
+
+    public void set(int index, int value){
+        array[index] = value;
+        if(index > biggestIndex) biggestIndex = index;
+    }
+
+    /**
      * Returns the value at the given index.
      * @param index to be gotten
      * @return int the value at the given index
@@ -78,6 +97,7 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
 
     @Override
     public void write(DataOutputStream stream) throws IOException {
+        size = Math.max(size, biggestIndex+1);
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
             stream.writeInt(array[i]);
@@ -98,6 +118,7 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
+        biggestIndex = size-1;
         array = new int[size];
         for (int i = 0; i < size; i++) {
             array[i] = stream.readInt();
@@ -121,21 +142,10 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         int temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
+        if(index1 > biggestIndex) biggestIndex = index1;
+        else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(int value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-
-        array[size] = value;
-        size++;
-    }
 
     public void addAll(int[] values) {
         while (size + values.length > array.length) {

@@ -46,8 +46,9 @@ public class Navigation {
     private void relax(int vertex) {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
-            int destination = graph.getDestination(edges.get(i));
-            float newWeight = distTo[vertex] + graph.getWeight(edges.get(i));
+            int edge = edges.get(i);
+            int destination = graph.getDestination(edge);
+            float newWeight = distTo[vertex] + graph.getWeight(edge);
             if(newWeight < distTo[destination]){
                 if(queue.contains(destination)) queue.decreaseKey(destination, newWeight);
                 else queue.insert(destination, newWeight);
@@ -62,10 +63,9 @@ public class Navigation {
         vertexTo[vertex] = vertexFrom;
     }
 
-    public DrawableWay getPath(long startPoint, long endPoint) {
+    private DrawableWay getPath(int startPointID, int endPointID){
 
-        int startPointID = graph.idToVertexId(startPoint);
-        int endPointID = graph.idToVertexId(endPoint);
+
 
         if(!buildPaths(startPointID, endPointID)) return null;
 
@@ -84,6 +84,21 @@ public class Navigation {
         return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
 
         //return path;
+
+    }
+
+    public DrawableWay getPath(long startID, long endID){
+        int startPointID = graph.idToVertexId(startID);
+        int endPointID = graph.idToVertexId(endID);
+        return getPath(startPointID, endPointID);
+    }
+
+    public DrawableWay getPath(float[] startCoords, float[] endCoords){
+        //int startPoint = graph.getNearestNeigherborID(startCoords);
+        int startPoint = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]});
+        //int endPoint = graph.getNearestNeigherborID(endCoords);
+        int endPoint = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]});
+        return getPath(startPoint, endPoint);
 
     }
 

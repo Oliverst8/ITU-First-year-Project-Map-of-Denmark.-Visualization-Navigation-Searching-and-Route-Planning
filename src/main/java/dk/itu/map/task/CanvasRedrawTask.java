@@ -1,5 +1,6 @@
 package dk.itu.map.task;
 
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
 import java.util.Set;
@@ -14,10 +15,10 @@ public class CanvasRedrawTask extends Task<Void> {
     private final Canvas canvas;
     private final Affine trans;
     private final float zoom;
-    private Set<DrawableWay> ways = null;
+    private Set<Drawable> ways = null;
     int themeNumber = 0;
 
-    public CanvasRedrawTask(Canvas canvas, Set<DrawableWay> ways, Affine trans, float zoom, int themeNumber) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoom, int themeNumber) {
         this.canvas = canvas;
         this.ways = ways;
         this.trans = trans;
@@ -33,7 +34,7 @@ public class CanvasRedrawTask extends Task<Void> {
         wipeCanvas(gc);
 
         // Draw the chunks
-        for (DrawableWay way : ways) {
+        for (Drawable way : ways) {
             way.draw(gc, zoom, themeNumber);
         }
 

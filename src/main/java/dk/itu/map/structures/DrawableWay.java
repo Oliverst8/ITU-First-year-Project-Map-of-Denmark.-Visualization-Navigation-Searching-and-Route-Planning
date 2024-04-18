@@ -6,7 +6,7 @@ import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class DrawableWay implements Serializable {
+public class DrawableWay implements Drawable {
     private final CoordArrayList outerCoords;
     private final CoordArrayList innerCoords;
     private final String[] tags;
