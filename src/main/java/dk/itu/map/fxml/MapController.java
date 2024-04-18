@@ -130,8 +130,18 @@ public class MapController extends ViewController {
     }
 
     @FXML
-    void switchTheme(){
+    void switchToStandardTheme(){
+        themeNumber = 0;
+        redraw();
+    }
+    @FXML
+    void switchToDarkTheme(){
         themeNumber = 1;
+        redraw();
+    }
+    @FXML
+    void switchToYetAnotherTheme(){
+        themeNumber = 2;
         redraw();
     }
 

@@ -33,7 +33,6 @@
 -->
 
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -53,9 +52,9 @@
             <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu mnemonicParsing="false" text="Theme">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Standard Theme" />
-                        <MenuItem mnemonicParsing="false" text="Darkmode" />
-                        <MenuItem mnemonicParsing="false" text="Yet another theme" />
+                      <MenuItem mnemonicParsing="false" onAction="#switchToStandardTheme" text="Standard Theme" />
+                        <MenuItem mnemonicParsing="false" onAction="#switchToDarkTheme" text="Darkmode" />
+                        <MenuItem mnemonicParsing="false" onAction="#switchToYetAnotherTheme" text="Yet another theme" />
                     </items>
                   </Menu>
             <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
@@ -73,7 +72,6 @@
         <Canvas fx:id="canvasAmenity" />
         <Canvas fx:id="canvasHighway" />
         <Canvas fx:id="canvasBuilding" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
-            <Button layoutX="14.0" layoutY="206.0" mnemonicParsing="false" onAction="#switchTheme" text="Button" />
         
         <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
       </children>

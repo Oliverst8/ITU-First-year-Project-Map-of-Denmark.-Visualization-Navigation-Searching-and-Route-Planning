@@ -122,6 +122,9 @@ public class DrawableWay implements Serializable {
                     if (themeNumber == 0) {
                         gc.setStroke(Color.TURQUOISE);
                     }
+                    if (themeNumber == 2) {
+                        gc.setStroke(Color.web("#00FF00"));
+                    }
                     gc.stroke();
                     continue;
 
@@ -132,6 +135,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#E6EDF8"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF69B4"));
+                            }
                             gc.fill();
                             continue;
 
@@ -139,6 +145,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.005f;
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#F3F6FF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#00BFFF"));
                             }
                             gc.stroke();
                             continue;
@@ -148,6 +157,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#F3F6FF"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#00BFFF"));
+                            }
                             gc.stroke();
                             continue;
                         
@@ -155,6 +167,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.0001f;
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#E6EDF8"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF69B4"));
                             }
                             gc.fill();
                             continue;
@@ -167,6 +182,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#8BA5C1"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFD700"));
+                            }
                             gc.stroke();
                             continue;
 
@@ -174,6 +192,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.0005f;
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#B1C0CF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
                             }
                             gc.stroke();
                             continue;
@@ -183,6 +204,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#B1C0CF"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
+                            }
                             gc.stroke();
                             continue;
 
@@ -191,6 +215,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#8BA5C1"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFD700"));
+                            }
                             gc.stroke();
                             continue;
                         
@@ -198,6 +225,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.0005f;
                             if (themeNumber == 0) {
                                 gc.setStroke(Color.web("#B1C0CF"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setStroke(Color.web("#FFA07A"));
                             }
                             gc.stroke();
                             continue;
@@ -210,6 +240,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#F7ECCF"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FFD700"));
+                            }
                             gc.fill();
                             continue;
                         
@@ -218,6 +251,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#90DAEE"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#00CED1"));
+                            }
                             gc.fill();
                             continue;
 
@@ -225,6 +261,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.0001f;
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#C9F5DB"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#7FFFD4"));
                             }
                             gc.fill();
                             continue;
@@ -237,6 +276,9 @@ public class DrawableWay implements Serializable {
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#C9F5DB"));
                             }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#7FFFD4"));
+                            }
                             gc.fill();
                             continue;
                     }
@@ -247,6 +289,9 @@ public class DrawableWay implements Serializable {
                             lineWidth = 0.0001f;
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#F5F3F3"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF4500"));
                             }
                             gc.fill();
                             continue;
@@ -261,6 +306,9 @@ public class DrawableWay implements Serializable {
                             }
                             if (themeNumber == 0) {
                                 gc.setFill(Color.web("#E8E9ED"));
+                            }
+                            if (themeNumber == 2) {
+                                gc.setFill(Color.web("#FF007F"));
                             }
                             gc.stroke();
                             gc.fill();
