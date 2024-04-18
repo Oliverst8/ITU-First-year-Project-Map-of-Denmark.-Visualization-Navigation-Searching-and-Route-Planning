@@ -1,8 +1,13 @@
 package dk.itu.map.structures.ArrayLists;
 
-public class LongArrayList extends PrimitiveArrayList {
+import dk.itu.map.structures.WriteAble;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class LongArrayList extends PrimitiveArrayList implements WriteAble {
     // The array that holds the values
-    private long[] list;
+    private long[] array;
 
     /**
      * Constructor for the LongArrayList class
@@ -11,7 +16,7 @@ public class LongArrayList extends PrimitiveArrayList {
      */
     public LongArrayList() {
         super();
-        list = new long[ARRAY_INIT_SIZE];
+        array = new long[ARRAY_INIT_SIZE];
     }
 
     /**
@@ -21,7 +26,7 @@ public class LongArrayList extends PrimitiveArrayList {
      */
     public LongArrayList(int init_size) {
         super();
-        list = new long[init_size];
+        array = new long[init_size];
     }
 
     /**
@@ -30,10 +35,10 @@ public class LongArrayList extends PrimitiveArrayList {
      * @param value to be inserted
      */
     public void add(long value) {
-        if (size >= list.length) {
+        if (size >= array.length) {
             resize();
         }
-        list[size] = value;
+        array[size] = value;
         size++;
     }
 
@@ -43,17 +48,65 @@ public class LongArrayList extends PrimitiveArrayList {
      * @return long the value at the index
      */
     public long get(int index) {
-        return list[index];
+        return array[index];
     }
 
     /**
      * Resizes the array to double the size
      */
+    @Override
     protected void resize() {
-        long[] newList = new long[list.length * 2];
-        for (int i = 0; i < list.length; i++) {
-            newList[i] = list[i];
+        long[] newList = new long[array.length * 2];
+        System.arraycopy(array, 0, newList, 0, array.length);
+        array = newList;
+    }
+
+    @Override
+    public void write(String path) throws IOException {
+        DataOutputStream stream = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(path)
+                )
+        );
+        write(stream);
+        stream.close();
+    }
+
+    @Override
+    public void write(DataOutputStream stream) throws IOException {
+        stream.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            stream.writeLong(array[i]);
         }
-        list = newList;
+    }
+
+    @Override
+    public void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
+    public void read(DataInputStream stream) throws IOException {
+        size = stream.readInt();
+        array = new long[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = stream.readLong();
+        }
+    }
+
+    public long[] toArray() {
+        return Arrays.copyOfRange(array, 0, size);
+    }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        long temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
     }
 }

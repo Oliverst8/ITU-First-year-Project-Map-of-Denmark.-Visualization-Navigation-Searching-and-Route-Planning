@@ -10,13 +10,14 @@ module dk.itu.map {
     requires javafx.base;
     
     opens dk.itu.map to javafx.fxml;
+    opens dk.itu.map.fxml to javafx.fxml;
+    opens dk.itu.map.parser to javafx.fxml;
+    opens dk.itu.map.structures to javafx.fxml;
     opens dk.itu.map.fxml.views to javafx.fxml;
 
     exports dk.itu.map;
     exports dk.itu.map.fxml;
     exports dk.itu.map.parser;
     exports dk.itu.map.structures;
-    opens dk.itu.map.structures to javafx.fxml;
     exports dk.itu.map.structures.ArrayLists;
-    opens dk.itu.map.structures.ArrayLists to javafx.fxml;
 }

@@ -21,8 +21,7 @@ class ZoomLayer extends ArrayList<Chunk> {}
 public class ChunkGenerator implements Runnable {
 
     private final String dataPath;
-    // chunk size in coordinate size
-    private final float CHUNK_SIZE = 0.25f;
+    private final float CHUNK_SIZE = 0.05f;
     private final byte amountOfZoomLayers = 5;
 
     public float minLat, maxLat, minLon, maxLon;
@@ -34,6 +33,8 @@ public class ChunkGenerator implements Runnable {
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
+    private final GraphBuilder graph;
+    private final Thread graphThread;
 
     private final Thread chunkingThread;
 
@@ -48,11 +49,14 @@ public class ChunkGenerator implements Runnable {
      * @param maxLon The maximum longitude
      */
     public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
+        graph = new GraphBuilder();
         this.dataPath = dataPath;
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         this.chunkingThread = new Thread(this);
         this.chunkingThread.start();
+        graphThread = new Thread(graph);
+        graphThread.start();
 
         this.minLat = minLat;
         this.maxLat = maxLat;
@@ -91,6 +95,7 @@ public class ChunkGenerator implements Runnable {
                     new FileOutputStream(files[i][j]).close();
                 }
             }
+            (new File(dataPath + "/utilities")).mkdir();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -129,6 +134,7 @@ public class ChunkGenerator implements Runnable {
     public void addWay(MapElement way) {
         rawWays.add(way);
     }
+    
     /**
      * Sort ways into chunks and zoom levels
      */
@@ -136,61 +142,15 @@ public class ChunkGenerator implements Runnable {
         List<MapElement> newWays = rawWays;
         System.out.println("chunking: " + newWays.size());
         rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        forWay:
         for (MapElement way : newWays) {
-            byte zoomLevel = -1;
-            List<String> tags = way.getTags();
-            for (String tag : tags) {
-                switch (tag) {
-                    case "ferry":
-                        continue forWay;
-
-                    case "motorway":
-                    case "motorway_link":
-                    case "trunk":
-                    case "trunk_link":
-                    case "primary":
-                    case "primary_link":
-                    case "island":
-                    case "coastline":
-                        zoomLevel = 4;
-                        break;
-                    case "aerodrome":
-                    case "secondary":
-                    case "secondary_link":
-                    case "rail":
-                    case "light_rail":
-                        if (zoomLevel < 3) zoomLevel = 3;
-                        break;
-                    case "forest":
-                    case "grassland":
-                    case "wetland":
-                    case "runway":
-                    case "tertiary":
-                    case "tertiary_link":
-                    case "heath":
-                    case "scrub":
-                    case "fell":
-                    case "beach":
-                    case "water":
-                        if (zoomLevel < 2) zoomLevel = 2;
-                        break;
-                    case "unclassified":
-                    case "residential":
-                        if (zoomLevel < 1) zoomLevel = 1;
-                        break;
-                    case "building":
-                    case "highway":
-                        if (zoomLevel < 0) zoomLevel = 0;
-                        break;
-                }
-            }
+            byte zoomLevel = desiredZoomLevel(way);
             if (zoomLevel == -1) continue;
 
             CoordArrayList coords = way.getCoords();
-            for (int i = 0; i < coords.size(); i += 2) {
-                float lat = coords.get(i);
-                float lon = coords.get(i + 1);
+            for (int i = 0; i < coords.size(); i++) {
+                float[] coord = coords.get(i);
+                float lat = coord[0];
+                float lon = coord[1];
 
                 int chunkIndex = coordsToChunkIndex(lat, lon);
 
@@ -199,6 +159,95 @@ public class ChunkGenerator implements Runnable {
                 }
             }
         }
+    }
+
+    /**
+     * Determines the desired zoom level for a way
+     * @param way The way to determine the zoom level for
+     * @return The desired zoom level
+     */
+    private byte desiredZoomLevel(MapElement way) {
+        byte zoomLevel = -1;
+        List<String> tags = way.getTags();
+
+        for (int i = 0; i < tags.size(); i += 2) {
+            switch (tags.get(i)) {
+                case "route":
+                    switch (tags.get(i + 1)) {
+                        case "ferry", "ferry_link":
+                            return -1;
+                    }
+
+                case "place":
+                    switch (tags.get(i + 1)) {
+                        case "island", "islet":
+                            if (zoomLevel < 4) zoomLevel = 4;
+                            break;
+                    }
+                    break;
+
+                case "aeroway":
+                    switch (tags.get(i + 1)) {
+                        case "aerodrome":
+                            if (zoomLevel < 3) zoomLevel = 3;
+                            break;
+
+                        case "apron", "runway", "taxiway":
+                            if (zoomLevel < 2) zoomLevel = 2;
+                            break;
+                    }
+                    break;
+                
+                case "highway":
+                    if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
+                    switch (tags.get(i + 1)) {
+                        case "trunk", "primary", "secondary", "motorway":
+                            if (zoomLevel < 4) zoomLevel = 4;
+                            break;
+
+                        case "tertiary", "tertiary_link", "motorway_link", "primary_link", "trunk_link":
+                            if (zoomLevel < 3) zoomLevel = 3;
+                            break;
+                        
+                        case "service", "residential", "unclassified":
+                            if (zoomLevel < 1) zoomLevel = 0;
+                            break;
+                    }
+                    break;
+
+                case "natural":
+                    switch (tags.get(i + 1)) {
+                        case "peninsula":
+                            if (zoomLevel < 4) zoomLevel = 4;
+                            break;
+                    }
+
+                    switch (tags.get(i + 1)) {
+                        case "water", "scrub", "beach":
+                            if (zoomLevel < 3) zoomLevel = 3;
+                            break;
+                    }
+                    break;
+                
+                case "landuse":
+                    switch (tags.get(i + 1)) {
+                        case "allotments", "industrial", "residential":
+                            if (zoomLevel < 3) zoomLevel = 3;
+                            break;
+                    }
+                    break;
+                
+                case "building":
+                    switch (tags.get(i + 1)) {
+                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
+                            if (zoomLevel < 0) zoomLevel = 0;
+                            break;
+                    }
+                    break;
+                }
+        }
+
+        return zoomLevel;
     }
 
     /**
@@ -223,7 +272,18 @@ public class ChunkGenerator implements Runnable {
 
             writeFiles();
         }
-        System.out.println("Finished while loop");
+        long startTime = System.nanoTime();
+        graph.stop();
+        try {
+            graphThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        writeUtilities();
+
+        System.out.println(graph.size());
+        long endTime = System.nanoTime();
+        System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
     }
     /**
      * Write the chunks to binaryfiles
@@ -271,6 +331,10 @@ public class ChunkGenerator implements Runnable {
                 "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
+    private void writeUtilities(){
+        graph.writeToFile(dataPath + "/utilities");
+    }
+
     /**
      * Used to mark the finish of ChunkGenerator and prevent it from continuing
      */

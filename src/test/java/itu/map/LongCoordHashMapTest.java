@@ -2,7 +2,7 @@ package itu.map;
 
 import org.junit.jupiter.api.Test;
 
-import dk.itu.map.structures.LongCoordHashMap;
+import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 

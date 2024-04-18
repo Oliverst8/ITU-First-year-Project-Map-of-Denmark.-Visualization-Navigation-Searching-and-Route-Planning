@@ -1,6 +1,7 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Way;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
 import java.io.FileReader;
@@ -70,8 +71,9 @@ public class ChunkLoader {
      * @param zoomLevel The zoom level
      * @return The ways
      */
-    public Map<Integer, List<Way>> readFiles(int[] chunks, int zoomLevel) {
-        Map<Integer, List<Way>> ways = Collections.synchronizedMap(new HashMap<>());
+
+    public Map<Integer, List<DrawableWay>> readFiles(int[] chunks, int zoomLevel) {
+        Map<Integer, List<DrawableWay>> ways = Collections.synchronizedMap(new HashMap<>());
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
             if (chunk < 0 || chunk >= chunkAmount) return;
@@ -80,24 +82,30 @@ public class ChunkLoader {
 
             File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
-            float[] outerCoords;
-            float[] innerCoords;
+            long id;
+            CoordArrayList outerCoords;
+            CoordArrayList innerCoords;
             String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
-                    outerCoords = new float[stream.readInt()];
-                    for (int j = 0; j < outerCoords.length; j++) {
-                        outerCoords[j] = stream.readFloat();
+                    id = stream.readLong();
+                    int outerCoordsLength = stream.readInt();
+                    outerCoords = new CoordArrayList(outerCoordsLength);
+                    for (int j = 0; j < outerCoordsLength; j++) {
+                        outerCoords.add(stream.readFloat(), stream.readFloat());
                     }
-                    innerCoords = new float[stream.readInt()];
-                    for (int j = 0; j < innerCoords.length; j++) {
-                        innerCoords[j] = stream.readFloat();
+                    int innerCoordsLength = stream.readInt();
+                    innerCoords = new CoordArrayList(innerCoordsLength);
+                    for (int j = 0; j < innerCoordsLength; j++) {
+                        innerCoords.add(stream.readFloat(), stream.readFloat());
                     }
                     tags = new String[stream.readInt()];
                     for (int j = 0; j < tags.length; j++) {
                         tags[j] = stream.readUTF();
                     }
-                    ways.get(chunk).add(new Way(outerCoords, innerCoords, tags));
+
+                    String primaryType = stream.readUTF();
+                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

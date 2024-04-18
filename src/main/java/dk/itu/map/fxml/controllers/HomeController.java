@@ -64,6 +64,8 @@ public class HomeController {
             mapList.getItems().add(item);
 
             item.setOnAction(e -> {
+                mapList.hide();
+
                 App.setView(new Screen.Map(item.getText()));
             });
         }

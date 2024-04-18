@@ -1,83 +1,168 @@
 package dk.itu.map.structures;
 
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
-import dk.itu.map.structures.ArrayLists.LongArrayList;
+import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
+import dk.itu.map.structures.HashMaps.LongIntHashMap;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.*;
+import java.util.stream.IntStream;
 
-public class Graph implements Runnable {
-    private List<Way> ways;
-    private final HashMap<Long, IntArrayList> idToIndex;
-    private final CoordArrayList edges;
-    private final LongArrayList ids;
-    private boolean running = true;
 
+public class Graph {
+    protected final LongIntHashMap idToIndex;
+    protected final WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
+    protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
+    protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
+    protected final FloatArrayList coords; //List that holds the coordinates of each vertex
+
+    /**
+     * Constructor for the Graph class
+     * Initializes the idToIndex, vertexList, edgeDestinations, edgeWeights and coords
+     */
     public Graph() {
-        edges = new CoordArrayList(50_000);
-        ways = Collections.synchronizedList(new ArrayList<>());
-        idToIndex = new HashMap<>();
-        ids = new LongArrayList(50_000);
+        idToIndex = new LongIntHashMap();
+        vertexList = new WriteAbleArrayList<>();
+        edgeDestinations = new IntArrayList();
+        edgeWeights = new FloatArrayList(50_000);
+        coords = new FloatArrayList();
+        //wayIDs = new LongArrayList();
     }
 
-    private float calcWeight(Way way) {
-        float[] coords = way.getCoords();
-        float distSum = 0;
-        for(int i = 0; i < way.getCoords().length-2; i +=2) {
-            distSum += (float) Math.sqrt(Math.pow(coords[i] - coords[i+2], 2) + Math.pow(coords[i+1] - coords[i+3], 2));
-        }
-
-        return distSum;
+    /**
+     * @return the number of vertices in the graph
+     */
+    public int size(){
+        return idToIndex.size();
     }
 
-    public void run() {
-        while(running){
-            while(!ways.isEmpty()){
-                Way way = ways.remove(0);
-                addVertix(way.getNodeIDs());
-                addEdge(way);
+    /**
+     * @param vertex to be gotten edge list of
+     * @return A list of vertices edge indexes. These indexes refer to the edgeDestinations and edgeWeights lists
+     */
+    public IntArrayList getEdgeList(int vertex){return vertexList.get(vertex);}
+
+    /**
+     * @param edge the index of the edges destination to be gotten
+     * @return the destination of the edge
+     */
+    public int getDestination(int edge){
+        return edgeDestinations.get(edge);
+    }
+
+    /**
+     * @param edge the index of the edge weight to be gotten
+     * @return the weight of the edge
+     */
+    public float getWeight(int edge){
+        return edgeWeights.get(edge);
+    }
+
+    /**
+     * @param index the index of the vertex coords to be gotten
+     * @return the coordinates of the vertex
+     */
+    public float[] getCoords(int index){
+        return new float[]{coords.get(index*2), coords.get(index*2+1)};
+    }
+
+    /**
+     * @param id the id of the vertex
+     * @return the index of the vertex
+     */
+    public int idToVertexId(long id){
+        return idToIndex.get(id);
+    }
+
+    /**
+     * Loads the graph from a given folder
+     * @param path the path where the graph folder is located
+     * @throws IOException
+     */
+    public void loadFromDataPath(String path) throws IOException {
+        String folderPath = path + "/graph";
+        File[] files = new File[]{
+                new File(folderPath + "/idToIndex.txt"),
+                new File(folderPath + "/vertexList.txt"),
+                new File(folderPath + "/edgeDestinations.txt"),
+                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/coords.txt"),
+                //new File(folderPath + "/wayIDs.txt")
+        };
+
+        DataInputStream[] streams = new DataInputStream[files.length];
+
+        for(int i = 0; i < files.length; i++){
+            try {
+                streams[i] = new DataInputStream(
+                        new BufferedInputStream(
+                                new FileInputStream(files[i].getAbsolutePath())
+                        )
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
+        try{
+            DataInputStream stream = new DataInputStream(
+                    new BufferedInputStream(
+                            new FileInputStream(files[1].getAbsolutePath())
+                    )
+            );
+            int sizeOfIdToIndex = stream.readInt();
+            for(int i = 0; i < sizeOfIdToIndex; i++){
+                vertexList.add(new IntArrayList(0));
+            }
+            vertexList.trimToSize();
+            stream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        WriteAble[] instanceVariables = new WriteAble[]{
+                idToIndex,
+                vertexList,
+                edgeDestinations,
+                edgeWeights,
+                coords,
+                //wayIDs
+        };
+
+        IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
+            try {
+                instanceVariables[i].read(streams[i]);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        for(DataInputStream stream : streams){
+            stream.close();
+        }
+
     }
 
-    private void addVertix(long[] vertexID){
-        idToIndex.putIfAbsent(vertexID[0], new IntArrayList());
-        idToIndex.putIfAbsent(vertexID[1], new IntArrayList());
+    public IntArrayList getEdges() {
+        return edgeDestinations;
     }
 
-    private void addEdge(Way way) {
-        idToIndex.get(way.getNodeIDs()[0]).add(ids.size());
-        ids.add(way.getId());
-        idToIndex.get(way.getNodeIDs()[1]).add(ids.size());
-        ids.add(way.getId());
-
-        float[] nodes = way.getCoords();
-
-        edges.add(nodes[nodes.length-2]);
-        edges.add(nodes[nodes.length-1]);
-        edges.add(calcWeight(way));
-
-        edges.add(nodes[0]);
-        edges.add(nodes[1]);
-        edges.add(calcWeight(way));
+    public FloatArrayList getWeights() {
+        return edgeWeights;
     }
 
-    public void addWay(Way way) {
-        ways.add(way);
-    }
-
-    public void stop() {
-        running = false;
-    }
-
-    public CoordArrayList getEdges() {
-        return edges;
-    }
-
-    public LongArrayList getIds() {
-        return ids;
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Graph){
+            Graph other = (Graph) obj;
+            if(!idToIndex.equals(other.idToIndex)) return false;
+            if(!vertexList.equals(other.vertexList)) return false;
+            if(!edgeDestinations.equals(other.edgeDestinations)) return false;
+            if(!edgeWeights.equals(other.edgeWeights)) return false;
+            if(!coords.equals(other.coords)) return false;
+            return true;
+        }
+        return false;
     }
 }

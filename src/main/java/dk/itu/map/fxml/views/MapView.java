@@ -1,18 +1,31 @@
 package dk.itu.map.fxml.views;
 
-import java.util.List;
-import java.util.Map;
-
+import dk.itu.map.Model;
+import dk.itu.map.Controller;
+import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.task.CanvasRedrawTask;
+import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.structures.Way;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.HashMap;
+
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -20,12 +33,14 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MapView {
-    
-    // JavaFX canvas
     @FXML
-    private Canvas canvas;
-    // GraphicsContext for drawing on the canvas
-    private GraphicsContext gc;
+    private VBox root;
+
+    @FXML
+    private AnchorPane canvasParent;
+    private String[] mapLayers;
+    private Map<String, Canvas> canvas;
+    
     // Affine transformation for panning and zooming
     private Affine trans;
     private MapController controller;
@@ -38,15 +53,17 @@ public class MapView {
     // Zoom level
     private float zoomLevel;
     // Initial distance between two points
-    // private float startDist;
+    private float startDist;
 
     // Amount of chunks seen
     private float currentChunkAmountSeen = 1;
 
+    private AnimationTimer render;
+
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
         this.model = model;
-    }
+
 
     /**
      * Initializes the graphics context, and set rules for drawing
@@ -56,42 +73,80 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        gc = canvas.getGraphicsContext2D();
-        gc.setFillRule(FillRule.EVEN_ODD);
-        gc.setLineCap(StrokeLineCap.ROUND);
-        gc.setLineJoin(StrokeLineJoin.ROUND);
+        mapLayers = new String[]{"building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
+
+        canvas = new HashMap<>();
+        for(String key : mapLayers) {
+            canvas.put(key, (Canvas) canvasParent.lookup("#canvas" + key.substring(0, 1).toUpperCase() + key.substring(1)));
+
+            GraphicsContext gc = canvas.get(key).getGraphicsContext2D();
+
+            gc.setFillRule(FillRule.EVEN_ODD);
+            gc.setLineCap(StrokeLineCap.ROUND);
+            gc.setLineJoin(StrokeLineJoin.ROUND);
+
+            canvas.get(key).widthProperty().bind(root.widthProperty());
+            canvas.get(key).heightProperty().bind(root.heightProperty());
+        }
+
         trans = new Affine();
+        trans.prependTranslation(-0.56 * viewModel.getMinLon(), viewModel.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
 
-        trans.prependTranslation(-0.56 * this.model.getMinLon(), this.model.getMaxLat());
-        // Calling the code of pan, to prevent redraw before zoom has been run
-        // This is done to avoid getheight and getwidth from canvas, returning way to
-        // big values
-        zoom(0, 0, canvas.getHeight() / (this.model.getMaxLat() - this.model.getMinLat()));
+        // Zoom to the initial view
+        Platform.runLater(() -> {
+            zoom(0, 0, canvas.get("building").getHeight() / (this.viewModel.getMaxLat() - this.viewModel.getMinLat()));
 
-        // startDist = getZoomDistance();
-        redraw();
-
-        canvas.setOnMousePressed(e -> {
-            lastX = (float)e.getX();
-            lastY = (float)e.getY();
+            redraw();
         });
 
-        canvas.setOnMouseDragged(e -> {
-            if (e.isPrimaryButtonDown()) {
+        startDist = getZoomDistance();
 
-                double dx = e.getX() - lastX;
-                double dy = e.getY() - lastY;
-                pan(dx, dy);
+
+        render = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                redraw();
             }
+        };
+    }
 
-            lastX = (float)e.getX();
-            lastY = (float)e.getY();
-        });
+    @FXML
+    void canvasPressed(MouseEvent e) {
+        if(e.isPrimaryButtonDown()) {
+            lastX = (float) e.getX();
+            lastY = (float) e.getY();
 
-        canvas.setOnScroll(e -> {
-            double factor = e.getDeltaY();
-            zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
-        });
+            render.start();
+        } else if(e.isSecondaryButtonDown()) {
+            Navigation navigation = new Navigation(this.viewModel.getGraph());
+            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
+            System.out.println(path);
+            path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100);
+        }
+    }
+
+    @FXML
+    void canvasReleased(MouseEvent e) {
+        render.stop();
+    }
+
+    @FXML
+    void canvasDragged(MouseEvent e) {
+        if (e.isPrimaryButtonDown()) {
+
+            double dx = e.getX() - lastX;
+            double dy = e.getY() - lastY;
+            pan(dx, dy);
+        }
+
+        lastX = (float) e.getX();
+        lastY = (float) e.getY();
+    }
+
+    @FXML
+    void canvasScroll(ScrollEvent e) {
+        double factor = e.getDeltaY();
+        zoom(e.getX(), e.getY(), Math.pow(1.01, factor));
     }
 
     @FXML
@@ -130,36 +185,46 @@ public class MapView {
         trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
         trans.prependTranslation(dx, dy);
-        redraw();
     }
 
     /**
      * Redraws the map
      */
     private void redraw() {
-        gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.setTransform(trans);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-
-        gc.setStroke(Color.BLACK);
-        gc.setFill(Color.GRAY);
-
-        // If you remove the first updateZoomLevel it takes double the amount of time to
-        // load the chunks, we dont know why (mvh August & Oliver)
+        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
         currentChunkAmountSeen = controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
 
-        for (int i = getDetailLevel(); i <= 4; i++) {
-            Map<Integer, List<Way>> chunkLayer = model.getChunksInZoomLevel(i);
+        Map<String, Set<DrawableWay>> ways = new HashMap<>();
+        
+        for(String key : mapLayers){
+            ways.put(key, new HashSet<>());
+        }
+
+        float zoom = getZoomDistance() / startDist * 100;
+
+        for(int i = getDetailLevel(); i <= 4; i++) {
+            Map<Integer, List<DrawableWay>> chunkLayer = viewModel.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
-                List<Way> currentChunk = chunkLayer.get(chunk);
-                for (int j = 0; j < chunkLayer.get(chunk).size(); j++) {
-                    currentChunk.get(j).draw(gc, getZoomDistance() * 100);
+                List<DrawableWay> chunkLayerList = chunkLayer.get(chunk);
+                for(int j = 0; j < chunkLayerList.size(); j++) {
+                    DrawableWay way = chunkLayerList.get(j);
+
+                    switch (way.getPrimaryType()) {
+                        case "building", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
+                            ways.get(way.getPrimaryType()).add(way);
+                            break;
+                    }
                 }
             }
+        }
+
+        for (Map.Entry<String, Set<DrawableWay>> entry : ways.entrySet()) {
+            
+            Canvas canvas = this.canvas.get(entry.getKey());
+
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom).run();
         }
     }
 
@@ -180,15 +245,11 @@ public class MapView {
     /**
      * @return int the detail level of the map
      */
-    private int getDetailLevel() {
-        if (zoomLevel > 55000)
-            return 4;
-        if (zoomLevel > 2300)
-            return 3;
-        if (zoomLevel > 115)
-            return 2;
-        if (zoomLevel > 10)
-            return 1;
+    private int getDetailLevel(){
+        if(zoomLevel > 0.07) return 4;
+        if(zoomLevel > 0.01) return 3;
+        if(zoomLevel > 0.01) return 2;
+        if(zoomLevel > 6.9539517E-4) return 1;
         return 0;
     }
 
@@ -206,7 +267,7 @@ public class MapView {
      */
     private void updateZoomLevel() {
         float newZoom = getZoomDistance();
-        zoomLevel = newZoom * 100 * currentChunkAmountSeen * model.getChunkAmount();
+        zoomLevel = (newZoom / startDist) * 100;
     }
 
     /**

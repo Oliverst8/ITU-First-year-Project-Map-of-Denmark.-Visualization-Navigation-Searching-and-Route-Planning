@@ -1,11 +1,10 @@
 package dk.itu.map.structures.ArrayLists;
 
-import java.util.Arrays;
-
 public class CoordArrayList extends PrimitiveArrayList {
 
     // The array that holds the values
-    private float[] array;
+    private float[] arrayX;
+    private float[] arrayY;
 
     /**
      * Constructor for the CoordArrayList class. Initializes the array with a default size.
@@ -13,7 +12,8 @@ public class CoordArrayList extends PrimitiveArrayList {
       */
     public CoordArrayList() {
         super();
-        array = new float[ARRAY_INIT_SIZE];
+        arrayX = new float[ARRAY_INIT_SIZE];
+        arrayY = new float[ARRAY_INIT_SIZE];
     }
 
     /**
@@ -22,7 +22,8 @@ public class CoordArrayList extends PrimitiveArrayList {
      */
     public CoordArrayList(int init_size) {
         super();
-        array = new float[init_size];
+        arrayX = new float[init_size];
+        arrayY = new float[init_size];
     }
 
     /**
@@ -30,32 +31,55 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param array
      */
     public CoordArrayList(float[] array) {
-        this.array = array;
-        size = array.length;
+        arrayX = new float[array.length/2];
+        arrayY = new float[array.length/2];
+
+        this.addAll(array);
     }
 
     /**
      * Resizes the array to double the size.
      */
+    @Override
     protected void resize() {
-        float[] newArray = new float[array.length * 2];
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
+        float[] newArrayX = new float[arrayX.length * 2];
+        float[] newArrayY = new float[arrayY.length * 2];
+        System.arraycopy(arrayX, 0, newArrayX, 0, arrayX.length);
+        System.arraycopy(arrayY, 0, newArrayY, 0, arrayY.length);
+        arrayX = newArrayX;
+        arrayY = newArrayY;
+    }
+
+    /**
+     * Converts the list to a float array.
+     * @return float[]
+     */
+    public float[] toArray() {
+        float[] output = new float[size*2];
+        for (int i = 0; i < size; i++) {
+            output[i*2] = arrayX[i];
+            output[i*2+1] = arrayY[i];
         }
-        array = newArray;
+        return output;
     }
 
     /**
      * Adds a value to the empty spot in the array.
      * If the array is full, it will resize the array.
-     * @param value to be inserted
+     * @param valueX to be inserted
+     * @param valueY to be inserted
      */
-    public void add(float value) {
-        if (size + 1 > array.length) {
+    public void add(float valueX, float valueY) {
+        if (size + 1 > arrayX.length) {
             resize();
         }
-        array[size] = value;
+        arrayX[size] = valueX;
+        arrayY[size] = valueY;
         size++;
+    }
+
+    public void add(float[] coords){
+        add(coords[0], coords[1]);
     }
 
     /**
@@ -64,19 +88,14 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param values to be inserted
      */
     public void addAll(float[] values) {
-        while (size + values.length > array.length) {
+        while (size + values.length/2 > arrayX.length) {
             resize();
         }
-        System.arraycopy(values, 0, array, size, values.length);
-        size += values.length;
-    }
-
-    /**
-     * Converts the list to an float array.
-     * @return float[]
-     */
-    public float[] toArray() {
-        return Arrays.copyOf(array, size);
+        for(int i = 0; i < values.length; i+=2) {
+            arrayX[size] = values[i];
+            arrayY[size] = values[i+1];
+            size++;
+        }
     }
 
     /**
@@ -86,15 +105,15 @@ public class CoordArrayList extends PrimitiveArrayList {
      * If the size is odd, the middle value will not be swapped.
      */
     public void reverse() {
-        for (int i = 0; i < size / 2; i += 2) {
-            float tempX = array[i];
-            float tempY = array[i + 1];
+        for (int i = 0; i < size / 2; i++) {
+            float tempX = arrayX[i];
+            float tempY = arrayY[i];
 
-            array[i] = array[size - i - 2];
-            array[i + 1] = array[size - i - 1];
+            arrayX[i] = arrayX[size - i - 1];
+            arrayY[i] = arrayY[size - i - 1];
 
-            array[size - i - 2] = tempX;
-            array[size - i - 1] = tempY;
+            arrayX[size - i - 1] = tempX;
+            arrayY[size - i - 1] = tempY;
         }
     }
 
@@ -103,11 +122,25 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param index to be gotten
      * @return float value at the index
      */
-    public float get(int index) {
+    public float[] get(int index) {
         if (index < 0)
-            return array[size + index];
+            return new float[]{arrayX[size+index], arrayY[size+index]};
         else
-            return array[index];
+            return new float[]{arrayX[index], arrayY[index]};
     }
+
+    @Override
+    public void exchange(int index1, int index2) {
+        float tempX = arrayX[index1];
+        float tempY = arrayY[index1];
+
+        arrayX[index1] = arrayX[index2];
+        arrayY[index1] = arrayY[index2];
+
+        arrayX[index2] = tempX;
+        arrayY[index2] = tempY;
+    }
+
+
 
 }

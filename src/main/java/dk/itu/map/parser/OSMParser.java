@@ -2,6 +2,7 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.application.Platform;
+import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.LongCoordHashMap;
 
 
@@ -93,7 +94,7 @@ public class OSMParser extends Thread {
             long startLoadTime = System.nanoTime();
 
             whileLoop:
-            while (input.hasNext()) {
+            while (true) {
                 int tagKind = input.next();
 
                 if (tagKind == XMLStreamConstants.START_ELEMENT) {
@@ -218,7 +219,7 @@ public class OSMParser extends Thread {
     private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
-        long[] nodeIds = new long[]{-1,0};
+        LongArrayList nodeIds = new LongArrayList();
         while (input.hasNext()) {
             int eventType = input.next();
             if (eventType != XMLStreamConstants.START_ELEMENT) {
@@ -231,16 +232,12 @@ public class OSMParser extends Thread {
 
                 long node = Long.parseLong(input.getAttributeValue(null, "ref"));
 
-                if (nodeIds[0] == -1) {
-                    nodeIds[0] = node;
-                } else {
-                    nodeIds[1] = node;
-                }
+                nodeIds.add(node);
 
                 float[] temp = nodes.get(node);
 
-                coords.add(temp[0]);
-                coords.add(temp[1]);
+                coords.add(temp[0], temp[1]);
+
             } else if (innerType.equals("tag")) {
                 tags.add(input.getAttributeValue(null, "k"));
                 tags.add(input.getAttributeValue(null, "v"));
@@ -249,7 +246,7 @@ public class OSMParser extends Thread {
             }
         }
 
-        Way way = new Way(id, tags, coords);
+        Way way = new Way(id, tags, coords, nodeIds);
 
         if (relationMap.containsKey(id)) {
             relationMap.get(id).forEach(relation -> {
