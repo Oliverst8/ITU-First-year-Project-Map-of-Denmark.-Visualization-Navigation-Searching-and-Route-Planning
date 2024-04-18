@@ -11,7 +11,8 @@ import java.util.HashSet;
 
 public class TwoDTreeBuilder {
 
-    int tempCounter = 0;
+    int tempCounterPartetion = 0;
+    int tempCounterNotEqual = 0;
     private int[][] sortedIndexes;
 
     private CoordArrayList coords;
@@ -66,11 +67,15 @@ public class TwoDTreeBuilder {
         sortedIndexes[0] = pointX.getSortedIndexes();
         sortedIndexes[1] = pointY.getSortedIndexes();
 
-        if(!checkIfSorted(sortedIndexes[0], 0)){
-            System.out.println("X is not sorted");
+        while(!checkIfSorted(sortedIndexes[0], 0,  true)){
+            System.out.println("X is not sorted: Resorting");
+            insertionSort(sortedIndexes[0], 0, coords.size(), 0);
+            insertionSort(sortedIndexes[1], 1, coords.size(), 0);
         }
-        if(!checkIfSorted(sortedIndexes[1], 1)){
-            System.out.println("Y is not sorted");
+        while(!checkIfSorted(sortedIndexes[1], 1, true)){
+            System.out.println("Y is not sorted: Resorting");
+            insertionSort(sortedIndexes[0], 0, coords.size(), 0);
+            insertionSort(sortedIndexes[1], 1, coords.size(), 0);
         }
 
         int[][] secondArray = new int[2][coords.size()];
@@ -92,9 +97,9 @@ public class TwoDTreeBuilder {
         return -1;
     }
 
-    public boolean checkIfSorted(int[] array, int axis){
+    public boolean checkIfSorted(int[] array, int axis, boolean isSorted){
         for(int i = 0; i < array.length - 1; i++){
-            if(compare(array[i] , array[i + 1], axis) > 0) return false;
+            if(compare(array[i] , array[i + 1], axis, isSorted) > 0) return false;
         }
         return true;
     }
@@ -139,22 +144,19 @@ public class TwoDTreeBuilder {
         int[] array4 = buildArrayFromRange(array2, start, range);
         HashSet<Integer> one = GraphBuilder.getDifference(array3, array4);
         HashSet<Integer> two = GraphBuilder.getDifference(array4, array3);
-        return one.isEmpty() && two.isEmpty();
+        if(one.isEmpty() && two.isEmpty()){
+            return true;
+        }
+        return false;
     }
 
     public int partition(int start, int range, int rootIndex, int primaryAxis, int[][] readArray, int[][] writeArray) {
 
-        if(!arrayEquals(readArray[primaryAxis], readArray[(primaryAxis+1)%2], start, range)){
-            System.out.println(++tempCounter);
-        }
+        tempCounterPartetion++;
 
         int medianIndex = start + (range - 1) / 2;
         int median = readArray[primaryAxis][medianIndex];
-        if(median == 3174149){
-            System.out.println("Median is 3");
-        } else if(medianIndex +1 < readArray[primaryAxis].length &&readArray[primaryAxis][medianIndex+1] == 3){
-            System.out.println("Median + 1 is 3");
-        }
+
         int leftChildIndex = rootIndex * 2 + 1;
         int rightChildIndex = rootIndex * 2 + 2;
         int rangeLeft = (range - 1) / 2;
@@ -164,6 +166,7 @@ public class TwoDTreeBuilder {
         int rightStart = medianIndex + 1;
 
         int secondaryAxis = (primaryAxis + 1) % 2;
+
 
         if(range == 1) {
             setLeftChild(rootIndex, -1);
@@ -195,28 +198,22 @@ public class TwoDTreeBuilder {
             }
             return median;
         }
-        if(start == 1676896 && range == 5){
-            System.out.println();
-        }
         for(int i = start; i < start + range; i++) {
             int index = readArray[secondaryAxis][i]; //i = 7 er hvor den fejler
             writeArray[primaryAxis][i] = readArray[primaryAxis][i];
-            if(index == median) continue;
-            if(index == 58565){
-                if(range == 5){
-                    System.out.println("Other index is 3");
-                }
+            if(index == median){
+                //writeArray[secondaryAxis][medianIndex] = index;
+                continue;
             }
+
             int cmp = compare(index, median, primaryAxis);
-            if(index == 3 && range == 13){
-                System.out.println("Index is 3");
-            }
             if(cmp > 0) {
                 writeArray[secondaryAxis][rightStart++] = index;
             } else if(cmp < 0) {
                 writeArray[secondaryAxis][leftStart++] = index;
             }
         }
+
 
         primaryAxis = secondaryAxis;
 
@@ -228,6 +225,10 @@ public class TwoDTreeBuilder {
     }
 
     private int compare(int index1, int index2, int primaryAxis) {
+        return compare(index1, index2, primaryAxis, true);
+    }
+
+    private int compare(int index1, int index2, int primaryAxis, boolean shouldChange) {
 
         float[] coord1 = coords.get(index1);
         float[] coord2 = coords.get(index2);
@@ -236,7 +237,16 @@ public class TwoDTreeBuilder {
             cmp = Float.compare(coord1[(primaryAxis + 1) % 2], coord2[(primaryAxis + 1) % 2]);
         }
         if(cmp == 0){
-            coords.set(index2, new float[]{coord2[0], coord2[1] + 0.0000001f});
+            if(shouldChange) {
+                float temp = Math.nextAfter(coord2[1], Double.POSITIVE_INFINITY);
+                coords.set(index2, new float[]{coord2[0], temp});
+
+                /*if(temp != coords.get(index2)[1]){
+                    System.out.println();
+                }*/
+            } else{
+                throw new RuntimeException("Two points are equal");
+            }
             cmp = -1;
         }
         return cmp;
