@@ -147,7 +147,7 @@ public class MapController {
         return currentChunkAmountSeen;
     }
 
-    public void navigate(){
+    public void navigate(int vehicleCode) {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
         if(startPoint == null || endPoint == null){
@@ -158,7 +158,7 @@ public class MapController {
             alert.showAndWait();
             return;
         }
-        Navigation navigation = new Navigation(model.getGraph());
+        Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
         DrawableWay path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
         if(path == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -185,4 +185,8 @@ public class Graph {
         }
         return false;
     }
+
+    public ByteArrayList getVehicleRestrictions() {
+        return vehicleRestrictions;
+    }
 }

@@ -373,7 +373,7 @@ public class MapView {
 
     @FXML
     void navigateNow(ActionEvent event){
-        controller.navigate();
+        controller.navigate(vehicleCode);
         redraw();
     }
 }

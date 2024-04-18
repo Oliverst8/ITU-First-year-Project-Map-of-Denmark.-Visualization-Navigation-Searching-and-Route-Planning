@@ -36,9 +36,7 @@ public class Navigation {
             int min = queue.delMin();
 
             if(min == endPoint) return true;
-            if((min^vehicleCode) > 0){
-                relax(min);
-            }
+            relax(min);
         }
         return false;
     }
@@ -46,6 +44,9 @@ public class Navigation {
     private void relax(int vertex) {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
+            if((graph.getVehicleRestrictions().get(edges.get(i))^vehicleCode) == 0){
+                continue;
+            }
             int edge = edges.get(i);
             int destination = graph.getDestination(edge);
             float newWeight = distTo[vertex] + graph.getWeight(edge);
@@ -64,8 +65,6 @@ public class Navigation {
     }
 
     private DrawableWay getPath(int startPointID, int endPointID){
-
-
 
         if(!buildPaths(startPointID, endPointID)) return null;
 
