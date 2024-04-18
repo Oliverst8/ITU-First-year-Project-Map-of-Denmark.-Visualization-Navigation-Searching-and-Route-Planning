@@ -12,11 +12,12 @@ public class Navigation {
     //private ChangablePriorityQueue queue;
     private IndexMinPQ<Float> queue;
     private final int[] vertexTo;
-
     private final float[] distTo;
+    private final int vehicleCode;
 
-    public Navigation(Graph graph) {
+    public Navigation(Graph graph, int vehicleCode) {
         this.graph = graph;
+        this.vehicleCode = vehicleCode;
         vertexTo = new int[graph.size()];
         distTo = new float[graph.size()];
 
@@ -33,8 +34,11 @@ public class Navigation {
         setDistTo(startPoint, startPoint, 0f);
         while(!queue.isEmpty()){
             int min = queue.delMin();
+
             if(min == endPoint) return true;
-            relax(min);
+            if((min^vehicleCode) > 0){
+                relax(min);
+            }
         }
         return false;
     }

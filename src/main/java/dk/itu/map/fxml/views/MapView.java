@@ -57,6 +57,7 @@ public class MapView {
 
     private AnimationTimer render;
     private int themeNumber = 0;
+    private int vehicleCode = 4;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -116,7 +117,7 @@ public class MapView {
 
             render.start();
         } else if(e.isSecondaryButtonDown()) {
-            Navigation navigation = new Navigation(model.getGraph());
+            Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
             DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
             System.out.println(path);
             path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100, themeNumber);
@@ -142,6 +143,18 @@ public class MapView {
     void switchToYetAnotherTheme(){
         themeNumber = 2;
         redraw();
+    }
+    @FXML
+    void switchToCarNavigation(){
+        vehicleCode = 4;
+    }
+    @FXML
+    void switchToBikeNavigation(){
+        vehicleCode = 2;
+    }
+    @FXML
+    void switchToWalkNavigation(){
+        vehicleCode = 1;
     }
 
     @FXML

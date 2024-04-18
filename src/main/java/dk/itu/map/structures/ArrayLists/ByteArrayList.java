@@ -92,16 +92,16 @@ public class ByteArrayList extends PrimitiveArrayList implements WriteAble{
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
-        array = new int[size];
+        array = new byte[size];
         for (int i = 0; i < size; i++) {
-            array[i] = stream.readInt();
+            array[i] = stream.readByte();
         }
     }
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof IntArrayList)) return false;
-        IntArrayList other = (IntArrayList) obj;
+        if(!(obj instanceof ByteArrayList)) return false;
+        ByteArrayList other = (ByteArrayList) obj;
         if(size != other.size) return false;
         for(int i = 0; i < size; i++){
             if(array[i] != other.array[i]) return false;
@@ -111,7 +111,7 @@ public class ByteArrayList extends PrimitiveArrayList implements WriteAble{
 
     @Override
     public void exchange(int index1, int index2) {
-        int temp = array[index1];
+        byte temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
     }
