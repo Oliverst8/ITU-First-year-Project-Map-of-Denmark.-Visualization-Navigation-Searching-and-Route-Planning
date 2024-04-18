@@ -30,7 +30,6 @@ public class OSMParser extends Thread {
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
-    // private float minlat, maxlat, minlon, maxlon;
     private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
 
