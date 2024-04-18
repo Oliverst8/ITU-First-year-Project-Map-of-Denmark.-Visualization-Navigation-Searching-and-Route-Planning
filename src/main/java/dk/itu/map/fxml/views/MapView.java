@@ -1,6 +1,8 @@
 package dk.itu.map.fxml.views;
 
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
@@ -110,6 +112,30 @@ public class MapView {
     }
 
     @FXML
+    void canvasClicked(MouseEvent e){
+        if(setStartPoint){
+            float[] startPoint = new float[]{(float) e.getX(), (float) e.getY()};
+            startPoint = convertToLatLon(startPoint);
+            System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
+            setStartPoint = false;
+            Point point = new Point(startPoint[0], startPoint[1], "navigation");
+            model.setStartPoint(point);
+            model.removeRoute();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance()/startDist*100, themeNumber).run();
+        } else if(setEndPoint){
+            float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
+            endPoint = convertToLatLon(endPoint);
+            System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
+            setEndPoint = false;
+            Point point = new Point(endPoint[0], endPoint[1],"navigation");
+            model.setEndPoint(point);
+            model.removeRoute();
+
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance()/startDist*100, themeNumber).run();
+        }
+    }
+
+    @FXML
     void canvasPressed(MouseEvent e) {
         if(e.isPrimaryButtonDown()) {
             lastX = (float) e.getX();
@@ -212,22 +238,24 @@ public class MapView {
         currentChunkAmountSeen = controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
 
-        Map<String, Set<DrawableWay>> ways = new HashMap<>();
+        Map<String, Set<Drawable>> ways = new HashMap<>();
         
         for(String key : mapLayers){
             ways.put(key, new HashSet<>());
         }
+        Set<Drawable> navigationSet = getNavigationDrawables();
 
-        ways.put("navigation", model.getNavigationWays());
+
+        ways.put("navigation", navigationSet);
 
         float zoom = getZoomDistance() / startDist * 100;
 
         for(int i = getDetailLevel(); i <= 4; i++) {
-            Map<Integer, List<DrawableWay>> chunkLayer = model.getChunksInZoomLevel(i);
+            Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
-                List<DrawableWay> chunkLayerList = chunkLayer.get(chunk);
+                List<Drawable> chunkLayerList = chunkLayer.get(chunk);
                 for(int j = 0; j < chunkLayerList.size(); j++) {
-                    DrawableWay way = chunkLayerList.get(j);
+                    Drawable way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
                         case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
@@ -238,12 +266,22 @@ public class MapView {
             }
         }
 
-        for (Map.Entry<String, Set<DrawableWay>> entry : ways.entrySet()) {
+        for (Map.Entry<String, Set<Drawable>> entry : ways.entrySet()) {
             
             Canvas canvas = this.canvas.get(entry.getKey());
 
             new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, themeNumber).run();
         }
+    }
+
+    private Set<Drawable> getNavigationDrawables() {
+        Set<Drawable> navigationSet = new HashSet<>();
+
+        for(Drawable drawable : model.getNavigationWays()){
+            if(drawable == null) continue;
+            navigationSet.add(drawable);
+        }
+        return navigationSet;
     }
 
     /**
@@ -303,6 +341,11 @@ public class MapView {
         }
     }
 
+    private float[] convertToLatLon(float[] startPoint) {
+        Point2D point = convertTo2DPoint(startPoint[0], startPoint[1]);
+        return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
+    }
+
     @FXML
     void setStartPoint(ActionEvent event){
         System.out.println("Can now set start point");
@@ -318,5 +361,6 @@ public class MapView {
     @FXML
     void navigateNow(ActionEvent event){
         controller.navigate();
+        redraw();
     }
 }

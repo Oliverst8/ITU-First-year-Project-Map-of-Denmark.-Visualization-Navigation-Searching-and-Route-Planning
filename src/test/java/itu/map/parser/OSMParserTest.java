@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import dk.itu.map.structures.Drawable;
 import org.junit.jupiter.api.Test;
 
 import dk.itu.map.parser.ChunkLoader;
@@ -24,7 +25,7 @@ public class OSMParserTest {
         parser.start();
         parser.setCallback((Runnable)() -> {
             ChunkLoader chunkLoader = new ChunkLoader("maps/aaasdsaasads");
-            Map<Integer, List<DrawableWay>> chunkMap = chunkLoader.readFiles(new int[]{0}, 0);
+            Map<Integer, List<Drawable>> chunkMap = chunkLoader.readFiles(new int[]{0}, 0);
             System.out.println(chunkMap.size());
             assertEquals(chunkMap.get(0).size(), 21);
         });

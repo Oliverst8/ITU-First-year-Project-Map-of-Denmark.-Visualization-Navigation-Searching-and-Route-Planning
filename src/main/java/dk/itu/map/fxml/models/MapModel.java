@@ -3,19 +3,20 @@ package dk.itu.map.fxml.models;
 import java.util.*;
 
 import dk.itu.map.parser.ChunkLoader;
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.Point;
 
 public class MapModel {
     
     // A list that holds the different zoom levels, and their chunks
-    public final List<Map<Integer, List<DrawableWay>>> chunkLayers;
+    public final List<Map<Integer, List<Drawable>>> chunkLayers;
     // The chunk loader
     public ChunkLoader chunkLoader;
     private Graph graph;
-    private float[] startPoint, endPoint;
 
-    private Set<DrawableWay> navigationWays;
+    private final Drawable[] navigationWays;
 
     public MapModel() {
         graph = new Graph();
@@ -23,7 +24,7 @@ public class MapModel {
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
-        navigationWays = new HashSet<>();
+        navigationWays = new Drawable[]{null,null,null};
     }
 
     /**
@@ -62,20 +63,28 @@ public class MapModel {
         return chunkLoader.chunkAmount;
     }
 
-    public float[] getStartPoint() {
-        return startPoint;
+    public Point getStartPoint() {
+        return ((Point) navigationWays[0]);
     }
 
-    public void setStartPoint(float[] startPoint) {
-        this.startPoint = startPoint;
+    public void setStartPoint(Point startPoint) {
+        this.navigationWays[0] = startPoint;
     }
 
-    public float[] getEndPoint() {
-        return endPoint;
+    public Point getEndPoint() {
+        return ((Point) navigationWays[1]);
     }
 
-    public void setEndPoint(float[] endPoint) {
-        this.endPoint = endPoint;
+    public void setEndPoint(Point endPoint) {
+        this.navigationWays[1] = endPoint;
+    }
+
+    public void setRoute(DrawableWay route) {
+        this.navigationWays[2] = route;
+    }
+
+    public void removeRoute() {
+        this.navigationWays[2] = null;
     }
 
     /**
@@ -86,7 +95,7 @@ public class MapModel {
      *         The key is the chunk index, and the value is a list of ways in the
      *         chunk
      */
-    public Map<Integer, List<DrawableWay>> getChunksInZoomLevel(int zoomLevel) {
+    public Map<Integer, List<Drawable>> getChunksInZoomLevel(int zoomLevel) {
         return chunkLayers.get(zoomLevel);
     }
 
@@ -98,11 +107,7 @@ public class MapModel {
         this.graph = graph;
     }
 
-    public void setNavigationWays(Set<DrawableWay> set){
-        navigationWays = set;
-    }
-
-    public Set<DrawableWay> getNavigationWays(){
+    public Drawable[] getNavigationWays(){
         return navigationWays;
     }
 
