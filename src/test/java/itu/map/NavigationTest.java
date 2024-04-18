@@ -19,7 +19,7 @@ class    NavigationTest {
 
     private GraphBuilder getGraph1(){
         GraphBuilder graph = new GraphBuilder();
-        ArrayList tags = new ArrayList();
+        ArrayList<String> tags = new ArrayList<>();
         tags.add("navigationPath");
 
         CoordArrayList coords = TestUtilities.createCoordArrayList(new float[]{0f, 0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f, 9f, 9f});

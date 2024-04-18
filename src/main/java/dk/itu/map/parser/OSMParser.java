@@ -1,15 +1,15 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.HashMaps.LongCoordHashMap;
-
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
-
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -25,14 +25,16 @@ import javax.xml.stream.FactoryConfigurationError;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
-public class OSMParser {
+public class OSMParser extends Thread {
     private final File file;
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
-    private float minlat, maxlat, minlon, maxlon;
+    // private float minlat, maxlat, minlon, maxlon;
     private LongCoordHashMap nodes;
     private Map<Long, LinkedList<Polygon>> relationMap;
+
+    private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
 
@@ -51,20 +53,31 @@ public class OSMParser {
     }
 
     /**
+     * Sets the function to call when parsing is done
+     */
+    public void setCallback(Runnable callback) {
+        this.callback = callback;
+    }
+
+    /**
      * Load the file and parse it
      */
-
-    public void load() throws IOException, XMLStreamException {
-        if (file.getName().contains("bz2")) {
-            parse(new BZip2CompressorInputStream(new FileInputStream(file)));
-        } else {
-            try {
+    @Override
+    public void run() {
+        try {
+            if (file.getName().contains("bz2")) {
+                parse(new BZip2CompressorInputStream(new FileInputStream(file)));
+            } else {
                 ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
                 parseRelations(relationReader);
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                parse(new FileInputStream(file));
             }
-            parse(new FileInputStream(file));
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     /**
@@ -73,57 +86,67 @@ public class OSMParser {
      * @param inputStream The input stream to be parsed
      */
 
-    private void parse(InputStream inputStream) throws XMLStreamException, FactoryConfigurationError {
-        XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-        nodes = new LongCoordHashMap();
-        long startLoadTime = System.nanoTime();
+    private void parse(InputStream inputStream) {
+        try {
+            XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            nodes = new LongCoordHashMap();
+            long startLoadTime = System.nanoTime();
 
-        whileLoop:
-        while (true) {
-            int tagKind = input.next();
+            whileLoop:
+            while (true) {
+                int tagKind = input.next();
 
-            if (tagKind == XMLStreamConstants.START_ELEMENT) {
-                String type = input.getLocalName();
-                switch (type) {
+                if (tagKind == XMLStreamConstants.START_ELEMENT) {
+                    String type = input.getLocalName();
+                    switch (type) {
 
-                    case "bounds" -> {
-                        float minLat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
-                        float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
-                        float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
-                        float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                        chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon);
-                    }
+                        case "bounds" -> {
+                            float minLat = Float.parseFloat(input.getAttributeValue(null, "minlat"));
+                            float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
+                            float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
+                            float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
+                            chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon);
+                        }
 
-                    case "node" -> {
-                        float[] cords = new float[2];
-                        long id = Long.parseLong(input.getAttributeValue(null, "id"));
-                        cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
-                        cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
-                        nodes.put(id, cords);
-                    }
+                        case "node" -> {
+                            float[] cords = new float[2];
+                            long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                            cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
+                            cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
+                            nodes.put(id, cords);
+                        }
 
-                    case "way" -> {
-                        long id = Long.parseLong(input.getAttributeValue(null, "id"));
-                        createWay(input, nodes, id);
-                    }
+                        case "way" -> {
+                            long id = Long.parseLong(input.getAttributeValue(null, "id"));
+                            createWay(input, nodes, id);
+                        }
 
-                    case "relation" -> {
-                        break whileLoop; //All relations are parsed in the first pass
+                        case "relation" -> {
+                            break whileLoop; //All relations are parsed in the first pass
+                        }
                     }
                 }
             }
+
+            long startWriteTime = System.nanoTime();
+            System.out.println("Reading took: " + ((startWriteTime - startLoadTime) / 1_000_000_000.0) + "s");
+
+            relations.forEach(relation -> {
+                chunkGenerator.addWay(relation);
+            });
+
+            chunkGenerator.finishWork();
+            long endWriteTime = System.nanoTime();
+            System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
+
+            if (callback != null) {
+                Platform.runLater(callback);
+            }
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (FactoryConfigurationError e) {
+            e.printStackTrace();
         }
-
-        long startWriteTime = System.nanoTime();
-        System.out.println("Reading took: " + ((startWriteTime - startLoadTime) / 1_000_000_000.0) + "s");
-
-        relations.forEach(relation -> {
-            chunkGenerator.addWay(relation);
-        });
-
-        chunkGenerator.finishWork();
-        long endWriteTime = System.nanoTime();
-        System.out.println("Writing took: " + ((endWriteTime - startWriteTime) / 1_000_000_000.0) + "s");
     }
     /**
      * Parse the relations
