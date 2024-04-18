@@ -160,6 +160,14 @@ public class MapController {
         }
         Navigation navigation = new Navigation(model.getGraph());
         DrawableWay path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
+        if(path == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No path found");
+            alert.setContentText("No path found between the selected points");
+            alert.showAndWait();
+            return;
+        }
         model.setRoute(path);
     }
 }
