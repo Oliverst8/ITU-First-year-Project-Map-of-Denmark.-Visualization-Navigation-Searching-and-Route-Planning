@@ -99,44 +99,8 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
         vertexList = newVertexList;
-        GraphBuilder.getDifference(newVertices, idToIndex.getValues());
-        GraphBuilder.getDifference(idToIndex.getValues(), newVertices);
         coords = newCoords;
 
-    }
-
-    public static HashSet<Integer> getIndexOf(int[] array, int value){
-        HashSet<Integer> indexes = new HashSet<>();
-        for(int i = 0; i < array.length; i++){
-            if(array[i] == value) indexes.add(i);
-        }
-        return indexes;
-    }
-
-    public static HashSet<Integer> getDifference(int[] array1, int[] array2){
-        HashSet<Integer> set1 = new HashSet<>();
-        HashSet<Integer> set2 = new HashSet<>();
-        for(int i = 0; i < array1.length; i++){
-            set1.add(array1[i]);
-        }
-        for(int i = 0; i < array2.length; i++){
-            set2.add(array2[i]);
-        }
-
-        set1.removeAll(set2);
-
-        return set1;
-    }
-
-    public static HashSet<Integer> getDuplicates(int[] array){
-        HashSet<Integer> normalSet = new HashSet<>();
-        HashSet<Integer> duplicates = new HashSet<>();
-        for(int i = 0; i < array.length; i++){
-            if(!normalSet.add(array[i])){
-                duplicates.add(array[i]);
-            }
-        }
-        return duplicates;
     }
 
     /**
