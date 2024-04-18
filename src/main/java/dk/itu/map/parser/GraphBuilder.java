@@ -74,35 +74,10 @@ public class GraphBuilder extends Graph implements Runnable {
                 addEdge(way);
             }
         }
-        TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
-        treeBuilder.build();
-        int[] treeIndexes = treeBuilder.getTree();
-        sortCoordsAndIndexes(treeIndexes);
-    }
-
-    private void sortCoordsAndIndexes(int[] newVertices) {
-        oldToNewVertexIndex = new IntArrayList(vertexList.size());
-
-
-        WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
-        TwoDTree newCoords = new TwoDTree(newVertices.length);
-
-        for(int i = 0; i < newVertices.length; i++){
-
-            if(newVertices[i] == -1){
-                newVertexList.add(new IntArrayList(0));
-                newCoords.add(new float[]{-1,-1});
-            } else{
-                oldToNewVertexIndex.set(newVertices[i], i); //Not Built corŕectly I think, way to many 0s
-                newVertexList.add(vertexList.get(newVertices[i]));
-                newCoords.add(coords.get(newVertices[i]));
-            }
-        }
-        vertexList = newVertexList;
-        getDifference(newVertices, idToIndex.getValues());
-        getDifference(idToIndex.getValues(), newVertices);
-        coords = newCoords;
-
+        //TwoDTreeBuilder treeBuilder = new TwoDTreeBuilder(coords);
+        //treeBuilder.build();
+        //int[] treeIndexes = treeBuilder.getTree();
+        //sortCoordsAndIndexes(treeIndexes);
     }
 
     public static HashSet<Integer> getIndexOf(int[] array, int value){
