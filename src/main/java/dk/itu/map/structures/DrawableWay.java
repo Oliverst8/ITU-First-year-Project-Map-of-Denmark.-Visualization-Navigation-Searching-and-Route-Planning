@@ -3,7 +3,6 @@ package dk.itu.map.structures;
 import java.io.Serializable;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.SimpleLinkedList.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

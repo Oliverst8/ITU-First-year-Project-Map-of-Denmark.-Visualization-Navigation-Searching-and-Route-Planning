@@ -29,7 +29,6 @@ public class ChunkLoader {
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
     public float CHUNK_SIZE;
 
-
     /**
      * Initialises the filehandler
      *
@@ -39,6 +38,7 @@ public class ChunkLoader {
         this.dataPath = dataPath;
         loadConfig();
     }
+
     /**
      * Load the config file, and set the variables
      */
@@ -63,46 +63,16 @@ public class ChunkLoader {
             e.printStackTrace();
         }
     }
-    /**
-     * Converts a latitude and longitude to a chunk index
-     *
-     * @param lat The latitude
-     * @param lon The longitude
-     * @return The chunk index
-     */
 
-    public int latLonToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
-            (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
-    }
-    /**
-     * Converts a javaFX-point to a chunk index
-     *
-     * @param p The point
-     * @return The chunk index
-     */
-
-    public int pointToChunkIndex(Point2D p) {
-        float X = (float) p.getX()/0.56f;
-        X = Math.min(X, maxLon);
-        X = Math.max(X, minLon);
-        float Y = (float) p.getY()*-1;
-        Y = Math.min(Y, maxLat);
-        Y = Math.max(Y, minLat);
-        int chunkIndex = latLonToChunkIndex(Y, X);
-        chunkIndex = Math.min(chunkIndex, chunkAmount-1);
-        chunkIndex = Math.max(chunkIndex, 0);
-        return chunkIndex;
-    }
     /**
      * Load the data from the chunkfiles
      *
-     * @param chunks The chunks to load
+     * @param chunks    The chunks to load
      * @param zoomLevel The zoom level
      * @return The ways
      */
 
-    public Map<Integer, List<DrawableWay>> loadBytes(int[] chunks, int zoomLevel) {
+    public Map<Integer, List<DrawableWay>> readFiles(int[] chunks, int zoomLevel) {
         Map<Integer, List<DrawableWay>> ways = Collections.synchronizedMap(new HashMap<>());
 
         IntStream.of(chunks).parallel().forEach(chunk -> {
@@ -153,5 +123,36 @@ public class ChunkLoader {
         });
 
         return ways;
+    }
+
+    /**
+     * Converts a latitude and longitude to a chunk index
+     *
+     * @param lat The latitude
+     * @param lon The longitude
+     * @return The chunk index
+     */
+    public int latLonToChunkIndex(float lat, float lon) {
+        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
+                (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
+    }
+
+    /**
+     * Converts a javaFX-point to a chunk index
+     *
+     * @param p The point
+     * @return The chunk index
+     */
+    public int pointToChunkIndex(Point2D p) {
+        float X = (float) p.getX() / 0.56f;
+        X = Math.min(X, maxLon);
+        X = Math.max(X, minLon);
+        float Y = (float) p.getY() * -1;
+        Y = Math.min(Y, maxLat);
+        Y = Math.max(Y, minLat);
+        int chunkIndex = latLonToChunkIndex(Y, X);
+        chunkIndex = Math.min(chunkIndex, chunkAmount - 1);
+        chunkIndex = Math.max(chunkIndex, 0);
+        return chunkIndex;
     }
 }

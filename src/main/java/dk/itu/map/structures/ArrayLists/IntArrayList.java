@@ -2,7 +2,13 @@ package dk.itu.map.structures.ArrayLists;
 
 import dk.itu.map.structures.WriteAble;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 
 public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     // The array that holds the values
@@ -29,6 +35,17 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     }
 
     /**
+     * Constructor for the IntArrayList class
+     * Initializes the array with the given array
+     * @param array to be initialized
+     */
+    public IntArrayList(int[] array) {
+        super();
+        this.array = array;
+        size = array.length;
+    }
+
+    /**
      * Resizes the array to double the size
      */
     @Override
@@ -36,19 +53,6 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         int[] newArray = new int[array.length*2];
         System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
-    }
-
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(int value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
     }
 
     /**
@@ -67,6 +71,7 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
                         new FileOutputStream(path)
                 )
         );
+
         write(stream);
         stream.close();
     }
@@ -82,10 +87,11 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(String path) throws IOException {
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
+
         read(stream);
     }
 
@@ -106,6 +112,7 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         for(int i = 0; i < size; i++){
             if(array[i] != other.array[i]) return false;
         }
+
         return true;
     }
 
@@ -116,4 +123,32 @@ public class IntArrayList extends PrimitiveArrayList implements WriteAble {
         array[index2] = temp;
     }
 
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(int value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+
+        array[size] = value;
+        size++;
+    }
+
+    public void addAll(int[] values) {
+        while (size + values.length > array.length) {
+            resize();
+        }
+
+        System.arraycopy(values, 0, array, size, values.length);
+        size += values.length;
+    }
+
+    public int[] toArray() {
+        int[] result = new int[size];
+        System.arraycopy(array, 0, result, 0, size);
+        return result;
+    }
 }
