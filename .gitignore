@@ -3,6 +3,8 @@ zoomLayers/
 maps/
 extra/
 htmlReport/
+src/test/java/itu/map/testFiles/*
+!src/test/java/itu/map/testFiles/testmap.osm
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,linux,windows,visualstudiocode,intellij,gradle,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,linux,windows,visualstudiocode,intellij,gradle,vim
