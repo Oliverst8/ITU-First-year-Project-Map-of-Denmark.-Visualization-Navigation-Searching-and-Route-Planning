@@ -47,11 +47,47 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param way the way to calculate the weight of
      * @return the weight of the way
      */
-    private float calcWeight(MapElement way, int nodeId) {
+    private float calcWeightDistance(MapElement way, int nodeId) {
         CoordArrayList coords = way.getCoords();
         float[] coord1 = coords.get(nodeId);
         float[] coord2 = coords.get(nodeId+1);
-        return dist(coord1[0], coord1[1], coord2[0], coord2[1]);
+        return distanceInKM(coord1, coord2);
+    }
+    private float calcWeightTime(MapElement way, int nodeId) {
+        int speedLimit = -1;
+        for(int i = 0; i < way.getTags().size(); i += 2){
+            if(way.getTags().get(i).equals("maxspeed")){
+                speedLimit = Integer.parseInt(way.getTags().get(i+1));
+                break;
+            }
+        }
+        if(speedLimit == -1){
+            switch(way.getSecondaryType()){
+                case "living_street":
+                    speedLimit = 15;
+                    break;
+                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track":
+                        speedLimit = 50;
+                        break;
+                case "primary", "primary_link", "trunk", "trunk_link":
+                    speedLimit = 80;
+                    break;
+                case "motorway", "motorway_link":
+                    speedLimit = 130;
+                    break;
+            }
+        }
+
+        CoordArrayList coords = way.getCoords();
+        float[] coord1 = coords.get(nodeId);
+        float[] coord2 = coords.get(nodeId+1);
+        return distanceInKM(coord1, coord2)*speedLimit;
+    }
+    private float distanceInKM(float[] coord1, float[] coord2) {
+        double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
+        double latDistance = Math.abs(coord1[1] - coord2[1])*110.574;
+
+        return (float) Math.sqrt(lonDistance*lonDistance + latDistance*latDistance);
     }
 
     /**
@@ -161,10 +197,15 @@ public class GraphBuilder extends Graph implements Runnable {
             vehicleRestrictions.add(vehicleRestriction);
             vehicleRestrictions.add(vehicleRestriction);
 
-            float weight = calcWeight(way, i);
+            float weight = calcWeightDistance(way, i);
 
-            edgeWeights.add(weight);
-            edgeWeights.add(weight);
+            distanceWeights.add(weight);
+            distanceWeights.add(weight);
+
+            weight = calcWeightTime(way, i);
+
+            timeWeights.add(weight);
+            timeWeights.add(weight);
 
             //mystisk vej fra 10837361538
             //til 1275653523
@@ -180,13 +221,8 @@ public class GraphBuilder extends Graph implements Runnable {
 
     private byte setVehicleRestriction(MapElement way) {
         List<String> tags = way.getTags();
-        String secondayType = null;
-        for(int i = 0; i < tags.size(); i += 2){
-            if(tags.get(i).equals("highway")){
-                secondayType = tags.get(i+1);
-                break;
-            }
-        }
+        String secondayType = way.getSecondaryType();
+
         switch(secondayType){
             case "escape":
             case "raceway":
@@ -255,7 +291,8 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/distanceWeights.txt"),
+                new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
                 new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
@@ -265,7 +302,8 @@ public class GraphBuilder extends Graph implements Runnable {
                 idToIndex,
                 vertexList,
                 edgeDestinations,
-                edgeWeights,
+                distanceWeights,
+                timeWeights,
                 coords,
                 oldToNewVertexIndex
                 //wayIDs

@@ -18,7 +18,9 @@ public class Graph {
     protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
     protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
-    protected final FloatArrayList edgeWeights; //List that holds the weight of each edge
+    protected final FloatArrayList timeWeights; //List that holds the weight in hours of each edge
+    protected final FloatArrayList distanceWeights; //List that holds the weight in km of each edge
+
     protected final ByteArrayList vehicleRestrictions; //List that holds which vehicles are allowed to use each edge
     protected TwoDTree coords; //List that holds the coordinates of each vertex
 
@@ -30,7 +32,8 @@ public class Graph {
         idToIndex = new LongIntHashMap();
         vertexList = new WriteAbleArrayList<>();
         edgeDestinations = new IntArrayList();
-        edgeWeights = new FloatArrayList(50_000);
+        timeWeights = new FloatArrayList(50_000);
+        distanceWeights = new FloatArrayList(50_000);
         vehicleRestrictions = new ByteArrayList(50_000);
         coords = new TwoDTree();
         oldToNewVertexIndex = new IntArrayList();
@@ -68,8 +71,11 @@ public class Graph {
      * @param edge the index of the edge weight to be gotten
      * @return the weight of the edge
      */
-    public float getWeight(int edge){
-        return edgeWeights.get(edge);
+    public float getTimeWeight(int edge){
+        return timeWeights.get(edge);
+    }
+    public float getDistanceWeight(int edge){
+        return distanceWeights.get(edge);
     }
 
     /**
@@ -140,7 +146,8 @@ public class Graph {
                 idToIndex,
                 vertexList,
                 edgeDestinations,
-                edgeWeights,
+                timeWeights,
+                distanceWeights,
                 coords,
                 oldToNewVertexIndex
                 //wayIDs
@@ -163,10 +170,6 @@ public class Graph {
         return edgeDestinations;
     }
 
-    public FloatArrayList getWeights() {
-        return edgeWeights;
-    }
-
     public int getNearestNeigherborID(float[] coords) {
         return this.coords.nearestNeighbour(coords);
     }
@@ -178,7 +181,8 @@ public class Graph {
             if(!idToIndex.equals(other.idToIndex)) return false;
             if(!vertexList.equals(other.vertexList)) return false;
             if(!edgeDestinations.equals(other.edgeDestinations)) return false;
-            if(!edgeWeights.equals(other.edgeWeights)) return false;
+            if(!distanceWeights.equals(other.distanceWeights)) return false;
+            if(!timeWeights.equals(other.timeWeights)) return false;
             if(!coords.equals(other.coords)) return false;
             if(!oldToNewVertexIndex.equals(other.oldToNewVertexIndex)) return false;
             return true;

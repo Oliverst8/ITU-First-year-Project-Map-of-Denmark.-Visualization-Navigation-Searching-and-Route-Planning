@@ -10,6 +10,7 @@ public abstract class MapElement {
     private final long id;
     private final List<String> tags;
     protected String primaryType;
+    protected String secondaryType = null;
     private long[] nodeIDs;
 
     public MapElement(long id, List<String> tags) {
@@ -30,6 +31,7 @@ public abstract class MapElement {
             switch (tags.get(i)) {
                 case "highway":
                     primaryType = "highway";
+                    secondaryType = tags.get(i + 1);
                     return;
                 case "leisure":
                     primaryType = "leisure";
@@ -74,5 +76,8 @@ public abstract class MapElement {
 
     public long[] getNodeIDs() {
         return nodeIDs;
+    }
+    public String getSecondaryType() {
+        return secondaryType;
     }
 }
