@@ -81,7 +81,7 @@ public class GraphBuilder extends Graph implements Runnable {
         CoordArrayList coords = way.getCoords();
         float[] coord1 = coords.get(nodeId);
         float[] coord2 = coords.get(nodeId+1);
-        return distanceInKM(coord1, coord2)*speedLimit;
+        return distanceInKM(coord1, coord2)/speedLimit;
     }
     private float distanceInKM(float[] coord1, float[] coord2) {
         double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
