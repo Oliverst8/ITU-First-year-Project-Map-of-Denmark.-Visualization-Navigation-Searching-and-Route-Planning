@@ -29,7 +29,10 @@ public class GraphBuilderTest {
     void testAddEdges() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
         CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
-        List<String> stringList = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("primary");
+
         CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
         LongArrayList nodeIDs1 = new LongArrayList();
         nodeIDs1.add(1);
@@ -37,8 +40,8 @@ public class GraphBuilderTest {
         LongArrayList nodeIDs2 = new LongArrayList();
         nodeIDs2.add(2);
         nodeIDs2.add(3);
-        Way way1 = new Way(0, stringList, nodes1, nodeIDs1);
-        Way way2 = new Way(0, stringList, nodes2, nodeIDs2);
+        Way way1 = new Way(0, tags, nodes1, nodeIDs1);
+        Way way2 = new Way(0, tags, nodes2, nodeIDs2);
 
         graph.addWay(way1);
         graph.addWay(way2);
@@ -47,11 +50,11 @@ public class GraphBuilderTest {
         Thread.sleep(10);
         graph.stop();
         thread.join();
-        FloatArrayList expectedWeights = new FloatArrayList();
-        expectedWeights.add((float) Math.sqrt(2));
-        expectedWeights.add((float) Math.sqrt(2));
-        expectedWeights.add(2f);
-        expectedWeights.add(2f);
+        FloatArrayList expectedDistanceWeights = new FloatArrayList();
+        expectedDistanceWeights.add((float) Math.sqrt(2));
+        expectedDistanceWeights.add((float) Math.sqrt(2));
+        expectedDistanceWeights.add(2f);
+        expectedDistanceWeights.add(2f);
 
         IntArrayList expectedDestinations = new IntArrayList();
 
@@ -62,15 +65,19 @@ public class GraphBuilderTest {
 
 
         IntArrayList actualDestinations = graph.getEdges();
-        FloatArrayList actualWeights = graph.getWeights();
+        FloatArrayList actualDistanceWeights = graph.getDistanceWeights();
+        FloatArrayList actualTimeWeights = graph.getTimeWeights();
 
-        for(int i = 0; i < expectedWeights.size(); i++){
-            assertEquals(expectedWeights.get(i), actualWeights.get(i));
+        for(int i = 0; i < expectedDistanceWeights.size(); i++){
+            assertEquals(expectedDistanceWeights.get(i), actualDistanceWeights.get(i));
+        }
+        for(int i = 0; i < expectedDistanceWeights.size(); i++){
+            assertEquals(expectedDistanceWeights.get(i), actualTimeWeights.get(i));
         }
         for(int i = 0; i < expectedDestinations.size(); i++){
             assertEquals(expectedDestinations.get(i), actualDestinations.get(i));
         }
-        assertEquals(expectedWeights.size(), actualWeights.size());
+        assertEquals(expectedDistanceWeights.size(), actualDistanceWeights.size());
         assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
 
@@ -89,7 +96,9 @@ public class GraphBuilderTest {
     public GraphBuilder getGraph() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
         CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
-        List<String> stringList = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("primary");
         CoordArrayList nodes2 = TestUtilities.createCoordArrayList(1f,1f,3f,1f);
         LongArrayList nodeIDs1 = new LongArrayList();
         nodeIDs1.add(1);
@@ -97,8 +106,8 @@ public class GraphBuilderTest {
         LongArrayList nodeIDs2 = new LongArrayList();
         nodeIDs2.add(2);
         nodeIDs2.add(3);
-        Way way1 = new Way(0, stringList, nodes1, nodeIDs1);
-        Way way2 = new Way(0, stringList, nodes2, nodeIDs2);
+        Way way1 = new Way(0, tags, nodes1, nodeIDs1);
+        Way way2 = new Way(0, tags, nodes2, nodeIDs2);
 
         graph.addWay(way1);
         graph.addWay(way2);

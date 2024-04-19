@@ -193,4 +193,10 @@ public class Graph {
     public ByteArrayList getVehicleRestrictions() {
         return vehicleRestrictions;
     }
+    public FloatArrayList getDistanceWeights() {
+        return distanceWeights;
+    }
+    public FloatArrayList getTimeWeights() {
+        return timeWeights;
+    }
 }

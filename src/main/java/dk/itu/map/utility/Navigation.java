@@ -13,6 +13,8 @@ public class Navigation {
     private IndexMinPQ<Float> queue;
     private final int[] vertexTo;
     private final float[] distTo;
+    private final float[] timeTo;
+    //This is 4 for car, 2 for bike and 1 for walk.
     private final int vehicleCode;
 
     public Navigation(Graph graph, int vehicleCode) {
@@ -20,6 +22,7 @@ public class Navigation {
         this.vehicleCode = vehicleCode;
         vertexTo = new int[graph.size()];
         distTo = new float[graph.size()];
+        timeTo = new float[graph.size()];
 
         for(int i = 0; i < graph.size(); i++) {
             distTo[i] = Float.MAX_VALUE;
@@ -31,7 +34,7 @@ public class Navigation {
         //queue = new ChangablePriorityQueue(graph);
         queue = new IndexMinPQ<>(graph.size());
         queue.insert(startPoint, 0f);
-        setDistTo(startPoint, startPoint, 0f);
+        setDistTo(startPoint, startPoint, 0f, 0f);
         while(!queue.isEmpty()){
             int min = queue.delMin();
 
@@ -49,18 +52,24 @@ public class Navigation {
             }
             int edge = edges.get(i);
             int destination = graph.getDestination(edge);
-            float newWeight = distTo[vertex] + graph.getWeight(edge);
-            if(newWeight < distTo[destination]){
-                if(queue.contains(destination)) queue.decreaseKey(destination, newWeight);
-                else queue.insert(destination, newWeight);
-                //vertexTo[destination] = vertex;
-                setDistTo(destination, vertex, newWeight);
+            float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge);
+            float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
+
+            if((newTimeWeight < timeTo[destination]) && vehicleCode == 4){
+                if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
+                else queue.insert(destination, newTimeWeight);
+                setDistTo(destination, vertex, newDistWeight, newTimeWeight);
+            } else if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1)){
+                if(queue.contains(destination)) queue.decreaseKey(destination, newDistWeight);
+                else queue.insert(destination, newDistWeight);
+                setDistTo(destination, vertex, newDistWeight, newTimeWeight);
             }
         }
     }
 
-    private void setDistTo(int vertex, int vertexFrom, float dist) {
+    private void setDistTo(int vertex, int vertexFrom, float dist, float time) {
         distTo[vertex] = dist;
+        timeTo[vertex] = time;
         vertexTo[vertex] = vertexFrom;
     }
 
