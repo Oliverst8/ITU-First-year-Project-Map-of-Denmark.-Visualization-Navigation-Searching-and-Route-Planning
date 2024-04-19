@@ -363,12 +363,14 @@ public class MapView {
     void setStartPoint(ActionEvent event){
         System.out.println("Can now set start point");
         setStartPoint = true;
+        setEndPoint = false;
     }
 
     @FXML
     void setEndPoint(ActionEvent event){
         System.out.println("Can now set end point");
         setEndPoint = true;
+        setStartPoint = false;
     }
 
     @FXML
