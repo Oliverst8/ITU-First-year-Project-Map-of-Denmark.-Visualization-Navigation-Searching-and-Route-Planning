@@ -27,27 +27,15 @@ public class TwoDTreeBuilder {
 
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
-        if(childIndex == 9){
-            System.out.println("Right child is -1");
-        }
         if(childIndex >= tree.length && child == -1) return;
-        if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
-            System.out.println("left child is 3");
-        }
         if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
         tree[childIndex] = child;
     }
 
     private void setRightChild(int parent, int child) {
         int childIndex = parent * 2 + 2;
-        if(childIndex == 9){
-            System.out.println("Right child is -1");
-        }
         if(childIndex >= tree.length && child == -1) return;
         if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
-        if(coords.get(child)[0] == 54.145023f && coords.get(child)[1] == -4.5019617f){
-            System.out.println("left child is 3");
-        }
         tree[childIndex] = child;
     }
 

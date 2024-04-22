@@ -158,9 +158,6 @@ public class GraphBuilder extends Graph implements Runnable {
     private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
-                if(vertexID[i] == 11367582572l){
-                    System.out.println("Found the node");
-                }
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
@@ -175,11 +172,7 @@ public class GraphBuilder extends Graph implements Runnable {
 
                 //Here we could add node ids to an nodeIDArray, if we want them later
 
-                //55.821827 12.313429
-                //57.01456 9.979408
-                if(coord[0] == 55.821827f && coord[1] == 12.313429f || coord[0] == 57.01456f && coord[1] == 9.979408f){
-                    System.out.println("Found the node");
-                }
+
             }
         }
     }
@@ -219,11 +212,7 @@ public class GraphBuilder extends Graph implements Runnable {
             timeWeights.add(weight);
             timeWeights.add(weight);
 
-            //mystisk vej fra 10837361538
-            //til 1275653523
-            if(nodeIDs[i] == 10837361538l || nodeIDs[i+1] == 1275653523l || nodeIDs[i] == 1275653523l || nodeIDs[i+1] == 10837361538l){
-                System.out.println("Found the edge");
-            }
+
 
         }
 
