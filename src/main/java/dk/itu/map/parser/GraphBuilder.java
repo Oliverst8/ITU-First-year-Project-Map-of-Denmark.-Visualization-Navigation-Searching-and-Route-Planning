@@ -54,14 +54,24 @@ public class GraphBuilder extends Graph implements Runnable {
         return distanceInKM(coord1, coord2);
     }
     private float calcWeightTime(MapElement way, int nodeId) {
-        int speedLimit = -1;
+        String[] speedLimitString = null;
         for(int i = 0; i < way.getTags().size(); i += 2){
             if(way.getTags().get(i).equals("maxspeed")){
-                speedLimit = Integer.parseInt(way.getTags().get(i+1));
+                speedLimitString = way.getTags().get(i+1).split(" ");
                 break;
             }
         }
-        if(speedLimit == -1){
+
+        int speedLimit = -1;
+        if(speedLimitString != null && !speedLimitString[0].equals("none")){
+            if(speedLimitString.length == 1) {
+                speedLimit = Integer.parseInt(speedLimitString[0]);
+            } else{
+                speedLimit = (int) (Integer.parseInt(speedLimitString[0])*1.609344);
+            }
+        }
+
+        if(speedLimitString == null){
             switch(way.getSecondaryType()){
                 case "living_street":
                     speedLimit = 15;
@@ -76,6 +86,8 @@ public class GraphBuilder extends Graph implements Runnable {
                     speedLimit = 130;
                     break;
             }
+        } else if(speedLimitString.equals("none")){
+            speedLimit = 130;
         }
 
         CoordArrayList coords = way.getCoords();

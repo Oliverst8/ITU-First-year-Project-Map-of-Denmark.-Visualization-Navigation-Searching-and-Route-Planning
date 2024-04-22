@@ -105,7 +105,8 @@ public class Graph {
                 new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/distanceWeights.txt"),
+                new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
                 new File(folderPath + "/oldToNewVertexIndex.txt")
                 //new File(folderPath + "/wayIDs.txt")
