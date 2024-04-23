@@ -14,7 +14,7 @@ public class ChunkController {
 
     public ChunkController(ChunkModel model, String name) {
         this.model = model;
-        App.mapPath = App.dataPath + name + "/";
+        App.mapPath = App.DATA_PATH + name + "/";
         this.name = name;
     }
 

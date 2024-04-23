@@ -101,7 +101,8 @@ public class OSMParser extends Thread {
                             float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                             float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                             float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                            chunkGenerator = new ChunkGenerator(minLat, maxLat, minLon, maxLon);
+                            MapConfig config = new MapConfig(minLat, maxLat, minLon, maxLon);
+                            chunkGenerator = new ChunkGenerator(config);
                         }
 
                         case "node" -> {

@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import dk.itu.map.structures.Point;
-import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
@@ -38,7 +37,7 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
-        App.mapPath = App.dataPath + mapName + "/";
+        App.mapPath = App.DATA_PATH + mapName + "/";
 
         UtilityLoader utilityLoader = new UtilityLoader(mapName);
         utilityLoader.start();
@@ -120,13 +119,9 @@ public class MapController {
      * @param zoomLevel the zoom level to be updated
      */
     private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        for (Map<Integer, List<Drawable>> chunkLayers : model.chunkLayers) {
-            chunkLayers.keySet().retainAll(chunks);
-        }
+        model.chunkLayers.get(zoomLevel).keySet().retainAll(chunks);
 
-        for (int i = zoomLevel; i <= 4; i++) {
-            readChunks(chunks, i);
-        }
+        readChunks(chunks, zoomLevel);
     }
 
     /**
@@ -135,18 +130,15 @@ public class MapController {
      * @param lowerRightCorner The lower right corner of the current view
      * @return The amount of chunks seen in the current view in the y direction
      */
-    public float updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner) {
-        int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner);
-        int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner);
+    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner) {
+        for (int i = detailLevel; i <= 4; i++) {
+            int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
+            int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner, i);
 
-        Set<Integer> chunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.chunkColumnAmount);
+            Set<Integer> chunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
 
-        float currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY())
-                / model.chunkLoader.CHUNK_SIZE);
-
-        updateZoomLayer(chunks, detailLevel);
-
-        return currentChunkAmountSeen;
+            updateZoomLayer(chunks, i);
+        }
     }
 
     public void navigate(){

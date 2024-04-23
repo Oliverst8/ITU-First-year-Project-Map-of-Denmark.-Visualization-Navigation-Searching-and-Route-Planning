@@ -6,7 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 
 public class App extends Application {
-    static public final String dataPath = "maps/";
+    static public final String DATA_PATH = "maps/";
     static public String mapPath;
     // The stage is the window that the application is running in
     private static Stage stage;

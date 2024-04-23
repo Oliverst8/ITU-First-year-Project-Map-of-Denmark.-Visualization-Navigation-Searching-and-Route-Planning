@@ -4,7 +4,6 @@ import dk.itu.map.App;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -21,12 +20,8 @@ class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
 
-    private final float CHUNK_SIZE = 0.05f;
-    private final byte amountOfZoomLayers = 5;
-
-    public float minLat, maxLat, minLon, maxLon;
-
-    public int chunkColumnAmount, chunkRowAmount, chunkAmount;
+    private MapConfig config;
+    
     private ArrayList<ZoomLayer> zoomLayers;
     private final File[][] files;
     private List<MapElement> rawWays;
@@ -46,7 +41,7 @@ public class ChunkGenerator implements Runnable {
      * @param minLon The minimum longitude
      * @param maxLon The maximum longitude
      */
-    public ChunkGenerator(float minLat, float maxLat, float minLon, float maxLon) {
+    public ChunkGenerator(MapConfig config) {
         graph = new GraphBuilder();
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
@@ -55,26 +50,21 @@ public class ChunkGenerator implements Runnable {
         graphThread = new Thread(graph);
         graphThread.start();
 
-        this.minLat = minLat;
-        this.maxLat = maxLat;
-        this.minLon = minLon;
-        this.maxLon = maxLon;
+        this.config = config;
 
-        this.chunkColumnAmount = (int) Math.ceil(Math.abs(maxLon - minLon) / CHUNK_SIZE);
-        this.chunkRowAmount = (int) Math.ceil(Math.abs(maxLat - minLat) / CHUNK_SIZE);
-
-        this.chunkAmount = chunkColumnAmount * chunkRowAmount;
-
-        System.out.println("Beginning" + chunkRowAmount + " " + chunkColumnAmount);
+        System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
         resetChunks();
 
-        files = new File[amountOfZoomLayers][chunkAmount];
+        files = new File[config.layerCount][];
+        for (int i = 0; i < files.length; i++) {
+            files[i] = new File[config.getChunkAmount(i)];
+        }
 
         createFiles(App.mapPath);
     }
-
-   /**
+    
+    /**
      * Create the files for the chunks
      *
      * @param dataPath The path to the map folder
@@ -83,10 +73,11 @@ public class ChunkGenerator implements Runnable {
         try {
             File folder = new File(dataPath);
             folder.mkdirs();
-            for (int i = 0; i < amountOfZoomLayers; i++) {
+            for (int i = 0; i < config.layerCount; i++) {
                 File innerFolder = new File(dataPath + "zoom" + i);
                 innerFolder.mkdir();
-
+                
+                int chunkAmount = config.getChunkAmount(i);
                 for (int j = 0; j < chunkAmount; j++) {
                     files[i][j] = new File(dataPath + "zoom" + i + "/chunk" + j + ".txt");
                     new FileOutputStream(files[i][j]).close();
@@ -103,31 +94,21 @@ public class ChunkGenerator implements Runnable {
      */
 
     private void resetChunks() {
-        zoomLayers = new ArrayList<>(chunkAmount);
-        for (int i = 0; i < amountOfZoomLayers; i++) {
+        zoomLayers = new ArrayList<>(config.layerCount);
+        for (int i = 0; i < config.layerCount; i++) {
             zoomLayers.add(new ZoomLayer());
+            int chunkAmount = config.getChunkAmount(i);
             for (int j = 0; j < chunkAmount; j++) {
                 zoomLayers.get(i).add(new Chunk());
             }
         }
     }
-    /**
-     * Converts coordinates to a chunk index
-     *
-     * @param lat The latitude
-     * @param lon The longitude
-     * @return The chunk index
-     */
-    private int coordsToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
-            (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
-    }
+
     /**
      * Adds a way to the list of ways to be chunked
      *
      * @param way The way to be added
      */
-
     public void addWay(MapElement way) {
         rawWays.add(way);
     }
@@ -149,9 +130,9 @@ public class ChunkGenerator implements Runnable {
                 float lat = coord[0];
                 float lon = coord[1];
 
-                int chunkIndex = coordsToChunkIndex(lat, lon);
+                int chunkIndex = config.coordsToChunkIndex(lat, lon, zoomLevel);
 
-                if (chunkIndex < chunkAmount && chunkIndex >= 0) {
+                if (chunkIndex < config.getChunkAmount(zoomLevel) && chunkIndex >= 0) {
                     zoomLayers.get(zoomLevel).get(chunkIndex).add(way);
                 }
             }
@@ -286,7 +267,7 @@ public class ChunkGenerator implements Runnable {
      * Write the chunks to binaryfiles
      */
     public void writeFiles() {
-        IntStream.range(0, amountOfZoomLayers).forEach(i -> {
+        IntStream.range(0, config.layerCount).forEach(i -> {
             IntStream.range(0, zoomLayers.get(i).size()).parallel().forEach(j -> {
                 try {
                     DataOutputStream stream = new DataOutputStream(
@@ -305,28 +286,11 @@ public class ChunkGenerator implements Runnable {
             });
         });
 
-        try {
-            writeConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        config.writeConfig();
     }
     /**
      * Write the configuration file, with map constants
      */
-    private void writeConfig() throws IOException {
-        FileWriter writer = new FileWriter(App.mapPath + "/config");
-        writer.write(
-                "minLat: " + minLat + "\n" +
-                "maxLat: " + maxLat + "\n" +
-                "minLon: " + minLon + "\n" +
-                "maxLon: " + maxLon + "\n" +
-                "chunkColumnAmount: " + chunkColumnAmount + "\n" +
-                "chunkRowAmount: " + chunkRowAmount + "\n" +
-                "chunkAmount: " + chunkAmount + "\n" +
-                "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
-        writer.close();
-    }
     private void writeUtilities() {
         graph.writeToFile(App.mapPath + "utilities");
     }

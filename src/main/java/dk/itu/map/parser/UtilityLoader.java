@@ -10,7 +10,7 @@ public class UtilityLoader extends Thread{
     private String path;
 
     public UtilityLoader(String name) {
-        this.path = App.dataPath + name + "/utilities";
+        this.path = App.DATA_PATH + name + "/utilities";
         graph = new Graph();
     }
 
