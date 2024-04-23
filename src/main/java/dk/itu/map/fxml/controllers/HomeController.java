@@ -52,7 +52,7 @@ public class HomeController {
     }
 
     public void loadSavedMaps(MenuButton mapList) {
-        File directoryPath = new File(model.getDataPath());
+        File directoryPath = new File(App.dataPath);
 
         String[] maps = directoryPath.list();
 

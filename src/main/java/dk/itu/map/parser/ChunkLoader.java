@@ -1,6 +1,7 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
@@ -24,7 +25,7 @@ import java.util.stream.IntStream;
 import javafx.geometry.Point2D;
 
 public class ChunkLoader {
-    private final String dataPath;
+
 
     public float minLat, maxLat, minLon, maxLon;
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
@@ -33,10 +34,8 @@ public class ChunkLoader {
     /**
      * Initialises the filehandler
      *
-     * @param dataPath
      */
-    public ChunkLoader(String dataPath) {
-        this.dataPath = dataPath;
+    public ChunkLoader() {
         loadConfig();
     }
 
@@ -45,7 +44,7 @@ public class ChunkLoader {
      */
     private void loadConfig() {
         try {
-            File file = new File(this.dataPath + "/config");
+            File file = new File(App.mapPath + "config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -81,7 +80,7 @@ public class ChunkLoader {
 
             ways.putIfAbsent(chunk, new ArrayList<>());
 
-            File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+            File file = new File(App.mapPath + "zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
             long id;
             CoordArrayList outerCoords;

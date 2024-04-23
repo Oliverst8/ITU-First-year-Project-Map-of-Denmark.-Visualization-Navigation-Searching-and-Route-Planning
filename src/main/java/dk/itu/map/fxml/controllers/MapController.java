@@ -1,5 +1,6 @@
 package dk.itu.map.fxml.controllers;
 
+import dk.itu.map.App;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
@@ -37,11 +38,12 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
-        
-        UtilityLoader utilityLoader = new UtilityLoader("maps/" + mapName);
+        App.mapPath = App.dataPath + mapName + "/";
+
+        UtilityLoader utilityLoader = new UtilityLoader(mapName);
         utilityLoader.start();
-        
-        model.chunkLoader = new ChunkLoader("maps/" + mapName);
+
+        model.chunkLoader = new ChunkLoader();
 
         setUtilities(utilityLoader);
     }

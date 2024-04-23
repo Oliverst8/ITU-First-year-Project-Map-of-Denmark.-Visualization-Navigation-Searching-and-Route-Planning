@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.App;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
@@ -20,14 +21,12 @@ class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
 
-    private final String dataPath;
     private final float CHUNK_SIZE = 0.05f;
     private final byte amountOfZoomLayers = 5;
 
     public float minLat, maxLat, minLon, maxLon;
 
     public int chunkColumnAmount, chunkRowAmount, chunkAmount;
-
     private ArrayList<ZoomLayer> zoomLayers;
     private final File[][] files;
     private List<MapElement> rawWays;
@@ -42,15 +41,13 @@ public class ChunkGenerator implements Runnable {
     /**
      * Constructor for the ChunkGenerator class
      *
-     * @param dataPath The path to the data folder
      * @param minLat The minimum latitude
      * @param maxLat The maximum latitude
      * @param minLon The minimum longitude
      * @param maxLon The maximum longitude
      */
-    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
+    public ChunkGenerator(float minLat, float maxLat, float minLon, float maxLon) {
         graph = new GraphBuilder();
-        this.dataPath = dataPath;
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         this.chunkingThread = new Thread(this);
@@ -74,28 +71,28 @@ public class ChunkGenerator implements Runnable {
 
         files = new File[amountOfZoomLayers][chunkAmount];
 
-        createFiles(dataPath);
+        createFiles(App.mapPath);
     }
 
    /**
      * Create the files for the chunks
      *
-     * @param dataPath The path to the data folder
+     * @param dataPath The path to the map folder
      */
     private void createFiles(String dataPath) {
         try {
             File folder = new File(dataPath);
             folder.mkdirs();
             for (int i = 0; i < amountOfZoomLayers; i++) {
-                File innerFolder = new File(dataPath + "/zoom" + i);
+                File innerFolder = new File(dataPath + "zoom" + i);
                 innerFolder.mkdir();
 
                 for (int j = 0; j < chunkAmount; j++) {
-                    files[i][j] = new File(dataPath + "/zoom" + i + "/chunk" + j + ".txt");
+                    files[i][j] = new File(dataPath + "zoom" + i + "/chunk" + j + ".txt");
                     new FileOutputStream(files[i][j]).close();
                 }
             }
-            (new File(dataPath + "/utilities")).mkdir();
+            (new File(dataPath + "utilities")).mkdir();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -317,9 +314,8 @@ public class ChunkGenerator implements Runnable {
     /**
      * Write the configuration file, with map constants
      */
-
     private void writeConfig() throws IOException {
-        FileWriter writer = new FileWriter(dataPath + "/config");
+        FileWriter writer = new FileWriter(App.mapPath + "/config");
         writer.write(
                 "minLat: " + minLat + "\n" +
                 "maxLat: " + maxLat + "\n" +
@@ -331,8 +327,8 @@ public class ChunkGenerator implements Runnable {
                 "CHUNK_SIZE: " + CHUNK_SIZE + "\n");
         writer.close();
     }
-    private void writeUtilities(){
-        graph.writeToFile(dataPath + "/utilities");
+    private void writeUtilities() {
+        graph.writeToFile(App.mapPath + "utilities");
     }
 
     /**

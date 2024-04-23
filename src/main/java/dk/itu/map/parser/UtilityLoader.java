@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.App;
 import dk.itu.map.structures.Graph;
 
 import java.io.IOException;
@@ -8,8 +9,8 @@ public class UtilityLoader extends Thread{
     private Graph graph;
     private String path;
 
-    public UtilityLoader(String path) {
-        this.path = path + "/utilities";
+    public UtilityLoader(String name) {
+        this.path = App.dataPath + name + "/utilities";
         graph = new Graph();
     }
 
