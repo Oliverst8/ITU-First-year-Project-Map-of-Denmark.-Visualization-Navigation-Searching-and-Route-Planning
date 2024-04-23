@@ -55,9 +55,6 @@ public class MapView {
     // Initial distance between two points
     private float startDist;
 
-    // Amount of chunks seen
-    private float currentChunkAmountSeen = 1;
-
     private AnimationTimer render;
     private boolean setStartPoint = false, setEndPoint = false;
 
@@ -230,7 +227,7 @@ public class MapView {
     private void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
-        currentChunkAmountSeen = controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
+        controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
         updateZoomLevel();
 
         Map<String, Set<Drawable>> ways = new HashMap<>();

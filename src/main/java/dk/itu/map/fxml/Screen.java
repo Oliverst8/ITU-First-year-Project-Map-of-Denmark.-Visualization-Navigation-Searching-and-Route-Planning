@@ -43,8 +43,8 @@ public abstract class Screen<M, C> {
 
         public Chunker(String OSMFile, String mapName) {
             this.fxml = "chunking.fxml";
-            this.model = new ChunkModel(OSMFile, mapName);
-            this.controller = new ChunkController(model);
+            this.model = new ChunkModel(OSMFile);
+            this.controller = new ChunkController(model, mapName);
             this.view = new ChunkView(controller, model);
 
         }
