@@ -14,8 +14,8 @@ public class Point implements Drawable{
 
     public void draw(GraphicsContext gc, float zoom, int themeNumber){
         gc.setStroke(Color.BEIGE);
-        float width = 0.03f;
-        float height = 0.03f;
+        float width = 0.0003f;
+        float height = 0.0003f;
         float x = (this.x*0.56f) - width/2;
         float y = (this.y*-1) - height/2;
         gc.fillOval( x, y, width, height);

@@ -75,7 +75,7 @@ public class ByteArrayList extends PrimitiveArrayList implements WriteAble{
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
-            stream.writeInt(array[i]);
+            stream.writeByte(array[i]);
         }
     }
 

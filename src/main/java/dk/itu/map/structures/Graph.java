@@ -34,13 +34,11 @@ public class Graph {
         edgeDestinations = new IntArrayList();
         timeWeights = new FloatArrayList(50_000);
         distanceWeights = new FloatArrayList(50_000);
-        vehicleRestrictions = new ByteArrayList(50_000);
+        vehicleRestrictions = new ByteArrayList();
         coords = new TwoDTree();
         oldToNewVertexIndex = new IntArrayList();
         //wayIDs = new LongArrayList();
     }
-
-
 
     /**
      * @return the number of vertices in the graph
@@ -105,6 +103,7 @@ public class Graph {
                 new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
+                new File(folderPath + "/vehicleRestrictions.txt"),
                 new File(folderPath + "/distanceWeights.txt"),
                 new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
@@ -147,8 +146,9 @@ public class Graph {
                 idToIndex,
                 vertexList,
                 edgeDestinations,
-                timeWeights,
+                vehicleRestrictions,
                 distanceWeights,
+                timeWeights,
                 coords,
                 oldToNewVertexIndex
                 //wayIDs
@@ -182,6 +182,7 @@ public class Graph {
             if(!idToIndex.equals(other.idToIndex)) return false;
             if(!vertexList.equals(other.vertexList)) return false;
             if(!edgeDestinations.equals(other.edgeDestinations)) return false;
+            if(!vehicleRestrictions.equals(other.vehicleRestrictions)) return false;
             if(!distanceWeights.equals(other.distanceWeights)) return false;
             if(!timeWeights.equals(other.timeWeights)) return false;
             if(!coords.equals(other.coords)) return false;

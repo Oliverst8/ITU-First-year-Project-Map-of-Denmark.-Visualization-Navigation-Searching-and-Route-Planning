@@ -102,6 +102,77 @@ class NavigationTest {
         return graph;
     }
 
+    private GraphBuilder getGraph3() {
+        GraphBuilder graph = new GraphBuilder();
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("footway");
+
+        CoordArrayList coords;
+        LongArrayList nodeIDs;
+        Way way;
+
+        //redStriped
+        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 1f, 100f, 8f, 7f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,11, 12});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //blueStriped
+        coords = TestUtilities.createCoordArrayList(new float[]{2f,4f, 4f,5f, 5f,6f, 8f,7f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{13,14,15,12});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //blueStiped
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,1f, 2f, 4f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1, 13});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        graph.stop();
+        graph.run();
+        return graph;
+    }
+    private GraphBuilder getGraphSomeFootPathSomeMotorway() {
+        GraphBuilder graph = new GraphBuilder();
+        ArrayList<String> tags = new ArrayList<>();
+        CoordArrayList coords;
+        LongArrayList nodeIDs;
+        Way way;
+
+        //redStriped
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 1f, 100f, 8f, 7f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,11, 12});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //blueStriped
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{2f,4f, 4f,5f, 5f,6f, 8f,7f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{13,14,15,12});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //green
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("footway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,1f, 2f, 4f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1, 13});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        graph.stop();
+        graph.run();
+        return graph;
+    }
+
     @BeforeEach
     void setUp() {
     }
@@ -164,7 +235,25 @@ class NavigationTest {
         float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
         assertArrayEquals(expected, path.getOuterCoords());
     }
+    @Test
+    void testShortestWayIsVehicleRestrictedByFoot(){
+        Graph graph = getGraphSomeFootPathSomeMotorway();
+        Navigation navigation = new Navigation(graph, 1);
+        DrawableWay path = navigation.getPath(1, 13);
 
+        //float[] expected = new float[]{2f,4f,1f,1f};
+        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
+        assertArrayEquals(expected, path.getOuterCoords());
+    }
+    @Test
+    void testShortestWayIsVehicleRestrictedByCar(){
+        Graph graph = getGraphSomeFootPathSomeMotorway();
+        Navigation navigation = new Navigation(graph, 4);
+        DrawableWay path = navigation.getPath(1, 13);
 
+        //float[] expected = new float[]{2f,4f,1f,1f};
+        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
+        assertArrayEquals(expected, path.getOuterCoords());
+    }
 
 }

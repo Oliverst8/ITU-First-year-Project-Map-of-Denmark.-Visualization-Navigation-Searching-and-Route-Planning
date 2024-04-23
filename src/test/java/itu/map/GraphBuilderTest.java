@@ -97,7 +97,8 @@ public class GraphBuilderTest {
         GraphBuilder graph = new GraphBuilder();
         graph.loadFromDataPath(dataPath);
         FileUtils.deleteDirectory(new File(dataPath + "/graph"));
-        assertEquals(graph, graphBuilder);
+        //assertEquals(graph, graphBuilder);
+        assertTrue(graph.equals(graphBuilder));
     }
 
 @Test

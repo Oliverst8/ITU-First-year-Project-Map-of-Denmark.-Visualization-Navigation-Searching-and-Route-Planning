@@ -53,8 +53,10 @@ public class GraphBuilder extends Graph implements Runnable {
         float[] coord2 = coords.get(nodeId+1);
         return distanceInKM(coord1, coord2);
     }
+
     private float calcWeightTime(MapElement way, int nodeId) {
         String[] speedLimitString = null;
+        int speedLimit = -1;
         for(int i = 0; i < way.getTags().size(); i += 2){
             if(way.getTags().get(i).equals("maxspeed")){
                 speedLimitString = way.getTags().get(i+1).split(" ");
@@ -62,7 +64,6 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
 
-        int speedLimit = -1;
         if(speedLimitString != null && !speedLimitString[0].equals("none")){
             if(speedLimitString.length == 1) {
                 speedLimit = Integer.parseInt(speedLimitString[0]);
@@ -85,6 +86,8 @@ public class GraphBuilder extends Graph implements Runnable {
                 case "motorway", "motorway_link":
                     speedLimit = 130;
                     break;
+                default:
+                    speedLimit = 1;
             }
         } else if(speedLimitString.equals("none")){
             speedLimit = 130;
@@ -93,7 +96,14 @@ public class GraphBuilder extends Graph implements Runnable {
         CoordArrayList coords = way.getCoords();
         float[] coord1 = coords.get(nodeId);
         float[] coord2 = coords.get(nodeId+1);
+
+        if(distanceInKM(coord1, coord2)/speedLimit <= 0){
+            System.out.println(speedLimitString);
+            System.out.println("The time to get");
+        }
         return distanceInKM(coord1, coord2)/speedLimit;
+
+
     }
     private float distanceInKM(float[] coord1, float[] coord2) {
         double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
@@ -292,6 +302,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
+                new File(folderPath + "/vehicleRestrictions.txt"),
                 new File(folderPath + "/distanceWeights.txt"),
                 new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
@@ -303,6 +314,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 idToIndex,
                 vertexList,
                 edgeDestinations,
+                vehicleRestrictions,
                 distanceWeights,
                 timeWeights,
                 coords,
