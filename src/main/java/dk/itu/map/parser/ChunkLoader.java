@@ -2,6 +2,7 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.App;
+import dk.itu.map.fxml.views.MapView;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
@@ -98,7 +99,7 @@ public class ChunkLoader {
 
         long endTime = System.currentTimeMillis();
         System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
-
+        MapView.overridePrint = true;
         return ways;
     }
 

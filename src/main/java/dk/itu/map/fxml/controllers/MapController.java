@@ -2,6 +2,7 @@ package dk.itu.map.fxml.controllers;
 
 import dk.itu.map.App;
 import dk.itu.map.fxml.models.MapModel;
+import dk.itu.map.fxml.views.MapView;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
 import dk.itu.map.structures.Drawable;
@@ -130,8 +131,7 @@ public class MapController {
      * @param lowerRightCorner The lower right corner of the current view
      * @return The amount of chunks seen in the current view in the y direction
      */
-    long prevTime = 0;
-    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner) {
+    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner, boolean print) {
         int count = 0;
         for (int i = detailLevel; i <= 4; i++) {
             int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
@@ -142,8 +142,7 @@ public class MapController {
 
             updateZoomLayer(chunks, i);
         }
-        if (System.currentTimeMillis() - prevTime > 300) {
-            prevTime = System.currentTimeMillis();
+        if (print || MapView.overridePrint) {
             System.out.println("Loaded chunks: " + count);
         }
     }
