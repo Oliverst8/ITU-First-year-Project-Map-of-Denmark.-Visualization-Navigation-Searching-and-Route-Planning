@@ -59,7 +59,7 @@ public class MapView {
 
     private AnimationTimer render;
     private int themeNumber = 0;
-    private int vehicleCode = 1;
+    private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false;
 
     public MapView(MapController controller, MapModel model) {

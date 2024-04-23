@@ -56,7 +56,7 @@ public class GraphBuilder extends Graph implements Runnable {
 
     private float calcWeightTime(MapElement way, int nodeId) {
         String[] speedLimitString = null;
-        int speedLimit = -1;
+        int speedLimit = 0;
         for(int i = 0; i < way.getTags().size(); i += 2){
             if(way.getTags().get(i).equals("maxspeed")){
                 speedLimitString = way.getTags().get(i+1).split(" ");
@@ -86,8 +86,6 @@ public class GraphBuilder extends Graph implements Runnable {
                 case "motorway", "motorway_link":
                     speedLimit = 130;
                     break;
-                default:
-                    speedLimit = 1;
             }
         } else if(speedLimitString.equals("none")){
             speedLimit = 130;
@@ -97,10 +95,6 @@ public class GraphBuilder extends Graph implements Runnable {
         float[] coord1 = coords.get(nodeId);
         float[] coord2 = coords.get(nodeId+1);
 
-        if(distanceInKM(coord1, coord2)/speedLimit <= 0){
-            System.out.println(speedLimitString);
-            System.out.println("The time to get");
-        }
         return distanceInKM(coord1, coord2)/speedLimit;
 
 
@@ -193,7 +187,6 @@ public class GraphBuilder extends Graph implements Runnable {
      */
     private void addEdge(MapElement way) {
         long[] nodeIDs = way.getNodeIDs();
-
         byte vehicleRestriction = setVehicleRestriction(way);
 
         for(int i = 0; i < nodeIDs.length-1; i++){
@@ -233,7 +226,7 @@ public class GraphBuilder extends Graph implements Runnable {
     private byte setVehicleRestriction(MapElement way) {
         List<String> tags = way.getTags();
         String secondayType = way.getSecondaryType();
-
+        System.out.print(secondayType);
         switch(secondayType){
             case "escape":
             case "raceway":
@@ -306,7 +299,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/distanceWeights.txt"),
                 new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
-                new File(folderPath + "/oldToNewVertexIndex.txt")
+                new File(folderPath + "/oldToNewVertexIndex.txt"),
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -318,7 +311,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 distanceWeights,
                 timeWeights,
                 coords,
-                oldToNewVertexIndex
+                oldToNewVertexIndex,
                 //wayIDs
         };
 

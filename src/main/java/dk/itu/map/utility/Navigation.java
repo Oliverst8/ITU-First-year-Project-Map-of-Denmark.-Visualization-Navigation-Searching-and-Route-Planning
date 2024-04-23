@@ -26,6 +26,7 @@ public class Navigation {
 
         for(int i = 0; i < graph.size(); i++) {
             distTo[i] = Float.MAX_VALUE;
+            timeTo[i] = Float.MAX_VALUE;
             vertexTo[i] = -1;
         }
     }
@@ -49,30 +50,33 @@ public class Navigation {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
             int edge = edges.get(i);
-            System.out.println("This is the vehicle restriction: " + graph.getVehicleRestrictions().get(edge));
-            System.out.println("This is the allowance " + ((graph.getVehicleRestrictions().get(edge))&vehicleCode));
-            if((graph.getVehicleRestrictions().get(edge)&vehicleCode) == 0){
-                System.out.println("We are in!");
+            if((graph.getVehicleRestrictions().get(edge) & vehicleCode) == 0 ){
+                System.out.println("VehicleRestriction: " + graph.getVehicleRestrictions().get(edge));
                 continue;
             }
 
             int destination = graph.getDestination(edge);
-            if(graph.getTimeWeight(edge) < 0) {
-                System.out.println("We are in the negative distance");
-            }
+
             float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge);
-            float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
-            System.out.println("Our new timeWeight is:" + newTimeWeight + "and our time to destination is: " + timeTo[destination] + "and destination is" + destination);
-            if((newTimeWeight < timeTo[destination]) && vehicleCode == 4 && false){
-                System.out.println("We are in the timeWeight");
-                if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
-                else queue.insert(destination, newTimeWeight);
-                setDistTo(destination, vertex, newDistWeight, newTimeWeight);
-            } else if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1 || vehicleCode == 4)){
+            if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1)){
                 System.out.println("We are in the distWeight");
                 if(queue.contains(destination)) queue.decreaseKey(destination, newDistWeight);
                 else queue.insert(destination, newDistWeight);
-                setDistTo(destination, vertex, newDistWeight, newTimeWeight);
+                setDistTo(destination, vertex, newDistWeight);
+            }
+
+            if(vehicleCode == 4){
+                float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
+                if(graph.getTimeWeight(edge) <= 0){
+                    System.out.println("TimeWeight is: "+ graph.getTimeWeight(edge));
+                }
+
+                if((newTimeWeight < timeTo[destination])){
+                    System.out.println("We are in the timeWeight");
+                    if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
+                    else queue.insert(destination, newTimeWeight);
+                    setDistTo(destination, vertex, newDistWeight, newTimeWeight);
+                }
             }
         }
     }
@@ -80,6 +84,11 @@ public class Navigation {
     private void setDistTo(int vertex, int vertexFrom, float dist, float time) {
         distTo[vertex] = dist;
         timeTo[vertex] = time;
+        vertexTo[vertex] = vertexFrom;
+    }
+
+    private void setDistTo(int vertex, int vertexFrom, float dist) {
+        distTo[vertex] = dist;
         vertexTo[vertex] = vertexFrom;
     }
 
@@ -114,9 +123,9 @@ public class Navigation {
 
     public DrawableWay getPath(float[] startCoords, float[] endCoords){
         //int startPoint = graph.getNearestNeighborID(startCoords);
-        int startPoint = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]});
+        int startPoint = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]}, vehicleCode, graph);
         //int endPoint = graph.getNearestNeighborID(endCoords);
-        int endPoint = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]});
+        int endPoint = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]}, vehicleCode, graph);
         return getPath(startPoint, endPoint);
 
     }

@@ -11,6 +11,7 @@ import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
 import java.util.stream.IntStream;
+import java.util.ArrayList;
 
 
 public class Graph {
@@ -20,7 +21,6 @@ public class Graph {
     protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
     protected final FloatArrayList timeWeights; //List that holds the weight in hours of each edge
     protected final FloatArrayList distanceWeights; //List that holds the weight in km of each edge
-
     protected final ByteArrayList vehicleRestrictions; //List that holds which vehicles are allowed to use each edge
     protected TwoDTree coords; //List that holds the coordinates of each vertex
 
@@ -171,8 +171,8 @@ public class Graph {
         return edgeDestinations;
     }
 
-    public int getNearestNeigherborID(float[] coords) {
-        return this.coords.nearestNeighbour(coords);
+    public int getNearestNeigherborID(float[] coords, int vehicleCode, Graph graph) {
+        return this.coords.nearestNeighbour(coords, vehicleCode, graph);
     }
 
     @Override
@@ -201,4 +201,5 @@ public class Graph {
     public FloatArrayList getTimeWeights() {
         return timeWeights;
     }
+
 }
