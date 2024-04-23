@@ -60,9 +60,6 @@ public class Navigation {
     }
 
     private DrawableWay getPath(int startPointID, int endPointID){
-
-
-
         if(!buildPaths(startPointID, endPointID)) return null;
 
         CoordArrayList path = new CoordArrayList();
@@ -78,9 +75,6 @@ public class Navigation {
         pathIDs.add(current);
 
         return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
-
-        //return path;
-
     }
 
     public DrawableWay getPath(long startID, long endID){

@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import dk.itu.map.structures.Point;
-import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;

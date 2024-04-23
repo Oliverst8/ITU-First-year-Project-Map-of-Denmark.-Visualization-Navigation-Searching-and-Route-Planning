@@ -1,13 +1,7 @@
 package dk.itu.map.structures;
 
-import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-
 import dk.itu.map.utility.Sort;
-
-import java.util.Arrays;
-import java.util.HashSet;
-
 
 public class TwoDTreeBuilder {
 

@@ -1,7 +1,5 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
-
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
@@ -10,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 
-public class IntArrayList extends PrimitiveArrayList implements WriteAble {
+public class IntArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private int[] array;
 

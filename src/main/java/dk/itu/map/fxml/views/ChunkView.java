@@ -2,7 +2,6 @@ package dk.itu.map.fxml.views;
 
 import dk.itu.map.fxml.controllers.ChunkController;
 import dk.itu.map.fxml.models.ChunkModel;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 
 public class ChunkView {

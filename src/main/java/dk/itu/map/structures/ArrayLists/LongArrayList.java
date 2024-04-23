@@ -1,7 +1,5 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
-
 import java.util.Arrays;
 
 import java.io.IOException;
@@ -12,7 +10,7 @@ import java.io.DataOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 
-public class LongArrayList extends PrimitiveArrayList implements WriteAble {
+public class LongArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private long[] array;
 
