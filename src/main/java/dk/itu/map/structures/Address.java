@@ -3,15 +3,14 @@ package dk.itu.map.structures;
 import dk.itu.map.structures.ArrayLists.BooleanArrayList;
 import dk.itu.map.structures.ArrayLists.CharArrayList;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Address implements Runnable{
     private CharArrayList streetTree;
     private BooleanArrayList[] endingChar;
     private TwoDTree kdTree;
     private Queue<String> streetNames;
+    private Node root;
 
     public Address(){
         streetNames = new LinkedList<>();
@@ -23,33 +22,70 @@ public class Address implements Runnable{
     }
 
     public void run(){
+        String street = streetNames.remove();
+        root = insert(street);
         while(!streetNames.isEmpty()){
-            String street = streetNames.remove();
-            char[] streetChars = street.toCharArray();
-            int[] searchResult = search(street);
-            if(searchResult[0] < 0){
-                searchResult[0] = -searchResult[0];
+            street = streetNames.remove();
+            insert(street);
+        }
+    }
+
+    private Node insert(String value){
+        return insert(root, value, 0);
+    }
+
+    private Node insert(Node node, String value, int pos){
+        if(pos >= value.length()) return node;
+        if (node == null){
+            node = new Node();
+            node.value = value.charAt(pos);
+        }
+        if(node.value > value.charAt(pos)){
+            node.left = insert(node.left, value, pos);
+        } else if(node.value < value.charAt(pos)){
+            node.right = insert(node.right, value, pos);
+        } else if(pos == value.length()-1){
+            node.isTerminal = true;
+        }else {
+            node.middle = insert(node.middle, value, pos+1);
+        }
+        return node;
+    }
+
+    public InformationNode search(String value){
+        return search(root, value, 0);
+    }
+
+    public InformationNode search(Node node, String value, int pos){
+        if(node == null) return null;
+
+        if(pos >= value.length()) {
+            return new InformationNode(node, pos, false);
+        }
+        InformationNode searchResult;
+        if(node.value == value.charAt(pos)){
+            if(node.isTerminal && pos == value.length()-1){
+                return new InformationNode(node, pos, true);
             }
-            String streetToInsert = street.substring(searchResult[1]);
-            insert(searchResult[0], streetToInsert);
-        }
-    }
-
-    private int[] search(String goal){
-        return search(0, new StringBuilder(), goal, 0);
-    }
-    //Ternary search
-    private int[] search(int start, StringBuilder current, String goal, int pos){
-        if(streetTree.get(start) == '\000') return (new int[]{-start, pos});
-
-        if((!current.toString().isEmpty()) && current.toString().charAt(pos) == goal.charAt(pos)) {
-            if(pos == goal.length()-1) return new int[]{start, pos};
-            return search(getMiddleChild(start), current.append(streetTree.get(start)), goal, pos+1);
+            searchResult = search(node.middle, value, pos+1);
+            if(searchResult == null) return new InformationNode(node,pos, false);
+        } else if(node.value > value.charAt(pos)){
+            searchResult = search(node.left, value, pos);
+            if(searchResult == null) return new InformationNode(node,pos, false);
+        } else {
+            searchResult = search(node.right, value, pos);
+            if(searchResult == null) return new InformationNode(node,pos, false);
         }
 
-        if(streetTree.get(start) < goal.charAt(pos)) return search(getRightChild(start), current.append(streetTree.get(start)), goal, pos);
+        return searchResult;
 
-        return search(getLeftChild(start), current.append(streetTree.get(start)), goal, pos);
+    }
+
+    public Set<String> autoComplete(String value, int maxResults){
+
+        Set<String> result = new HashSet<>();
+        InformationNode node = search(value);
+
     }
 
     private int getLeftChild(int index){
@@ -64,16 +100,26 @@ public class Address implements Runnable{
         return index*3+3;
     }
 
-    private void insert(int index, String value){
-        char[] charArray = value.toCharArray();
-        for(char c : charArray){
-            streetTree.set(index,c);
-            index = getMiddleChild(index);
-        }
-    }
-
     public char[] getStreetTree(){
         return streetTree.toArray();
     }
 
+    public class Node{
+        public Node left;
+        public Node middle;
+        public Node right;
+        public char value;
+        public boolean isTerminal;
+    }
+
+    public class InformationNode {
+        public Node node;
+        int pos;
+        boolean fullMatch;
+        public InformationNode(Node node, int pos, boolean fullMatch){
+            this.node = node;
+            this.pos = pos;
+            this.fullMatch = fullMatch;
+        }
+    }
 }

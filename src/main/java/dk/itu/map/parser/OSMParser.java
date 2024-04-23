@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.Address;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
@@ -36,6 +37,7 @@ public class OSMParser extends Thread {
     private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
+    private Address address;
 
     /**
      * Constructor for the OSMParser class
@@ -86,6 +88,7 @@ public class OSMParser extends Thread {
      */
 
     private void parse(InputStream inputStream) {
+        int counter = 0;
         try {
             XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
             nodes = new LongCoordHashMap();
@@ -104,18 +107,36 @@ public class OSMParser extends Thread {
                             float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                             float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                             float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                            chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon);
+                            chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon, address);
                         }
 
                         case "node" -> {
+                            if((++counter)%1_000_000 == 0){
+                                System.out.println("Nodes:" + counter);
+                            }
                             float[] cords = new float[2];
                             long id = Long.parseLong(input.getAttributeValue(null, "id"));
                             cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                             cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                             nodes.put(id, cords);
+                            String houseNumber = input.getAttributeValue(null, "addr:housenumber");
+                            if(houseNumber != null){
+                                StringBuilder streetName = new StringBuilder();
+                                streetName.append(input.getAttributeValue(null, "addr:street"));
+                                streetName.append(" ");
+                                streetName.append(houseNumber);
+                                streetName.append(", ");
+                                streetName.append(input.getAttributeValue(null, "addr:postcode"));
+                                streetName.append(" ");
+                                streetName.append(input.getAttributeValue(null, "addr:city"));
+                                address.addStreetName(streetName.toString());
+                            }
                         }
 
                         case "way" -> {
+                            if((++counter)%1_000_000 == 0){
+                                System.out.println("Ways: " + counter);
+                            }
                             long id = Long.parseLong(input.getAttributeValue(null, "id"));
                             createWay(input, nodes, id);
                         }

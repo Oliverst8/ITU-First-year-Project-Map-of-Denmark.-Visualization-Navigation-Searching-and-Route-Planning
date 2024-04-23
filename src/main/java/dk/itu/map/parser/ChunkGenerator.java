@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.Address;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
@@ -38,6 +39,8 @@ public class ChunkGenerator implements Runnable {
 
     private final Thread chunkingThread;
 
+    private final Address address;
+
 
     /**
      * Constructor for the ChunkGenerator class
@@ -48,7 +51,7 @@ public class ChunkGenerator implements Runnable {
      * @param minLon The minimum longitude
      * @param maxLon The maximum longitude
      */
-    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon) {
+    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon, Address address) {
         graph = new GraphBuilder();
         this.dataPath = dataPath;
         this.hasMoreWork = false;
@@ -62,6 +65,8 @@ public class ChunkGenerator implements Runnable {
         this.maxLat = maxLat;
         this.minLon = minLon;
         this.maxLon = maxLon;
+
+        this.address = address;
 
         this.chunkColumnAmount = (int) Math.ceil(Math.abs(maxLon - minLon) / CHUNK_SIZE);
         this.chunkRowAmount = (int) Math.ceil(Math.abs(maxLat - minLat) / CHUNK_SIZE);
@@ -273,9 +278,12 @@ public class ChunkGenerator implements Runnable {
             writeFiles();
         }
         long startTime = System.nanoTime();
+        Thread thread = new Thread(address);
+        thread.start();
         graph.stop();
         try {
             graphThread.join();
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
