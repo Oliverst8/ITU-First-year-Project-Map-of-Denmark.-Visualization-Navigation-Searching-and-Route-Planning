@@ -132,17 +132,24 @@ public class MapController {
      * @param lowerRightCorner The lower right corner of the current view
      * @return The amount of chunks seen in the current view in the y direction
      */
+    long prevTime = 0;
     public float updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner) {
+        int count = 0;
         int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner);
         int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner);
 
         Set<Integer> chunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.chunkColumnAmount);
+        count += chunks.size()*(5-detailLevel);
 
         float currentChunkAmountSeen = (float) (Math.abs(upperLeftCorner.getY() - lowerRightCorner.getY())
                 / model.chunkLoader.CHUNK_SIZE);
 
         updateZoomLayer(chunks, detailLevel);
 
+        if (System.currentTimeMillis() - prevTime > 300) {
+            prevTime = System.currentTimeMillis();
+            System.out.println("Loaded chunks: " + count);
+        }
         return currentChunkAmountSeen;
     }
 

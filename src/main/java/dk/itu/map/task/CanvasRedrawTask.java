@@ -11,7 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
-public class CanvasRedrawTask extends Task<Void> {
+public class CanvasRedrawTask {
     private final Canvas canvas;
     private final Affine trans;
     private final float zoom;
@@ -26,8 +26,7 @@ public class CanvasRedrawTask extends Task<Void> {
         this.theme = theme;
     }
 
-    @Override
-    protected Void call() throws Exception {
+    public Void run() {
         // Redraw the canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
 

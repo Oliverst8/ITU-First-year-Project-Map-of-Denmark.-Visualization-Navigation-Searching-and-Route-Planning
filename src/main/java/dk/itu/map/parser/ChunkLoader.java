@@ -75,7 +75,7 @@ public class ChunkLoader {
 
     public Map<Integer, List<Drawable>> readFiles(int[] chunks, int zoomLevel) {
         Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
-
+        long starTime = System.currentTimeMillis();
         IntStream.of(chunks).parallel().forEach(chunk -> {
             if (chunk < 0 || chunk >= chunkAmount) return;
 
@@ -123,6 +123,9 @@ public class ChunkLoader {
                 throw new RuntimeException(e);
             }
         });
+
+        long endTime = System.currentTimeMillis();
+        System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
 
         return ways;
     }
