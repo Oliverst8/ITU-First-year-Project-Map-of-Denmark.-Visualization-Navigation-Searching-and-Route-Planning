@@ -51,6 +51,7 @@ public class OSMParser extends Thread {
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
+        address = new Address();
     }
 
     /**
@@ -119,7 +120,48 @@ public class OSMParser extends Thread {
                             cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                             cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                             nodes.put(id, cords);
-                            String houseNumber = input.getAttributeValue(null, "addr:housenumber");
+                            ArrayList<String> tags = new ArrayList<>(4);
+                            for(int i = 0; i < 4; i++){
+                                tags.add(null);
+                            }
+                            whileTagLoop:
+                            while(true){
+                                int eventType = input.next();
+                                if(eventType == XMLStreamConstants.END_ELEMENT && input.getLocalName().equals("node")){
+                                    break;
+                                }
+                                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                                    String tagType  = input.getAttributeValue(null, "k");
+                                    int position = -1;
+                                    switch (tagType){
+                                        case "addr:street":
+                                            position = 0;
+                                            break;
+                                        case "addr:housenumber":
+                                            position = 1;
+                                            break;
+                                        case "addr:postcode":
+                                            position = 2;
+                                            break;
+                                        case "addr:city":
+                                            position = 3;
+                                            break;
+                                        default:
+                                            continue whileTagLoop;
+                                    }
+                                    tags.set(position, input.getAttributeValue(null, "v"));
+                                }
+                            }
+                            StringBuilder streetName = new StringBuilder();
+                            for(String tag : tags){
+                                if(tag == null){
+                                    continue;
+                                }
+                                streetName.append(tag);
+                                streetName.append(" ");
+                            }
+                            if(!streetName.toString().isEmpty()) address.addStreetName(streetName.toString());
+                            /*String houseNumber = input.getAttributeValue(null, "addr:housenumber");
                             if(houseNumber != null){
                                 StringBuilder streetName = new StringBuilder();
                                 streetName.append(input.getAttributeValue(null, "addr:street"));
@@ -130,7 +172,7 @@ public class OSMParser extends Thread {
                                 streetName.append(" ");
                                 streetName.append(input.getAttributeValue(null, "addr:city"));
                                 address.addStreetName(streetName.toString());
-                            }
+                            }*/
                         }
 
                         case "way" -> {

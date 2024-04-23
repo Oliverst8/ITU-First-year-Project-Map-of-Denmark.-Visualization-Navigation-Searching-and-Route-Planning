@@ -3,10 +3,7 @@ package dk.itu.map.fxml.models;
 import java.util.*;
 
 import dk.itu.map.parser.ChunkLoader;
-import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
-import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.Point;
+import dk.itu.map.structures.*;
 
 public class MapModel {
     
@@ -15,6 +12,7 @@ public class MapModel {
     // The chunk loader
     public ChunkLoader chunkLoader;
     private Graph graph;
+    private Address address;
 
     private final Drawable[] navigationWays;
 
@@ -111,4 +109,7 @@ public class MapModel {
         return navigationWays;
     }
 
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 }

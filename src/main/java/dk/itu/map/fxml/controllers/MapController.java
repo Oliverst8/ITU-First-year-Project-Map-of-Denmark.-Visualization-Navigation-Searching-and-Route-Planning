@@ -109,6 +109,7 @@ public class MapController {
             throw new RuntimeException(e);
         }
         model.setGraph(utilityLoader.getGraph());
+        model.setAddress(utilityLoader.getAddress());
     }
 
     /**

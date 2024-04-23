@@ -341,6 +341,11 @@ public class ChunkGenerator implements Runnable {
     }
     private void writeUtilities(){
         graph.writeToFile(dataPath + "/utilities");
+        try {
+            address.write(dataPath + "/utilities" + "/address.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
