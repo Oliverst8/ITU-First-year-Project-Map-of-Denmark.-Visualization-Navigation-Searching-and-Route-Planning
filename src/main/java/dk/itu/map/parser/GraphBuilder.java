@@ -229,7 +229,6 @@ public class GraphBuilder extends Graph implements Runnable {
         }
         List<String> tags = way.getTags();
         String secondayType = way.getSecondaryType();
-        System.out.print(secondayType);
         switch(secondayType){
             case "escape":
             case "raceway":
