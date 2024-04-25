@@ -98,7 +98,7 @@ public class Navigation {
         int current = endPointID;
         while(current != startPointID){
             path.add(graph.getCoords(current));
-            pathIDs.add(current);
+            //pathIDs.add(current);
             current = vertexTo[current];
             //System.out.println(path.size());
         }
