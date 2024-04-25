@@ -1,7 +1,6 @@
 package dk.itu.map.structures;
 
-import dk.itu.map.structures.ArrayLists.BooleanArrayList;
-import dk.itu.map.structures.ArrayLists.CharArrayList;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,25 +8,29 @@ import java.io.IOException;
 import java.util.*;
 
 public class Address implements Runnable, WriteAble{
-    private CharArrayList streetTree;
-    private BooleanArrayList[] endingChar;
-    private TwoDTree kdTree;
-    private Queue<String> streetNames;
+    private final Queue<String[]> streetNames;
+    private Map<String, Integer> streetNumberMap, zipMap, cityMap;
+    private List<String> streetNumber, zip, cities;
     private Node root;
     private int size;
 
     public Address(){
         size = 0;
         streetNames = new LinkedList<>();
-        streetTree = new CharArrayList();
+        streetNumberMap = new HashMap<>();
+        zipMap = new HashMap<>();
+        cityMap = new HashMap<>();
+        streetNumber = new ArrayList<>();
+        zip = new ArrayList<>();
+        cities = new ArrayList<>();
     }
 
-    public void addStreetName(String streetName){
+    public void addStreetName(String[] streetName){
         streetNames.add(streetName);
     }
 
     public void run(){
-        String street = streetNames.remove();
+        String[] street = streetNames.remove();
         root = insert(street);
         while(!streetNames.isEmpty()){
             street = streetNames.remove();
@@ -35,23 +38,26 @@ public class Address implements Runnable, WriteAble{
         }
     }
 
-    private Node insert(String value){
+    private Node insert(String[] value){
         return insert(root, value, 0);
     }
 
-    private Node insert(Node node, String value, int pos){
-        if(pos >= value.length()) return node;
+    private Node insert(Node node, String[] value, int pos){
+        if(pos >= value[0].length()) return node;
         if (node == null){
             node = new Node();
-            node.value = value.charAt(pos);
+            node.value = value[0].charAt(pos);
             size++;
         }
-        if(node.value > value.charAt(pos)){
+        int cmp = node.compareTo(value[0].charAt(pos));
+        if(cmp > 0){
             node.left = insert(node.left, value, pos);
-        } else if(node.value < value.charAt(pos)){
+        } else if(cmp < 0){
             node.right = insert(node.right, value, pos);
-        } else if(pos == value.length()-1){
-            node.isTerminal = true;
+        } else if(pos == value[0].length()-1){
+            //node.isTerminal = true;
+            if(!node.isTerminal) node = new AddressNode(value);
+            else ((AddressNode) node).addAddress(value);
         }else {
             node.middle = insert(node.middle, value, pos+1);
         }
@@ -62,58 +68,84 @@ public class Address implements Runnable, WriteAble{
         return size;
     }
 
-    public InformationNode search(String value){
+    public Node search(String value){
         return search(root, value, 0);
     }
 
-    public InformationNode search(Node node, String value, int pos){
+    public Node search(Node node, String value, int pos){
         if(node == null) return null;
 
         if(pos >= value.length()) {
-            return new InformationNode(node, pos, false);
+            //return new InformationNode(node, pos, false);
+            return null;
         }
-        InformationNode searchResult;
-        if(node.value == value.charAt(pos)){
-            if(node.isTerminal && pos == value.length()-1){
-                return new InformationNode(node, pos, true);
+        int cmp = node.compareTo(value.charAt(pos));
+        if(cmp == 0){
+            if(pos == value.length()-1){
+                //return new InformationNode(node, pos, true);
+                return node;
             }
-            searchResult = search(node.middle, value, pos+1);
-            if(searchResult == null) return new InformationNode(node,pos, false);
-        } else if(node.value > value.charAt(pos)){
-            searchResult = search(node.left, value, pos);
-            if(searchResult == null) return new InformationNode(node,pos, false);
+            //searchResult =
+            return search(node.middle, value, pos+1);
+
+            //if(searchResult == null) return new InformationNode(node,pos, false);
+        } else if(cmp > 0){
+            //searchResult =
+            return search(node.left, value, pos);
+            //if(searchResult == null) return new InformationNode(node,pos, false);
         } else {
-            searchResult = search(node.right, value, pos);
-            if(searchResult == null) return new InformationNode(node,pos, false);
+            //searchResult = search(node.right, value, pos);
+            return search(node.right, value, pos);
+            //if(searchResult == null) return new InformationNode(node,pos, false);
         }
 
-        return searchResult;
+        //return searchResult;
 
     }
 
     public Set<String> autoComplete(String value, int maxResults){
+        Node searchResult = search(value);
+        Set<String> results = new HashSet<>();
+        Queue<Node> branches = new LinkedList<>();
+        Queue<StringBuilder> branchStrings = new LinkedList<>();
 
+        if (searchResult == null) return results;
 
+        if(searchResult.isTerminal) results.add(value);
 
+        if(searchResult.middle != null) branches.add(searchResult.middle);
+        else return results;
+
+        branchStrings.add(new StringBuilder(value));
+
+        while(!branches.isEmpty()){
+            Node current = branches.remove();
+            StringBuilder currentString = branchStrings.remove();
+
+            if(current.left != null) {
+                branches.add(current.left);
+                branchStrings.add(new StringBuilder(currentString));
+            }
+            if(current.middle != null) {
+                branches.add(current.middle);
+                branchStrings.add(new StringBuilder(currentString).append(current.value));
+            }
+            if(current.right != null) {
+                branches.add(current.right);
+                branchStrings.add(new StringBuilder(currentString));
+            }
+
+            if(current.isTerminal) {
+                currentString.append(current.value);
+                results.add(currentString.toString());
+            }
+
+            if(results.size() >= maxResults) break;
+
+        }
+
+        return results;
     }
-
-    private int getLeftChild(int index){
-        return index*3+1;
-    }
-
-    private int getMiddleChild(int index){
-        return index*3+2;
-    }
-
-    private int getRightChild(int index){
-        return index*3+3;
-    }
-
-    public char[] getStreetTree(){
-        return streetTree.toArray();
-    }
-
-
 
     @Override
     public void write(DataOutputStream stream) throws IOException {
@@ -202,16 +234,64 @@ public class Address implements Runnable, WriteAble{
         public Node right;
         public char value;
         public boolean isTerminal;
+
+        public String toString(){
+            return "Value: " + value + " Terminal: " + isTerminal + (left != null ? " Has left" : " left is null") + (middle != null ? " Has middle" : " middle is null") + (right != null ? " Has right" : " right is null");
+        }
+
+        public int compareTo(char otherValue){
+            return Character.compare(Character.toLowerCase(value), Character.toLowerCase(otherValue));
+        }
+
     }
 
-    public class InformationNode {
-        public Node node;
-        int pos;
-        boolean fullMatch;
-        public InformationNode(Node node, int pos, boolean fullMatch){
-            this.node = node;
-            this.pos = pos;
-            this.fullMatch = fullMatch;
+    public class AddressNode extends Node{
+
+        IntArrayList cityIndexes;
+        IntArrayList zipIndexes;
+        IntArrayList streetNumberIndexes;
+
+        public AddressNode(String[] address){
+            isTerminal = true;
+            cityIndexes = new IntArrayList();
+            zipIndexes = new IntArrayList();
+            streetNumberIndexes = new IntArrayList();
+            addAddress(address);
         }
+
+        public void addAddress(String[] address){
+            int cityIndex;
+            if(cityMap.containsKey(address[1])){
+                cityIndex = cityMap.get(address[1]);
+                cityIndexes.add(cityIndex);
+            } else {
+                cities.add(address[1]);
+                cityMap.put(address[1], cities.size()-1);
+                cityIndexes.add(cities.size()-1);
+            }
+
+            int zipIndex;
+            if(zipMap.containsKey(address[2])){
+                zipIndex = zipMap.get(address[2]);
+                zipIndexes.add(zipIndex);
+            } else {
+                zip.add(address[2]);
+                zipMap.put(address[2], zip.size()-1);
+                zipIndexes.add(zip.size()-1);
+            }
+
+            int streetNumberIndex;
+            if(streetNumberMap.containsKey(address[3])){
+                streetNumberIndex = streetNumberMap.get(address[3]);
+                streetNumberIndexes.add(streetNumberIndex);
+            } else {
+                streetNumber.add(address[3]);
+                streetNumberMap.put(address[3], streetNumber.size()-1);
+                streetNumberIndexes.add(streetNumber.size()-1);
+            }
+
+        }
+
     }
+
 }

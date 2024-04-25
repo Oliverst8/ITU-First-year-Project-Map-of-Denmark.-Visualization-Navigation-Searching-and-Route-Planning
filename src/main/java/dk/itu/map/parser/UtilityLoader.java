@@ -36,6 +36,8 @@ public class UtilityLoader extends Thread{
     }
 
     public Address getAddress() {
+        System.out.println(address.autoComplete("a",10));
+        System.out.println(address.autoComplete("a",10).size());
         return address;
     }
 

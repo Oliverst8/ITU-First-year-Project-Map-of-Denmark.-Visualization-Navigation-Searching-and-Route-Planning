@@ -120,10 +120,11 @@ public class OSMParser extends Thread {
                             cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                             cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                             nodes.put(id, cords);
-                            ArrayList<String> tags = new ArrayList<>(4);
+                            String[] tags = new String[4];
+                            /*ArrayList<String> tags = new ArrayList<>(4);
                             for(int i = 0; i < 4; i++){
                                 tags.add(null);
-                            }
+                            }*/
                             whileTagLoop:
                             while(true){
                                 int eventType = input.next();
@@ -149,30 +150,12 @@ public class OSMParser extends Thread {
                                         default:
                                             continue whileTagLoop;
                                     }
-                                    tags.set(position, input.getAttributeValue(null, "v"));
+                                    tags[position] = input.getAttributeValue(null, "v");
                                 }
                             }
-                            StringBuilder streetName = new StringBuilder();
-                            for(String tag : tags){
-                                if(tag == null){
-                                    continue;
-                                }
-                                streetName.append(tag);
-                                streetName.append(" ");
-                            }
-                            if(!streetName.toString().isEmpty()) address.addStreetName(streetName.toString());
-                            /*String houseNumber = input.getAttributeValue(null, "addr:housenumber");
-                            if(houseNumber != null){
-                                StringBuilder streetName = new StringBuilder();
-                                streetName.append(input.getAttributeValue(null, "addr:street"));
-                                streetName.append(" ");
-                                streetName.append(houseNumber);
-                                streetName.append(", ");
-                                streetName.append(input.getAttributeValue(null, "addr:postcode"));
-                                streetName.append(" ");
-                                streetName.append(input.getAttributeValue(null, "addr:city"));
-                                address.addStreetName(streetName.toString());
-                            }*/
+
+                            if(tags[0] != null) address.addStreetName(tags);
+
                         }
 
                         case "way" -> {
