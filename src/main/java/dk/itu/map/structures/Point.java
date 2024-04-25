@@ -27,6 +27,6 @@ public class Point implements Drawable{
     }
 
     public float[] getCoords(){
-        return new float[]{x, y};
+        return new float[]{y, x};
     }
 }

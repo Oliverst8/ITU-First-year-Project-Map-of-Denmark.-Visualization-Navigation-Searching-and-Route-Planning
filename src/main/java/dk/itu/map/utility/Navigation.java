@@ -8,6 +8,8 @@ import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.Point;
 
+import java.util.Arrays;
+
 public class Navigation {
     private final Graph graph;
     //private ChangeablePriorityQueue queue;
@@ -87,8 +89,8 @@ public class Navigation {
 
     public DrawableWay[] getPath(float[] startCoords, float[] endCoords){
 
-        int nearestStartPointID = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]}, vehicleCode, graph);
-        int nearestEndPointID = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]}, vehicleCode, graph);
+        int nearestStartPointID = graph.getNearestNeigherborID(new float[]{startCoords[0],startCoords[1]}, vehicleCode, graph);
+        int nearestEndPointID = graph.getNearestNeigherborID(new float[]{endCoords[0],endCoords[1]}, vehicleCode, graph);
 
         if(!buildPaths(nearestStartPointID, nearestEndPointID)) return null;
 
@@ -106,12 +108,16 @@ public class Navigation {
 
         CoordArrayList startPath = new CoordArrayList();
         startPath.add(startCoords);
+        System.out.println("StartCoords: "+Arrays.toString(startCoords));
         startPath.add(graph.getCoords(nearestStartPointID));
+        System.out.println("NearestStartPoint: "+ Arrays.toString(graph.getCoords(nearestStartPointID)));
         paths[1] = new DrawableWay(startPath, new String[]{"pathToRoad", "pathToRoad"}, -2);
 
         CoordArrayList endPath = new CoordArrayList();
         endPath.add(endCoords);
+        System.out.println("EndCoords: "+Arrays.toString(endCoords));
         endPath.add(graph.getCoords(nearestEndPointID));
+        System.out.println("NearestEndPoint: "+Arrays.toString(graph.getCoords(nearestEndPointID)));
         paths[2] = new DrawableWay(endPath, new String[]{"pathToRoad", "pathToRoad"}, -3);
 
         return paths;
