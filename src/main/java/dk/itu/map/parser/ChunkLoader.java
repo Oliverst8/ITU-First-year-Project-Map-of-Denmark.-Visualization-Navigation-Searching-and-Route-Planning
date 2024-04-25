@@ -106,7 +106,8 @@ public class ChunkLoader {
                     }
 
                     String primaryType = stream.readUTF();
-                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType));
+                    String secondaryType = stream.readUTF();
+                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType, secondaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

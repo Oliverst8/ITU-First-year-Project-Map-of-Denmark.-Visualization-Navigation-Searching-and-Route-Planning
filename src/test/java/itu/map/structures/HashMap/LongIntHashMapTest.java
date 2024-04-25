@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import dk.itu.map.structures.HashMaps.LongIntHashMap;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;

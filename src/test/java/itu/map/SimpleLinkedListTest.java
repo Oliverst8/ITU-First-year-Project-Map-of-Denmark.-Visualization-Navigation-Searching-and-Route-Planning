@@ -1,6 +1,5 @@
 package itu.map;
 
-import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.SimpleLinkedList;
 import org.junit.jupiter.api.Test;
 

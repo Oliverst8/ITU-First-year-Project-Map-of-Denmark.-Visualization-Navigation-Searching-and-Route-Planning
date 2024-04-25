@@ -103,7 +103,6 @@ public class Navigation {
             current = vertexTo[current];
         }
         path.add(graph.getCoords(current));
-
         paths[0] = new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, -1);
 
         CoordArrayList startPath = new CoordArrayList();

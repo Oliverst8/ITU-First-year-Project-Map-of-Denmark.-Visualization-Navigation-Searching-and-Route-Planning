@@ -31,6 +31,7 @@ public class Way extends MapElement {
             stream.writeUTF(getTags().get(i));
         }
         stream.writeUTF(primaryType);
+        stream.writeUTF(secondaryType);
     }
 
     @Override

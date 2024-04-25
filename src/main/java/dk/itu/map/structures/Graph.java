@@ -1,18 +1,13 @@
 package dk.itu.map.structures;
 
 import dk.itu.map.structures.ArrayLists.ByteArrayList;
-import dk.itu.map.parser.GraphBuilder;
-import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.WriteAbleArrayList;
 import dk.itu.map.structures.HashMaps.LongIntHashMap;
-import dk.itu.map.tempHashMapLongToInt;
 
 import java.io.*;
 import java.util.stream.IntStream;
-import java.util.ArrayList;
-
 
 public class Graph {
     protected final LongIntHashMap idToIndex;

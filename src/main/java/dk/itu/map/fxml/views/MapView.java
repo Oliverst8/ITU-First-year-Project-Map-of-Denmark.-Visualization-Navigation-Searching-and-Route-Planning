@@ -7,6 +7,7 @@ import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
+import dk.itu.map.fxml.models.MapModel.Themes;
 
 import java.util.Map;
 import java.util.Set;
@@ -122,7 +123,7 @@ public class MapView {
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance()/startDist*100, themeNumber).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -132,7 +133,7 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance()/startDist*100, themeNumber).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
         }
     }
 
@@ -153,17 +154,17 @@ public class MapView {
 
     @FXML
     void switchToStandardTheme(){
-        themeNumber = 0;
+        model.theme.setTheme(Themes.LIGHT);
         redraw();
     }
     @FXML
     void switchToDarkTheme(){
-        themeNumber = 1;
+        model.theme.setTheme(Themes.DARK);
         redraw();
     }
     @FXML
     void switchToYetAnotherTheme(){
-        themeNumber = 2;
+        model.theme.setTheme(Themes.Wierd);
         redraw();
     }
     @FXML
@@ -278,7 +279,7 @@ public class MapView {
             
             Canvas canvas = this.canvas.get(entry.getKey());
 
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, themeNumber).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, model.theme).run();
         }
     }
 

@@ -27,7 +27,7 @@ public class DrawableWayTest {
         CoordArrayList innerCoords = new CoordArrayList();
         CoordArrayList outerCoords = new CoordArrayList();
         String[] tags = new String[2];
-        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0, "");
+        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0);
 
         assertArrayEquals(way.getOuterCoords(), outerCoords.toArray());
         assertArrayEquals(way.getTags(), tags);
@@ -38,7 +38,7 @@ public class DrawableWayTest {
         CoordArrayList innerCoords = new CoordArrayList();
         CoordArrayList outerCoords = new CoordArrayList();
         String[] tags = new String[2];
-        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0, "");
+        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0);
 
         assertNotEquals(way, new Object());
     }
@@ -48,7 +48,7 @@ public class DrawableWayTest {
         CoordArrayList innerCoords = new CoordArrayList();
         CoordArrayList outerCoords = new CoordArrayList();
         String[] tags = new String[2];
-        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0, "");
+        DrawableWay way = new DrawableWay(outerCoords, innerCoords, tags, 0);
 
         assertEquals(way, way);
     }
@@ -60,42 +60,42 @@ public class DrawableWayTest {
         CoordArrayList outerCoords = new CoordArrayList(coords);
         String[] tags = new String[2];
         String expected = "Nodes:\n3\n1.0 2.0\n3.0 4.0\n5.0 6.0\nInner nodes:\n3\n1.0 2.0\n3.0 4.0\n5.0 6.0\nTags:\n2\nnull null\n";
-        assertEquals(expected, new DrawableWay(outerCoords, innerCoords, tags, 0, "").toString());
+        assertEquals(expected, new DrawableWay(outerCoords, innerCoords, tags, 0).toString());
     }
 
     @Test
     void testDraw() {
-        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"motorway"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"motorway"}, 0);
         way.draw(gc, 100, 0);
     }
 
     @Test
     void testDrawNoCoords() {
-        way = new DrawableWay(new CoordArrayList(), new CoordArrayList(), new String[]{"motorway"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(), new CoordArrayList(), new String[]{"motorway"}, 0);
         way.draw(gc, 100, 0);
     }
 
     @Test
     void testDrawIsIsland() {
-        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"island"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"island"}, 0);
         way.draw(gc, 100, 0);
     }
 
     @Test
     void testIsRelationExpectsFalse() {
-        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(), new String[]{"motorway"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(), new String[]{"motorway"}, 0);
         assertFalse(way.isRelation());
     }
 
     @Test
     void testIsRelationExpectsTrue() {
-        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"type", "relation"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"type", "relation"}, 0);
         assertTrue(way.isRelation());
     }
 
     @Test
     void testDrawShouldFill() {
-        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"beach"}, 0, "");
+        way = new DrawableWay(new CoordArrayList(coords), new CoordArrayList(coords), new String[]{"beach"}, 0);
         way.draw(gc, 100, 0);
     }
 

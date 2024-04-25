@@ -1,10 +1,8 @@
 package itu.map;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.TwoDTreeBuilder;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,8 +60,10 @@ public class TwoDTreeBuilderTest {
         CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,2,0});
         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
         builder.build();
+
         int[] actual = builder.getTree();
         int[] expected = new int[]{0,-1,1};
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -71,8 +71,10 @@ public class TwoDTreeBuilderTest {
         CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,0,2});
         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
         builder.build();
+
         int[] actual = builder.getTree();
         int[] expected = new int[]{0,1,-1};
+        assertArrayEquals(expected, actual);
     }
 
     @Test
