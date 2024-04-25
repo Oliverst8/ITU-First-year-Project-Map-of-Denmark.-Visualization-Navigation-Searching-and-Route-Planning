@@ -87,7 +87,7 @@ public class GraphBuilder extends Graph implements Runnable {
                     speedLimit = 130;
                     break;
             }
-        } else if(speedLimitString.equals("none")){
+        } else if(speedLimitString[0].equals("none")){
             speedLimit = 130;
         }
 
@@ -224,6 +224,9 @@ public class GraphBuilder extends Graph implements Runnable {
     }
 
     private byte setVehicleRestriction(MapElement way) {
+        if(way.getId() == 37948939){
+            System.out.println();
+        }
         List<String> tags = way.getTags();
         String secondayType = way.getSecondaryType();
         System.out.print(secondayType);

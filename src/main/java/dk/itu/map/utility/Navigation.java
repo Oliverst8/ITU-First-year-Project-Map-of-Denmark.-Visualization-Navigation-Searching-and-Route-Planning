@@ -6,6 +6,7 @@ import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
+import dk.itu.map.structures.Point;
 
 public class Navigation {
     private final Graph graph;
@@ -46,12 +47,10 @@ public class Navigation {
     }
 
     private void relax(int vertex) {
-        System.out.println("Vehiclecode is: " + vehicleCode);
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
             int edge = edges.get(i);
             if((graph.getVehicleRestrictions().get(edge) & vehicleCode) == 0 ){
-                System.out.println("VehicleRestriction: " + graph.getVehicleRestrictions().get(edge));
                 continue;
             }
 
@@ -59,7 +58,6 @@ public class Navigation {
 
             float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge);
             if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1)){
-                System.out.println("We are in the distWeight");
                 if(queue.contains(destination)) queue.decreaseKey(destination, newDistWeight);
                 else queue.insert(destination, newDistWeight);
                 setDistTo(destination, vertex, newDistWeight);
@@ -67,12 +65,8 @@ public class Navigation {
 
             if(vehicleCode == 4){
                 float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
-                if(graph.getTimeWeight(edge) <= 0){
-                    System.out.println("TimeWeight is: "+ graph.getTimeWeight(edge));
-                }
 
                 if((newTimeWeight < timeTo[destination])){
-                    System.out.println("We are in the timeWeight");
                     if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
                     else queue.insert(destination, newTimeWeight);
                     setDistTo(destination, vertex, newDistWeight, newTimeWeight);
@@ -93,6 +87,9 @@ public class Navigation {
     }
 
     private DrawableWay getPath(int startPointID, int endPointID){
+
+        System.out.println("Startpoint: " + graph.getCoords(startPointID)[0] + " " + graph.getCoords(startPointID)[1]);
+        System.out.println("Endpoint: " + graph.getCoords(endPointID)[0] + " " + graph.getCoords(endPointID)[1]);
 
         if(!buildPaths(startPointID, endPointID)) return null;
 
