@@ -122,4 +122,21 @@ public class Navigation {
         return paths;
 
     }
+    public DrawableWay getPath(int startID, int endID){
+        int startPointID = graph.idToVertexId(startID);
+        int endPointID = graph.idToVertexId(endID);
+
+        if(!buildPaths(startPointID, endPointID)) return null;
+
+
+        CoordArrayList path = new CoordArrayList();
+        int current = endPointID;
+        while(current != startPointID){
+            path.add(graph.getCoords(current));
+            current = vertexTo[current];
+        }
+        path.add(graph.getCoords(current));
+        return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, -1, "navigation", "path");
+
+    }
 }

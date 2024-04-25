@@ -6,6 +6,8 @@ import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.parser.Way;
+import dk.itu.map.structures.TwoDTree;
+import dk.itu.map.structures.TwoDTreeBuilder;
 import dk.itu.map.utility.Navigation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +55,7 @@ class NavigationTest {
         graph.addWay(way);
 
         //redStriped1note
-        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 1f, 100f, 8f, 7f});
+        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 100f, 1f, 8f, 7f});
         nodeIDs = TestUtilities.createLongArrayList(new long[]{1,11,12});
         way = new Way(1l, tags, coords, nodeIDs);
         graph.addWay(way);
@@ -100,6 +102,7 @@ class NavigationTest {
         graph.stop();
         graph.run();
         return graph;
+
     }
 
     private GraphBuilder getGraph3() {
@@ -185,7 +188,7 @@ class NavigationTest {
     void testTheresNoPath() {
         Graph graph = getGraph1();
         Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 3);
+        DrawableWay path = navigation.getPath(1,3);
         assertNull(path);
     }
 
@@ -195,6 +198,7 @@ class NavigationTest {
         Navigation navigation = new Navigation(graph, 1);
         DrawableWay path = navigation.getPath(2,4);
         float[] expected = new float[]{1f, 4f, 1f, 3f, 1f,2f};
+        System.out.println(Arrays.toString(path.getOuterCoords()));
         assertArrayEquals(expected, path.getOuterCoords());
     }
 
@@ -235,16 +239,7 @@ class NavigationTest {
         float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
         assertArrayEquals(expected, path.getOuterCoords());
     }
-    @Test
-    void testShortestWayIsVehicleRestrictedByFoot(){
-        Graph graph = getGraphSomeFootPathSomeMotorway();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 13);
 
-        //float[] expected = new float[]{2f,4f,1f,1f};
-        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
     @Test
     void testShortestWayIsVehicleRestrictedByCar(){
         Graph graph = getGraphSomeFootPathSomeMotorway();

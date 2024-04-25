@@ -67,9 +67,14 @@ public class TwoDTree extends CoordArrayList {
         IntArrayList edges = graph.getEdgeList(nextCheck);
         boolean canBeUsed = false;
         for(int j = 0; j < edges.size(); j++){
+            if(graph==null){
+                canBeUsed = true;
+                break;
+            }
             int edge = edges.get(j);
             if((graph.getVehicleRestrictions().get(edge) & vehicleCode) > 0 ){
                 canBeUsed = true;
+                break;
             }
         }
         if(canBeUsed){
