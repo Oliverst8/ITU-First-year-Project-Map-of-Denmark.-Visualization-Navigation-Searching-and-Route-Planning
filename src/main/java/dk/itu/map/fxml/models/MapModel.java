@@ -24,7 +24,7 @@ public class MapModel {
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
-        navigationWays = new Drawable[]{null,null,null};
+        navigationWays = new Drawable[]{null,null,null,null,null};
     }
 
     /**
@@ -79,12 +79,16 @@ public class MapModel {
         this.navigationWays[1] = endPoint;
     }
 
-    public void setRoute(DrawableWay route) {
-        this.navigationWays[2] = route;
+    public void setRoute(DrawableWay[] routes) {
+        this.navigationWays[2] = routes[0]; //sets the navigation route from nearest usable road to nearest usable road, from start- to endpoint
+        this.navigationWays[3] = routes[1]; //sets a path from the start point to the nearest usable road
+        this.navigationWays[4] = routes[2]; //sets a path from the endpoint to the nearest usable road
     }
 
     public void removeRoute() {
         this.navigationWays[2] = null;
+        this.navigationWays[3] = null;
+        this.navigationWays[4] = null;
     }
 
     /**

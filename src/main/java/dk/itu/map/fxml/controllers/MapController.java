@@ -159,7 +159,7 @@ public class MapController {
             return;
         }
         Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
-        DrawableWay path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
+        DrawableWay[] path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
         if(path == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

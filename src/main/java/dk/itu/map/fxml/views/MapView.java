@@ -143,11 +143,6 @@ public class MapView {
             lastY = (float) e.getY();
 
             render.start();
-        } else if(e.isSecondaryButtonDown()) {
-            Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
-            DrawableWay path = navigation.getPath(814157l,2395042472l); //this works
-            System.out.println(path);
-            path.draw(canvas.get("highway").getGraphicsContext2D(), getZoomDistance()/startDist*100, themeNumber);
         }
     }
 

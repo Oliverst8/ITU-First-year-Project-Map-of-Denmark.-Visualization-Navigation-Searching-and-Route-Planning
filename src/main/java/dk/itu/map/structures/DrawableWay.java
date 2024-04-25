@@ -13,16 +13,14 @@ public class DrawableWay implements Drawable {
     private String primaryType;
     public boolean randomColors = false;
     private final long id;
-    private long[] nodeIDs;
 
     /**
      * Only used for navigation
      */
-    public DrawableWay(CoordArrayList outerCoords, String[] tags, long[] nodeId){
-        this.id = -1;
+    public DrawableWay(CoordArrayList outerCoords, String[] tags, long id){
+        this.id = id;
         this.outerCoords = outerCoords;
         this.tags = tags;
-        this.nodeIDs = nodeId;
         this.innerCoords = new CoordArrayList();
     }
 
@@ -123,6 +121,17 @@ public class DrawableWay implements Drawable {
                     }
                     if (themeNumber == 2) {
                         gc.setStroke(Color.web("#00FF00"));
+                    }
+                    gc.stroke();
+                    continue;
+
+                case "pathToRoad":
+                    lineWidth = 0.003f;
+                    if (themeNumber == 0) {
+                        gc.setStroke(Color.GREY);
+                    }
+                    if (themeNumber == 2) {
+                        gc.setStroke(Color.GREY);
                     }
                     gc.stroke();
                     continue;
@@ -348,9 +357,6 @@ public class DrawableWay implements Drawable {
         return id;
     }
 
-    public long[] getNodeIDs() {
-        return nodeIDs;
-    }
     public void setRandomColors(){ randomColors = !randomColors; }
 
     @Override

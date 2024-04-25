@@ -33,7 +33,6 @@ public class Navigation {
     }
 
     private boolean buildPaths(int startPoint, int endPoint) {
-        //queue = new ChangeablePriorityQueue(graph);
         queue = new IndexMinPQ<>(graph.size());
         queue.insert(startPoint, 0f);
         setDistTo(startPoint, startPoint, 0f, 0f);
@@ -86,44 +85,36 @@ public class Navigation {
         vertexTo[vertex] = vertexFrom;
     }
 
-    private DrawableWay getPath(int startPointID, int endPointID){
+    public DrawableWay[] getPath(float[] startCoords, float[] endCoords){
 
-        System.out.println("Startpoint: " + graph.getCoords(startPointID)[0] + " " + graph.getCoords(startPointID)[1]);
-        System.out.println("Endpoint: " + graph.getCoords(endPointID)[0] + " " + graph.getCoords(endPointID)[1]);
+        int nearestStartPointID = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]}, vehicleCode, graph);
+        int nearestEndPointID = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]}, vehicleCode, graph);
 
-        if(!buildPaths(startPointID, endPointID)) return null;
+        if(!buildPaths(nearestStartPointID, nearestEndPointID)) return null;
+
+        DrawableWay[] paths = new DrawableWay[3];
 
         CoordArrayList path = new CoordArrayList();
-        LongArrayList pathIDs = new LongArrayList();
-        int current = endPointID;
-        while(current != startPointID){
+        int current = nearestEndPointID;
+        while(current != nearestStartPointID){
             path.add(graph.getCoords(current));
-            pathIDs.add(current);
             current = vertexTo[current];
-            //System.out.println(path.size());
         }
-
         path.add(graph.getCoords(current));
-        pathIDs.add(current);
 
-        return new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, pathIDs.toArray());
+        paths[0] = new DrawableWay(path, new String[]{"navigationPath", "navigationPath"}, -1);
 
-        //return path;
+        CoordArrayList startPath = new CoordArrayList();
+        startPath.add(startCoords);
+        startPath.add(graph.getCoords(nearestStartPointID));
+        paths[1] = new DrawableWay(startPath, new String[]{"pathToRoad", "pathToRoad"}, -2);
 
-    }
+        CoordArrayList endPath = new CoordArrayList();
+        endPath.add(endCoords);
+        endPath.add(graph.getCoords(nearestEndPointID));
+        paths[2] = new DrawableWay(endPath, new String[]{"pathToRoad", "pathToRoad"}, -3);
 
-    public DrawableWay getPath(long startID, long endID){
-        int startPointID = graph.idToVertexId(startID);
-        int endPointID = graph.idToVertexId(endID);
-        return getPath(startPointID, endPointID);
-    }
-
-    public DrawableWay getPath(float[] startCoords, float[] endCoords){
-        //int startPoint = graph.getNearestNeighborID(startCoords);
-        int startPoint = graph.getNearestNeigherborID(new float[]{startCoords[1],startCoords[0]}, vehicleCode, graph);
-        //int endPoint = graph.getNearestNeighborID(endCoords);
-        int endPoint = graph.getNearestNeigherborID(new float[]{endCoords[1],endCoords[0]}, vehicleCode, graph);
-        return getPath(startPoint, endPoint);
+        return paths;
 
     }
 }
