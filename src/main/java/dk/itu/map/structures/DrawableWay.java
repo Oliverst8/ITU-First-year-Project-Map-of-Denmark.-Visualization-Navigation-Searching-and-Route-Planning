@@ -16,19 +16,15 @@ public class DrawableWay implements Drawable {
     /**
      * Only used for navigation
      */
-    public DrawableWay(CoordArrayList outerCoords, String[] tags, long id){
+    public DrawableWay(CoordArrayList outerCoords, String[] tags, long id, String primaryType, String secondaryType) {
         this.id = id;
         this.outerCoords = outerCoords;
         this.tags = tags;
         this.innerCoords = new CoordArrayList();
+        this.primaryType = primaryType;
+        this.secondaryType = secondaryType;
     }
 
-    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags, long id) {
-        this.id = id;
-        this.outerCoords = outerCoords;
-        this.innerCoords = innerCoords;
-        this.tags = tags;
-    }
 
     public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags, long id, String primaryType, String secondaryType) {
         this.id = id;
@@ -121,20 +117,13 @@ public class DrawableWay implements Drawable {
         switch(primaryType) {
             case "navigation":
                 switch(secondaryType) {
-                    case "path":
-                        lineWidth = 0.003f;
-                        gc.setStroke(theme.getColor(primaryType, secondaryType));
-                        gc.stroke();
-                        break colorSelect;
-                    case "pathToRoad":
+                    case "path", "pathToRoad":
                         lineWidth = 0.003f;
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
                 }
 
-
-            
             case "aeroway":
                 switch(secondaryType) {
                     case "aerodrome", "apron":

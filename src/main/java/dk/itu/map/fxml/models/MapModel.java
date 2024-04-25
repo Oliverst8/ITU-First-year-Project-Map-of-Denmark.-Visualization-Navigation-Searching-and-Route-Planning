@@ -160,6 +160,7 @@ public class MapModel {
             // Navigation
             secondary = new HashMap<>();
             secondary.put("path", Color.TURQUOISE);
+            secondary.put("pathToRoad", Color.GREY);
             primary.put("navigation", secondary);
 
             // Aeroway
