@@ -85,6 +85,11 @@ public abstract class MapElement {
     public long[] getNodeIDs() {
         return nodeIDs;
     }
+
+    public String getPrimaryType() {
+        return primaryType;
+    }
+
     public String getSecondaryType() {
         return secondaryType;
     }
