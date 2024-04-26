@@ -64,7 +64,7 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
 
-        if(speedLimitString != null && !speedLimitString[0].equals("none")){
+        if(speedLimitString != null && !speedLimitString[0].equals("none") && !speedLimitString[0].equals("signals") && !speedLimitString[0].equals("DK:urban")){
             if(speedLimitString.length == 1) {
                 speedLimit = Integer.parseInt(speedLimitString[0]);
             } else{
@@ -72,9 +72,9 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
 
-        if(speedLimitString == null){
+        if(speedLimitString == null || speedLimitString[0].equals("signals") || speedLimitString[0].equals("DK:urban")) {
             switch(way.getSecondaryType()){
-                case "living_street":
+                case "living_street", "rest_area":
                     speedLimit = 15;
                     break;
                 case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track":
@@ -214,9 +214,6 @@ public class GraphBuilder extends Graph implements Runnable {
 
             timeWeights.add(weight);
             timeWeights.add(weight);
-
-
-
         }
 
         //Maybe for all these we should add at the specific index to make sure no mistakes are made,
@@ -227,17 +224,9 @@ public class GraphBuilder extends Graph implements Runnable {
         if(way.getId() == 37948939){
             System.out.println();
         }
-        List<String> tags = way.getTags();
+
         String secondayType = way.getSecondaryType();
         switch(secondayType){
-            case "escape":
-            case "raceway":
-            case "busway":
-            case "busguideway":
-            case "proposed":
-            case "construction":
-            case "service":
-                return 0;
             case "pedestrian":
             case "footway":
             case "steps":
@@ -250,6 +239,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 return 3;
             case "motorway":
             case "motorway_link":
+            case "rest_area":
                 return 4;
             case "trunk":
             case "trunk_link":
@@ -266,7 +256,7 @@ public class GraphBuilder extends Graph implements Runnable {
             case "track":
                 return 7;
             default:
-                throw new RuntimeException("Unknown highway type: " + secondayType + " in way: " + way.getId());
+                return 0;
         }
     }
 
