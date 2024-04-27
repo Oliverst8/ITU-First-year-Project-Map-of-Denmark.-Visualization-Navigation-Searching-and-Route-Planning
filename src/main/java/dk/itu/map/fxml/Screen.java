@@ -35,6 +35,7 @@ public abstract class Screen<M, C> {
             this.controller = new MapController(model);
             controller.importMap("", mapName);
             this.view = new MapView(controller, model);
+            controller.setView((MapView)view);
 
         }
     }

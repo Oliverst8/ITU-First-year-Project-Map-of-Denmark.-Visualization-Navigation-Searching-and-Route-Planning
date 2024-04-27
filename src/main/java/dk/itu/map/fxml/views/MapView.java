@@ -227,7 +227,7 @@ public class MapView {
     
     public static boolean overridePrint = false;
     long prevTime = 0;
-    private void redraw() {
+    public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
         boolean print = false;

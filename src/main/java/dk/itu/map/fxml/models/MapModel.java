@@ -67,6 +67,10 @@ public class MapModel {
         return chunkLoader.getConfig().chunkAmount;
     }
 
+    public int getLayerCount() {
+        return chunkLoader.getConfig().layerCount;
+    }
+
     public Point getStartPoint() {
         return ((Point) navigationWays[0]);
     }

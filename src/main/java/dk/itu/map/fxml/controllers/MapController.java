@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 public class MapController {
 
     private MapModel model;
+    private MapView view;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -29,6 +30,13 @@ public class MapController {
      */
     public MapController(MapModel model) {
         this.model = model;
+    }
+
+    public void setView(MapView view) {
+        if (this.view != null) {
+            throw new RuntimeException("cannot reset view");
+        }
+        this.view = view;
     }
 
     /**
@@ -44,6 +52,19 @@ public class MapController {
         utilityLoader.start();
 
         model.chunkLoader = new ChunkLoader();
+        model.chunkLoader.setCallback(() -> {
+            Map<Integer, Map<Integer, List<Drawable>>> newChunks = model.chunkLoader.getFinishedChunks();
+            for (int i = 0; i < model.getLayerCount(); i++) {
+                Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
+                Map<Integer, List<Drawable>> newLayer = newChunks.get(i);
+                if (newLayer == null) {
+                    continue;
+                }
+                chunks.putAll(newLayer);
+            }
+
+            if (view != null) view.redraw();
+        });
 
         setUtilities(utilityLoader);
     }
@@ -86,56 +107,33 @@ public class MapController {
      */
     public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner, boolean print) {
         int count = 0;
-        for (int i = detailLevel; i <= 4; i++) {
+        for (int i = detailLevel; i < model.getLayerCount(); i++) {
             int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
             int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner, i);
+            Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
 
-            Set<Integer> chunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
-            count += chunks.size()*(5-detailLevel);
+            Set<Integer> visibleChunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
+            count += visibleChunks.size()*(model.getLayerCount()-detailLevel);
 
-            updateZoomLayer(chunks, i);
+            chunks.keySet().retainAll(visibleChunks);
+
+            visibleChunks.removeAll(chunks.keySet());
+    
+            int[] newChunks = new int[visibleChunks.size()];
+    
+            int c = 0;
+            for (int chunk : visibleChunks) {
+                newChunks[c++] = chunk;
+            }
+    
+            if (visibleChunks.isEmpty())
+                continue;
+    
+            model.chunkLoader.readFiles(newChunks, i);
         }
         if (print || MapView.overridePrint) {
             System.out.println("Loaded chunks: " + count);
         }
-    }
-
-    /**
-     * Updates the given zoom level with the given chunks
-     * 
-     * @param chunks    the chunks to be updated
-     * @param zoomLevel the zoom level to be updated
-     */
-    private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        model.chunkLayers.get(zoomLevel).keySet().retainAll(chunks);
-
-        readChunks(chunks, zoomLevel);
-    }
-
-    /**
-     * Reads the chunks from the set on at the zoom level
-     * and puts them in the chunkLayers
-     * Chunks are not read if they already are read
-     * 
-     * @param chunkSet  the set of chunks to be read
-     * @param zoomLevel the zoom level of the chunks
-     */
-    private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(zoomLevel);
-
-        chunkSet.removeAll(chunks.keySet());
-
-        int[] newChunks = new int[chunkSet.size()];
-
-        int c = 0;
-        for (int chunk : chunkSet) {
-            newChunks[c++] = chunk;
-        }
-
-        if (chunkSet.isEmpty())
-            return;
-
-        chunks.putAll(model.chunkLoader.readFiles(newChunks, zoomLevel));
     }
 
     private void setUtilities(UtilityLoader utilityLoader) {
