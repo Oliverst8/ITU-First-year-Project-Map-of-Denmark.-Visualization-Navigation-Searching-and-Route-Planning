@@ -225,24 +225,24 @@ public class MapView {
      * Redraws the map
      */
     
-    public static boolean overridePrint = false;
-    long prevTime = 0;
+    // public static boolean overridePrint = false;
+    // long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
-        boolean print = false;
-        long totalStart = System.currentTimeMillis();
-        if (System.currentTimeMillis() - prevTime > 300) {
-            prevTime = System.currentTimeMillis();
-            print = true;
-            overridePrint = false;
-        }
-        controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner(), print);
+        // boolean print = false;
+        // long totalStart = System.currentTimeMillis();
+        // if (System.currentTimeMillis() - prevTime > 300) {
+        //     prevTime = System.currentTimeMillis();
+        //     print = true;
+        //     overridePrint = false;
+        // }
+        controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
         updateZoomLevel();
-        if (overridePrint) {
-            print = true;
-            overridePrint = false;
-        }
+        // if (overridePrint) {
+        //     print = true;
+        //     overridePrint = false;
+        // }
 
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
@@ -271,35 +271,35 @@ public class MapView {
                 }
             }
         }
-        long wastedTime = System.currentTimeMillis();
-        Map<String, Long> renderTimes = new HashMap<>();
+        // long wastedTime = System.currentTimeMillis();
+        // Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
 
-            long startTime = System.currentTimeMillis();
+            // long startTime = System.currentTimeMillis();
 
             Canvas canvas = this.canvas.get(entry.getKey());
             new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, model.theme).run();
 
-            long endTime = System.currentTimeMillis();
+            // long endTime = System.currentTimeMillis();
 
-            renderTimes.put(entry.getKey(), endTime - startTime);
+            // renderTimes.put(entry.getKey(), endTime - startTime);
         }
         
-        if (!print) return;
-        long drawTimes = 0;
-        System.out.println("Render times: ");
-        for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
-            String layer = String.format("%-15s", entry.getKey());
-            long renderTime = entry.getValue();
-            drawTimes += renderTime;
+        // if (!print) return;
+        // long drawTimes = 0;
+        // System.out.println("Render times: ");
+        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
+        //     String layer = String.format("%-15s", entry.getKey());
+        //     long renderTime = entry.getValue();
+        //     drawTimes += renderTime;
             
-            System.out.println(layer + ": " + renderTime + " ");
-        }
-        System.out.println("Total draw time: " + drawTimes + "ms");
-        System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
-        System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
-        System.out.println();
+        //     System.out.println(layer + ": " + renderTime + " ");
+        // }
+        // System.out.println("Total draw time: " + drawTimes + "ms");
+        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
+        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
+        // System.out.println();
     }
 
     private Set<Drawable> getNavigationDrawables() {

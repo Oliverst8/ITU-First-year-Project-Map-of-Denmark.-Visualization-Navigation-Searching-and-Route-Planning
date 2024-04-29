@@ -105,15 +105,15 @@ public class MapController {
      * @param lowerRightCorner The lower right corner of the current view
      * @return The amount of chunks seen in the current view in the y direction
      */
-    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner, boolean print) {
-        int count = 0;
+    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner/*, boolean print*/) {
+        // int count = 0;
         for (int i = detailLevel; i < model.getLayerCount(); i++) {
             int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
             int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner, i);
             Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
 
             Set<Integer> visibleChunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
-            count += visibleChunks.size()*(model.getLayerCount()-detailLevel);
+            // count += visibleChunks.size()*(model.getLayerCount()-detailLevel);
 
             chunks.keySet().retainAll(visibleChunks);
 
@@ -131,9 +131,9 @@ public class MapController {
     
             model.chunkLoader.readFiles(newChunks, i);
         }
-        if (print || MapView.overridePrint) {
-            System.out.println("Loaded chunks: " + count);
-        }
+        // if (print || MapView.overridePrint) {
+        //     System.out.println("Loaded chunks: " + count);
+        // }
     }
 
     private void setUtilities(UtilityLoader utilityLoader) {

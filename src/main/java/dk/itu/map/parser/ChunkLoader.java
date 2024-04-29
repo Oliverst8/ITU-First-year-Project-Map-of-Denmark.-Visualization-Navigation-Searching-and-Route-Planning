@@ -2,31 +2,26 @@ package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.App;
-import dk.itu.map.fxml.views.MapView;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.EOFException;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 
 import java.util.Map;
-import java.util.Queue;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
 public class ChunkLoader extends Thread {
@@ -64,7 +59,6 @@ public class ChunkLoader extends Thread {
 
         Thread thread = new Thread(this);
         thread.start();
-        System.out.println("started thread");
     }
 
     public void setCallback(Runnable callback) {
@@ -89,10 +83,8 @@ public class ChunkLoader extends Thread {
     }
 
     public void run() {
-        System.out.println("Start of run thread");
         while (true) {
             try {
-                Thread.sleep(100);
                 if (queueSize <= 0) {
                     Thread.sleep(100);
                     continue;
@@ -113,7 +105,6 @@ public class ChunkLoader extends Thread {
                 }
             }
             if (chunkIndex == -1) continue;
-            System.out.println("Reading chunk " + chunkIndex);
             List<Drawable> chunk = new ArrayList<>();
             
             File file = new File(App.mapPath + "zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
@@ -153,7 +144,7 @@ public class ChunkLoader extends Thread {
                 // End of file reached
                 finishedChunks.putIfAbsent(zoomLayer, new HashMap<>());
                 finishedChunks.get(zoomLayer).put(chunkIndex, chunk);
-                callback.run();
+                if (queueSize % 20 == 0) Platform.runLater(callback);
                 continue;
             } catch (IOException e) {
                 // Since we run it in parallel we need to return a runtime exception since we
@@ -172,7 +163,7 @@ public class ChunkLoader extends Thread {
      */
     public Map<Integer, List<Drawable>> readFilesold(int[] chunks, int zoomLevel) {
         Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
-        long starTime = System.currentTimeMillis();
+        // long starTime = System.currentTimeMillis();
         IntStream.of(chunks).parallel().forEach(chunk -> {
             if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) return;
 
@@ -221,9 +212,9 @@ public class ChunkLoader extends Thread {
             }
         });
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
-        MapView.overridePrint = true;
+        // long endTime = System.currentTimeMillis();
+        // System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
+        // MapView.overridePrint = true;
         return ways;
     }
 
