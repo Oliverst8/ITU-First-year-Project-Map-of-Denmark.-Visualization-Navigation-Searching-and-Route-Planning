@@ -47,11 +47,63 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param way the way to calculate the weight of
      * @return the weight of the way
      */
-    private float calcWeight(MapElement way, int nodeId) {
+    private float calcWeightDistance(MapElement way, int nodeId) {
         CoordArrayList coords = way.getCoords();
         float[] coord1 = coords.get(nodeId);
         float[] coord2 = coords.get(nodeId+1);
-        return dist(coord1[0], coord1[1], coord2[0], coord2[1]);
+        return distanceInKM(coord1, coord2);
+    }
+
+    private float calcWeightTime(MapElement way, int nodeId) {
+        String[] speedLimitString = null;
+        int speedLimit = 0;
+        for(int i = 0; i < way.getTags().size(); i += 2){
+            if(way.getTags().get(i).equals("maxspeed")){
+                speedLimitString = way.getTags().get(i+1).split(" ");
+                break;
+            }
+        }
+
+        if(speedLimitString != null && !speedLimitString[0].equals("none") && !speedLimitString[0].equals("signals") && !speedLimitString[0].equals("DK:urban")){
+            if(speedLimitString.length == 1) {
+                speedLimit = Integer.parseInt(speedLimitString[0]);
+            } else{
+                speedLimit = (int) (Integer.parseInt(speedLimitString[0])*1.609344);
+            }
+        }
+
+        if(speedLimitString == null || speedLimitString[0].equals("signals") || speedLimitString[0].equals("DK:urban")) {
+            switch(way.getSecondaryType()){
+                case "living_street", "rest_area":
+                    speedLimit = 15;
+                    break;
+                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track":
+                        speedLimit = 50;
+                        break;
+                case "primary", "primary_link", "trunk", "trunk_link":
+                    speedLimit = 80;
+                    break;
+                case "motorway", "motorway_link":
+                    speedLimit = 130;
+                    break;
+            }
+        } else if(speedLimitString[0].equals("none")){
+            speedLimit = 130;
+        }
+
+        CoordArrayList coords = way.getCoords();
+        float[] coord1 = coords.get(nodeId);
+        float[] coord2 = coords.get(nodeId+1);
+
+        return distanceInKM(coord1, coord2)/speedLimit;
+
+
+    }
+    private float distanceInKM(float[] coord1, float[] coord2) {
+        double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
+        double latDistance = Math.abs(coord1[1] - coord2[1])*110.574;
+
+        return (float) Math.sqrt(lonDistance*lonDistance + latDistance*latDistance);
     }
 
     /**
@@ -110,9 +162,6 @@ public class GraphBuilder extends Graph implements Runnable {
     private void addVertices(long[] vertexID, CoordArrayList coords) {
         for (int i = 0; i < vertexID.length; i++) {
             if(!idToIndex.containsKey(vertexID[i])){
-                if(vertexID[i] == 11367582572l){
-                    System.out.println("Found the node");
-                }
                 int index = vertexList.size();
                 idToIndex.put(vertexID[i], index);
                 vertexList.add(new IntArrayList(2));
@@ -127,11 +176,7 @@ public class GraphBuilder extends Graph implements Runnable {
 
                 //Here we could add node ids to an nodeIDArray, if we want them later
 
-                //55.821827 12.313429
-                //57.01456 9.979408
-                if(coord[0] == 55.821827f && coord[1] == 12.313429f || coord[0] == 57.01456f && coord[1] == 9.979408f){
-                    System.out.println("Found the node");
-                }
+
             }
         }
     }
@@ -141,29 +186,8 @@ public class GraphBuilder extends Graph implements Runnable {
      * @param way the way to add an edge from
      */
     private void addEdge(MapElement way) {
-        /*
-        int node1 = idToIndex.get(way.getNodeIDs()[0]);
-        int node2 = idToIndex.get(way.getNodeIDs()[1]);
-        int edgeNumberFrom1 = edgeDestinations.size();
-        int edgeNumberFrom2 = edgeNumberFrom1+1;
-        //Weight should be differentiated later, but currently nothing can change it, so ill keep it in one variable
-        float edgeWeight = calcWeight(way);
-
-        vertexList.get(node1).add(edgeNumberFrom1);
-        vertexList.get(node2).add(edgeNumberFrom2);
-
-        edgeDestinations.add(node2);
-        edgeDestinations.add(node1);
-
-        edgeWeights.add(edgeWeight);
-        edgeWeights.add(edgeWeight);
-
-        wayIDs.add(way.getId());
-        wayIDs.add(way.getId());
-        */
-
-        //This is the new version of the above code, which should be more efficient
         long[] nodeIDs = way.getNodeIDs();
+        byte vehicleRestriction = setVehicleRestriction(way);
 
         for(int i = 0; i < nodeIDs.length-1; i++){
             int node1 = idToIndex.get(nodeIDs[i]);
@@ -178,22 +202,62 @@ public class GraphBuilder extends Graph implements Runnable {
             edgeDestinations.add(node2);
             edgeDestinations.add(node1);
 
+            vehicleRestrictions.add(vehicleRestriction);
+            vehicleRestrictions.add(vehicleRestriction);
 
-            float weight = calcWeight(way, i);
+            float weight = calcWeightDistance(way, i);
 
-            edgeWeights.add(weight);
-            edgeWeights.add(weight);
+            distanceWeights.add(weight);
+            distanceWeights.add(weight);
 
-            //mystisk vej fra 10837361538
-            //til 1275653523
-            if(nodeIDs[i] == 10837361538l || nodeIDs[i+1] == 1275653523l || nodeIDs[i] == 1275653523l || nodeIDs[i+1] == 10837361538l){
-                System.out.println("Found the edge");
-            }
+            weight = calcWeightTime(way, i);
 
+            timeWeights.add(weight);
+            timeWeights.add(weight);
         }
 
         //Maybe for all these we should add at the specific index to make sure no mistakes are made,
         // but as long as we just call these methods here, we should be okay I think
+    }
+
+    private byte setVehicleRestriction(MapElement way) {
+        if(way.getId() == 37948939){
+            System.out.println();
+        }
+
+        String secondayType = way.getSecondaryType();
+        switch(secondayType){
+            case "pedestrian":
+            case "footway":
+            case "steps":
+            case "corridor":
+                return 1;
+            case "cycleway":
+                return 2;
+            case "bridleway":
+            case "path":
+                return 3;
+            case "motorway":
+            case "motorway_link":
+            case "rest_area":
+                return 4;
+            case "trunk":
+            case "trunk_link":
+            case "primary":
+            case "primary_link":
+            case "secondary":
+            case "secondary_link":
+            case "tertiary":
+            case "tertiary_link":
+            case "unclassified":
+            case "residential":
+            case "living_street":
+            case "road":
+            case "track":
+                return 7;
+            default:
+                return 0;
+        }
     }
 
     /**
@@ -223,9 +287,11 @@ public class GraphBuilder extends Graph implements Runnable {
                 new File(folderPath + "/idToIndex.txt"),
                 new File(folderPath + "/vertexList.txt"),
                 new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/edgeWeights.txt"),
+                new File(folderPath + "/vehicleRestrictions.txt"),
+                new File(folderPath + "/distanceWeights.txt"),
+                new File(folderPath + "/timeWeights.txt"),
                 new File(folderPath + "/coords.txt"),
-                new File(folderPath + "/oldToNewVertexIndex.txt")
+                new File(folderPath + "/oldToNewVertexIndex.txt"),
                 //new File(folderPath + "/wayIDs.txt")
         };
 
@@ -233,9 +299,11 @@ public class GraphBuilder extends Graph implements Runnable {
                 idToIndex,
                 vertexList,
                 edgeDestinations,
-                edgeWeights,
+                vehicleRestrictions,
+                distanceWeights,
+                timeWeights,
                 coords,
-                oldToNewVertexIndex
+                oldToNewVertexIndex,
                 //wayIDs
         };
 

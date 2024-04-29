@@ -289,7 +289,6 @@ public class ChunkGenerator implements Runnable {
         }
         writeUtilities();
 
-        System.out.println(graph.size());
         long endTime = System.nanoTime();
         System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
     }

@@ -4,8 +4,8 @@ import java.io.*;
 
 public class CoordArrayList extends PrimitiveArrayList {
     // The array that holds the values
-    private float[] arrayX;
-    private float[] arrayY;
+    private float[] arrayLat;
+    private float[] arrayLon;
 
     /**
      * Constructor for the CoordArrayList class. Initializes the array with a default size.
@@ -13,8 +13,8 @@ public class CoordArrayList extends PrimitiveArrayList {
       */
     public CoordArrayList() {
         super();
-        arrayX = new float[ARRAY_INIT_SIZE];
-        arrayY = new float[ARRAY_INIT_SIZE];
+        arrayLat = new float[ARRAY_INIT_SIZE];
+        arrayLon = new float[ARRAY_INIT_SIZE];
     }
 
     /**
@@ -23,8 +23,8 @@ public class CoordArrayList extends PrimitiveArrayList {
      */
     public CoordArrayList(int init_size) {
         super(init_size);
-        arrayX = new float[init_size];
-        arrayY = new float[init_size];
+        arrayLat = new float[init_size];
+        arrayLon = new float[init_size];
     }
 
     /**
@@ -32,8 +32,8 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param array
      */
     public CoordArrayList(float[] array) {
-        arrayX = new float[array.length/2];
-        arrayY = new float[array.length/2];
+        arrayLat = new float[array.length/2];
+        arrayLon = new float[array.length/2];
 
         this.addAll(array);
     }
@@ -43,25 +43,25 @@ public class CoordArrayList extends PrimitiveArrayList {
      */
     @Override
     protected void resize() {
-        float[] newArrayX = new float[arrayX.length * 2];
-        float[] newArrayY = new float[arrayY.length * 2];
-        System.arraycopy(arrayX, 0, newArrayX, 0, arrayX.length);
-        System.arraycopy(arrayY, 0, newArrayY, 0, arrayY.length);
-        arrayX = newArrayX;
-        arrayY = newArrayY;
-        capacity = arrayX.length;
+        float[] newArrayLat = new float[arrayLat.length * 2];
+        float[] newArrayLon = new float[arrayLon.length * 2];
+        System.arraycopy(arrayLat, 0, newArrayLat, 0, arrayLat.length);
+        System.arraycopy(arrayLon, 0, newArrayLon, 0, arrayLon.length);
+        arrayLat = newArrayLat;
+        arrayLon = newArrayLon;
+        capacity = arrayLat.length;
     }
 
     @Override
     public void exchange(int index1, int index2) {
-        float tempX = arrayX[index1];
-        float tempY = arrayY[index1];
+        float tempLat = arrayLat[index1];
+        float tempLon = arrayLon[index1];
 
-        arrayX[index1] = arrayX[index2];
-        arrayY[index1] = arrayY[index2];
+        arrayLat[index1] = arrayLat[index2];
+        arrayLon[index1] = arrayLon[index2];
 
-        arrayX[index2] = tempX;
-        arrayY[index2] = tempY;
+        arrayLat[index2] = tempLat;
+        arrayLon[index2] = tempLon;
     }
 
     /**
@@ -71,8 +71,8 @@ public class CoordArrayList extends PrimitiveArrayList {
     public float[] toArray() {
         float[] output = new float[size*2];
         for (int i = 0; i < size; i++) {
-            output[i*2] = arrayX[i];
-            output[i*2+1] = arrayY[i];
+            output[i*2] = arrayLat[i];
+            output[i*2+1] = arrayLon[i];
         }
         return output;
     }
@@ -84,11 +84,11 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param valueY to be inserted
      */
     public void add(float valueX, float valueY) {
-        if (size + 1 > arrayX.length) {
+        if (size + 1 > arrayLat.length) {
             resize();
         }
-        arrayX[size] = valueX;
-        arrayY[size] = valueY;
+        arrayLat[size] = valueX;
+        arrayLon[size] = valueY;
         size++;
     }
 
@@ -97,8 +97,8 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     public void set(int index, float[] coords){
-        arrayX[index] = coords[0];
-        arrayY[index] = coords[1];
+        arrayLat[index] = coords[0];
+        arrayLon[index] = coords[1];
     }
     /**
      * Returns the value at the given index.
@@ -107,9 +107,9 @@ public class CoordArrayList extends PrimitiveArrayList {
      */
     public float[] get(int index) {
         if (index < 0)
-            return new float[]{arrayX[size+index], arrayY[size+index]};
+            return new float[]{arrayLat[size+index], arrayLon[size+index]};
         else
-            return new float[]{arrayX[index], arrayY[index]};
+            return new float[]{arrayLat[index], arrayLon[index]};
     }
 
     /**
@@ -118,12 +118,12 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param values to be inserted
      */
     public void addAll(float[] values) {
-        while (size + values.length/2 > arrayX.length) {
+        while (size + values.length/2 > arrayLat.length) {
             resize();
         }
         for(int i = 0; i < values.length; i+=2) {
-            arrayX[size] = values[i];
-            arrayY[size] = values[i+1];
+            arrayLat[size] = values[i];
+            arrayLon[size] = values[i+1];
             size++;
         }
     }
@@ -136,14 +136,14 @@ public class CoordArrayList extends PrimitiveArrayList {
      */
     public void reverse() {
         for (int i = 0; i < size / 2; i++) {
-            float tempX = arrayX[i];
-            float tempY = arrayY[i];
+            float tempX = arrayLat[i];
+            float tempY = arrayLon[i];
 
-            arrayX[i] = arrayX[size - i - 1];
-            arrayY[i] = arrayY[size - i - 1];
+            arrayLat[i] = arrayLat[size - i - 1];
+            arrayLon[i] = arrayLon[size - i - 1];
 
-            arrayX[size - i - 1] = tempX;
-            arrayY[size - i - 1] = tempY;
+            arrayLat[size - i - 1] = tempX;
+            arrayLon[size - i - 1] = tempY;
         }
     }
 
@@ -163,8 +163,8 @@ public class CoordArrayList extends PrimitiveArrayList {
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
-            stream.writeFloat(arrayX[i]);
-            stream.writeFloat(arrayY[i]);
+            stream.writeFloat(arrayLat[i]);
+            stream.writeFloat(arrayLon[i]);
         }
     }
 
@@ -181,11 +181,11 @@ public class CoordArrayList extends PrimitiveArrayList {
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
-        arrayX = new float[size];
-        arrayY = new float[size];
+        arrayLat = new float[size];
+        arrayLon = new float[size];
         for (int i = 0; i < size; i++) {
-            arrayX[i] = stream.readFloat();
-            arrayY[i] = stream.readFloat();
+            arrayLat[i] = stream.readFloat();
+            arrayLon[i] = stream.readFloat();
         }
     }
 
@@ -202,7 +202,7 @@ public class CoordArrayList extends PrimitiveArrayList {
             return false;
         }
         for (int i = 0; i < this.size; i++) {
-            if (this.arrayX[i] != that.arrayX[i] || this.arrayY[i] != that.arrayY[i]) {
+            if (this.arrayLat[i] != that.arrayLat[i] || this.arrayLon[i] != that.arrayLon[i]) {
                 return false;
             }
         }

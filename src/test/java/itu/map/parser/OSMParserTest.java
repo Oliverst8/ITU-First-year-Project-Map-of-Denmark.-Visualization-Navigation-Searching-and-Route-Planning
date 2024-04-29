@@ -3,18 +3,15 @@ package itu.map.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
 
 import dk.itu.map.structures.Drawable;
 import org.junit.jupiter.api.Test;
 
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.OSMParser;
-import dk.itu.map.structures.DrawableWay;
 import itu.map.TestUtilities;
 
 public class OSMParserTest {

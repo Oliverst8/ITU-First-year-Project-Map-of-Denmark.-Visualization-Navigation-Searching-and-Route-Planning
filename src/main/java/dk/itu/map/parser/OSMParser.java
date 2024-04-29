@@ -6,11 +6,14 @@ import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
 import dk.itu.map.structures.HashMaps.LongCoordHashMap;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 public class OSMParser extends Thread {
-    private final File file;
+    private File file;
     private final String dataPath;
 
     private ArrayList<MapElement> relations;
@@ -68,14 +71,21 @@ public class OSMParser extends Thread {
     public void run() {
         try {
             if (file.getName().contains("bz2")) {
-                parse(new BZip2CompressorInputStream(new FileInputStream(file)));
-            } else {
-                ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
-                parseRelations(relationReader);
+                BufferedInputStream compressedMap = new BufferedInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
+                BufferedOutputStream decompressedMap = new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath().replace(".bz2", "")));
 
-                parse(new FileInputStream(file));
+                compressedMap.transferTo(decompressedMap);
+
+                compressedMap.close();
+                decompressedMap.close();
+
+                file = new File(file.getAbsolutePath().replace(".bz2", ""));
             }
-            
+
+            ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
+            parseRelations(relationReader);
+
+            parse(new FileInputStream(file));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

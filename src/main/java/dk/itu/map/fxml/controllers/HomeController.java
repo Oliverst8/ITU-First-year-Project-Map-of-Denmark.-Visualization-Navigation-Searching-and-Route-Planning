@@ -34,7 +34,8 @@ public class HomeController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import Map File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("OSM", "*.osm"));
+                new FileChooser.ExtensionFilter("OSM", "*.osm"),
+                new FileChooser.ExtensionFilter("BZ2", "*.bz2"));
 
         Stage dialog = new Stage();
         return fileChooser.showOpenDialog(dialog);

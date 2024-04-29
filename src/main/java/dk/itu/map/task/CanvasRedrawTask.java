@@ -1,7 +1,7 @@
 package dk.itu.map.task;
 
+import dk.itu.map.fxml.models.MapModel.Theme;
 import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
 
 import java.util.Set;
 
@@ -16,14 +16,14 @@ public class CanvasRedrawTask extends Task<Void> {
     private final Affine trans;
     private final float zoom;
     private Set<Drawable> ways = null;
-    int themeNumber = 0;
+    Theme theme;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoom, int themeNumber) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoom, Theme theme) {
         this.canvas = canvas;
         this.ways = ways;
         this.trans = trans;
         this.zoom = zoom;
-        this.themeNumber = themeNumber;
+        this.theme = theme;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CanvasRedrawTask extends Task<Void> {
 
         // Draw the chunks
         for (Drawable way : ways) {
-            way.draw(gc, zoom, themeNumber);
+            way.draw(gc, zoom, theme);
         }
 
         return null;
@@ -45,7 +45,7 @@ public class CanvasRedrawTask extends Task<Void> {
         gc.setTransform(new Affine());
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
-        gc.setLineWidth(1/Math.sqrt(trans.determinant()));
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         gc.setStroke(Color.BLACK);
         gc.setFill(Color.GRAY);
     }

@@ -3,7 +3,12 @@ package dk.itu.map.fxml.models;
 import java.util.*;
 
 import dk.itu.map.parser.ChunkLoader;
-import dk.itu.map.structures.*;
+import dk.itu.map.structures.Drawable;
+import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.structures.Graph;
+import dk.itu.map.structures.Point;
+import dk.itu.map.structures.Address;
+import javafx.scene.paint.Color;
 
 public class MapModel {
     
@@ -13,6 +18,7 @@ public class MapModel {
     public ChunkLoader chunkLoader;
     private Graph graph;
     private Address address;
+    public final Theme theme = new Theme();
 
     private final Drawable[] navigationWays;
 
@@ -22,7 +28,7 @@ public class MapModel {
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
-        navigationWays = new Drawable[]{null,null,null};
+        navigationWays = new Drawable[]{null,null,null,null,null};
     }
 
     /**
@@ -77,12 +83,16 @@ public class MapModel {
         this.navigationWays[1] = endPoint;
     }
 
-    public void setRoute(DrawableWay route) {
-        this.navigationWays[2] = route;
+    public void setRoute(DrawableWay[] routes) {
+        this.navigationWays[2] = routes[0]; //sets the navigation route from nearest usable road to nearest usable road, from start- to endpoint
+        this.navigationWays[3] = routes[1]; //sets a path from the start point to the nearest usable road
+        this.navigationWays[4] = routes[2]; //sets a path from the endpoint to the nearest usable road
     }
 
     public void removeRoute() {
         this.navigationWays[2] = null;
+        this.navigationWays[3] = null;
+        this.navigationWays[4] = null;
     }
 
     /**
@@ -111,5 +121,113 @@ public class MapModel {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+    public enum Themes {
+        LIGHT,
+        DARK,
+        Wierd,
+    }
+
+    public class Theme {
+        private String name;
+        private Map<String, Map<String, Map<String, Color>>> color; // Theme - primary - secondary - color
+
+        public Theme() {
+            this.name = "light";
+            this.color = new HashMap<>();
+            setLight();
+            //setDark();
+            //setWierd();
+        }
+
+        public void setTheme(Themes newTheme) {
+            switch (newTheme) {
+                case LIGHT:
+                    name = "light";
+                    break;
+                case DARK:
+                    name = "dark";
+                    break;
+                case Wierd:
+                    name = "wierd";
+                    break;
+            }
+        }
+
+        public Color getColor(String primary, String secondary) {
+            return color.get(name).get(primary).get(secondary);
+        }
+
+        private void setLight() {
+            Map<String, Map<String, Color>> primary = new HashMap<>();
+            Map<String, Color> secondary;
+
+            // Navigation
+            secondary = new HashMap<>();
+            secondary.put("path", Color.TURQUOISE);
+            secondary.put("pathToRoad", Color.GREY);
+            primary.put("navigation", secondary);
+
+            // Aeroway
+            secondary = new HashMap<>();
+            secondary.put("aerodrome", Color.web("#E6EDF8"));
+            secondary.put("apron", Color.web("#E6EDF8"));
+            secondary.put("runway", Color.web("#F3F6FF"));
+            secondary.put("taxiway", Color.web("#F3F6FF"));
+            primary.put("aeroway", secondary);
+
+            // Highway
+            secondary = new HashMap<>();
+            secondary.put("motorway", Color.web("#8BA5C1"));
+            secondary.put("motorway_link", Color.web("#8BA5C1"));
+            secondary.put("tertiary", Color.web("#B1C0CF"));
+            secondary.put("tertiary_link", Color.web("#B1C0CF"));
+            secondary.put("service", Color.web("#B1C0CF"));
+            secondary.put("residential", Color.web("#B1C0CF"));
+            secondary.put("unclassified", Color.web("#B1C0CF"));
+            secondary.put("trunk", Color.web("#8BA5C1"));
+            secondary.put("trunk_link", Color.web("#8BA5C1"));
+            secondary.put("primary", Color.web("#8BA5C1"));
+            secondary.put("primary_link", Color.web("#8BA5C1"));
+            secondary.put("secondary", Color.web("#B1C0CF"));
+            secondary.put("secondary_link", Color.web("#B1C0CF"));
+            primary.put("highway", secondary);
+
+            // Natural
+            secondary = new HashMap<>();
+            secondary.put("scrub", Color.web("#F7ECCF"));
+            secondary.put("beach", Color.web("#F7ECCF"));
+            secondary.put("water", Color.web("#90DAEE"));
+            secondary.put("peninsula", Color.web("#C9F5DB"));
+            primary.put("natural", secondary);
+
+            // Place
+            secondary = new HashMap<>();
+            secondary.put("island", Color.web("#C9F5DB"));
+            secondary.put("islet", Color.web("#C9F5DB"));
+            primary.put("place", secondary);
+
+            // Landuse
+            secondary = new HashMap<>();
+            secondary.put("allotments", Color.web("#F5F3F3"));
+            secondary.put("industrial", Color.web("#F5F3F3"));
+            secondary.put("residential", Color.web("#F5F3F3"));
+            primary.put("landuse", secondary);
+
+            // Building
+            secondary = new HashMap<>();
+            secondary.put("yes", Color.web("#DBDDE8"));
+            secondary.put("shed", Color.web("#DBDDE8"));
+            secondary.put("office", Color.web("#DBDDE8"));
+            secondary.put("college", Color.web("#DBDDE8"));
+            secondary.put("detached", Color.web("#DBDDE8"));
+            secondary.put("dormitory", Color.web("#DBDDE8"));
+            secondary.put("university", Color.web("#DBDDE8"));
+            secondary.put("apartments", Color.web("#DBDDE8"));
+            secondary.put("allotment_house", Color.web("#DBDDE8"));
+            primary.put("building", secondary);
+
+            color.put("light", primary);
+        }
     }
 }

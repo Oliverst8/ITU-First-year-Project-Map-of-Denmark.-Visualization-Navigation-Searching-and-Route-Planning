@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import dk.itu.map.structures.Point;
-import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
@@ -148,7 +147,7 @@ public class MapController {
         return currentChunkAmountSeen;
     }
 
-    public void navigate(){
+    public void navigate(int vehicleCode) {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
         if(startPoint == null || endPoint == null){
@@ -159,8 +158,8 @@ public class MapController {
             alert.showAndWait();
             return;
         }
-        Navigation navigation = new Navigation(model.getGraph());
-        DrawableWay path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
+        Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
+        DrawableWay[] path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
         if(path == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");

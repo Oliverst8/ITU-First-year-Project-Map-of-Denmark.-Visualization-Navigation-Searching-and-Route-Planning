@@ -1,25 +1,21 @@
 package dk.itu.map.structures.ArrayLists;
 
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import dk.itu.map.structures.WriteAble;
 
-public class IntArrayList extends PrimitiveArrayList {
+import java.io.*;
+
+public class ByteArrayList extends PrimitiveArrayList implements WriteAble{
     // The array that holds the values
-    private int[] array;
+    private byte[] array;
 
     /**
      * Constructor for the IntArrayList class
      * Initializes the array with the default size
      * Default size is 10
      */
-    public IntArrayList() {
+    public ByteArrayList() {
         super();
-        array = new int[ARRAY_INIT_SIZE];
+        array = new byte[ARRAY_INIT_SIZE];
     }
 
     /**
@@ -27,20 +23,9 @@ public class IntArrayList extends PrimitiveArrayList {
      * Initializes the array with the given size
      * @param init_size to be initialized
      */
-    public IntArrayList(int init_size) {
+    public ByteArrayList(int init_size) {
         super();
-        array = new int[init_size];
-    }
-
-    /**
-     * Constructor for the IntArrayList class
-     * Initializes the array with the given array
-     * @param array to be initialized
-     */
-    public IntArrayList(int[] array) {
-        super();
-        this.array = array;
-        size = array.length;
+        array = new byte[init_size];
     }
 
     /**
@@ -48,7 +33,7 @@ public class IntArrayList extends PrimitiveArrayList {
      */
     @Override
     protected void resize() {
-        int[] newArray = new int[array.length*2];
+        byte[] newArray = new byte[array.length*2];
         System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
     }
@@ -58,18 +43,12 @@ public class IntArrayList extends PrimitiveArrayList {
      * If the array is full, it will resize the array.
      * @param value to be inserted
      */
-    public void add(int value) {
+    public void add(byte value) {
         if(size + 1 > array.length) {
             resize();
         }
         array[size] = value;
         size++;
-        if(size > biggestIndex) biggestIndex = size-1;
-    }
-
-    public void set(int index, int value){
-        array[index] = value;
-        if(index > biggestIndex) biggestIndex = index;
     }
 
     /**
@@ -88,75 +67,53 @@ public class IntArrayList extends PrimitiveArrayList {
                         new FileOutputStream(path)
                 )
         );
-
         write(stream);
         stream.close();
     }
 
     @Override
     public void write(DataOutputStream stream) throws IOException {
-        size = Math.max(size, biggestIndex+1);
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
-            stream.writeInt(array[i]);
+            stream.writeByte(array[i]);
         }
     }
 
     @Override
     public void read(String path) throws IOException {
         DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
         );
-
         read(stream);
     }
 
     @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
-        biggestIndex = size-1;
-        array = new int[size];
+        array = new byte[size];
         for (int i = 0; i < size; i++) {
-            array[i] = stream.readInt();
+            array[i] = stream.readByte();
         }
     }
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof IntArrayList)) return false;
-        IntArrayList other = (IntArrayList) obj;
+        if(!(obj instanceof ByteArrayList)) return false;
+        ByteArrayList other = (ByteArrayList) obj;
         if(size != other.size) return false;
         for(int i = 0; i < size; i++){
             if(array[i] != other.array[i]) return false;
         }
-
         return true;
     }
 
     @Override
     public void exchange(int index1, int index2) {
-        int temp = array[index1];
+        byte temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
-        if(index1 > biggestIndex) biggestIndex = index1;
-        else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
-
-    public void addAll(int[] values) {
-        while (size + values.length > array.length) {
-            resize();
-        }
-
-        System.arraycopy(values, 0, array, size, values.length);
-        size += values.length;
-    }
-
-    public int[] toArray() {
-        int[] result = new int[size];
-        System.arraycopy(array, 0, result, 0, size);
-        return result;
-    }
 }

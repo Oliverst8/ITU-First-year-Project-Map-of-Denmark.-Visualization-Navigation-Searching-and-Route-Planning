@@ -1,6 +1,7 @@
 package dk.itu.map.structures;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.structures.ArrayLists.IntArrayList;
 
 public class TwoDTree extends CoordArrayList {
 
@@ -42,11 +43,11 @@ public class TwoDTree extends CoordArrayList {
         return validatePosition(2 * i + 2);
     }
 
-    public int nearestNeighbour(float[] point) {
-        return nearest(point, 0, 0, 0);
+    public int nearestNeighbour(float[] point, int vehicleCode, Graph graph) {
+        return nearest(point, 0, 0, 0, vehicleCode, graph);
     }
 
-    private int nearest(float[] goal, int i, int best, int axis){
+    private int nearest(float[] goal, int i, int best, int axis, int vehicleCode, Graph graph) {
 
         if(goal == get(i)) return i;
 
@@ -62,19 +63,28 @@ public class TwoDTree extends CoordArrayList {
             if(child == -1) return i;
         }
 
-        int nextCheck = nearest(goal, child, best, (axis + 1) % 2);
-        best = distance(goal, get(best)) > distance(goal, get(nextCheck)) ? nextCheck : best;
+        int nextCheck = nearest(goal, child, best, (axis + 1) % 2, vehicleCode, graph);
+        IntArrayList edges = graph.getEdgeList(nextCheck);
+        boolean canBeUsed = false;
+        for(int j = 0; j < edges.size(); j++){
+            int edge = edges.get(j);
+            if((graph.getVehicleRestrictions().get(edge) & vehicleCode) > 0 ){
+                canBeUsed = true;
+            }
+        }
+        if(canBeUsed){
+            best = distance(goal, get(best)) > distance(goal, get(nextCheck)) ? nextCheck : best;
+        }
 
         if(child == rightChild){
             if(leftChild == -1) return best;
             float rPrime = distToLine(goal, get(i), axis);
-            if(distance(goal, get(best)) > rPrime) best = nearest(goal, leftChild, best, (axis + 1) % 2);
+            if(distance(goal, get(best)) > rPrime) best = nearest(goal, leftChild, best, (axis + 1) % 2, vehicleCode, graph);
         } else {
             if(rightChild == -1) return best;
             float rPrime = distToLine(goal, get(i), axis);
-            if(distance(goal, get(best)) > rPrime) best = nearest(goal, rightChild, best, (axis + 1) % 2);
+            if(distance(goal, get(best)) > rPrime) best = nearest(goal, rightChild, best, (axis + 1) % 2, vehicleCode, graph);
         }
-
         return best;
     }
 
@@ -122,7 +132,7 @@ public class TwoDTree extends CoordArrayList {
         throw new UnsupportedOperationException("Not implemented yet");
     }
  */
-    public int nearestNeighbour(float x, float y) {
-        return nearestNeighbour(new float[]{x,y});
+    public int nearestNeighbour(float x, float y, int vehicleCode, Graph graph) {
+        return nearestNeighbour(new float[]{x,y}, vehicleCode, graph);
     }
 }

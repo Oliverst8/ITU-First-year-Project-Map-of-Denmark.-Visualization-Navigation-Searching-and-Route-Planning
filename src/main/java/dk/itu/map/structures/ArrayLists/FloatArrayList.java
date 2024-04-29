@@ -1,7 +1,5 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
-
 import java.util.Arrays;
 
 import java.io.IOException;
@@ -14,7 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 
-public class FloatArrayList extends PrimitiveArrayList implements Serializable, WriteAble {
+public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     private float[] array;
 
     public FloatArrayList() {
