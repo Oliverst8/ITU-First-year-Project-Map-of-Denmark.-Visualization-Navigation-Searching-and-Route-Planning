@@ -2,6 +2,7 @@ package dk.itu.map.fxml.controllers;
 
 import dk.itu.map.App;
 import dk.itu.map.fxml.models.MapModel;
+import dk.itu.map.fxml.views.MapView;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
 import dk.itu.map.structures.Drawable;
@@ -20,6 +21,7 @@ import javafx.scene.control.Alert;
 public class MapController {
 
     private MapModel model;
+    private MapView view;
 
     /**
      * Constructor for the MapController, set the following variables
@@ -28,6 +30,13 @@ public class MapController {
      */
     public MapController(MapModel model) {
         this.model = model;
+    }
+
+    public void setView(MapView view) {
+        if (this.view != null) {
+            throw new RuntimeException("cannot reset view");
+        }
+        this.view = view;
     }
 
     /**
@@ -43,6 +52,19 @@ public class MapController {
         utilityLoader.start();
 
         model.chunkLoader = new ChunkLoader();
+        model.chunkLoader.setCallback(() -> {
+            Map<Integer, Map<Integer, List<Drawable>>> newChunks = model.chunkLoader.getFinishedChunks();
+            for (int i = 0; i < model.getLayerCount(); i++) {
+                Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
+                Map<Integer, List<Drawable>> newLayer = newChunks.get(i);
+                if (newLayer == null) {
+                    continue;
+                }
+                chunks.putAll(newLayer);
+            }
+
+            if (view != null) view.redraw();
+        });
 
         setUtilities(utilityLoader);
     }
@@ -78,29 +100,40 @@ public class MapController {
     }
 
     /**
-     * Reads the chunks from the set on at the zoom level
-     * and puts them in the chunkLayers
-     * Chunks are not read if they already are read
-     * 
-     * @param chunkSet  the set of chunks to be read
-     * @param zoomLevel the zoom level of the chunks
+     * @param detailLevel      The current detail level
+     * @param upperLeftCorner  The upper left corner of the current view
+     * @param lowerRightCorner The lower right corner of the current view
+     * @return The amount of chunks seen in the current view in the y direction
      */
-    private void readChunks(Set<Integer> chunkSet, int zoomLevel) {
-        Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(zoomLevel);
+    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner/*, boolean print*/) {
+        // int count = 0;
+        for (int i = detailLevel; i < model.getLayerCount(); i++) {
+            int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
+            int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner, i);
+            Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
 
-        chunkSet.removeAll(chunks.keySet());
+            Set<Integer> visibleChunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
+            // count += visibleChunks.size()*(model.getLayerCount()-detailLevel);
 
-        int[] newChunks = new int[chunkSet.size()];
+            chunks.keySet().retainAll(visibleChunks);
 
-        int c = 0;
-        for (int chunk : chunkSet) {
-            newChunks[c++] = chunk;
+            visibleChunks.removeAll(chunks.keySet());
+    
+            int[] newChunks = new int[visibleChunks.size()];
+    
+            int c = 0;
+            for (int chunk : visibleChunks) {
+                newChunks[c++] = chunk;
+            }
+    
+            if (visibleChunks.isEmpty())
+                continue;
+    
+            model.chunkLoader.readFiles(newChunks, i);
         }
-
-        if (chunkSet.isEmpty())
-            return;
-
-        chunks.putAll(model.chunkLoader.readFiles(newChunks, zoomLevel));
+        // if (print || MapView.overridePrint) {
+        //     System.out.println("Loaded chunks: " + count);
+        // }
     }
 
     private void setUtilities(UtilityLoader utilityLoader) {
@@ -110,35 +143,6 @@ public class MapController {
             throw new RuntimeException(e);
         }
         model.setGraph(utilityLoader.getGraph());
-    }
-
-    /**
-     * Updates the given zoom level with the given chunks
-     * 
-     * @param chunks    the chunks to be updated
-     * @param zoomLevel the zoom level to be updated
-     */
-    private void updateZoomLayer(Set<Integer> chunks, int zoomLevel) {
-        model.chunkLayers.get(zoomLevel).keySet().retainAll(chunks);
-
-        readChunks(chunks, zoomLevel);
-    }
-
-    /**
-     * @param detailLevel      The current detail level
-     * @param upperLeftCorner  The upper left corner of the current view
-     * @param lowerRightCorner The lower right corner of the current view
-     * @return The amount of chunks seen in the current view in the y direction
-     */
-    public void updateChunks(int detailLevel, Point2D upperLeftCorner, Point2D lowerRightCorner) {
-        for (int i = detailLevel; i <= 4; i++) {
-            int upperLeftChunk = model.chunkLoader.pointToChunkIndex(upperLeftCorner, i);
-            int lowerRightChunk = model.chunkLoader.pointToChunkIndex(lowerRightCorner, i);
-
-            Set<Integer> chunks = getChunksInRect(upperLeftChunk, lowerRightChunk, model.chunkLoader.getConfig().getColumnAmount(i));
-
-            updateZoomLayer(chunks, i);
-        }
     }
 
     public void navigate(int vehicleCode) {
