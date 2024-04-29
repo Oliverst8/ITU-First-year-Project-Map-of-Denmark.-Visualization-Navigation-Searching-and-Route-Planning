@@ -15,6 +15,20 @@ public class AddressTest {
         address = new Address();
     }
 
+    private static void assertStringArraySetEquals(Set<String[]> result_array, Set<String[]> expected_arrray) {
+        Set<List<String>> result = new HashSet<>();
+        for(String[] key : result_array){
+            List<String> list = new ArrayList<>(Arrays.asList(key));
+            result.add(list);
+        }
+        Set<List<String>> expected = new HashSet<>();
+        for(String[] key : expected_arrray){
+            List<String> list = new ArrayList<>(Arrays.asList(key));
+            expected.add(list);
+        }
+        assertEquals(expected,result);
+    }
+
     public void addAdresses(){
         address.addStreetName(new String[]{"ab","1","1234","cph"});
         address.addStreetName(new String[]{"ad","1","1234","cph"});
@@ -35,33 +49,34 @@ public class AddressTest {
     @Test
     void testAutoCompleteMatchingStringFound(){
         addAdresses();
-        Set<String> result = address.autoComplete("hv",10);
-        Set<String> expected = new HashSet<>(List.of("hv","hvi"));
-        assertEquals(expected,result);
+        Map<String[], Address.AddressNode> result_array = address.autoComplete("hv",10);
+        Set<String[]> expected_arrray = new HashSet<>(List.of(new String[]{"hv", "1234"}, new String[]{"hvi","1234"}));
+        assertStringArraySetEquals(result_array.keySet(), expected_arrray);
+
     }
 
     @Test
     void testAutoComplete1() {
         addAdresses();
-        Set<String> result = address.autoComplete("a", 10);
-        Set<String> expected = new HashSet<>(List.of("ab", "ad"));
-        assertEquals(expected, result);
+        Map<String[], Address.AddressNode> result = address.autoComplete("a", 10);
+        Set<String[]> expected = new HashSet<>(List.of(new String[]{"ab","1234"}, new String[]{"ad","1234"}));
+        assertStringArraySetEquals(result.keySet(), expected);
     }
 
     @Test
     void testAutoComplete2() {
         addAdresses();
-        Set<String> result = address.autoComplete("ol", 10);
-        Set<String> expected = new HashSet<>();
-        assertEquals(expected, result);
+        Map<String[], Address.AddressNode> result = address.autoComplete("ol", 10);
+        Set<String[]> expected = new HashSet<>();
+        assertStringArraySetEquals(result.keySet(), expected);
     }
 
     @Test
     void testAutoCompleteMatchingStringNotFound(){
         addAdresses();
-        Set<String> result = address.autoComplete("h",10);
-        Set<String> expected = new HashSet<>(List.of("hv","hvi","he"));
-        assertEquals(expected,result);
+        Map<String[], Address.AddressNode> result = address.autoComplete("h",10);
+        Set<String[]> expected = new HashSet<>(List.of(new String[]{"hv","1234"},new String[]{"hvi","1234"},new String[]{"he","1234"}));
+        assertStringArraySetEquals(result.keySet(), expected);
     }
 
     @Test
@@ -108,9 +123,9 @@ public class AddressTest {
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"});
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"});
         address.run();
-        Set<String> result = address.autoComplete("Ballafletcher", 20);
-        Set<String> expected = new HashSet<>(List.of("Ballafletcher Road 17 Cronkbourne", "Ballafletcher Road 12 Cronkbourne", "Ballafletcher Road 13 Cronkbourne"));
-        assertEquals(expected, result);
+        Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
+        Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
+        assertStringArraySetEquals(result.keySet(), expected);
     }
 
     @Test
@@ -128,8 +143,35 @@ public class AddressTest {
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"});
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"});
         address.run();
-        Set<String> result = address.autoComplete("Ballafletcher", 20);
-        Set<String> expected = new HashSet<>(List.of("Ballafletcher Road 17 Cronkbourne", "Ballafletcher Road 12 Cronkbourne", "Ballafletcher Road 13 Cronkbourne"));
-        assertEquals(expected, result);
+        Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
+        Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
+        assertStringArraySetEquals(result.keySet(), expected);
     }
+
+    @Test
+    void testFillAddressExpectsMultiple() {
+        Random random = new Random();
+        for(int i = 0; i < 1000; i++){
+            StringBuilder streetName = new StringBuilder();
+            for(int j = 0; j < 10; j++){
+                streetName.append((char) ('a' + random.nextInt(26)));
+            }
+            address.addStreetName(new String[]{streetName.toString(),"1","2","3"});
+        }
+        address.addStreetName(new String[]{"Ballafletcher Road","1","23","Herlev"});
+        address.addStreetName(new String[]{"Ballafletcher Road","2","23","Herlev"});
+        address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"});
+        address.run();
+
+        Map<String[], Address.AddressNode> map = address.autoComplete("Ballafletcher", 20);
+        String[] autocomplete = map.keySet().iterator().next();
+
+        List<String[]> result = address.fillAddress(autocomplete, map.get(autocomplete));
+        Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road","1","23","Herlev"}, new String[]{"Ballafletcher Road","2","23","Herlev"}, new String[]{"Ballafletcher Road","3","23","Islev"}));
+
+        assertStringArraySetEquals(new HashSet<>(result), expected);
+
+    }
+
+
 }

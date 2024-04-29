@@ -45,8 +45,7 @@ public class Address implements Runnable, WriteAble{
     private Node insert(Node node, String[] value, int pos){
         if(pos >= value[0].length()) return node;
         if (node == null){
-            node = new Node();
-            node.value = value[0].charAt(pos);
+            node = new Node(value[0].charAt(pos));
             size++;
         }
         int cmp = node.compareTo(value[0].charAt(pos));
@@ -56,12 +55,20 @@ public class Address implements Runnable, WriteAble{
             node.right = insert(node.right, value, pos);
         } else if(pos == value[0].length()-1){
             //node.isTerminal = true;
-            if(!node.isTerminal) node = new AddressNode(value);
-            else ((AddressNode) node).addAddress(value);
+            if(!node.isTerminal) {
+                node = new AddressNode(value, value[0].charAt(pos));
+            } else ((AddressNode) node).addAddress(value);
         }else {
             node.middle = insert(node.middle, value, pos+1);
         }
         return node;
+    }
+
+    private void addToResults(String value, Node input, Map<String[], AddressNode> results){
+        AddressNode node = (AddressNode) input;
+        for(int i = 0; i < node.zipIndexes.size(); i++){
+            results.put(new String[]{value, zip.get(node.zipIndexes.get(i))}, (AddressNode) input);
+        }
     }
 
     public int Size(){
@@ -103,15 +110,17 @@ public class Address implements Runnable, WriteAble{
 
     }
 
-    public Set<String> autoComplete(String value, int maxResults){
+    public Map<String[], AddressNode> autoComplete(String value, int maxResults){
         Node searchResult = search(value);
-        Set<String> results = new HashSet<>();
+        Map<String[], AddressNode> results = new HashMap<>();
         Queue<Node> branches = new LinkedList<>();
         Queue<StringBuilder> branchStrings = new LinkedList<>();
 
         if (searchResult == null) return results;
 
-        if(searchResult.isTerminal) results.add(value);
+        if(searchResult.isTerminal) {
+            addToResults(value, searchResult, results);
+        }
 
         if(searchResult.middle != null) branches.add(searchResult.middle);
         else return results;
@@ -137,7 +146,7 @@ public class Address implements Runnable, WriteAble{
 
             if(current.isTerminal) {
                 currentString.append(current.value);
-                results.add(currentString.toString());
+                addToResults(currentString.toString(), current, results);
             }
 
             if(results.size() >= maxResults) break;
@@ -145,6 +154,23 @@ public class Address implements Runnable, WriteAble{
         }
 
         return results;
+    }
+
+    public List<String[]> fillAddress(String[] address, AddressNode node) {
+        List<String[]> list = new ArrayList<>();
+
+        for(int i = 0; i < node.zipIndexes.size(); i++){
+            if(zip.get(node.zipIndexes.get(i)).equals(address[1])){
+                String[] newAddress = new String[4];
+                newAddress[0] = address[0];
+                newAddress[1] = streetNumber.get(node.streetNumberIndexes.get(i));
+                newAddress[2] = address[1];
+                newAddress[3] = cities.get(node.cityIndexes.get(i));
+                list.add(newAddress);
+            }
+        }
+        if(list.isEmpty()) throw new IllegalArgumentException("Zip not found");
+        return list;
     }
 
     @Override
@@ -169,8 +195,7 @@ public class Address implements Runnable, WriteAble{
     @Override
     public void read(DataInputStream stream) throws IOException {
         Queue<Node> queue = new LinkedList<>();
-        root = new Node();
-        root.value = stream.readChar();
+        root = new Node(stream.readChar());
         root.isTerminal = stream.readBoolean();
         queue.add(root);
         while(!queue.isEmpty()) {
@@ -178,22 +203,19 @@ public class Address implements Runnable, WriteAble{
             Node current = queue.remove();
             char left = stream.readChar();
             if(left != '\0'){
-                current.left = new Node();
-                current.left.value = left;
+                current.left = new Node(left);
                 current.left.isTerminal = stream.readBoolean();
                 queue.add(current.left);
             }
             char middle = stream.readChar();
             if(middle != '\0'){
-                current.middle = new Node();
-                current.middle.value = middle;
+                current.middle = new Node(middle);
                 current.middle.isTerminal = stream.readBoolean();
                 queue.add(current.middle);
             }
             char right = stream.readChar();
             if(right != '\0'){
-                current.right = new Node();
-                current.right.value = right;
+                current.right = new Node(right);
                 current.right.isTerminal = stream.readBoolean();
                 queue.add(current.right);
             }
@@ -235,6 +257,10 @@ public class Address implements Runnable, WriteAble{
         public char value;
         public boolean isTerminal;
 
+        public Node(char value){
+            this.value = value;
+        }
+
         public String toString(){
             return "Value: " + value + " Terminal: " + isTerminal + (left != null ? " Has left" : " left is null") + (middle != null ? " Has middle" : " middle is null") + (right != null ? " Has right" : " right is null");
         }
@@ -251,7 +277,8 @@ public class Address implements Runnable, WriteAble{
         IntArrayList zipIndexes;
         IntArrayList streetNumberIndexes;
 
-        public AddressNode(String[] address){
+        public AddressNode(String[] address, char value){
+            super(value);
             isTerminal = true;
             cityIndexes = new IntArrayList();
             zipIndexes = new IntArrayList();
@@ -260,14 +287,14 @@ public class Address implements Runnable, WriteAble{
         }
 
         public void addAddress(String[] address){
-            int cityIndex;
-            if(cityMap.containsKey(address[1])){
-                cityIndex = cityMap.get(address[1]);
-                cityIndexes.add(cityIndex);
+            int streetNumberIndex;
+            if(streetNumberMap.containsKey(address[1])){
+                streetNumberIndex = streetNumberMap.get(address[1]);
+                streetNumberIndexes.add(streetNumberIndex);
             } else {
-                cities.add(address[1]);
-                cityMap.put(address[1], cities.size()-1);
-                cityIndexes.add(cities.size()-1);
+                streetNumber.add(address[1]);
+                streetNumberMap.put(address[1], streetNumber.size()-1);
+                streetNumberIndexes.add(streetNumber.size()-1);
             }
 
             int zipIndex;
@@ -280,14 +307,14 @@ public class Address implements Runnable, WriteAble{
                 zipIndexes.add(zip.size()-1);
             }
 
-            int streetNumberIndex;
-            if(streetNumberMap.containsKey(address[3])){
-                streetNumberIndex = streetNumberMap.get(address[3]);
-                streetNumberIndexes.add(streetNumberIndex);
+            int cityIndex;
+            if(cityMap.containsKey(address[3])){
+                cityIndex = cityMap.get(address[3]);
+                cityIndexes.add(cityIndex);
             } else {
-                streetNumber.add(address[3]);
-                streetNumberMap.put(address[3], streetNumber.size()-1);
-                streetNumberIndexes.add(streetNumber.size()-1);
+                cities.add(address[3]);
+                cityMap.put(address[3], cities.size()-1);
+                cityIndexes.add(cities.size()-1);
             }
 
         }
