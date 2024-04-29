@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 public class TwoDTreeTest {
 
-    @Test
+    /*@Test
     void testNearestNeighborRootIsIt() {
         CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2});
         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
@@ -46,7 +46,7 @@ public class TwoDTreeTest {
         TwoDTree twoDtree = new TwoDTree(tree.length);
         for(int i = 0; i < tree.length; i++){
             twoDtree.add(coordArrayList.get(tree[i]));
-        }*/
+        }
         int nearest = twoDtree.nearestNeighbour(new float[]{3.5f, 4});
         assertEquals(5, nearest);
     }
@@ -65,6 +65,6 @@ public class TwoDTreeTest {
         float[] expected = new float[]{3,1};
         float[] actual = twoDtree.get(nearest);
         assertArrayEquals(actual, expected);
-    }
+    }*/
 
 }

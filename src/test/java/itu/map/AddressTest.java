@@ -114,7 +114,8 @@ public class AddressTest {
         address.write(testPath + "addressTest");
         Address newAddress = new Address();
         newAddress.read(testPath + "addressTest");
-        assertEquals(address, newAddress);
+        //assertEquals(address, newAddress);
+        assertTrue(address.equals(newAddress));
     }
 
     @Test

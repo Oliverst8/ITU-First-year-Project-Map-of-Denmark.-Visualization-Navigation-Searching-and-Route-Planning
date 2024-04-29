@@ -164,7 +164,10 @@ public class OSMParser extends Thread {
                                 }
                             }
 
-                            if(tags[0] != null) address.addStreetName(tags);
+                            if(tags[0] != null) {
+                                for(int i = 1; i < tags.length; i++) if(tags[i] == null) tags[i] = "";
+                                address.addStreetName(tags);
+                            }
 
                         }
 

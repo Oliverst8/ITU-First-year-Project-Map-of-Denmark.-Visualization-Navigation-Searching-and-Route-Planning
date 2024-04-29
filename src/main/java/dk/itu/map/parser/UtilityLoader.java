@@ -4,6 +4,7 @@ import dk.itu.map.structures.Address;
 import dk.itu.map.structures.Graph;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class UtilityLoader extends Thread{
     private Graph graph;
@@ -36,7 +37,11 @@ public class UtilityLoader extends Thread{
     }
 
     public Address getAddress() {
-        System.out.println(address.autoComplete("a",10));
+        //System.out.println(address.autoComplete("a",10));
+        Map<String[], Address.AddressNode> result = address.autoComplete("Andreas Road",10);
+        for (Map.Entry<String[], Address.AddressNode> entry : result.entrySet()) {
+            System.out.println(entry.getKey()[0] + ", " + entry.getKey()[1]);
+        }
         System.out.println(address.autoComplete("a",10).size());
         return address;
     }

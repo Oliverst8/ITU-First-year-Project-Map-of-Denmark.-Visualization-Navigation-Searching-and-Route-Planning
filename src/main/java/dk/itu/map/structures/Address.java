@@ -144,7 +144,8 @@ public class Address implements Runnable, WriteAble{
                 branchStrings.add(new StringBuilder(currentString));
             }
 
-            if(current.isTerminal) {
+            //if(current.isTerminal) {
+            if(current instanceof AddressNode){
                 currentString.append(current.value);
                 addToResults(currentString.toString(), current, results);
             }
@@ -183,12 +184,26 @@ public class Address implements Runnable, WriteAble{
                 stream.writeChar('\0');
                 continue;
             }
-            stream.writeChar(node.value);
-            stream.writeBoolean(node.isTerminal);
+            //stream.writeChar(node.value);
+            //stream.writeBoolean(node.isTerminal);
+            node.write(stream);
             queue.add(node.left);
             queue.add(node.middle);
             queue.add(node.right);
         }
+        stream.writeInt(streetNumber.size());
+        for(String streetNum : streetNumber){
+            stream.writeUTF(streetNum);
+        }
+        stream.writeInt(zip.size());
+        for(String zipCode : zip){
+            stream.writeUTF(zipCode);
+        }
+        stream.writeInt(cities.size());
+        for(String city : cities){
+            stream.writeUTF(city);
+        }
+
     }
 
 
@@ -203,22 +218,58 @@ public class Address implements Runnable, WriteAble{
             Node current = queue.remove();
             char left = stream.readChar();
             if(left != '\0'){
-                current.left = new Node(left);
-                current.left.isTerminal = stream.readBoolean();
+                //current.left = new Node(left);
+                //current.left.isTerminal = stream.readBoolean();
+                if(stream.readBoolean()){
+                    current.left = new AddressNode(left);
+                    current.left.read(stream);
+                } else {
+                    current.left = new Node(left);
+                    current.left.read(stream);
+                }
                 queue.add(current.left);
             }
             char middle = stream.readChar();
             if(middle != '\0'){
-                current.middle = new Node(middle);
-                current.middle.isTerminal = stream.readBoolean();
+                //current.middle = new Node(middle);
+                //current.middle.isTerminal = stream.readBoolean();
+                if(stream.readBoolean()){
+                    current.middle = new AddressNode(middle);
+                    current.middle.read(stream);
+                } else {
+                    current.middle = new Node(middle);
+                    current.middle.read(stream);
+                }
                 queue.add(current.middle);
             }
             char right = stream.readChar();
             if(right != '\0'){
-                current.right = new Node(right);
-                current.right.isTerminal = stream.readBoolean();
+                //current.right = new Node(right);
+                //current.right.isTerminal = stream.readBoolean();
+                if(stream.readBoolean()){
+                    current.right = new AddressNode(right);
+                    current.right.read(stream);
+                } else {
+                    current.right = new Node(right);
+                    current.right.read(stream);
+                }
                 queue.add(current.right);
             }
+        }
+        int streetNumberSize = stream.readInt();
+        streetNumber = new ArrayList<>(streetNumberSize);
+        for(int i = 0; i < streetNumberSize; i++){
+            streetNumber.add(stream.readUTF());
+        }
+        int zipSize = stream.readInt();
+        zip = new ArrayList<>(zipSize);
+        for(int i = 0; i < zipSize; i++){
+            zip.add(stream.readUTF());
+        }
+        int citySize = stream.readInt();
+        cities = new ArrayList<>(citySize);
+        for(int i = 0; i < citySize; i++){
+            cities.add(stream.readUTF());
         }
     }
 
@@ -240,6 +291,7 @@ public class Address implements Runnable, WriteAble{
             if(thisNode == null || otherNode == null) return false;
             if(thisNode.value != otherNode.value) return false;
             if(thisNode.isTerminal != otherNode.isTerminal) return false;
+            if(!thisNode.getClass().equals(otherNode.getClass())) return false;
             thisQueue.add(thisNode.left);
             thisQueue.add(thisNode.middle);
             thisQueue.add(thisNode.right);
@@ -247,10 +299,26 @@ public class Address implements Runnable, WriteAble{
             otherQueue.add(otherNode.middle);
             otherQueue.add(otherNode.right);
         }
+        if(!this.streetNumber.equals(other.getStreetNumber())) return false;
+        if(!this.zip.equals(other.getZip())) return false;
+        if(!this.cities.equals(other.getCities())) return false;
+
         return true;
     }
 
-    public class Node{
+    public List<String> getCities() {
+        return cities;
+    }
+
+    public List<String> getZip() {
+        return zip;
+    }
+
+    public List<String> getStreetNumber() {
+        return streetNumber;
+    }
+
+    public class Node implements WriteAble{
         public Node left;
         public Node middle;
         public Node right;
@@ -269,13 +337,36 @@ public class Address implements Runnable, WriteAble{
             return Character.compare(Character.toLowerCase(value), Character.toLowerCase(otherValue));
         }
 
+        @Override
+        public void write(DataOutputStream stream) throws IOException {
+            stream.writeChar(value);
+            stream.writeBoolean(isTerminal);
+        }
+
+        /**
+         * This expects that terminal is false
+         * @param stream
+         * @throws IOException
+         */
+        @Override
+        public void read(DataInputStream stream) throws IOException {
+            isTerminal = false;
+            //value = stream.readChar();
+        }
     }
 
     public class AddressNode extends Node{
-
-        IntArrayList cityIndexes;
-        IntArrayList zipIndexes;
         IntArrayList streetNumberIndexes;
+        IntArrayList zipIndexes;
+        IntArrayList cityIndexes;
+
+        public AddressNode(char value){
+            super(value);
+            isTerminal = true;
+            cityIndexes = new IntArrayList();
+            zipIndexes = new IntArrayList();
+            streetNumberIndexes = new IntArrayList();
+        }
 
         public AddressNode(String[] address, char value){
             super(value);
@@ -317,6 +408,24 @@ public class Address implements Runnable, WriteAble{
                 cityIndexes.add(cities.size()-1);
             }
 
+        }
+
+        @Override
+        public void write(DataOutputStream stream) throws IOException {
+            stream.writeChar(value);
+            stream.writeBoolean(isTerminal);
+            streetNumberIndexes.write(stream);
+            zipIndexes.write(stream);
+            cityIndexes.write(stream);
+        }
+
+        @Override
+        public void read(DataInputStream stream) throws IOException {
+            isTerminal = true;
+            //value = stream.readChar();
+            streetNumberIndexes.read(stream);
+            zipIndexes.read(stream);
+            cityIndexes.read(stream);
         }
 
     }
