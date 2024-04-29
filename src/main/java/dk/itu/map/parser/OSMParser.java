@@ -30,7 +30,6 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 
 public class OSMParser extends Thread {
     private File file;
-    private final String dataPath;
 
     private ArrayList<MapElement> relations;
     private LongCoordHashMap nodes;
@@ -44,11 +43,9 @@ public class OSMParser extends Thread {
      * Constructor for the OSMParser class
      *
      * @param file The file to be parsed
-     * @param dataPath The path to the data folder
      */
-    public OSMParser(File file, String dataPath) {
+    public OSMParser(File file) {
         this.file = file;
-        this.dataPath = dataPath;
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
@@ -114,7 +111,8 @@ public class OSMParser extends Thread {
                             float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                             float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                             float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                            chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon);
+                            MapConfig config = new MapConfig(minLat, maxLat, minLon, maxLon);
+                            chunkGenerator = new ChunkGenerator(config);
                         }
 
                         case "node" -> {

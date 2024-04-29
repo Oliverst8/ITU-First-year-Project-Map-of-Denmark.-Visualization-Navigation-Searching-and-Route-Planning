@@ -16,7 +16,7 @@ public class ChunkView {
     
     @FXML
     public void initialize() {
-        controller.importMap(model.OSMFile, model.mapName);
+        controller.importMap(model.OSMFile);
         
     }
 }
