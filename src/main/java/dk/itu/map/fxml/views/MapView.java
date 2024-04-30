@@ -1,10 +1,8 @@
 package dk.itu.map.fxml.views;
 
 import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
-import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
@@ -56,7 +54,6 @@ public class MapView {
     private float startDist;
 
     private AnimationTimer render;
-    private int themeNumber = 0;
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false;
 

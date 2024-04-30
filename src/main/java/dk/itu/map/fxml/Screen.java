@@ -23,7 +23,6 @@ public abstract class Screen<M, C> {
             this.model = new HomeModel();
             this.controller = new HomeController(model);
             this.view = new HomeView(controller);
-
         }
     }
 
@@ -36,7 +35,6 @@ public abstract class Screen<M, C> {
             controller.importMap("", mapName);
             this.view = new MapView(controller, model);
             controller.setView((MapView)view);
-
         }
     }
 
@@ -47,7 +45,6 @@ public abstract class Screen<M, C> {
             this.model = new ChunkModel(OSMFile);
             this.controller = new ChunkController(model, mapName);
             this.view = new ChunkView(controller, model);
-
         }
     }
 }

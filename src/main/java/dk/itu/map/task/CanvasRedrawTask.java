@@ -5,7 +5,6 @@ import dk.itu.map.structures.Drawable;
 
 import java.util.Set;
 
-import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
