@@ -1,10 +1,8 @@
 package dk.itu.map.fxml.views;
 
 import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
-import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
@@ -51,12 +49,9 @@ public class MapView {
     // Last mouse position
     private float lastY;
     // Zoom level
-    private float zoomLevel;
-    // Initial distance between two points
-    private float startDist;
+    private float zoomAmount;
 
     private AnimationTimer render;
-    private int themeNumber = 0;
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false;
 
@@ -99,8 +94,6 @@ public class MapView {
             redraw();
         });
 
-        startDist = getZoomDistance();
-
 
         render = new AnimationTimer() {
             @Override
@@ -112,6 +105,7 @@ public class MapView {
 
     @FXML
     void canvasClicked(MouseEvent e){
+        updateZoomAmount();
         if(setStartPoint){
             float[] startPoint = new float[]{(float) e.getX(), (float) e.getY()};
             startPoint = convertToLatLon(startPoint);
@@ -120,7 +114,7 @@ public class MapView {
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, getDetailLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -130,7 +124,7 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, getDetailLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
         }
     }
 
@@ -243,7 +237,7 @@ public class MapView {
     long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
-        updateZoomLevel();
+        updateZoomAmount();
         boolean print = false;
         long totalStart = System.currentTimeMillis();
         if (System.currentTimeMillis() - prevTime > 300) {
@@ -251,8 +245,8 @@ public class MapView {
             print = true;
             overridePrint = false;
         }
-        controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
-        updateZoomLevel();
+        controller.updateChunks(getZoomLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
+        updateZoomAmount();
         if (overridePrint) {
             print = true;
             overridePrint = false;
@@ -268,9 +262,9 @@ public class MapView {
 
         layers.put("navigation", navigationSet);
 
-        float zoom = getZoomDistance() / startDist * 100;
+        updateZoomAmount();
 
-        for(int i = getDetailLevel(); i <= 4; i++) {
+        for(int i = getZoomLevel(); i <= 4; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);
@@ -293,7 +287,7 @@ public class MapView {
             long startTime = System.currentTimeMillis();
 
             Canvas canvas = this.canvas.get(entry.getKey());
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, getDetailLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoomAmount, getZoomLevel(), model.theme).run();
 
             long endTime = System.currentTimeMillis();
 
@@ -310,8 +304,8 @@ public class MapView {
             
             System.out.println(layer + ": " + renderTime + " ");
         }
-        System.out.println("Current zoomLevel: " + getDetailLevel());
-        System.out.println("Currently skipping: " + (int)Math.pow(3, getDetailLevel()));
+        System.out.println("Current zoomLevel: " + getZoomLevel());
+        System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
         System.out.println("Total draw time: " + drawTimes + "ms");
         System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
         System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
@@ -345,11 +339,11 @@ public class MapView {
     /**
      * @return int the detail level of the map
      */
-    private int getDetailLevel(){
-        if(zoomLevel > 0.07) return 4;
-        if(zoomLevel > 0.06) return 3;
-        if(zoomLevel > 0.03) return 2;
-        if(zoomLevel > 6.9539517E-3) return 1;
+    private int getZoomLevel(){
+        if(zoomAmount > 0.07) return 4;
+        if(zoomAmount > 0.06) return 3;
+        if(zoomAmount > 0.03) return 2;
+        if(zoomAmount > 6.9539517E-3) return 1;
         return 0;
     }
 
@@ -365,9 +359,8 @@ public class MapView {
     /**
      * Updates the zoom level
      */
-    private void updateZoomLevel() {
-        float newZoom = getZoomDistance();
-        zoomLevel = (newZoom / startDist) * 100;
+    private void updateZoomAmount() {
+        zoomAmount = getZoomDistance() * 100;
     }
 
     /**

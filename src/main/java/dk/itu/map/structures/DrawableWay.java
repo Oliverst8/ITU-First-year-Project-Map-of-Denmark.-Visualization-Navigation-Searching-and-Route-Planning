@@ -210,7 +210,7 @@ public class DrawableWay implements Drawable {
     }
 
     private double calcLineWidth(float lineWidth, float scaleFactor) {
-        return lineWidth * ( 1 / (scaleFactor) );
+        return lineWidth * ( 2 / (scaleFactor) );
     }
 
     public boolean containsTag(String tag) {
