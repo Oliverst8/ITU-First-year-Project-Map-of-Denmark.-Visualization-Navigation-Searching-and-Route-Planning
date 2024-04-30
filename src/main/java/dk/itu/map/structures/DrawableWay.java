@@ -80,9 +80,9 @@ public class DrawableWay implements Drawable {
         return secondaryType;
     }
 
-    public void draw(GraphicsContext gc, float scaleFactor, Theme theme) {
+    public void draw(GraphicsContext gc, float scaleFactor, int skipAmount, Theme theme) {
         gc.beginPath();
-        drawCoords(gc, outerCoords);
+        drawCoords(gc, outerCoords, skipAmount);
         // drawCoords(gc, outerCoords);
 
         setColors(gc, tags, scaleFactor, theme);
@@ -90,7 +90,7 @@ public class DrawableWay implements Drawable {
         gc.closePath();
     }
 
-    public void drawCoords(GraphicsContext gc, CoordArrayList coords) {
+    public void drawCoords(GraphicsContext gc, CoordArrayList coords, int skipAmount) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
@@ -103,7 +103,7 @@ public class DrawableWay implements Drawable {
                 startY = coord[0];
                 continue;
             }
-            gc.lineTo(0.56f * coord[1], -coord[0]);
+            if (i % skipAmount == 0) gc.lineTo(0.56f * coord[1], -coord[0]);
             if (startX == coord[1] && startY == coord[0]) {
                 startNew = true;
             }
@@ -148,7 +148,7 @@ public class DrawableWay implements Drawable {
             case "highway":
                 switch(secondaryType) {
                     case "motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link":
-                        lineWidth = 0.001f;
+                        lineWidth = 0.01f;
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
@@ -211,7 +211,7 @@ public class DrawableWay implements Drawable {
                 }
         }
 
-        gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 0.75, 0.1));
+        gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 5, 0.1));
     }
 
     public boolean containsTag(String tag) {

@@ -120,7 +120,7 @@ public class MapView {
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, getDetailLevel(), model.theme).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -130,7 +130,7 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, getDetailLevel(), model.theme).run();
         }
     }
 
@@ -239,24 +239,24 @@ public class MapView {
      * Redraws the map
      */
     
-    // public static boolean overridePrint = false;
-    // long prevTime = 0;
+    public static boolean overridePrint = false;
+    long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomLevel();
-        // boolean print = false;
-        // long totalStart = System.currentTimeMillis();
-        // if (System.currentTimeMillis() - prevTime > 300) {
-        //     prevTime = System.currentTimeMillis();
-        //     print = true;
-        //     overridePrint = false;
-        // }
+        boolean print = false;
+        long totalStart = System.currentTimeMillis();
+        if (System.currentTimeMillis() - prevTime > 300) {
+            prevTime = System.currentTimeMillis();
+            print = true;
+            overridePrint = false;
+        }
         controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
         updateZoomLevel();
-        // if (overridePrint) {
-        //     print = true;
-        //     overridePrint = false;
-        // }
+        if (overridePrint) {
+            print = true;
+            overridePrint = false;
+        }
 
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
@@ -285,35 +285,37 @@ public class MapView {
                 }
             }
         }
-        // long wastedTime = System.currentTimeMillis();
-        // Map<String, Long> renderTimes = new HashMap<>();
+        long wastedTime = System.currentTimeMillis();
+        Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
 
-            // long startTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
 
             Canvas canvas = this.canvas.get(entry.getKey());
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, model.theme).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, getDetailLevel(), model.theme).run();
 
-            // long endTime = System.currentTimeMillis();
+            long endTime = System.currentTimeMillis();
 
-            // renderTimes.put(entry.getKey(), endTime - startTime);
+            renderTimes.put(entry.getKey(), endTime - startTime);
         }
         
-        // if (!print) return;
-        // long drawTimes = 0;
-        // System.out.println("Render times: ");
-        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
-        //     String layer = String.format("%-15s", entry.getKey());
-        //     long renderTime = entry.getValue();
-        //     drawTimes += renderTime;
+        if (!print) return;
+        long drawTimes = 0;
+        System.out.println("Render times: ");
+        for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
+            String layer = String.format("%-15s", entry.getKey());
+            long renderTime = entry.getValue();
+            drawTimes += renderTime;
             
-        //     System.out.println(layer + ": " + renderTime + " ");
-        // }
-        // System.out.println("Total draw time: " + drawTimes + "ms");
-        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
-        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
-        // System.out.println();
+            System.out.println(layer + ": " + renderTime + " ");
+        }
+        System.out.println("Current zoomLevel: " + getDetailLevel());
+        System.out.println("Currently skipping: " + (int)Math.pow(3, getDetailLevel()));
+        System.out.println("Total draw time: " + drawTimes + "ms");
+        System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
+        System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
+        System.out.println();
     }
 
     private Set<Drawable> getNavigationDrawables() {
@@ -345,8 +347,8 @@ public class MapView {
      */
     private int getDetailLevel(){
         if(zoomLevel > 0.07) return 4;
-        if(zoomLevel > 0.01) return 3;
-        if(zoomLevel > 0.01) return 2;
+        if(zoomLevel > 0.06) return 3;
+        if(zoomLevel > 0.03) return 2;
         if(zoomLevel > 6.9539517E-3) return 1;
         return 0;
     }
