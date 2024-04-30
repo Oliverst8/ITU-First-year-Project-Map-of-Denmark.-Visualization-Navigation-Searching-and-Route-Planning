@@ -28,9 +28,9 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import com.gluonhq.charm.glisten.control.AutoCompleteTextField?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -38,7 +38,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar useSystemMenuBar="true" VBox.vgrow="NEVER">
             <menus>
@@ -71,14 +71,14 @@
                 <Canvas fx:id="canvasHighway" />
                 <Canvas fx:id="canvasNavigation" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
-            <Button layoutX="684.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="30.0" prefWidth="25.0" text="x" />
-            <Button layoutX="725.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="30.0" prefWidth="25.0" text="x" />
+            <Button layoutX="637.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="30.0" prefWidth="75.0" text="Vælg start" />
+            <Button layoutX="716.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="30.0" prefWidth="75.0" text="Vælg slut" />
             <Button layoutX="684.0" layoutY="59.0" mnemonicParsing="false" onAction="#navigateNow" text="Navigate" />
             <Button layoutX="654.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" text="Walk" />
             <Button layoutX="738.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToCarNavigation" text="Car" />
             <Button layoutX="697.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" text="Bike" />
-            <AutoCompleteTextField fx:id="autocompleteStartPoint" layoutX="65.0" layoutY="50.0" prefHeight="133.0" prefWidth="529.0" />
-            <AutoCompleteTextField fx:id="autocompleteEndPoint" layoutX="596.0" layoutY="228.0" />
+            <ComboBox editable="true" layoutX="400.0" layoutY="22.0" onKeyTyped="#getAdressSuggestions" prefWidth="150.0" promptText="Start address" />
+            <ComboBox editable="true" layoutX="400.0" layoutY="59.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" promptText="End address" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>
         </AnchorPane>

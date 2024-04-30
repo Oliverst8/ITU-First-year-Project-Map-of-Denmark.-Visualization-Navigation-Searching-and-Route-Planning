@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +40,10 @@ public class MapView {
     private AutoCompleteTextField<String> autocompleteStartPoint;
     @FXML
     private AutoCompleteTextField<String> autocompleteEndPoint;
-
+    @FXML
+    private ComboBox<String> startComboBox;
+    @FXML
+    private ComboBox<String> endComboBox;
     @FXML
     private AnchorPane canvasParent;
     private String[] mapLayers;
@@ -415,4 +419,12 @@ public class MapView {
         controller.navigate(vehicleCode);
         redraw();
     }
+
+    @FXML
+    void searchEndAddress(ActionEvent event){
+        String searchWord = endComboBox.getValue();
+
+        startComboBox.getItems().addAll();
+    }
+
 }
