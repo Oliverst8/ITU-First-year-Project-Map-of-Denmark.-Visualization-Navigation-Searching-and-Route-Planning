@@ -26,10 +26,6 @@ public class Way extends MapElement {
             stream.writeFloat(coord[1]);
         }
         stream.writeInt(0); // Ways dont have inner coords
-        stream.writeInt(getTags().size());
-        for (int i = 0; i < getTags().size(); i++) {
-            stream.writeUTF(getTags().get(i));
-        }
         stream.writeUTF(primaryType);
         stream.writeUTF(secondaryType);
     }

@@ -112,7 +112,6 @@ public class ChunkLoader extends Thread {
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
                     id = stream.readLong();
@@ -126,14 +125,10 @@ public class ChunkLoader extends Thread {
                     for (int j = 0; j < innerCoordsLength; j++) {
                         innerCoords.add(stream.readFloat(), stream.readFloat());
                     }
-                    tags = new String[stream.readInt()];
-                    for (int j = 0; j < tags.length; j++) {
-                        tags[j] = stream.readUTF();
-                    }
 
                     String primaryType = stream.readUTF();
                     String secondaryType = stream.readUTF();
-                    chunk.add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType, secondaryType));
+                    chunk.add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,
@@ -174,7 +169,6 @@ public class ChunkLoader extends Thread {
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
                     id = stream.readLong();
@@ -188,14 +182,10 @@ public class ChunkLoader extends Thread {
                     for (int j = 0; j < innerCoordsLength; j++) {
                         innerCoords.add(stream.readFloat(), stream.readFloat());
                     }
-                    tags = new String[stream.readInt()];
-                    for (int j = 0; j < tags.length; j++) {
-                        tags[j] = stream.readUTF();
-                    }
 
                     String primaryType = stream.readUTF();
                     String secondaryType = stream.readUTF();
-                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType, secondaryType));
+                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,

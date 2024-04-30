@@ -7,7 +7,6 @@ import javafx.scene.canvas.GraphicsContext;
 public class DrawableWay implements Drawable {
     private final CoordArrayList outerCoords;
     private final CoordArrayList innerCoords;
-    private final String[] tags;
     private String primaryType;
     private String secondaryType;
     public boolean randomColors = false;
@@ -16,23 +15,21 @@ public class DrawableWay implements Drawable {
     /**
      * Only used for navigation
      */
-    public DrawableWay(CoordArrayList outerCoords, String[] tags, long id, String primaryType, String secondaryType) {
+    public DrawableWay(CoordArrayList outerCoords, long id, String primaryType, String secondaryType) {
         this.id = id;
         this.outerCoords = outerCoords;
-        this.tags = tags;
         this.innerCoords = new CoordArrayList();
         this.primaryType = primaryType;
         this.secondaryType = secondaryType;
     }
 
 
-    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, String[] tags, long id, String primaryType, String secondaryType) {
+    public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, long id, String primaryType, String secondaryType) {
         this.id = id;
         this.primaryType = primaryType;
         this.secondaryType = secondaryType;
         this.outerCoords = outerCoords;
         this.innerCoords = innerCoords;
-        this.tags = tags;
     }
 
     @Override
@@ -59,16 +56,6 @@ public class DrawableWay implements Drawable {
             builder.append("\n");
         }
 
-        builder.append("Tags:\n");
-        builder.append(tags.length);
-        builder.append("\n");
-        for (int i = 0; i < tags.length; i += 2) {
-            builder.append(tags[i]);
-            builder.append(" ");
-            builder.append(tags[i + 1]);
-            builder.append("\n");
-        }
-
         return builder.toString();
     }
 
@@ -85,7 +72,7 @@ public class DrawableWay implements Drawable {
         drawCoords(gc, outerCoords);
         // drawCoords(gc, outerCoords);
 
-        setColors(gc, tags, scaleFactor, theme);
+        setColors(gc, scaleFactor, theme);
 
         gc.closePath();
     }
@@ -110,7 +97,7 @@ public class DrawableWay implements Drawable {
         }
     }
 
-    private void setColors(GraphicsContext gc, String[] tags, float scaleFactor, Theme theme ) {
+    private void setColors(GraphicsContext gc, float scaleFactor, Theme theme ) {
         float lineWidth = 0.00001f;
 
         colorSelect:
@@ -214,15 +201,6 @@ public class DrawableWay implements Drawable {
         gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 0.75, 0.1));
     }
 
-    public boolean containsTag(String tag) {
-        for (int i = 0; i < tags.length; i += 2) {
-            if (tags[i].equals(tag)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isRelation() {
         return innerCoords.size() != 0;
     }
@@ -233,10 +211,6 @@ public class DrawableWay implements Drawable {
 
     public float[] getInnerCoords() {
         return innerCoords.toArray();
-    }
-
-    public String[] getTags() {
-        return tags;
     }
 
     public long getId() {
