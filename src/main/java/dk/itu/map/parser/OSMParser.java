@@ -25,6 +25,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.ProgressBar;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
@@ -39,7 +41,6 @@ public class OSMParser extends Thread {
 
     private ChunkGenerator chunkGenerator;
     private final FileProgress fileProgress;
-
     /**
      * Constructor for the OSMParser class
      *
@@ -80,8 +81,9 @@ public class OSMParser extends Thread {
 
             ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
             parseRelations(relationReader);
-
+            System.out.println("Stating parsing");
             parse(new FileInputStream(file));
+            fileProgress.finishProgress();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -96,14 +98,14 @@ public class OSMParser extends Thread {
 
     private void parse(InputStream inputStream) {
         try {
-            XMLReaderWrapper input = new XMLReaderWrapper(inputStream);
+            XMLReaderWrapper input = new XMLReaderWrapper(inputStream, fileProgress);
             nodes = new LongCoordHashMap();
             long startLoadTime = System.nanoTime();
-
+            //int amountRead = 0;
             whileLoop:
             while (true) {
                 int tagKind = input.next();
-
+                //if(amountRead++ % 1_000_000 == 0) System.out.println("Amount read: " + amountRead);
                 if (tagKind == XMLStreamConstants.START_ELEMENT) {
                     String type = input.getLocalName();
                     switch (type) {

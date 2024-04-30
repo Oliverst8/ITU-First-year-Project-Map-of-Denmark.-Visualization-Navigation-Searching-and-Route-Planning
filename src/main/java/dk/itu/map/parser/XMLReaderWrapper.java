@@ -8,12 +8,15 @@ import java.io.InputStream;
 public class XMLReaderWrapper {
 
     private final XMLStreamReader reader;
+    private final FileProgress fileProgress;
 
-    public XMLReaderWrapper(InputStream inputStream) throws XMLStreamException {
+    public XMLReaderWrapper(InputStream inputStream, FileProgress fileProgress) throws XMLStreamException {
         this.reader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        this.fileProgress = fileProgress;
     }
 
     public int next() throws XMLStreamException {
+        fileProgress.updateProgress();
         return reader.next();
     }
 
