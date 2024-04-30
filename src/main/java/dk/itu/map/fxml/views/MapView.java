@@ -296,20 +296,20 @@ public class MapView {
         
         if (!print) return;
         long drawTimes = 0;
-        System.out.println("Render times: ");
-        for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
-            String layer = String.format("%-15s", entry.getKey());
-            long renderTime = entry.getValue();
-            drawTimes += renderTime;
+        // System.out.println("Render times: ");
+        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
+        //     String layer = String.format("%-15s", entry.getKey());
+        //     long renderTime = entry.getValue();
+        //     drawTimes += renderTime;
             
-            System.out.println(layer + ": " + renderTime + " ");
-        }
-        System.out.println("Current zoomLevel: " + getZoomLevel());
-        System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
-        System.out.println("Total draw time: " + drawTimes + "ms");
-        System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
-        System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
-        System.out.println();
+        //     System.out.println(layer + ": " + renderTime + " ");
+        // }
+        // System.out.println("Current zoomLevel: " + getZoomLevel());
+        // System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
+        // System.out.println("Total draw time: " + drawTimes + "ms");
+        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
+        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
+        // System.out.println();
     }
 
     private Set<Drawable> getNavigationDrawables() {
@@ -340,10 +340,10 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
-        if(zoomAmount > 0.07) return 4;
-        if(zoomAmount > 0.06) return 3;
-        if(zoomAmount > 0.03) return 2;
-        if(zoomAmount > 6.9539517E-3) return 1;
+        if(zoomAmount > 20) return 4;
+        if(zoomAmount > 10) return 3;
+        if(zoomAmount > 5) return 2;
+        if(zoomAmount > 1) return 1;
         return 0;
     }
 

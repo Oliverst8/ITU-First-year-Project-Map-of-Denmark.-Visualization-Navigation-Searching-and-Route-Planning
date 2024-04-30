@@ -14,16 +14,16 @@ import javafx.scene.transform.Affine;
 public class CanvasRedrawTask {
     private final Canvas canvas;
     private final Affine trans;
-    private final float zoom;
+    private final float zoomAmount;
     private final int zoomLevel;
     private Set<Drawable> ways = null;
     Theme theme;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoom, int zoomLevel, Theme theme) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
         this.canvas = canvas;
         this.ways = ways;
         this.trans = trans;
-        this.zoom = zoom;
+        this.zoomAmount = zoomAmount;
         this.zoomLevel = zoomLevel;
         this.theme = theme;
     }
@@ -36,7 +36,7 @@ public class CanvasRedrawTask {
         int skipAmount = (int)Math.pow(3, zoomLevel);
         // Draw the chunks
         for (Drawable way : ways) {
-            way.draw(gc, zoom, skipAmount, theme);
+            way.draw(gc, zoomAmount, skipAmount, theme);
         }
 
         return null;
