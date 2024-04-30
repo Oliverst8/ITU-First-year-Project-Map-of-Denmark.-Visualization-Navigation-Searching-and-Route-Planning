@@ -83,7 +83,6 @@ public class DrawableWay implements Drawable {
     public void draw(GraphicsContext gc, float scaleFactor, int skipAmount, Theme theme) {
         gc.beginPath();
         drawCoords(gc, outerCoords, skipAmount);
-        // drawCoords(gc, outerCoords);
 
         setColors(gc, tags, scaleFactor, theme);
 
@@ -103,7 +102,7 @@ public class DrawableWay implements Drawable {
                 startY = coord[0];
                 continue;
             }
-            if (i % skipAmount == 0) gc.lineTo(0.56f * coord[1], -coord[0]);
+            if (i % skipAmount == 0 || i == coords.size()-1) gc.lineTo(0.56f * coord[1], -coord[0]);
             if (startX == coord[1] && startY == coord[0]) {
                 startNew = true;
             }
@@ -111,14 +110,12 @@ public class DrawableWay implements Drawable {
     }
 
     private void setColors(GraphicsContext gc, String[] tags, float scaleFactor, Theme theme ) {
-        float lineWidth = 0.00001f;
-
         colorSelect:
         switch(primaryType) {
             case "navigation":
                 switch(secondaryType) {
                     case "path", "pathToRoad":
-                        lineWidth = 0.003f;
+                        gc.setLineWidth(calcLineWidth(0.003f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
@@ -127,19 +124,19 @@ public class DrawableWay implements Drawable {
             case "aeroway":
                 switch(secondaryType) {
                     case "aerodrome", "apron":
-                        lineWidth = 0.0001f;
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
                     
                     case "runway":
-                        lineWidth = 0.005f;
+                        gc.setLineWidth(calcLineWidth(0.005f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
                     
                     case "taxiway":
-                        lineWidth = 0.001f;
+                        gc.setLineWidth(calcLineWidth(0.001f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
@@ -148,13 +145,13 @@ public class DrawableWay implements Drawable {
             case "highway":
                 switch(secondaryType) {
                     case "motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link":
-                        lineWidth = 0.01f;
+                        gc.setLineWidth(calcLineWidth(0.001f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
                     
                     case "secondary", "secondary_link", "tertiary", "tertiary_link", "service", "residential", "unclassified":
-                        lineWidth = 0.0005f;
+                        gc.setLineWidth(calcLineWidth(0.0005f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
                         break colorSelect;
@@ -163,19 +160,19 @@ public class DrawableWay implements Drawable {
             case "natural":
                 switch(secondaryType) {
                     case "scrub", "beach":
-                        lineWidth = 0.0001f;
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
                     
                     case "water":
-                        lineWidth = 0.00001f;
+                        gc.setLineWidth(calcLineWidth(0.00001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
                     
                     case "peninsula":
-                        lineWidth = 0.0001f;
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
@@ -184,7 +181,7 @@ public class DrawableWay implements Drawable {
             case "place":
                 switch(secondaryType) {
                     case "island", "islet":
-                        lineWidth = 0.0001f;
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
@@ -193,7 +190,7 @@ public class DrawableWay implements Drawable {
             case "landuse":
                 switch(secondaryType) {
                     case "allotments", "industrial", "residential":
-                        lineWidth = 0.0001f;
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
                         break colorSelect;
@@ -202,7 +199,7 @@ public class DrawableWay implements Drawable {
             case "building":
                 switch(secondaryType) {
                     case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
-                        lineWidth = 0.00001f;
+                        gc.setLineWidth(calcLineWidth(0.00001f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.stroke();
@@ -210,8 +207,10 @@ public class DrawableWay implements Drawable {
                         break colorSelect;
                 }
         }
+    }
 
-        gc.setLineWidth(lineWidth * Math.max(Math.log(scaleFactor) * 5, 0.1));
+    private double calcLineWidth(float lineWidth, float scaleFactor) {
+        return lineWidth * ( 1 / (scaleFactor) );
     }
 
     public boolean containsTag(String tag) {

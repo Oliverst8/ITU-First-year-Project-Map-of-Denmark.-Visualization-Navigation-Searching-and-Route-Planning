@@ -20,7 +20,7 @@ public class MapConfig {
     public final int columnAmount, rowAmount, chunkAmount;
 
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
-        this.CHUNK_SIZE = 0.02f;
+        this.CHUNK_SIZE = 1.2f;
         this.layerCount = 5;
         this.minLat = minLat;
         this.maxLat = maxLat;
