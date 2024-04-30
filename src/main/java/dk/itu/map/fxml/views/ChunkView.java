@@ -2,6 +2,7 @@ package dk.itu.map.fxml.views;
 
 import dk.itu.map.fxml.controllers.ChunkController;
 import dk.itu.map.fxml.models.ChunkModel;
+import dk.itu.map.parser.FileProgress;
 import javafx.fxml.FXML;
 
 public class ChunkView {
@@ -16,7 +17,7 @@ public class ChunkView {
     
     @FXML
     public void initialize() {
-        controller.importMap(model.OSMFile);
-        
+        FileProgress fileProgress = new FileProgress();
+        controller.importMap(model.OSMFile, fileProgress);
     }
 }

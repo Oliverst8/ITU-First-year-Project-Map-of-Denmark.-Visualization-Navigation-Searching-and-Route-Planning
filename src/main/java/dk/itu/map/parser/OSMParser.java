@@ -38,14 +38,16 @@ public class OSMParser extends Thread {
     private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
+    private final FileProgress fileProgress;
 
     /**
      * Constructor for the OSMParser class
      *
      * @param file The file to be parsed
      */
-    public OSMParser(File file) {
+    public OSMParser(File file, FileProgress fileProgress) {
         this.file = file;
+        this.fileProgress = fileProgress;
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
@@ -94,7 +96,7 @@ public class OSMParser extends Thread {
 
     private void parse(InputStream inputStream) {
         try {
-            XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            XMLReaderWrapper input = new XMLReaderWrapper(inputStream);
             nodes = new LongCoordHashMap();
             long startLoadTime = System.nanoTime();
 
@@ -222,7 +224,7 @@ public class OSMParser extends Thread {
      * @param nodes The nodes of the way
      * @param id The id of the way
      */
-    private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
+    private void createWay(XMLReaderWrapper input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
         LongArrayList nodeIds = new LongArrayList();
