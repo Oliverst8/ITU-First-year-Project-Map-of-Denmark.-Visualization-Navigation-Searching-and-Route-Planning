@@ -122,6 +122,11 @@ public class MapModel {
     public void setAddress(Address address) {
         this.address = address;
     }
+
+    public Address getAddress() {
+        return address;
+    }
+
     public enum Themes {
         LIGHT,
         DARK,

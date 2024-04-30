@@ -1,5 +1,7 @@
 package dk.itu.map.fxml.views;
 
+import com.gluonhq.charm.glisten.control.AutoCompleteTextField;
+import dk.itu.map.structures.Address;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Point;
@@ -9,11 +11,7 @@ import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.HashMap;
+import java.util.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -22,6 +20,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -35,6 +35,10 @@ import javafx.scene.transform.NonInvertibleTransformException;
 public class MapView {
     @FXML
     private VBox root;
+    @FXML
+    private AutoCompleteTextField<String> autocompleteStartPoint;
+    @FXML
+    private AutoCompleteTextField<String> autocompleteEndPoint;
 
     @FXML
     private AnchorPane canvasParent;
@@ -111,6 +115,24 @@ public class MapView {
                 redraw();
             }
         };
+
+        autocompleteStartPoint.setCompleter(textInput -> {
+            System.out.println("Autocompleting start");
+            Map<String[], Address.AddressNode> results = controller.searchAddress(textInput);
+            List<String> suggestions = new ArrayList<>();
+            int i = 0;
+            for(String[] result : results.keySet()){
+                suggestions.add(result[0] + ": " + result[1]);
+            }
+            System.out.println("Suggestions: " + suggestions);
+            return suggestions;
+            //return Arrays.asList("Jonathan", "Jose");
+        });
+
+        autocompleteStartPoint.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("New value selected from the auto-complete popup: " + newValue);
+        });
+
     }
 
     @FXML
@@ -212,6 +234,25 @@ public class MapView {
 
     @FXML
     void importMap(ActionEvent event) {
+    }
+
+    /*@FXML
+    void startPointTyped(KeyEvent event) {
+        System.out.println("Start point typed");
+        //System.out.println(autocompleteStartPoint.getText());
+        autocompleteTextField(autocompleteStartPoint);
+    }
+
+    @FXML
+    void endPointTyped(KeyEvent event) {
+        System.out.println("End point typed");
+        autocompleteTextField(autocompleteEndPoint);
+    }*/
+
+    private void autocompleteTextField(AutoCompleteTextField<String> autocompleteTextField){
+        String textInput = autocompleteTextField.getText();
+        Map<String[], Address.AddressNode> results = controller.searchAddress(textInput);
+
     }
 
     /**

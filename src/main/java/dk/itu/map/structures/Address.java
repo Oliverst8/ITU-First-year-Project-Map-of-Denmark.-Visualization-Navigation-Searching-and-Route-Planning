@@ -66,8 +66,19 @@ public class Address implements Runnable, WriteAble{
 
     private void addToResults(String value, Node input, Map<String[], AddressNode> results){
         AddressNode node = (AddressNode) input;
+        HashMap<String, Set<String>> zipToRoad = new HashMap<>();
         for(int i = 0; i < node.zipIndexes.size(); i++){
-            results.put(new String[]{value, zip.get(node.zipIndexes.get(i))}, (AddressNode) input);
+            String zipCode = zip.get(node.zipIndexes.get(i));
+            if(zipToRoad.containsKey(zipCode)){
+                Set<String> roads = zipToRoad.get(zipCode);
+                if(roads.contains(value)) continue;
+                roads.add(value);
+            } else {
+                Set<String> roads = new HashSet<>();
+                roads.add(value);
+                zipToRoad.put(zipCode, roads);
+            }
+            results.put(new String[]{value, zipCode}, (AddressNode) input);
         }
     }
 

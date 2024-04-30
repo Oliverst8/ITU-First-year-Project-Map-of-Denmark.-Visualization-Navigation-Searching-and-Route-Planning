@@ -3,6 +3,7 @@ package dk.itu.map.fxml.controllers;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.Address;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
@@ -169,5 +170,9 @@ public class MapController {
             return;
         }
         model.setRoute(path);
+    }
+
+    public Map<String[], Address.AddressNode> searchAddress(String input) {
+        return model.getAddress().autoComplete(input, 10);
     }
 }
