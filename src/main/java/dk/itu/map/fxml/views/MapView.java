@@ -37,10 +37,6 @@ public class MapView {
     @FXML
     private VBox root;
     @FXML
-    private AutoCompleteTextField<String> autocompleteStartPoint;
-    @FXML
-    private AutoCompleteTextField<String> autocompleteEndPoint;
-    @FXML
     private ComboBox<String> startComboBox;
     @FXML
     private ComboBox<String> endComboBox;
@@ -120,7 +116,7 @@ public class MapView {
             }
         };
 
-        autocompleteStartPoint.setCompleter(textInput -> {
+        /*autocompleteStartPoint.setCompleter(textInput -> {
             System.out.println("Autocompleting start");
             Map<String[], Address.AddressNode> results = controller.searchAddress(textInput);
             List<String> suggestions = new ArrayList<>();
@@ -136,7 +132,7 @@ public class MapView {
         autocompleteStartPoint.valueProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("New value selected from the auto-complete popup: " + newValue);
         });
-
+*/
     }
 
     @FXML
@@ -423,7 +419,7 @@ public class MapView {
     @FXML
     void searchEndAddress(ActionEvent event){
         String searchWord = endComboBox.getValue();
-
+        System.out.println(searchWord);
         startComboBox.getItems().addAll();
     }
 

@@ -77,7 +77,7 @@
             <Button layoutX="654.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" text="Walk" />
             <Button layoutX="738.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToCarNavigation" text="Car" />
             <Button layoutX="697.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" text="Bike" />
-            <ComboBox editable="true" layoutX="400.0" layoutY="22.0" onKeyTyped="#getAdressSuggestions" prefWidth="150.0" promptText="Start address" />
+            <ComboBox editable="true" layoutX="400.0" layoutY="22.0" onKeyTyped="#searchEndAddress" prefWidth="150.0" promptText="Start address" />
             <ComboBox editable="true" layoutX="400.0" layoutY="59.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" promptText="End address" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>
