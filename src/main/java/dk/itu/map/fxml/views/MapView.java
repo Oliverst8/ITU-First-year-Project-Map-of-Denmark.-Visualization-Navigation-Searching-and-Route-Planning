@@ -340,9 +340,9 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
-        if(zoomAmount > 20) return 4;
-        if(zoomAmount > 10) return 3;
-        if(zoomAmount > 5) return 2;
+        if(zoomAmount > 10) return 4;
+        if(zoomAmount > 5) return 3;
+        if(zoomAmount > 3) return 2;
         if(zoomAmount > 1) return 1;
         return 0;
     }

@@ -77,7 +77,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 case "living_street", "rest_area":
                     speedLimit = 15;
                     break;
-                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track":
+                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track", "service":
                         speedLimit = 50;
                         break;
                 case "primary", "primary_link", "trunk", "trunk_link":
@@ -233,7 +233,6 @@ public class GraphBuilder extends Graph implements Runnable {
             case "corridor":
                 return 1;
             case "cycleway":
-                return 2;
             case "bridleway":
             case "path":
                 return 3;
@@ -254,6 +253,7 @@ public class GraphBuilder extends Graph implements Runnable {
             case "living_street":
             case "road":
             case "track":
+            case "service":
                 return 7;
             default:
                 return 0;
