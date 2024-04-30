@@ -30,13 +30,13 @@ public class AddressTest {
     }
 
     public void addAdresses(){
-        address.addStreetName(new String[]{"ab","1","1234","cph"});
-        address.addStreetName(new String[]{"ad","1","1234","cph"});
-        address.addStreetName(new String[]{"ja","1","1234","cph"});
-        address.addStreetName(new String[]{"jd","1","1234","cph"});
-        address.addStreetName(new String[]{"hv","1","1234","cph"});
-        address.addStreetName(new String[]{"hvi","1","1234","cph"});
-        address.addStreetName(new String[]{"he","1","1234","cph"});
+        address.addStreetName(new String[]{"ab","1","1234","cph"},1,1);
+        address.addStreetName(new String[]{"ad","1","1234","cph"},3f,1f);
+        address.addStreetName(new String[]{"ja","1","1234","cph"},1f,7f);
+        address.addStreetName(new String[]{"jd","1","1234","cph"},4f,1f);
+        address.addStreetName(new String[]{"hv","1","1234","cph"},2f,3f);
+        address.addStreetName(new String[]{"hvi","1","1234","cph"},12f,14f);
+        address.addStreetName(new String[]{"he","1","1234","cph"},1f,1f);
         address.run();
     }
 
@@ -96,13 +96,13 @@ public class AddressTest {
     void testEqualsShouldEqual(){
         addAdresses();
         Address newAddress = new Address();
-        newAddress.addStreetName(new String[]{"ab","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"ad","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"ja","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"jd","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"hv","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"hvi","1","1234","cph"});
-        newAddress.addStreetName(new String[]{"he","1","1234","cph"});
+        newAddress.addStreetName(new String[]{"ab","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"ad","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"ja","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"jd","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"hv","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"hvi","1","1234","cph"},1f,1f);
+        newAddress.addStreetName(new String[]{"he","1","1234","cph"},1f,1f);
         newAddress.run();
         assertEquals(address, newAddress);
     }
@@ -120,9 +120,9 @@ public class AddressTest {
 
     @Test
     void testAutocomplete3() {
-        address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"});
-        address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"});
-        address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"});
+        address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
         address.run();
         Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
@@ -137,12 +137,12 @@ public class AddressTest {
             for(int j = 0; j < 10; j++){
                 streetName.append((char) ('a' + random.nextInt(26)));
             }
-            address.addStreetName(new String[]{streetName.toString(),"1","2","3"});
+            address.addStreetName(new String[]{streetName.toString(),"1","2","3"},1f,1f);
         }
 
-        address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"});
-        address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"});
-        address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"});
+        address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
         address.run();
         Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
@@ -157,11 +157,11 @@ public class AddressTest {
             for(int j = 0; j < 10; j++){
                 streetName.append((char) ('a' + random.nextInt(26)));
             }
-            address.addStreetName(new String[]{streetName.toString(),"1","2","3"});
+            address.addStreetName(new String[]{streetName.toString(),"1","2","3"},1f,1f);
         }
-        address.addStreetName(new String[]{"Ballafletcher Road","1","23","Herlev"});
-        address.addStreetName(new String[]{"Ballafletcher Road","2","23","Herlev"});
-        address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"});
+        address.addStreetName(new String[]{"Ballafletcher Road","1","23","Herlev"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road","2","23","Herlev"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"},1f,1f);
         address.run();
 
         Map<String[], Address.AddressNode> map = address.autoComplete("Ballafletcher", 20);

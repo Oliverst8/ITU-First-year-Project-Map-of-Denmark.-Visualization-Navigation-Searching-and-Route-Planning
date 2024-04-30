@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Address implements Runnable, WriteAble{
-    private final Queue<String[]> streetNames;
+    private final List<String[]> streetNames;
+    private final List<Float> streetPosition;
     private Map<String, Integer> streetNumberMap, zipMap, cityMap;
     private List<String> streetNumber, zip, cities;
     private Node root;
@@ -16,7 +17,8 @@ public class Address implements Runnable, WriteAble{
 
     public Address(){
         size = 0;
-        streetNames = new LinkedList<>();
+        streetNames = Collections.synchronizedList(new LinkedList<String[]>());
+        streetPosition = Collections.synchronizedList(new LinkedList<Float>());
         streetNumberMap = new HashMap<>();
         zipMap = new HashMap<>();
         cityMap = new HashMap<>();
@@ -25,24 +27,28 @@ public class Address implements Runnable, WriteAble{
         cities = new ArrayList<>();
     }
 
-    public void addStreetName(String[] streetName){
+    public void addStreetName(String[] streetName, float X, float Y){
         streetNames.add(streetName);
+        streetPosition.add(X);
+        streetPosition.add(Y);
     }
 
     public void run(){
-        String[] street = streetNames.remove();
-        root = insert(street);
+        String[] street = streetNames.remove(0);
+        float lat = streetPosition.remove(0);
+        float lon = streetPosition.remove(0);
+        root = insert(street, lat, lon);
         while(!streetNames.isEmpty()){
-            street = streetNames.remove();
-            insert(street);
+            street = streetNames.remove(0);
+            insert(street, lat, lon);
         }
     }
 
-    private Node insert(String[] value){
-        return insert(root, value, 0);
+    private Node insert(String[] value, float X, float Y){
+        return insert(root, value, 0, X, Y);
     }
 
-    private Node insert(Node node, String[] value, int pos){
+    private Node insert(Node node, String[] value, int pos, float lat, float lon){
         if(pos >= value[0].length()) return node;
         if (node == null){
             node = new Node(value[0].charAt(pos));
@@ -50,16 +56,16 @@ public class Address implements Runnable, WriteAble{
         }
         int cmp = node.compareTo(value[0].charAt(pos));
         if(cmp > 0){
-            node.left = insert(node.left, value, pos);
+            node.left = insert(node.left, value, pos, lat, lon);
         } else if(cmp < 0){
-            node.right = insert(node.right, value, pos);
+            node.right = insert(node.right, value, pos, lat, lon);
         } else if(pos == value[0].length()-1){
             //node.isTerminal = true;
             if(!node.isTerminal) {
-                node = new AddressNode(value, value[0].charAt(pos));
+                node = new AddressNode(value, value[0].charAt(pos), lat, lon);
             } else ((AddressNode) node).addAddress(value);
         }else {
-            node.middle = insert(node.middle, value, pos+1);
+            node.middle = insert(node.middle, value, pos+1, lat, lon);
         }
         return node;
     }
@@ -300,9 +306,7 @@ public class Address implements Runnable, WriteAble{
             Node otherNode = otherQueue.remove();
             if(thisNode == null && otherNode == null) continue;
             if(thisNode == null || otherNode == null) return false;
-            if(thisNode.value != otherNode.value) return false;
-            if(thisNode.isTerminal != otherNode.isTerminal) return false;
-            if(!thisNode.getClass().equals(otherNode.getClass())) return false;
+            if(!thisNode.equals(otherNode)) return false;
             thisQueue.add(thisNode.left);
             thisQueue.add(thisNode.middle);
             thisQueue.add(thisNode.right);
@@ -364,12 +368,23 @@ public class Address implements Runnable, WriteAble{
             isTerminal = false;
             //value = stream.readChar();
         }
+
+        @Override
+        public boolean equals(Object obj){
+            if(obj == null) return false;
+            if(!(obj.getClass().equals(this.getClass()))) return false;
+            Node other = (Node) obj;
+            if(this.value != other.value) return false;
+            if(this.isTerminal != other.isTerminal) return false;
+            return true;
+        }
     }
 
     public class AddressNode extends Node{
         IntArrayList streetNumberIndexes;
         IntArrayList zipIndexes;
         IntArrayList cityIndexes;
+        float lat, lon;
 
         public AddressNode(char value){
             super(value);
@@ -379,12 +394,14 @@ public class Address implements Runnable, WriteAble{
             streetNumberIndexes = new IntArrayList();
         }
 
-        public AddressNode(String[] address, char value){
+        public AddressNode(String[] address, char value, float lat, float lon){
             super(value);
             isTerminal = true;
             cityIndexes = new IntArrayList();
             zipIndexes = new IntArrayList();
             streetNumberIndexes = new IntArrayList();
+            this.lat = lat;
+            this.lon = lon;
             addAddress(address);
         }
 
@@ -425,6 +442,8 @@ public class Address implements Runnable, WriteAble{
         public void write(DataOutputStream stream) throws IOException {
             stream.writeChar(value);
             stream.writeBoolean(isTerminal);
+            stream.writeFloat(lat);
+            stream.writeFloat(lon);
             streetNumberIndexes.write(stream);
             zipIndexes.write(stream);
             cityIndexes.write(stream);
@@ -434,11 +453,24 @@ public class Address implements Runnable, WriteAble{
         public void read(DataInputStream stream) throws IOException {
             isTerminal = true;
             //value = stream.readChar();
+            lat = stream.readFloat();
+            lon = stream.readFloat();
             streetNumberIndexes.read(stream);
             zipIndexes.read(stream);
             cityIndexes.read(stream);
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (!super.equals(obj)) return false;
+            AddressNode other = (AddressNode) obj;
+            if (!this.streetNumberIndexes.equals(other.streetNumberIndexes)) return false;
+            if (!this.zipIndexes.equals(other.zipIndexes)) return false;
+            if (!this.cityIndexes.equals(other.cityIndexes)) return false;
+            if (this.lat != other.lat) return false;
+            if (this.lon != other.lon) return false;
+            return true;
+        }
     }
 
 }
