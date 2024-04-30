@@ -13,7 +13,7 @@ public class Point implements Drawable{
         this.primaryType = primaryType;
     }
 
-    public void draw(GraphicsContext gc, float zoom, Theme theme){
+    public void draw(GraphicsContext gc, float zoom, int skipAmount, Theme theme){
         gc.setStroke(Color.BEIGE);
 
         float width = 0.0003f;

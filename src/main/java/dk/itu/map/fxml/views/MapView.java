@@ -49,9 +49,7 @@ public class MapView {
     // Last mouse position
     private float lastY;
     // Zoom level
-    private float zoomLevel;
-    // Initial distance between two points
-    private float startDist;
+    private float zoomAmount;
 
     private AnimationTimer render;
     private int vehicleCode = 4;
@@ -96,8 +94,6 @@ public class MapView {
             redraw();
         });
 
-        startDist = getZoomDistance();
-
 
         render = new AnimationTimer() {
             @Override
@@ -109,6 +105,7 @@ public class MapView {
 
     @FXML
     void canvasClicked(MouseEvent e){
+        updateZoomAmount();
         if(setStartPoint){
             float[] startPoint = new float[]{(float) e.getX(), (float) e.getY()};
             startPoint = convertToLatLon(startPoint);
@@ -117,7 +114,7 @@ public class MapView {
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -127,7 +124,7 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
         }
     }
 
@@ -236,24 +233,24 @@ public class MapView {
      * Redraws the map
      */
     
-    // public static boolean overridePrint = false;
-    // long prevTime = 0;
+    public static boolean overridePrint = false;
+    long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
-        updateZoomLevel();
-        // boolean print = false;
-        // long totalStart = System.currentTimeMillis();
-        // if (System.currentTimeMillis() - prevTime > 300) {
-        //     prevTime = System.currentTimeMillis();
-        //     print = true;
-        //     overridePrint = false;
-        // }
-        controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
-        updateZoomLevel();
-        // if (overridePrint) {
-        //     print = true;
-        //     overridePrint = false;
-        // }
+        updateZoomAmount();
+        boolean print = false;
+        long totalStart = System.currentTimeMillis();
+        if (System.currentTimeMillis() - prevTime > 300) {
+            prevTime = System.currentTimeMillis();
+            print = true;
+            overridePrint = false;
+        }
+        controller.updateChunks(getZoomLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
+        updateZoomAmount();
+        if (overridePrint) {
+            print = true;
+            overridePrint = false;
+        }
 
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
@@ -265,9 +262,9 @@ public class MapView {
 
         layers.put("navigation", navigationSet);
 
-        float zoom = getZoomDistance() / startDist * 100;
+        updateZoomAmount();
 
-        for(int i = getDetailLevel(); i <= 4; i++) {
+        for(int i = getZoomLevel(); i <= 4; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);
@@ -282,23 +279,23 @@ public class MapView {
                 }
             }
         }
-        // long wastedTime = System.currentTimeMillis();
-        // Map<String, Long> renderTimes = new HashMap<>();
+        long wastedTime = System.currentTimeMillis();
+        Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
 
-            // long startTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
 
             Canvas canvas = this.canvas.get(entry.getKey());
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, model.theme).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoomAmount, getZoomLevel(), model.theme).run();
 
-            // long endTime = System.currentTimeMillis();
+            long endTime = System.currentTimeMillis();
 
-            // renderTimes.put(entry.getKey(), endTime - startTime);
+            renderTimes.put(entry.getKey(), endTime - startTime);
         }
         
-        // if (!print) return;
-        // long drawTimes = 0;
+        if (!print) return;
+        long drawTimes = 0;
         // System.out.println("Render times: ");
         // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
         //     String layer = String.format("%-15s", entry.getKey());
@@ -307,6 +304,8 @@ public class MapView {
             
         //     System.out.println(layer + ": " + renderTime + " ");
         // }
+        // System.out.println("Current zoomLevel: " + getZoomLevel());
+        // System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
         // System.out.println("Total draw time: " + drawTimes + "ms");
         // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
         // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
@@ -340,11 +339,11 @@ public class MapView {
     /**
      * @return int the detail level of the map
      */
-    private int getDetailLevel(){
-        if(zoomLevel > 0.07) return 4;
-        if(zoomLevel > 0.01) return 3;
-        if(zoomLevel > 0.01) return 2;
-        if(zoomLevel > 6.9539517E-3) return 1;
+    private int getZoomLevel(){
+        if(zoomAmount > 10) return 4;
+        if(zoomAmount > 5) return 3;
+        if(zoomAmount > 3) return 2;
+        if(zoomAmount > 1) return 1;
         return 0;
     }
 
@@ -360,9 +359,8 @@ public class MapView {
     /**
      * Updates the zoom level
      */
-    private void updateZoomLevel() {
-        float newZoom = getZoomDistance();
-        zoomLevel = (newZoom / startDist) * 100;
+    private void updateZoomAmount() {
+        zoomAmount = getZoomDistance() * 100;
     }
 
     /**
