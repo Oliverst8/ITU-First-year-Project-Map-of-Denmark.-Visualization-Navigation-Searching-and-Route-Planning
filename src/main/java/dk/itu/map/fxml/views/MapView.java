@@ -62,6 +62,8 @@ public class MapView {
     private float zoomLevel;
     // Initial distance between two points
     private float startDist;
+    private String[] startAddress;
+    private String[] endAddress;
 
     // Amount of chunks seen
     private float currentChunkAmountSeen = 1;
@@ -418,17 +420,22 @@ public class MapView {
 
     @FXML
     void searchStartAddress(KeyEvent event){
-        searchAddress(textFieldStart, startComboBox);
+        searchAddress(textFieldStart, startComboBox, startAddress);
     }
     @FXML
     void searchEndAddress(KeyEvent event){
-        searchAddress(textFieldEnd, endComboBox);
+        searchAddress(textFieldEnd, endComboBox, endAddress);
     }
 
-    private void searchAddress(TextField textField, ComboBox<String> comboBox){
+    private void searchAddress(TextField textField, ComboBox<String> comboBox, String[] address){
         String searchWord = textField.getText();
 
-        List<String> addresses = Arrays.asList("Jonathan", "Olivers far");
+        List<String> addresses = new ArrayList<>();
+
+        Map<String[], Address.AddressNode> results = controller.searchAddress(searchWord);
+        for(String[] result : results.keySet()){
+            addresses.add(result[0] + ": " + result[1]);
+        }
 
 
         System.out.println(searchWord);
