@@ -1,6 +1,5 @@
 package dk.itu.map.fxml.views;
 
-import com.gluonhq.charm.glisten.control.AutoCompleteTextField;
 import dk.itu.map.structures.Address;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
@@ -21,6 +20,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -40,6 +40,10 @@ public class MapView {
     private ComboBox<String> startComboBox;
     @FXML
     private ComboBox<String> endComboBox;
+    @FXML
+    private TextField textFieldStart;
+    @FXML
+    private TextField textFieldEnd;
     @FXML
     private AnchorPane canvasParent;
     private String[] mapLayers;
@@ -249,11 +253,7 @@ public class MapView {
         autocompleteTextField(autocompleteEndPoint);
     }*/
 
-    private void autocompleteTextField(AutoCompleteTextField<String> autocompleteTextField){
-        String textInput = autocompleteTextField.getText();
-        Map<String[], Address.AddressNode> results = controller.searchAddress(textInput);
 
-    }
 
     /**
      * Pans the map
@@ -417,10 +417,25 @@ public class MapView {
     }
 
     @FXML
-    void searchEndAddress(ActionEvent event){
-        String searchWord = endComboBox.getValue();
+    void searchStartAddress(KeyEvent event){
+        searchAddress(textFieldStart, startComboBox);
+    }
+    @FXML
+    void searchEndAddress(KeyEvent event){
+        searchAddress(textFieldEnd, endComboBox);
+    }
+
+    private void searchAddress(TextField textField, ComboBox<String> comboBox){
+        String searchWord = textField.getText();
+
+        List<String> addresses = Arrays.asList("Jonathan", "Olivers far");
+
+
         System.out.println(searchWord);
-        startComboBox.getItems().addAll();
+        //System.out.println("Keyevent: " + event.getCode());
+        comboBox.getItems().clear();
+        comboBox.getItems().addAll(addresses);
+        comboBox.show();
     }
 
 }
