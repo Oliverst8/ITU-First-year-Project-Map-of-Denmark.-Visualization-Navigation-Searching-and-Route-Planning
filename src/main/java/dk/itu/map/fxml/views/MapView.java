@@ -429,10 +429,6 @@ public class MapView {
         String searchWord = textField.getText();
 
         List<String> addresses = Arrays.asList("Jonathan", "Olivers far");
-
-
-        System.out.println(searchWord);
-        //System.out.println("Keyevent: " + event.getCode());
         comboBox.getItems().clear();
         comboBox.getItems().addAll(addresses);
         comboBox.show();
