@@ -27,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
@@ -47,6 +48,12 @@ public class MapView {
     private TextField textFieldEnd;
     @FXML
     private AnchorPane canvasParent;
+    @FXML
+    private AnchorPane navigationPane;
+    @FXML
+    private Button startNavigationButton;
+
+
     private String[] mapLayers;
     private Map<String, Canvas> canvas;
     
@@ -437,6 +444,17 @@ public class MapView {
     void addressSelectedEnd(ActionEvent event){
         addressSelected(textFieldEnd, endComboBox, endAddress);
     }
+    @FXML
+    void showNavigation(){
+        navigationPane.setVisible(true);
+        startNavigationButton.setVisible(false);
+    }
+    @FXML
+    void hideNavigation(){
+        navigationPane.setVisible(false);
+        startNavigationButton.setVisible(true);
+    }
+
 
     private void addressSelected(TextField textField, ComboBox<Address.searchAddress> comboBox,  Address.searchAddress address){
         Address.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
@@ -490,5 +508,6 @@ public class MapView {
     private List<Address.searchAddress> searchFullAddress(Address.searchAddress node){
         return controller.fillAddress(node);
     }
+
 
 }
