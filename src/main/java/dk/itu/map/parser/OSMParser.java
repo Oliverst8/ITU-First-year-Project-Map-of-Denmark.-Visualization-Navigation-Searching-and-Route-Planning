@@ -105,7 +105,6 @@ public class OSMParser extends Thread {
             whileLoop:
             while (true) {
                 int tagKind = input.next();
-                //if(amountRead++ % 1_000_000 == 0) System.out.println("Amount read: " + amountRead);
                 if (tagKind == XMLStreamConstants.START_ELEMENT) {
                     String type = input.getLocalName();
                     switch (type) {

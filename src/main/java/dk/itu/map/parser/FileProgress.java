@@ -27,15 +27,13 @@ public class FileProgress extends Thread{
 
     @Override
     public void run(){
+
         setTotalLines();
         System.out.println("Total lines: " + totalLines);
-        //long i = 0;
+
         while(!finishedProgress){
-            progressBar.setProgress((double) progress / (totalLines + 0.0));
-            /*if(progress-i > 1_000_000) {
-                //System.out.println("Progress: " + progress);
-                i = progress;
-            }*/
+            //progressBar.setProgress(Math.min(((double)progress / totalLines), 0.98));
+            progressBar.setProgress((double)progress / totalLines);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -43,16 +41,25 @@ public class FileProgress extends Thread{
             }
         }
         System.out.println("Finished progress bar!");
+        System.out.println("Real number: " + progress + " total lines: " + totalLines);
     }
 
-    private void setTotalLines() {
-        /*try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
-            totalLines = reader.lines().parallel().count();
+    public void setTotalLines() {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
+            totalLines = (long) (reader.lines().parallel().count() * 2.86);
+            /*totalLines = 0;
+            reader.lines().parallel().forEach((line) -> {
+                for(char c : line.toCharArray()){
+                    if(c == '<' || c == '>'){
+                        totalLines++;
+                    }
+                }
+            });*/
             System.out.println("Amount of lines: " + totalLines);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
-        XMLInputFactory factory = XMLInputFactory.newInstance();
+        }
+        /*XMLInputFactory factory = XMLInputFactory.newInstance();
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             XMLStreamReader reader = factory.createXMLStreamReader(in);
             while (true) {
@@ -63,7 +70,7 @@ public class FileProgress extends Thread{
             //Do Nothing
     }   catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 
