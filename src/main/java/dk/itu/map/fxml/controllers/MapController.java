@@ -172,7 +172,11 @@ public class MapController {
         model.setRoute(path);
     }
 
-    public Map<String[], Address.AddressNode> searchAddress(String input) {
+    public List<Address.searchAddress> searchAddress(String input) {
         return model.getAddress().autoComplete(input, 10);
+    }
+
+    public List<Address.searchAddress> fillAddress(Address.searchAddress node){
+        return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node);
     }
 }

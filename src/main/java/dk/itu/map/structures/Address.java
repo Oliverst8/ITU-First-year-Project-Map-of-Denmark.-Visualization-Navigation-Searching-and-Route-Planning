@@ -1,5 +1,6 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 
 import java.io.DataInputStream;
@@ -63,14 +64,14 @@ public class Address implements Runnable, WriteAble{
             //node.isTerminal = true;
             if(!node.isTerminal) {
                 node = new AddressNode(value, value[0].charAt(pos), lat, lon);
-            } else ((AddressNode) node).addAddress(value);
+            } else ((AddressNode) node).addAddress(value, lat, lon);
         }else {
             node.middle = insert(node.middle, value, pos+1, lat, lon);
         }
         return node;
     }
 
-    private void addToResults(String value, Node input, Map<String[], AddressNode> results){
+    private void addToResults(String value, Node input, List<searchAddress> results){
         AddressNode node = (AddressNode) input;
         HashMap<String, Set<String>> zipToRoad = new HashMap<>();
         for(int i = 0; i < node.zipIndexes.size(); i++){
@@ -84,7 +85,8 @@ public class Address implements Runnable, WriteAble{
                 roads.add(value);
                 zipToRoad.put(zipCode, roads);
             }
-            results.put(new String[]{value, zipCode}, (AddressNode) input);
+            searchAddress search = new searchAddress(value, zipCode, (AddressNode) input);
+            results.add(search);
         }
     }
 
@@ -127,9 +129,9 @@ public class Address implements Runnable, WriteAble{
 
     }
 
-    public Map<String[], AddressNode> autoComplete(String value, int maxResults){
+    public List<searchAddress> autoComplete(String value, int maxResults){
         Node searchResult = search(value);
-        Map<String[], AddressNode> results = new HashMap<>();
+        List<searchAddress> results = new ArrayList<>();
         Queue<Node> branches = new LinkedList<>();
         Queue<StringBuilder> branchStrings = new LinkedList<>();
 
@@ -174,16 +176,19 @@ public class Address implements Runnable, WriteAble{
         return results;
     }
 
-    public List<String[]> fillAddress(String[] address, AddressNode node) {
-        List<String[]> list = new ArrayList<>();
+    public List<searchAddress> fillAddress(String[] address, AddressNode node) {
+        List<searchAddress> list = new ArrayList<>();
 
         for(int i = 0; i < node.zipIndexes.size(); i++){
             if(zip.get(node.zipIndexes.get(i)).equals(address[1])){
-                String[] newAddress = new String[4];
-                newAddress[0] = address[0];
-                newAddress[1] = streetNumber.get(node.streetNumberIndexes.get(i));
-                newAddress[2] = address[1];
-                newAddress[3] = cities.get(node.cityIndexes.get(i));
+//                String[] newAddress = new String[4];
+//                newAddress[0] = address[0];
+//                newAddress[1] = streetNumber.get(node.streetNumberIndexes.get(i));
+//                newAddress[2] = address[1];
+//                newAddress[3] = cities.get(node.cityIndexes.get(i));
+                searchAddress newAddress = new searchAddress(address[0], address[1], node);
+                newAddress.streetNumber = streetNumber.get(node.streetNumberIndexes.get(i));
+                newAddress.city = cities.get(node.cityIndexes.get(i));
                 list.add(newAddress);
             }
         }
@@ -384,7 +389,8 @@ public class Address implements Runnable, WriteAble{
         IntArrayList streetNumberIndexes;
         IntArrayList zipIndexes;
         IntArrayList cityIndexes;
-        float lat, lon;
+        //float lat, lon;
+        CoordArrayList coords = new CoordArrayList();
 
         public AddressNode(char value){
             super(value);
@@ -400,12 +406,13 @@ public class Address implements Runnable, WriteAble{
             cityIndexes = new IntArrayList();
             zipIndexes = new IntArrayList();
             streetNumberIndexes = new IntArrayList();
-            this.lat = lat;
-            this.lon = lon;
-            addAddress(address);
+            //this.lat = lat;
+            //this.lon = lon;
+            addAddress(address, lat, lon);
         }
 
-        public void addAddress(String[] address){
+        public void addAddress(String[] address, float lat, float lon){
+            coords.add(lat, lon);
             int streetNumberIndex;
             if(streetNumberMap.containsKey(address[1])){
                 streetNumberIndex = streetNumberMap.get(address[1]);
@@ -442,8 +449,7 @@ public class Address implements Runnable, WriteAble{
         public void write(DataOutputStream stream) throws IOException {
             stream.writeChar(value);
             stream.writeBoolean(isTerminal);
-            stream.writeFloat(lat);
-            stream.writeFloat(lon);
+            coords.write(stream);
             streetNumberIndexes.write(stream);
             zipIndexes.write(stream);
             cityIndexes.write(stream);
@@ -453,8 +459,7 @@ public class Address implements Runnable, WriteAble{
         public void read(DataInputStream stream) throws IOException {
             isTerminal = true;
             //value = stream.readChar();
-            lat = stream.readFloat();
-            lon = stream.readFloat();
+            coords.read(stream);
             streetNumberIndexes.read(stream);
             zipIndexes.read(stream);
             cityIndexes.read(stream);
@@ -467,9 +472,46 @@ public class Address implements Runnable, WriteAble{
             if (!this.streetNumberIndexes.equals(other.streetNumberIndexes)) return false;
             if (!this.zipIndexes.equals(other.zipIndexes)) return false;
             if (!this.cityIndexes.equals(other.cityIndexes)) return false;
-            if (this.lat != other.lat) return false;
-            if (this.lon != other.lon) return false;
+            if(!this.coords.equals(other.coords)) return false;
             return true;
+        }
+    }
+
+    public static class searchAddress {
+        public String streetName;
+        public String streetNumber;
+        public String zip;
+        public String city;
+        public AddressNode node;
+
+        public searchAddress(String streetName, String zip, AddressNode node){
+            this.streetName = streetName;
+            this.streetNumber = null;
+            this.zip = zip;
+            this.city = null;
+            this.node = node;
+        }
+
+        public void clone(searchAddress other){
+            this.streetName = other.streetName;
+            this.streetNumber = other.streetNumber;
+            this.zip = other.zip;
+            this.city = other.city;
+            this.node = other.node;
+        }
+
+        @Override
+        public String toString(){
+            if(streetNumber == null && city == null) return streetName + ": " + zip;
+            return streetName + " " + streetNumber + ", " + zip + " " + city;
+        }
+
+        public void reset() {
+            this.streetName = null;
+            this.streetNumber = null;
+            this.zip = null;
+            this.city = null;
+            this.node = null;
         }
     }
 

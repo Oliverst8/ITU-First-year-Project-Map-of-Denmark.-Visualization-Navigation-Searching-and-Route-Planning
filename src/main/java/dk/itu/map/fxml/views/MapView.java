@@ -15,6 +15,7 @@ import java.util.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -37,9 +38,9 @@ public class MapView {
     @FXML
     private VBox root;
     @FXML
-    private ComboBox<String> startComboBox;
+    private ComboBox<Address.searchAddress> startComboBox;
     @FXML
-    private ComboBox<String> endComboBox;
+    private ComboBox<Address.searchAddress> endComboBox;
     @FXML
     private TextField textFieldStart;
     @FXML
@@ -62,8 +63,8 @@ public class MapView {
     private float zoomLevel;
     // Initial distance between two points
     private float startDist;
-    private String[] startAddress;
-    private String[] endAddress;
+    private final Address.searchAddress startAddress = new Address.searchAddress(null, null, null);
+    private final Address.searchAddress endAddress = new Address.searchAddress(null, null, null);
 
     // Amount of chunks seen
     private float currentChunkAmountSeen = 1;
@@ -427,22 +428,67 @@ public class MapView {
         searchAddress(textFieldEnd, endComboBox, endAddress);
     }
 
-    private void searchAddress(TextField textField, ComboBox<String> comboBox, String[] address){
-        String searchWord = textField.getText();
+    @FXML
+    void addressSelectedStart(ActionEvent event){
+        addressSelected(textFieldStart, startComboBox, startAddress);
+    }
 
-        List<String> addresses = new ArrayList<>();
+    @FXML
+    void addressSelectedEnd(ActionEvent event){
+        addressSelected(textFieldEnd, endComboBox, endAddress);
+    }
 
-        Map<String[], Address.AddressNode> results = controller.searchAddress(searchWord);
-        for(String[] result : results.keySet()){
-            addresses.add(result[0] + ": " + result[1]);
+    private void addressSelected(TextField textField, ComboBox<Address.searchAddress> comboBox,  Address.searchAddress address){
+        Address.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
+        if(address.streetName == null){
+            if(selected == null) throw new RuntimeException("No address selected");
+            textField.setText(selected.streetName);
+        } else {
+            if(selected == null) return;
+            textField.setText(selected.toString());
+        }
+        address.clone(selected);
+        System.out.println(address);
+        System.out.println(startAddress);
+    }
+
+    private void searchAddress(TextField textField, ComboBox<Address.searchAddress> comboBox,  Address.searchAddress address){
+
+        List<Address.searchAddress> addresses;
+
+        String currentText = textField.getText();
+
+        boolean shouldRestartSearch = false;
+
+        if (address.streetName == null) addresses = searchSteet(currentText);
+        else{
+            int i = 0;
+            for(char c : address.streetName.toCharArray()){
+                if(i >= currentText.length() || c != currentText.charAt(i++)){
+                    shouldRestartSearch = true;
+                    break;
+                }
+            }
+            if (shouldRestartSearch) {
+                address.reset();
+                addresses = searchSteet(currentText);
+            } else addresses = searchFullAddress(address);
         }
 
 
-        System.out.println(searchWord);
-        //System.out.println("Keyevent: " + event.getCode());
         comboBox.getItems().clear();
         comboBox.getItems().addAll(addresses);
+        comboBox.setVisibleRowCount(10);
         comboBox.show();
+
+    }
+
+    private List<Address.searchAddress> searchSteet(String searchWord){
+        return controller.searchAddress(searchWord);
+    }
+
+    private List<Address.searchAddress> searchFullAddress(Address.searchAddress node){
+        return controller.fillAddress(node);
     }
 
 }
