@@ -3,7 +3,7 @@ package dk.itu.map.fxml.controllers;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
@@ -172,11 +172,11 @@ public class MapController {
         model.setRoute(path);
     }
 
-    public List<Address.searchAddress> searchAddress(String input) {
+    public List<TernaryTree.searchAddress> searchAddress(String input) {
         return model.getAddress().autoComplete(input, 10);
     }
 
-    public List<Address.searchAddress> fillAddress(Address.searchAddress node){
+    public List<TernaryTree.searchAddress> fillAddress(TernaryTree.searchAddress node){
         return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node);
     }
 }

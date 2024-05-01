@@ -1,15 +1,14 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.Graph;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class UtilityLoader extends Thread{
     private Graph graph;
     private String path;
-    private Address address;
+    private TernaryTree address;
 
     public UtilityLoader(String path) {
         this.path = path + "/utilities";
@@ -36,10 +35,10 @@ public class UtilityLoader extends Thread{
         return graph;
     }
 
-    public Address getAddress() {
+    public TernaryTree getAddress() {
         //System.out.println(address.autoComplete("a",10));
-//        Map<String[], Address.AddressNode> result = address.autoComplete("Andreas Road",10);
-//        for (Map.Entry<String[], Address.AddressNode> entry : result.entrySet()) {
+//        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("Andreas Road",10);
+//        for (Map.Entry<String[], TernaryTree.AddressNode> entry : result.entrySet()) {
 //            System.out.println(entry.getKey()[0] + ", " + entry.getKey()[1]);
 //        }
 //        System.out.println(address.autoComplete("a",10).size());
@@ -47,11 +46,11 @@ public class UtilityLoader extends Thread{
     }
 
     private class AddressLoader extends Thread {
-        private Address address;
+        private TernaryTree address;
         private String path;
 
         public AddressLoader(String path) {
-            address = new Address();
+            address = new TernaryTree();
             this.path = path + "/address.txt";
         }
 
@@ -64,7 +63,7 @@ public class UtilityLoader extends Thread{
             }
         }
 
-        public Address getAddress() {
+        public TernaryTree getAddress() {
             return address;
         }
     }

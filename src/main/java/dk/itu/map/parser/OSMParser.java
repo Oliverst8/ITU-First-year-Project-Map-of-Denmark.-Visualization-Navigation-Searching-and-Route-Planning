@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
@@ -40,7 +40,7 @@ public class OSMParser extends Thread {
     private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
-    private Address address;
+    private TernaryTree address;
 
     /**
      * Constructor for the OSMParser class
@@ -54,7 +54,7 @@ public class OSMParser extends Thread {
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
-        address = new Address();
+        address = new TernaryTree();
     }
 
     /**
@@ -166,6 +166,9 @@ public class OSMParser extends Thread {
 
                             if(tags[0] != null) {
                                 for(int i = 1; i < tags.length; i++) if(tags[i] == null) tags[i] = "";
+                                if(tags[0].equalsIgnoreCase("hutchinson Square") && tags[1].equals("15")){
+                                    System.out.println("FOUND!!!");
+                                }
                                 address.addStreetName(tags, cords[0], cords[1]);
                             }
 

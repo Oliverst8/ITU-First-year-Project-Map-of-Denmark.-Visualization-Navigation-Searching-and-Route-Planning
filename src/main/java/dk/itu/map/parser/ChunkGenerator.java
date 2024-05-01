@@ -1,6 +1,6 @@
 package dk.itu.map.parser;
 
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class ChunkGenerator implements Runnable {
 
     private final Thread chunkingThread;
 
-    private final Address address;
+    private final TernaryTree address;
 
 
     /**
@@ -51,7 +51,7 @@ public class ChunkGenerator implements Runnable {
      * @param minLon The minimum longitude
      * @param maxLon The maximum longitude
      */
-    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon, Address address) {
+    public ChunkGenerator(String dataPath, float minLat, float maxLat, float minLon, float maxLon, TernaryTree address) {
         graph = new GraphBuilder();
         this.dataPath = dataPath;
         this.hasMoreWork = false;

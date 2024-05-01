@@ -8,7 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class Address implements Runnable, WriteAble{
+public class TernaryTree implements Runnable, WriteAble{
     private final List<String[]> streetNames;
     private final List<Float> streetPosition;
     private Map<String, Integer> streetNumberMap, zipMap, cityMap;
@@ -16,10 +16,10 @@ public class Address implements Runnable, WriteAble{
     private Node root;
     private int size;
 
-    public Address(){
+    public TernaryTree(){
         size = 0;
-        streetNames = Collections.synchronizedList(new LinkedList<String[]>());
-        streetPosition = Collections.synchronizedList(new LinkedList<Float>());
+        streetNames = Collections.synchronizedList(new LinkedList<>());
+        streetPosition = Collections.synchronizedList(new LinkedList<>());
         streetNumberMap = new HashMap<>();
         zipMap = new HashMap<>();
         cityMap = new HashMap<>();
@@ -41,6 +41,8 @@ public class Address implements Runnable, WriteAble{
         root = insert(street, lat, lon);
         while(!streetNames.isEmpty()){
             street = streetNames.remove(0);
+            lat = streetPosition.remove(0);
+            lon = streetPosition.remove(0);
             insert(street, lat, lon);
         }
     }
@@ -189,6 +191,11 @@ public class Address implements Runnable, WriteAble{
                 searchAddress newAddress = new searchAddress(address[0], address[1], node);
                 newAddress.streetNumber = streetNumber.get(node.streetNumberIndexes.get(i));
                 newAddress.city = cities.get(node.cityIndexes.get(i));
+                float[] coords = node.coords.get(i);
+                if(address[0].equalsIgnoreCase("hutchinson Square") && newAddress.streetNumber.equals("15")){
+                    System.out.println("FOUND!!!");
+                }
+                newAddress.point = new Point(coords[1], coords[0], "navigation");
                 list.add(newAddress);
             }
         }
@@ -300,7 +307,7 @@ public class Address implements Runnable, WriteAble{
         if(obj == null) return false;
         if(obj == this) return true;
         if(obj.getClass() != this.getClass()) return false;
-        Address other = (Address) obj;
+        TernaryTree other = (TernaryTree) obj;
         if(other.size != this.size) return false;
         Queue<Node> thisQueue = new LinkedList<>();
         Queue<Node> otherQueue = new LinkedList<>();
@@ -412,6 +419,9 @@ public class Address implements Runnable, WriteAble{
         }
 
         public void addAddress(String[] address, float lat, float lon){
+            if(address[0].equalsIgnoreCase("hutchinson Square") && address[1].equals("15")){
+                System.out.println("FOUND!!!");
+            }
             coords.add(lat, lon);
             int streetNumberIndex;
             if(streetNumberMap.containsKey(address[1])){
@@ -482,6 +492,7 @@ public class Address implements Runnable, WriteAble{
         public String streetNumber;
         public String zip;
         public String city;
+        public Point point;
         public AddressNode node;
 
         public searchAddress(String streetName, String zip, AddressNode node){

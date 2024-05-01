@@ -1,11 +1,9 @@
 package dk.itu.map.fxml.views;
 
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
-import dk.itu.map.utility.Navigation;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
@@ -15,14 +13,12 @@ import java.util.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -38,9 +34,9 @@ public class MapView {
     @FXML
     private VBox root;
     @FXML
-    private ComboBox<Address.searchAddress> startComboBox;
+    private ComboBox<TernaryTree.searchAddress> startComboBox;
     @FXML
-    private ComboBox<Address.searchAddress> endComboBox;
+    private ComboBox<TernaryTree.searchAddress> endComboBox;
     @FXML
     private TextField textFieldStart;
     @FXML
@@ -63,8 +59,8 @@ public class MapView {
     private float zoomLevel;
     // Initial distance between two points
     private float startDist;
-    private final Address.searchAddress startAddress = new Address.searchAddress(null, null, null);
-    private final Address.searchAddress endAddress = new Address.searchAddress(null, null, null);
+    private final TernaryTree.searchAddress startAddress = new TernaryTree.searchAddress(null, null, null);
+    private final TernaryTree.searchAddress endAddress = new TernaryTree.searchAddress(null, null, null);
 
     // Amount of chunks seen
     private float currentChunkAmountSeen = 1;
@@ -125,7 +121,7 @@ public class MapView {
 
         /*autocompleteStartPoint.setCompleter(textInput -> {
             System.out.println("Autocompleting start");
-            Map<String[], Address.AddressNode> results = controller.searchAddress(textInput);
+            Map<String[], TernaryTree.AddressNode> results = controller.searchAddress(textInput);
             List<String> suggestions = new ArrayList<>();
             int i = 0;
             for(String[] result : results.keySet()){
@@ -438,23 +434,25 @@ public class MapView {
         addressSelected(textFieldEnd, endComboBox, endAddress);
     }
 
-    private void addressSelected(TextField textField, ComboBox<Address.searchAddress> comboBox,  Address.searchAddress address){
-        Address.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
+    private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
+        TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
         if(address.streetName == null){
             if(selected == null) throw new RuntimeException("No address selected");
             textField.setText(selected.streetName);
         } else {
             if(selected == null) return;
             textField.setText(selected.toString());
+            model.setStartPoint(selected.point);
+            redraw();
         }
         address.clone(selected);
         System.out.println(address);
         System.out.println(startAddress);
     }
 
-    private void searchAddress(TextField textField, ComboBox<Address.searchAddress> comboBox,  Address.searchAddress address){
+    private void searchAddress(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
 
-        List<Address.searchAddress> addresses;
+        List<TernaryTree.searchAddress> addresses;
 
         String currentText = textField.getText();
 
@@ -483,11 +481,11 @@ public class MapView {
 
     }
 
-    private List<Address.searchAddress> searchSteet(String searchWord){
+    private List<TernaryTree.searchAddress> searchSteet(String searchWord){
         return controller.searchAddress(searchWord);
     }
 
-    private List<Address.searchAddress> searchFullAddress(Address.searchAddress node){
+    private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node){
         return controller.fillAddress(node);
     }
 

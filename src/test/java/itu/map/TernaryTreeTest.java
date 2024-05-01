@@ -1,6 +1,6 @@
 package itu.map;
 
-import dk.itu.map.structures.Address;
+import dk.itu.map.structures.TernaryTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class AddressTest {
-    Address address;
+public class TernaryTreeTest {
+    TernaryTree address;
     @BeforeEach
     public void setUp(){
-        address = new Address();
+        address = new TernaryTree();
     }
 
     private static void assertStringArraySetEquals(Set<String[]> result_array, Set<String[]> expected_arrray) {
@@ -49,7 +49,7 @@ public class AddressTest {
     @Test
     void testAutoCompleteMatchingStringFound(){
         addAdresses();
-        Map<String[], Address.AddressNode> result_array = address.autoComplete("hv",10);
+        Map<String[], TernaryTree.AddressNode> result_array = address.autoComplete("hv",10);
         Set<String[]> expected_arrray = new HashSet<>(List.of(new String[]{"hv", "1234"}, new String[]{"hvi","1234"}));
         assertStringArraySetEquals(result_array.keySet(), expected_arrray);
 
@@ -58,7 +58,7 @@ public class AddressTest {
     @Test
     void testAutoComplete1() {
         addAdresses();
-        Map<String[], Address.AddressNode> result = address.autoComplete("a", 10);
+        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("a", 10);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"ab","1234"}, new String[]{"ad","1234"}));
         assertStringArraySetEquals(result.keySet(), expected);
     }
@@ -66,7 +66,7 @@ public class AddressTest {
     @Test
     void testAutoComplete2() {
         addAdresses();
-        Map<String[], Address.AddressNode> result = address.autoComplete("ol", 10);
+        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("ol", 10);
         Set<String[]> expected = new HashSet<>();
         assertStringArraySetEquals(result.keySet(), expected);
     }
@@ -74,7 +74,7 @@ public class AddressTest {
     @Test
     void testAutoCompleteMatchingStringNotFound(){
         addAdresses();
-        Map<String[], Address.AddressNode> result = address.autoComplete("h",10);
+        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("h",10);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"hv","1234"},new String[]{"hvi","1234"},new String[]{"he","1234"}));
         assertStringArraySetEquals(result.keySet(), expected);
     }
@@ -88,14 +88,14 @@ public class AddressTest {
     @Test
     void testEqualsDifferent(){
         addAdresses();
-        Address newAddress = new Address();
+        TernaryTree newAddress = new TernaryTree();
         assertNotEquals(address, newAddress);
     }
 
     @Test
     void testEqualsShouldEqual(){
         addAdresses();
-        Address newAddress = new Address();
+        TernaryTree newAddress = new TernaryTree();
         newAddress.addStreetName(new String[]{"ab","1","1234","cph"},1f,1f);
         newAddress.addStreetName(new String[]{"ad","1","1234","cph"},1f,1f);
         newAddress.addStreetName(new String[]{"ja","1","1234","cph"},1f,1f);
@@ -112,7 +112,7 @@ public class AddressTest {
         addAdresses();
         String testPath = TestUtilities.getTestFilesPath();
         address.write(testPath + "addressTest");
-        Address newAddress = new Address();
+        TernaryTree newAddress = new TernaryTree();
         newAddress.read(testPath + "addressTest");
         //assertEquals(address, newAddress);
         assertTrue(address.equals(newAddress));
@@ -124,7 +124,7 @@ public class AddressTest {
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
         address.run();
-        Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
+        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("Ballafletcher", 20);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
         assertStringArraySetEquals(result.keySet(), expected);
     }
@@ -144,7 +144,7 @@ public class AddressTest {
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
         address.run();
-        Map<String[], Address.AddressNode> result = address.autoComplete("Ballafletcher", 20);
+        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("Ballafletcher", 20);
         Set<String[]> expected = new HashSet<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
         assertStringArraySetEquals(result.keySet(), expected);
     }
@@ -164,7 +164,7 @@ public class AddressTest {
         address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"},1f,1f);
         address.run();
 
-        Map<String[], Address.AddressNode> map = address.autoComplete("Ballafletcher", 20);
+        Map<String[], TernaryTree.AddressNode> map = address.autoComplete("Ballafletcher", 20);
         String[] autocomplete = map.keySet().iterator().next();
 
         List<String[]> result = address.fillAddress(autocomplete, map.get(autocomplete));
