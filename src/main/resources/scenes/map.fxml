@@ -36,6 +36,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -76,7 +78,7 @@
                 <Canvas fx:id="canvasNavigation" />
                 <Canvas fx:id="canvasPointOfInterest" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
-            <AnchorPane fx:id="navigationPane" disable="true" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0" visible="false">
+            <AnchorPane fx:id="navigationPane" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0">
                <children>
                   <Rectangle fx:id="navigateRectangle" arcHeight="5.0" arcWidth="5.0" fill="#e9eef2" height="126.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
                   <Button layoutX="201.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg start" />
@@ -90,10 +92,17 @@
                   <ComboBox fx:id="endComboBox" layoutX="51.0" layoutY="49.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#addressSelectedEnd" prefWidth="150.0" promptText="End address" />
                   <TextField fx:id="textFieldEnd" layoutX="51.0" layoutY="48.0" onInputMethodTextChanged="#searchEndAddress" onKeyPressed="#searchEndAddress" onKeyReleased="#searchEndAddress" onKeyTyped="#searchEndAddress" prefHeight="25.0" promptText="Where to?" />
                   <Button layoutX="201.0" layoutY="48.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg slut" />
-                  <Button fx:id="endNavigationButton" layoutX="232.0" layoutY="9.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="15.0" prefWidth="15.0" text="x">
+                  <Button fx:id="endNavigationButton" layoutX="232.0" layoutY="9.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="15.0" prefWidth="15.0">
                      <font>
                         <Font size="7.0" />
                      </font>
+                     <graphic>
+                        <ImageView fitHeight="72.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/minus.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                </children>
             </AnchorPane>
