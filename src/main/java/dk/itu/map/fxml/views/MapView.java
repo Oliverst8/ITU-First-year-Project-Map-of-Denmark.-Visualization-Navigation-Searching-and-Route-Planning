@@ -485,6 +485,7 @@ public class MapView {
 
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
         TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
+        textField.setStyle("-fx-border-color: transparent");
         if(address.streetName == null){
             if(selected == null) return;
             textField.setText(selected.streetName);
@@ -493,6 +494,7 @@ public class MapView {
             textField.setText(selected.toString());
             if(textField == this.textFieldStart) model.setStartPoint(selected.point);
             else model.setEndPoint(selected.point);
+            textField.setStyle("-fx-border-color: #7FFF00");
             redraw();
         }
         address.clone(selected);
