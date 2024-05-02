@@ -34,6 +34,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -152,7 +153,7 @@ public class MapView {
             startPoint = convertToLatLon(startPoint);
             System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
             setStartPoint = false;
-            Point point = new Point(startPoint[0], startPoint[1], "navigation");
+            Point point = new Point(startPoint[0], startPoint[1], "navigation", Color.RED);
             textFieldStart.setText(startPoint[0] + ", " + startPoint[1]);
             textFieldStart.setPromptText("Where from?");
             model.setStartPoint(point);
@@ -164,7 +165,7 @@ public class MapView {
             System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
             textFieldEnd.setPromptText("Where to?");
             setEndPoint = false;
-            Point point = new Point(endPoint[0], endPoint[1],"navigation");
+            Point point = new Point(endPoint[0], endPoint[1],"navigation", Color.RED);
             textFieldEnd.setText(endPoint[0] + ", " + endPoint[1]);
             model.setEndPoint(point);
             model.removeRoute();
@@ -477,7 +478,7 @@ public class MapView {
                 String[] coords = line.split(", ");
                 float lat = Float.parseFloat(coords[0]);
                 float lon = Float.parseFloat(coords[1]);
-                pointOfInterests.add(new Point(lat, lon, "pointOfInterest"));
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest", Color.YELLOW));
             }
         } catch (IOException e) {
             e.printStackTrace();
