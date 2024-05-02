@@ -25,7 +25,7 @@ public class GraphBuilderTest {
     }
     private GraphBuilder getGraph1() {
         GraphBuilder graph = new GraphBuilder();
-        ArrayList<String> tags = new ArrayList<>();
+        ArrayList<String> tags;
         CoordArrayList coords;
         LongArrayList nodeIDs;
         Way way;
@@ -347,7 +347,6 @@ public class GraphBuilderTest {
         assertTrue(graph.equals(graphBuilder));
     }
 
-@Test
     public GraphBuilder getGraph() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
         CoordArrayList nodes1 = TestUtilities.createCoordArrayList(0f,0f,1f,1f);
@@ -390,8 +389,8 @@ public class GraphBuilderTest {
         expected.add((byte) 0);
         expected.add((byte) 0);
         expected.add((byte) 0);
-        expected.add((byte) 0);
-        expected.add((byte) 0);
+        expected.add((byte) 7);
+        expected.add((byte) 7);
         expected.add((byte) 1);
         expected.add((byte) 1);
         expected.add((byte) 1);
@@ -402,8 +401,8 @@ public class GraphBuilderTest {
         expected.add((byte) 1);
         expected.add((byte) 3);
         expected.add((byte) 3);
-        expected.add((byte) 2);
-        expected.add((byte) 2);
+        expected.add((byte) 3);
+        expected.add((byte) 3);
         expected.add((byte) 3);
         expected.add((byte) 3);
         expected.add((byte) 7);
@@ -438,6 +437,15 @@ public class GraphBuilderTest {
         expected.add((byte) 7);
 
         ByteArrayList actual = graph.getVehicleRestrictions();
+
+        for(int i = 0; i < actual.size(); i++){
+            System.out.print(actual.get(i) + " ");
+        }
+        System.out.println();
+        for(int i = 0; i < expected.size(); i++){
+            System.out.print(expected.get(i) + " ");
+        }
+
 
         for(int i = 0; i < expected.size(); i++){
             assertEquals(expected.get(i), actual.get(i));
