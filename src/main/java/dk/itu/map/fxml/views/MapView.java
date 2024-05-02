@@ -486,7 +486,7 @@ public class MapView {
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
         TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
         if(address.streetName == null){
-            if(selected == null) throw new RuntimeException("No address selected");
+            if(selected == null) return;
             textField.setText(selected.streetName);
         } else {
             if(selected == null) return;
