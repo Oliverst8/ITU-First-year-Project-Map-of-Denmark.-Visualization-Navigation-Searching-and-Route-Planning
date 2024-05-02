@@ -27,18 +27,6 @@ public class GraphBuilder extends Graph implements Runnable {
         ways = Collections.synchronizedList(new LinkedList<>());
     }
 
-    /**
-     * Calculates the distance between two points
-     * @param x1 the x coordinate of the first point
-     * @param y1 the y coordinate of the first point
-     * @param x2 the x coordinate of the second point
-     * @param y2 the y coordinate of the second point
-     * @return the distance between the two points
-     */
-    private float dist(float x1, float y1, float x2, float y2){
-        return (float) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
-    }
-
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
     //ADVARSEL FUNGERER IKKE

@@ -241,7 +241,6 @@ public class MapView {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
         boolean print = false;
-        long totalStart = System.currentTimeMillis();
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
             print = true;
@@ -283,7 +282,6 @@ public class MapView {
                 }
             }
         }
-        long wastedTime = System.currentTimeMillis();
         Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
@@ -299,7 +297,6 @@ public class MapView {
         }
         
         if (!print) return;
-        long drawTimes = 0;
         // System.out.println("Render times: ");
         // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
         //     String layer = String.format("%-15s", entry.getKey());

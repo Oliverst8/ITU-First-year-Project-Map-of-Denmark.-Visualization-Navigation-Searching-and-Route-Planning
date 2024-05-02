@@ -5,8 +5,6 @@ import dk.itu.map.structures.IndexMinPQ;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
-import dk.itu.map.structures.ArrayLists.LongArrayList;
-import dk.itu.map.structures.Point;
 
 import java.util.Arrays;
 

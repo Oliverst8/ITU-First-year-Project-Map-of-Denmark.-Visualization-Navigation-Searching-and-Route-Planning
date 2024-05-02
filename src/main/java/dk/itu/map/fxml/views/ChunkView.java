@@ -5,10 +5,8 @@ import dk.itu.map.fxml.models.ChunkModel;
 import dk.itu.map.parser.FileProgress;
 import javafx.fxml.FXML;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.VBox;
 
 public class ChunkView {
-
     ChunkController controller;
     ChunkModel model;
     @FXML

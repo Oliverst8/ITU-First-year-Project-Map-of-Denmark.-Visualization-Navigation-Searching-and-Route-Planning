@@ -70,8 +70,8 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof WriteAbleArrayList)) return false;
-        WriteAbleArrayList other = (WriteAbleArrayList) obj;
+        if(!(obj instanceof WriteAbleArrayList<?>)) return false;
+        WriteAbleArrayList<?> other = (WriteAbleArrayList<?>) obj;
         if(size() != other.size()) return false;
         for(int i = 0; i < size(); i++){
             if(!get(i).equals(other.get(i))) return false;
