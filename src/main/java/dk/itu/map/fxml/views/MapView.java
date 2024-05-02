@@ -155,6 +155,7 @@ public class MapView {
             setStartPoint = false;
             Point point = new Point(startPoint[0], startPoint[1], "navigation", Color.RED);
             textFieldStart.setText(startPoint[0] + ", " + startPoint[1]);
+            textFieldStart.setPromptText("Where from?");
             model.setStartPoint(point);
             model.removeRoute();
             new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
@@ -162,6 +163,7 @@ public class MapView {
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
             System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
+            textFieldEnd.setPromptText("Where to?");
             setEndPoint = false;
             Point point = new Point(endPoint[0], endPoint[1],"navigation", Color.RED);
             textFieldEnd.setText(endPoint[0] + ", " + endPoint[1]);
@@ -280,7 +282,9 @@ public class MapView {
         setStartPoint = true;
         setEndPoint = false;
         textFieldStart.setText("");
+        textFieldStart.setPromptText("Select a point");
         textFieldStart.setStyle("-fx-border-color: transparent");
+
     }
 
     @FXML
@@ -288,6 +292,7 @@ public class MapView {
         setEndPoint = true;
         setStartPoint = false;
         textFieldEnd.setText("");
+        textFieldStart.setPromptText("Select a point");
         textFieldEnd.setStyle("-fx-border-color: transparent");
     }
 

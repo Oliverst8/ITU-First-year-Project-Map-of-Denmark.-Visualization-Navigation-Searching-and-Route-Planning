@@ -36,6 +36,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -78,22 +80,64 @@
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
             <AnchorPane fx:id="navigationPane" disable="true" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0" visible="false">
                <children>
-                  <Rectangle fx:id="navigateRectangle" arcHeight="5.0" arcWidth="5.0" fill="#e9eef2" height="126.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
-                  <Button layoutX="201.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg start" />
-                  <Button fx:id="walkButton" layoutX="40.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" prefHeight="25.0" prefWidth="50.0" text="Walk" />
-                  <Button fx:id="carButton" layoutX="160.0" layoutY="85.0" mnemonicParsing="false" onAction="#switchToCarNavigation" prefHeight="21.0" prefWidth="50.0" style="-fx-border-color: #00CED1;" text="Car" />
-                  <Button fx:id="bikeButton" layoutX="100.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" prefHeight="25.0" prefWidth="50.0" text="Bike" />
+                  <Rectangle fx:id="navigateRectangle" arcHeight="10.0" arcWidth="10.0" fill="#eaeaea" height="126.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
+                  <Button layoutX="201.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="25.0" style="-fx-border-radius: 200;" text="Vælg start">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true" translateX="-3.0">
+                           <image>
+                              <Image url="@../icons/location.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="walkButton" layoutX="40.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" prefHeight="25.0" prefWidth="50.0">
+                     <graphic>
+                        <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/walk.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="carButton" layoutX="160.0" layoutY="85.0" mnemonicParsing="false" onAction="#switchToCarNavigation" prefHeight="21.0" prefWidth="50.0" style="-fx-border-color: #00CED1;">
+                     <graphic>
+                        <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/car-side.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="bikeButton" layoutX="100.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" prefHeight="25.0" prefWidth="50.0">
+                     <graphic>
+                        <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/bicycle.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                   <ComboBox fx:id="startComboBox" layoutX="51.0" layoutY="13.0" onAction="#addressSelectedStart" prefWidth="150.0" promptText="Start address" />
                   <TextField fx:id="textFieldStart" layoutX="51.0" layoutY="13.0" onInputMethodTextChanged="#searchStartAddress" onKeyPressed="#searchStartAddress" onKeyReleased="#searchStartAddress" onKeyTyped="#searchStartAddress" prefHeight="25.0" promptText="Where from?" />
                   <Text fx:id="fromText" layoutX="17.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="From:" textAlignment="CENTER" />
                   <Text fx:id="toText" layoutX="24.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To:" textAlignment="CENTER" />
                   <ComboBox fx:id="endComboBox" layoutX="51.0" layoutY="49.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#addressSelectedEnd" prefWidth="150.0" promptText="End address" />
                   <TextField fx:id="textFieldEnd" layoutX="51.0" layoutY="48.0" onInputMethodTextChanged="#searchEndAddress" onKeyPressed="#searchEndAddress" onKeyReleased="#searchEndAddress" onKeyTyped="#searchEndAddress" prefHeight="25.0" promptText="Where to?" />
-                  <Button layoutX="201.0" layoutY="48.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg slut" />
-                  <Button fx:id="endNavigationButton" layoutX="232.0" layoutY="9.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="15.0" prefWidth="15.0" text="x">
+                  <Button layoutX="201.0" layoutY="48.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="25.0" text="Vælg slut">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true" translateX="-3.0">
+                           <image>
+                              <Image url="@../icons/location.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="endNavigationButton" layoutX="230.0" layoutY="3.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="20.0" prefWidth="20.0">
                      <font>
                         <Font size="7.0" />
                      </font>
+                     <graphic>
+                        <ImageView fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/close.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                </children>
             </AnchorPane>
