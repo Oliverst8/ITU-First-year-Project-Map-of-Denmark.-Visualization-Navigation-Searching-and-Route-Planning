@@ -75,14 +75,13 @@
                 <Canvas fx:id="canvasHighway" />
                 <Canvas fx:id="canvasNavigation" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
-            <AnchorPane fx:id="navigationPane" disable="true" layoutX="21.0" layoutY="22.0" prefHeight="172.0" prefWidth="253.0" visible="false">
+            <AnchorPane fx:id="navigationPane" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0">
                <children>
-                  <Rectangle fx:id="navigateRectangle" arcHeight="5.0" arcWidth="5.0" fill="#e9eef2" height="171.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
+                  <Rectangle fx:id="navigateRectangle" arcHeight="5.0" arcWidth="5.0" fill="#e9eef2" height="126.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
                   <Button layoutX="201.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg start" />
-                  <Button fx:id="navigateButton" layoutX="87.0" layoutY="86.0" mnemonicParsing="false" onAction="#navigateNow" prefHeight="25.0" text="Navigate" textAlignment="CENTER" />
-                  <Button fx:id="walkButton" layoutX="41.0" layoutY="125.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" prefHeight="25.0" prefWidth="50.0" text="Walk" />
-                  <Button fx:id="carButton" layoutX="149.0" layoutY="124.0" mnemonicParsing="false" onAction="#switchToCarNavigation" prefHeight="21.0" prefWidth="50.0" style="-fx-border-color: #00CED1;" text="Car" />
-                  <Button fx:id="bikeButton" layoutX="94.0" layoutY="125.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" prefHeight="25.0" prefWidth="50.0" text="Bike" />
+                  <Button fx:id="walkButton" layoutX="40.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" prefHeight="25.0" prefWidth="50.0" text="Walk" />
+                  <Button fx:id="carButton" layoutX="160.0" layoutY="85.0" mnemonicParsing="false" onAction="#switchToCarNavigation" prefHeight="21.0" prefWidth="50.0" style="-fx-border-color: #00CED1;" text="Car" />
+                  <Button fx:id="bikeButton" layoutX="100.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" prefHeight="25.0" prefWidth="50.0" text="Bike" />
                   <ComboBox fx:id="startComboBox" layoutX="51.0" layoutY="13.0" onAction="#addressSelectedStart" prefWidth="150.0" promptText="Start address" />
                   <TextField fx:id="textFieldStart" layoutX="51.0" layoutY="13.0" onInputMethodTextChanged="#searchStartAddress" onKeyPressed="#searchStartAddress" onKeyReleased="#searchStartAddress" onKeyTyped="#searchStartAddress" prefHeight="25.0" promptText="Where from?" />
                   <Text fx:id="fromText" layoutX="17.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="From:" textAlignment="CENTER" />

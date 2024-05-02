@@ -211,6 +211,7 @@ public class MapView {
         walkButton.setStyle("-fx-border-color: transparent");
         bikeButton.setStyle("-fx-border-color: transparent");
         carButton.setStyle("-fx-border-color:  #00CED1");
+        navigateNow(null);
     }
     @FXML
     void switchToBikeNavigation(){
@@ -218,6 +219,8 @@ public class MapView {
         walkButton.setStyle("-fx-border-color: transparent");
         bikeButton.setStyle("-fx-border-color: #00CED1");
         carButton.setStyle("-fx-border-color:  transparent");
+        navigateNow(null);
+
     }
     @FXML
     void switchToWalkNavigation(){
@@ -225,6 +228,8 @@ public class MapView {
         walkButton.setStyle("-fx-border-color: #00CED1");
         bikeButton.setStyle("-fx-border-color: transparent");
         carButton.setStyle("-fx-border-color: transparent");
+        navigateNow(null);
+
     }
 
     @FXML
