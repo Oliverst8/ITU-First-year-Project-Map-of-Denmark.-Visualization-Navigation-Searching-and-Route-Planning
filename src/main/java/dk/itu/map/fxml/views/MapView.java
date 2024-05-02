@@ -252,6 +252,8 @@ public class MapView {
             overridePrint = false;
         }
 
+        controller.getWrittenChunks();
+
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
         for(String key : mapLayers){

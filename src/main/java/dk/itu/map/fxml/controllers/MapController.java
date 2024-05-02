@@ -53,20 +53,25 @@ public class MapController {
 
         model.chunkLoader = new ChunkLoader();
         model.chunkLoader.setCallback(() -> {
-            Map<Integer, Map<Integer, List<Drawable>>> newChunks = model.chunkLoader.getFinishedChunks();
-            for (int i = 0; i < model.getLayerCount(); i++) {
-                Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
-                Map<Integer, List<Drawable>> newLayer = newChunks.get(i);
-                if (newLayer == null) {
-                    continue;
-                }
-                chunks.putAll(newLayer);
-            }
+            boolean shouldRedraw = getWrittenChunks();
 
-            if (view != null) view.redraw();
+            if (view != null && shouldRedraw) view.redraw();
         });
 
         setUtilities(utilityLoader);
+    }
+
+    public boolean getWrittenChunks() {
+        Map<Integer, Map<Integer, List<Drawable>>> newChunks = model.chunkLoader.getFinishedChunks();
+        for (int i = 0; i < model.getLayerCount(); i++) {
+            Map<Integer, List<Drawable>> chunks = model.chunkLayers.get(i);
+            Map<Integer, List<Drawable>> newLayer = newChunks.get(i);
+            if (newLayer == null) {
+                continue;
+            }
+            chunks.putAll(newLayer);
+        }
+        return !newChunks.isEmpty();
     }
 
     /**
