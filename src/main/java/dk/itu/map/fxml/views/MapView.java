@@ -93,7 +93,7 @@ public class MapView {
         trans = new Affine();
         trans.prependTranslation(-0.56 * model.getMinLon(), model.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
 
-        // Zoom to the initial view
+        // Zoom to the initial view, this has to be run later to make sure view has been initialized
         Platform.runLater(() -> {
             zoom(0, 0, canvas.get("building").getHeight() / (this.model.getMaxLat() - this.model.getMinLat()));
 
@@ -108,12 +108,10 @@ public class MapView {
             }
         };
 
-        // zoomSlider.setMajorTickUnit(25);
         zoomSlider.setMin(0);
         zoomSlider.setMax(15);
-        // zoomSlider.setMinorTickCount(5);
-        zoomSlider.setValue(50);
-        System.out.println(zoomSlider.getValue());
+        zoomSlider.setMouseTransparent(true);
+        zoomSlider.setFocusTraversable(false);
     }
 
     @FXML
