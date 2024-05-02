@@ -2,6 +2,7 @@ package dk.itu.map.structures;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
+import javafx.scene.paint.Color;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -195,7 +196,7 @@ public class TernaryTree implements Runnable, WriteAble{
                 newAddress.streetNumber = newStreetNumber;
                 newAddress.city = newCity;
                 float[] coords = node.coords.get(i);
-                newAddress.point = new Point(coords[1], coords[0], "navigation");
+                newAddress.point = new Point(coords[1], coords[0], "navigation", Color.PURPLE);
                 list.add(newAddress);
             }
         }
