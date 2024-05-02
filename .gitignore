@@ -1,7 +1,14 @@
+# Chunk file folders
+maps/
 chunkData/
 zoomLayers/
-maps/
+
+# Misc
+bin/
+data/
 extra/
+
+# Test report
 htmlReport/
 src/test/java/itu/map/testFiles/*
 !src/test/java/itu/map/testFiles/testmap.osm
