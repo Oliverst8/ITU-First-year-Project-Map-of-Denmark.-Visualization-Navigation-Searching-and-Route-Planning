@@ -5,7 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Point implements Drawable{
-    private float x, y;
+    private final float x;
+    private final float y;
     private final String primaryType;
     public Point(float x, float y, String primaryType){
         this.x = x;

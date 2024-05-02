@@ -34,22 +34,26 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" layoutX="233.0" layoutY="35.0" prefHeight="17.0" prefWidth="175.0" />
-      <Button layoutX="360.0" layoutY="266.0" mnemonicParsing="false" onAction="#importMap" text="Import new" />
-      <MenuButton fx:id="mapList" layoutX="354.0" layoutY="300.0" prefHeight="26.0" prefWidth="90.0" text="Load">
+      <HBox alignment="CENTER" layoutX="233.0" layoutY="35.0" prefHeight="17.0" prefWidth="175.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" wrappingWidth="95.71399688720703">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <Button layoutX="275.0" layoutY="174.0" mnemonicParsing="false" onAction="#importMap" text="Import new" />
+      <MenuButton fx:id="mapList" layoutX="275.0" layoutY="200.0" prefHeight="26.0" prefWidth="90.0" text="Load">
 
       </MenuButton>
-      <Text layoutX="231.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" textAlignment="CENTER" wrappingWidth="335.7139358520508">
-         <font>
-            <Font name="Century" size="54.0" />
-         </font>
-      </Text>
    </children>
 </AnchorPane>

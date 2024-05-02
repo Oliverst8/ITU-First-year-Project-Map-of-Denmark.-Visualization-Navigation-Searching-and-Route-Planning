@@ -12,6 +12,9 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://nexus.gluonhq.com/nexus/content/repositories/releases'
+    }
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -52,6 +55,11 @@ dependencies {
     
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
+
+    // https://mvnrepository.com/artifact/com.gluonhq/charm-glisten
+    implementation group: 'com.gluonhq', name: 'charm-glisten', version: '6.2.3'
+    // https://mvnrepository.com/artifact/com.gluonhq.attach/util
+    implementation group: 'com.gluonhq.attach', name: 'util', version: '4.0.20'
 
     // JavaFx | Uncomment when you want to build.
     // implementation group: 'org.openjfx', name: 'javafx-base', version: '21.0.3', classifier: 'win'

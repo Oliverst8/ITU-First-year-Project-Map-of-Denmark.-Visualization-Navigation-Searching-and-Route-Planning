@@ -3,10 +3,8 @@ package dk.itu.map.fxml.models;
 import java.util.*;
 
 import dk.itu.map.parser.ChunkLoader;
-import dk.itu.map.structures.Drawable;
-import dk.itu.map.structures.DrawableWay;
-import dk.itu.map.structures.Graph;
-import dk.itu.map.structures.Point;
+import dk.itu.map.structures.*;
+import dk.itu.map.structures.TernaryTree;
 import javafx.scene.paint.Color;
 
 public class MapModel {
@@ -16,6 +14,7 @@ public class MapModel {
     // The chunk loader
     public ChunkLoader chunkLoader;
     private Graph graph;
+    private TernaryTree address;
     public final Theme theme = new Theme();
 
     private final Drawable[] navigationWays;
@@ -123,6 +122,14 @@ public class MapModel {
         return navigationWays;
     }
 
+    public void setAddress(TernaryTree address) {
+        this.address = address;
+    }
+
+    public TernaryTree getAddress() {
+        return address;
+    }
+
     public enum Themes {
         LIGHT,
         DARK,
@@ -228,7 +235,7 @@ public class MapModel {
             secondary.put("apartments", Color.web("#DBDDE8"));
             secondary.put("allotment_house", Color.web("#DBDDE8"));
             primary.put("building", secondary);
-            
+
             color.put("light", primary);
         }
 

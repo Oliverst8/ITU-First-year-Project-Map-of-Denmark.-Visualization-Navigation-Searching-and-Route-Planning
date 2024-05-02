@@ -107,14 +107,14 @@ public class Navigation {
         startPath.add(startCoords);
         System.out.println("StartCoords: "+Arrays.toString(startCoords));
         startPath.add(graph.getCoords(nearestStartPointID));
-        System.out.println("NearestStartPoint: "+ Arrays.toString(graph.getCoords(nearestStartPointID)));
+        System.out.println("NearestStartPoint: " + Arrays.toString(graph.getCoords(nearestStartPointID)));
         paths[1] = new DrawableWay(startPath, -2, "navigation", "pathToRoad");
 
         CoordArrayList endPath = new CoordArrayList();
         endPath.add(endCoords);
-        System.out.println("EndCoords: "+Arrays.toString(endCoords));
+        System.out.println("EndCoords: "+ Arrays.toString(endCoords));
         endPath.add(graph.getCoords(nearestEndPointID));
-        System.out.println("NearestEndPoint: "+Arrays.toString(graph.getCoords(nearestEndPointID)));
+        System.out.println("NearestEndPoint: " + Arrays.toString(graph.getCoords(nearestEndPointID)));
         paths[2] = new DrawableWay(endPath, -3, "navigation", "pathToRoad");
 
         return paths;

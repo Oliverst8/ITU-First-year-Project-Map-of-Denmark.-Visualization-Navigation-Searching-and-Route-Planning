@@ -8,6 +8,9 @@ module dk.itu.map {
     
     requires org.apache.commons.io;
     requires org.apache.commons.compress;
+    requires javafx.base;
+
+    requires com.gluonhq.charm.glisten;
     
     opens dk.itu.map to javafx.fxml;
     opens dk.itu.map.fxml to javafx.fxml;
