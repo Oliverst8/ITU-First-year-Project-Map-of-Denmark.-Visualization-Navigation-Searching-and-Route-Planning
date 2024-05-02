@@ -67,9 +67,27 @@ public class HomeController {
             item.setOnAction(e -> {
                 mapList.hide();
 
-                App.setView(new Screen.Map(item.getText()));
+                App.setView(new Screen.Map(item.getText(), "external"));
+            });
+        }
+
+        // Import internal maps
+        File internalDirectoryPath = new File(getClass().getResource("/maps").getPath());
+
+        String[] internalMaps = internalDirectoryPath.list();
+
+        // If the directory is empty, return.
+        if (internalMaps == null) return;
+        
+        for (String map : internalMaps) {
+            MenuItem item = new MenuItem(map);
+            mapList.getItems().add(item);
+
+            item.setOnAction(e -> {
+                mapList.hide();
+
+                App.setView(new Screen.Map(item.getText(), "internal"));
             });
         }
     }
-
 }

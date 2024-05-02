@@ -47,7 +47,11 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
-        App.mapPath = App.DATA_PATH + mapName + "/";
+        if(model.getMapType().equals("internal")) {
+            App.mapPath = getClass().getResource("/maps/" + mapName + "/").getPath();
+        } else {
+            App.mapPath = App.DATA_PATH + mapName + "/";
+        }
 
         UtilityLoader utilityLoader = new UtilityLoader(mapName);
         utilityLoader.start();

@@ -32,7 +32,7 @@ public class ChunkController {
             OSMParser parser = new OSMParser(file, fileProgress);
             parser.setCallback((Runnable)() -> {
                 System.out.println("Finished importing map!");
-                App.setView(new Screen.Map(name));
+                App.setView(new Screen.Map(name, "external"));
             });
             parser.start();
         };
