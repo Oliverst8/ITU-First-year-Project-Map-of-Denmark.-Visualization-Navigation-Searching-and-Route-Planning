@@ -69,6 +69,7 @@
                 <Canvas fx:id="canvasAmenity" />
                 <Canvas fx:id="canvasHighway" />
                 <Canvas fx:id="canvasNavigation" />
+                <Canvas fx:id="canvasPointOfInterest" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
             <Button layoutX="684.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="30.0" prefWidth="25.0" text="x" />
             <Button layoutX="725.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="30.0" prefWidth="25.0" text="x" />

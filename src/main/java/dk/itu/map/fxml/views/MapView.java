@@ -1,5 +1,6 @@
 package dk.itu.map.fxml.views;
 
+import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
@@ -7,6 +8,10 @@ import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -53,7 +58,7 @@ public class MapView {
 
     private AnimationTimer render;
     private int vehicleCode = 4;
-    private boolean setStartPoint = false, setEndPoint = false;
+    private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = true;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -68,7 +73,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
+        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -125,6 +130,17 @@ public class MapView {
             model.removeRoute();
 
             new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+        } else if(setPointOfInterest){
+            float[] pointOfInterest = new float[]{(float) e.getX(), (float) e.getY()};
+            pointOfInterest = convertToLatLon(pointOfInterest);
+            System.out.println("Point of interest set to: " + pointOfInterest[0] + ", " + pointOfInterest[1]);
+            //setPointOfInterest = false;
+            try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
+                writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            redraw();
         }
     }
 
@@ -258,9 +274,10 @@ public class MapView {
             layers.put(key, new HashSet<>());
         }
         Set<Drawable> navigationSet = getNavigationDrawables();
-
+        Set<Drawable> pointOfInterests = getPointOfInterests();
 
         layers.put("navigation", navigationSet);
+        layers.put("pointOfInterest", pointOfInterests);
 
         updateZoomAmount();
 
@@ -272,7 +289,7 @@ public class MapView {
                     Drawable way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
+                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest":
                             layers.get(way.getPrimaryType()).add(way);
                             break;
                     }
@@ -320,6 +337,22 @@ public class MapView {
             navigationSet.add(drawable);
         }
         return navigationSet;
+    }
+
+    private Set<Drawable> getPointOfInterests() {
+        Set<Drawable> pointOfInterests = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] coords = line.split(", ");
+                float lat = Float.parseFloat(coords[0]);
+                float lon = Float.parseFloat(coords[1]);
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pointOfInterests;
     }
 
     /**
@@ -401,5 +434,10 @@ public class MapView {
     void navigateNow(ActionEvent event){
         controller.navigate(vehicleCode);
         redraw();
+    }
+
+    @FXML
+    void addPointOfInterest(ActionEvent event){
+        setPointOfInterest = true;
     }
 }

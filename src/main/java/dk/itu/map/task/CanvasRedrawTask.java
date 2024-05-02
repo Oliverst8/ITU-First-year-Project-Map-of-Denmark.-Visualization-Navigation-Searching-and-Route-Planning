@@ -15,12 +15,12 @@ public class CanvasRedrawTask {
     private final Affine trans;
     private final float zoomAmount;
     private final int zoomLevel;
-    private Set<Drawable> ways = null;
+    private Set<Drawable> drawables = null;
     Theme theme;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> drawable, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
         this.canvas = canvas;
-        this.ways = ways;
+        this.drawables = drawable;
         this.trans = trans;
         this.zoomAmount = zoomAmount;
         this.zoomLevel = zoomLevel;
@@ -34,8 +34,8 @@ public class CanvasRedrawTask {
         wipeCanvas(gc);
         int skipAmount = (int)Math.pow(3, zoomLevel);
         // Draw the chunks
-        for (Drawable way : ways) {
-            way.draw(gc, zoomAmount, skipAmount, theme);
+        for (Drawable drawable : drawables) {
+            drawable.draw(gc, zoomAmount, skipAmount, theme);
         }
 
         return null;
