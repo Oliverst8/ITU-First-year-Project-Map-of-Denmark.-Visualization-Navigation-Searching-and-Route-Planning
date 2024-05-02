@@ -463,7 +463,9 @@ public class TernaryTree implements Runnable, WriteAble{
                 cityMap.put(address[3], cities.size()-1);
                 cityIndexes.add(cities.size()-1);
             }
-
+            if(address[1].equals("7") && address[0].equalsIgnoreCase("Rued Langgaards vej")){
+                System.out.println("FOUND");
+            }
         }
 
         @Override
