@@ -137,7 +137,7 @@ public class DrawableWay implements Drawable {
                         gc.stroke();
                         break colorSelect;
                     
-                    case "secondary", "secondary_link", "tertiary", "tertiary_link", "service", "residential", "unclassified":
+                    case "secondary", "secondary_link", "tertiary", "tertiary_link", "service", "residential", "unclassified", "living_street", "pedestrian", "road", "track", "path", "footway", "bridleway", "steps", "cycleway", "corridor":
                         gc.setLineWidth(calcLineWidth(0.0005f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.stroke();

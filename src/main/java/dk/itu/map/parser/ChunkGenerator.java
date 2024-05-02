@@ -189,15 +189,16 @@ public class ChunkGenerator implements Runnable {
                 case "highway":
                     if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
                     switch (tags.get(i + 1)) {
-                        case "trunk", "primary", "secondary", "motorway":
+                        case "trunk", "primary", "secondary", "motorway", "motorway_link", "primary_link", "trunk_link", "secondary_link":
                             if (zoomLevel < 4) zoomLevel = 4;
                             break;
-
-                        case "tertiary", "tertiary_link", "motorway_link", "primary_link", "trunk_link":
+                        case "tertiary", "tertiary_link":
                             if (zoomLevel < 3) zoomLevel = 3;
                             break;
-                        
-                        case "service", "residential", "unclassified":
+                        case "unclassified":
+                            if (zoomLevel < 2) zoomLevel = 2;
+                            break;
+                        case "service", "residential", "pedestrian", "track", "path", "footway", "cycleway", "bridleway", "steps", "living_street", "road", "corridor":
                             if (zoomLevel < 1) zoomLevel = 0;
                             break;
                     }
