@@ -35,6 +35,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -143,6 +144,7 @@
             </AnchorPane>
             <Button fx:id="startNavigationButton" layoutX="21.0" layoutY="9.0" mnemonicParsing="false" onAction="#showNavigation" text="Start navigation" textAlignment="CENTER" />
             <Button fx:id="addMarkerButton" layoutX="130.0" layoutY="10.0" mnemonicParsing="false" onAction="#addPointOfInterest" prefWidth="100.0" text="Add marker" />
+            <Slider layoutX="7.0" layoutY="435.0" fx:id="zoomSlider" orientation="VERTICAL" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>
         </AnchorPane>

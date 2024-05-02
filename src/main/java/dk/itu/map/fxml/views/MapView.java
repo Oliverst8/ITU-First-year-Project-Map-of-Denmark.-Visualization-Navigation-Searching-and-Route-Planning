@@ -28,6 +28,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -66,6 +67,8 @@ public class MapView {
     private Button carButton;
     @FXML
     private Button addMarkerButton;
+    @FXML
+    private Slider zoomSlider;
 
 
     private String[] mapLayers;
@@ -129,7 +132,7 @@ public class MapView {
         trans = new Affine();
         trans.prependTranslation(-0.56 * model.getMinLon(), model.getMaxLat()); //Calling the code of pan, to prevent redraw before zoom has been run
 
-        // Zoom to the initial view
+        // Zoom to the initial view, this has to be run later to make sure view has been initialized
         Platform.runLater(() -> {
             zoom(0, 0, canvas.get("building").getHeight() / (this.model.getMaxLat() - this.model.getMinLat()));
 
@@ -143,6 +146,11 @@ public class MapView {
                 redraw();
             }
         };
+
+        zoomSlider.setMin(0);
+        zoomSlider.setMax(15);
+        zoomSlider.setMouseTransparent(true);
+        zoomSlider.setFocusTraversable(false);
     }
 
     @FXML
@@ -372,9 +380,11 @@ public class MapView {
      * @param factor the factor to zoom by
      */
     public void zoom(double dx, double dy, double factor) {
+        if (Math.log(trans.getMxx()) > zoomSlider.getMax() && factor > 1) return;
         trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
         trans.prependTranslation(dx, dy);
+        zoomSlider.setValue(zoomSlider.getMax()-Math.log(trans.getMxx()));
     }
 
     /**
