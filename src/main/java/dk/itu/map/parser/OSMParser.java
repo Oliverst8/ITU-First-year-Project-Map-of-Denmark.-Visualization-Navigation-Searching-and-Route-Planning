@@ -37,7 +37,7 @@ public class OSMParser extends Thread {
     private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
-    private TernaryTree address;
+    private final TernaryTree address;
 
     private final FileProgress fileProgress;
     /**
@@ -125,10 +125,6 @@ public class OSMParser extends Thread {
                             cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                             nodes.put(id, cords);
                             String[] tags = new String[4];
-                            /*ArrayList<String> tags = new ArrayList<>(4);
-                            for(int i = 0; i < 4; i++){
-                                tags.add(null);
-                            }*/
                             whileTagLoop:
                             while(true){
                                 int eventType = input.next();

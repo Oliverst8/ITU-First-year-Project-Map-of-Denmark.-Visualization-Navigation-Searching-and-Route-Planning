@@ -32,6 +32,7 @@ public class ChunkGenerator implements Runnable {
     private final Thread graphThread;
 
     private final Thread chunkingThread;
+    private final Thread addressTreeThread;
 
     private final TernaryTree address;
 
@@ -52,6 +53,9 @@ public class ChunkGenerator implements Runnable {
         this.chunkingThread.start();
         graphThread = new Thread(graph);
         graphThread.start();
+        addressTreeThread = new Thread(address);
+        addressTreeThread.start();
+
 
         this.config = config;
 
@@ -257,12 +261,11 @@ public class ChunkGenerator implements Runnable {
             writeFiles();
         }
         long startTime = System.nanoTime();
-        Thread thread = new Thread(address);
-        thread.start();
+        address.finish();
         graph.stop();
         try {
             graphThread.join();
-            thread.join();
+            addressTreeThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

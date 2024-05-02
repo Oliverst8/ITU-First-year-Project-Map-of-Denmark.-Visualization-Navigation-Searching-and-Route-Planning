@@ -15,6 +15,7 @@ public class TernaryTree implements Runnable, WriteAble{
     private List<String> streetNumber, zip, cities;
     private Node root;
     private int size;
+    private boolean running;
 
     public TernaryTree(){
         size = 0;
@@ -35,16 +36,33 @@ public class TernaryTree implements Runnable, WriteAble{
     }
 
     public void run(){
+        running = true;
+        while(streetNames.isEmpty()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("Starting to build tree");
         String[] street = streetNames.remove(0);
         float lat = streetPosition.remove(0);
         float lon = streetPosition.remove(0);
         root = insert(street, lat, lon);
-        while(!streetNames.isEmpty()){
-            street = streetNames.remove(0);
-            lat = streetPosition.remove(0);
-            lon = streetPosition.remove(0);
-            insert(street, lat, lon);
+        while(running){
+            while(!streetNames.isEmpty()){
+                street = streetNames.remove(0);
+                lat = streetPosition.remove(0);
+                lon = streetPosition.remove(0);
+                insert(street, lat, lon);
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+        System.out.println("Finsihed tree");
     }
 
     private Node insert(String[] value, float X, float Y){
@@ -201,6 +219,10 @@ public class TernaryTree implements Runnable, WriteAble{
             if (c != cSub) return false;
         }
         return true;
+    }
+
+    public void finish(){
+        running = false;
     }
 
     @Override
