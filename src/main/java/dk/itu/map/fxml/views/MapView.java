@@ -58,7 +58,7 @@ public class MapView {
 
     private AnimationTimer render;
     private int vehicleCode = 4;
-    private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = true;
+    private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -136,7 +136,7 @@ public class MapView {
             float[] pointOfInterest = new float[]{(float) e.getX(), (float) e.getY()};
             pointOfInterest = convertToLatLon(pointOfInterest);
             System.out.println("Point of interest set to: " + pointOfInterest[0] + ", " + pointOfInterest[1]);
-            //setPointOfInterest = false;
+            setPointOfInterest = false;
             try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
                 writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
             } catch (IOException ex) {
