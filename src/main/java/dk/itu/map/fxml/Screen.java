@@ -28,9 +28,9 @@ public abstract class Screen<M, C> {
 
     public static class Map extends Screen<MapModel, MapController> {
 
-        public Map(String mapName) {
+        public Map(String mapName, String mapType) {
             this.fxml = "map.fxml";
-            this.model = new MapModel();
+            this.model = new MapModel(mapType);
             this.controller = new MapController(model);
             controller.importMap("", mapName);
             this.view = new MapView(controller, model);

@@ -16,19 +16,23 @@ public class MapModel {
     private Graph graph;
     private TernaryTree address;
     public final Theme theme = new Theme();
+    private final String mapType;
 
     private final Drawable[] navigationWays;
 
-    public MapModel() {
+    public MapModel(String mapType) {
         graph = new Graph();
+        this.mapType = mapType;
         chunkLayers = new ArrayList<>();
         for (int i = 0; i <= 4; i++) {
             chunkLayers.add(new HashMap<>());
         }
-        navigationWays = new Drawable[]{null,null,null,null,null};
+        navigationWays = new Drawable[]{null, null, null, null, null};
     }
 
-    
+    public String getMapType() {
+        return mapType;
+    }
 
     /**
      * Gets the minimum longitude of the map
