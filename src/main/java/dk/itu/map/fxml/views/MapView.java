@@ -34,6 +34,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -63,6 +64,8 @@ public class MapView {
     private Button bikeButton;
     @FXML
     private Button carButton;
+    @FXML
+    private Button addMarkerButton;
 
 
     private String[] mapLayers;
@@ -150,7 +153,8 @@ public class MapView {
             startPoint = convertToLatLon(startPoint);
             System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
             setStartPoint = false;
-            Point point = new Point(startPoint[0], startPoint[1], "navigation");
+            Point point = new Point(startPoint[0], startPoint[1], "navigation", Color.RED);
+            textFieldStart.setText(startPoint[0] + ", " + startPoint[1]);
             model.setStartPoint(point);
             model.removeRoute();
             new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
@@ -159,7 +163,8 @@ public class MapView {
             endPoint = convertToLatLon(endPoint);
             System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
             setEndPoint = false;
-            Point point = new Point(endPoint[0], endPoint[1],"navigation");
+            Point point = new Point(endPoint[0], endPoint[1],"navigation", Color.RED);
+            textFieldEnd.setText(endPoint[0] + ", " + endPoint[1]);
             model.setEndPoint(point);
             model.removeRoute();
 
@@ -169,6 +174,8 @@ public class MapView {
             pointOfInterest = convertToLatLon(pointOfInterest);
             System.out.println("Point of interest set to: " + pointOfInterest[0] + ", " + pointOfInterest[1]);
             setPointOfInterest = false;
+            startNavigationButton.setDisable(false);
+            addMarkerButton.setStyle("-fx-border-color: transparent");
             try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
                 writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
             } catch (IOException ex) {
@@ -204,8 +211,8 @@ public class MapView {
         redraw();
     }
     @FXML
-    void switchToYetAnotherTheme(){
-        model.theme.setTheme(Themes.Wierd);
+    void switchToRandomTheme(){
+        model.theme.setTheme(Themes.RANDOM);
         redraw();
     }
     @FXML
@@ -267,6 +274,78 @@ public class MapView {
 
     @FXML
     void importMap(ActionEvent event) {
+    }
+    @FXML
+    void setStartPoint(ActionEvent event){
+        setStartPoint = true;
+        setEndPoint = false;
+        textFieldStart.setText("");
+        textFieldStart.setStyle("-fx-border-color: transparent");
+    }
+
+    @FXML
+    void setEndPoint(ActionEvent event){
+        setEndPoint = true;
+        setStartPoint = false;
+        textFieldEnd.setText("");
+        textFieldEnd.setStyle("-fx-border-color: transparent");
+    }
+
+    @FXML
+    void navigateNow(ActionEvent event){
+        controller.navigate(vehicleCode);
+        redraw();
+    }
+
+    @FXML
+    void addPointOfInterest(ActionEvent event){
+        setPointOfInterest = true;
+        startNavigationButton.setDisable(true);
+        addMarkerButton.setStyle("-fx-border-color: #7FFF00");
+    }
+
+    @FXML
+    void searchStartAddress(KeyEvent event){
+        searchAddress(textFieldStart, startComboBox, startAddress);
+    }
+    @FXML
+    void searchEndAddress(KeyEvent event){
+        searchAddress(textFieldEnd, endComboBox, endAddress);
+    }
+
+    @FXML
+    void addressSelectedStart(ActionEvent event){
+        addressSelected(textFieldStart, startComboBox, startAddress);
+    }
+
+    @FXML
+    void addressSelectedEnd(ActionEvent event){
+        addressSelected(textFieldEnd, endComboBox, endAddress);
+    }
+    @FXML
+    void showNavigation(){
+        navigationPane.setVisible(true);
+        navigationPane.setDisable(false);
+        startNavigationButton.setVisible(false);
+        startNavigationButton.setDisable(true);
+        addMarkerButton.setVisible(false);
+        addMarkerButton.setDisable(true);
+    }
+    @FXML
+    void hideNavigation(){
+        navigationPane.setVisible(false);
+        navigationPane.setDisable(true);
+        startNavigationButton.setVisible(true);
+        startNavigationButton.setDisable(false);
+        addMarkerButton.setVisible(true);
+        addMarkerButton.setDisable(false);
+    }
+
+    @FXML
+    void setTextToCoords(float x, float y){
+
+        textFieldStart.setText(x + ", " + y);
+
     }
 
     /**
@@ -394,7 +473,7 @@ public class MapView {
                 String[] coords = line.split(", ");
                 float lat = Float.parseFloat(coords[0]);
                 float lon = Float.parseFloat(coords[1]);
-                pointOfInterests.add(new Point(lat, lon, "pointOfInterest"));
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest", Color.YELLOW));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -463,70 +542,7 @@ public class MapView {
         return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
-    @FXML
-    void setStartPoint(ActionEvent event){
-        System.out.println("Can now set start point");
-        setStartPoint = true;
-        setEndPoint = false;
-    }
 
-    @FXML
-    void setEndPoint(ActionEvent event){
-        System.out.println("Can now set end point");
-        setEndPoint = true;
-        setStartPoint = false;
-    }
-
-    @FXML
-    void navigateNow(ActionEvent event){
-        controller.navigate(vehicleCode);
-        redraw();
-    }
-
-    @FXML
-    void addPointOfInterest(ActionEvent event){
-        setPointOfInterest = true;
-    }
-
-    @FXML
-    void searchStartAddress(KeyEvent event){
-        searchAddress(textFieldStart, startComboBox, startAddress);
-    }
-    @FXML
-    void searchEndAddress(KeyEvent event){
-        searchAddress(textFieldEnd, endComboBox, endAddress);
-    }
-
-    @FXML
-    void addressSelectedStart(ActionEvent event){
-        addressSelected(textFieldStart, startComboBox, startAddress);
-    }
-
-    @FXML
-    void addressSelectedEnd(ActionEvent event){
-        addressSelected(textFieldEnd, endComboBox, endAddress);
-    }
-    @FXML
-    void showNavigation(){
-        navigationPane.setVisible(true);
-        navigationPane.setDisable(false);
-        startNavigationButton.setVisible(false);
-        startNavigationButton.setDisable(true);
-    }
-    @FXML
-    void hideNavigation(){
-        navigationPane.setVisible(false);
-        navigationPane.setDisable(true);
-        startNavigationButton.setVisible(true);
-        startNavigationButton.setDisable(false);
-    }
-
-    @FXML
-    void setTextToCoords(float x, float y){
-
-        textFieldStart.setText(x + ", " + y);
-
-    }
 
 
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
