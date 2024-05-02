@@ -1,6 +1,7 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.TernaryTree;
+import dk.itu.map.App;
 import dk.itu.map.structures.Graph;
 
 import java.io.IOException;
@@ -10,8 +11,8 @@ public class UtilityLoader extends Thread{
     private String path;
     private TernaryTree address;
 
-    public UtilityLoader(String path) {
-        this.path = path + "/utilities";
+    public UtilityLoader(String name) {
+        this.path = App.DATA_PATH + name + "/utilities";
         graph = new Graph();
     }
 

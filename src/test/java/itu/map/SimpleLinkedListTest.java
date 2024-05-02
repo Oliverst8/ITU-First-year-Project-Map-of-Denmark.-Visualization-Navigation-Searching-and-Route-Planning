@@ -15,10 +15,10 @@ public class SimpleLinkedListTest {
         for (int i = 0; i < 100000; i++) {
             collection.add(i);
         }
-        SimpleLinkedList simpleLinkedList = new SimpleLinkedList(collection);
+        SimpleLinkedList<Integer> simpleLinkedList = new SimpleLinkedList<Integer>(collection);
         assertEquals(100000, simpleLinkedList.size());
 
-        SimpleLinkedList.Node node = simpleLinkedList.getFirst();
+        SimpleLinkedList.Node<Integer> node = simpleLinkedList.getFirst();
         for (int i = 0; i < 100000; i++) {
             assertEquals(i, node.getValue());
             node = node.getNext();
@@ -31,10 +31,10 @@ public class SimpleLinkedListTest {
         for (int i = 0; i < 3; i++) {
             collection.add(i);
         }
-        SimpleLinkedList simpleLinkedList = new SimpleLinkedList(collection);
+        SimpleLinkedList<Integer> simpleLinkedList = new SimpleLinkedList<Integer>(collection);
 
-        SimpleLinkedList.Node preDestination = simpleLinkedList.getFirst();
-        SimpleLinkedList.Node preTarget = preDestination.getNext();
+        SimpleLinkedList.Node<Integer> preDestination = simpleLinkedList.getFirst();
+        SimpleLinkedList.Node<Integer> preTarget = preDestination.getNext();
 
         simpleLinkedList.move(preDestination, preTarget);
 
@@ -43,11 +43,10 @@ public class SimpleLinkedListTest {
         expected.add(2);
         expected.add(1);
 
-        SimpleLinkedList.Node node = simpleLinkedList.getFirst();
+        SimpleLinkedList.Node<Integer> node = simpleLinkedList.getFirst();
         for (int i = 0; i < 3; i++) {
             assertEquals(expected.get(i), node.getValue());
             node = node.getNext();
         }
     }
-
 }

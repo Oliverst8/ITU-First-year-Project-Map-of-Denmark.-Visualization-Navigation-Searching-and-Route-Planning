@@ -1,10 +1,14 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-import java.io.*;
-
-public class ByteArrayList extends PrimitiveArrayList implements WriteAble{
+public class ByteArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private byte[] array;
 

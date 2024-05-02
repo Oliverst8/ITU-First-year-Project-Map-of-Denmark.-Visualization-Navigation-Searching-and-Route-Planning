@@ -49,10 +49,6 @@ public class Polygon extends MapElement {
                 stream.writeFloat(coord);
             }
         }
-        stream.writeInt(getTags().size());
-        for (int i = 0; i < getTags().size(); i++) {
-            stream.writeUTF(getTags().get(i));
-        }
         stream.writeUTF(primaryType);
         stream.writeUTF(secondaryType);
     }

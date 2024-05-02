@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
@@ -31,7 +29,6 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 
 public class OSMParser extends Thread {
     private File file;
-    private final String dataPath;
 
     private ArrayList<MapElement> relations;
     private LongCoordHashMap nodes;
@@ -42,15 +39,15 @@ public class OSMParser extends Thread {
     private ChunkGenerator chunkGenerator;
     private TernaryTree address;
 
+    private final FileProgress fileProgress;
     /**
      * Constructor for the OSMParser class
      *
      * @param file The file to be parsed
-     * @param dataPath The path to the data folder
      */
-    public OSMParser(File file, String dataPath) {
+    public OSMParser(File file, FileProgress fileProgress) {
         this.file = file;
-        this.dataPath = dataPath;
+        this.fileProgress = fileProgress;
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
@@ -84,8 +81,9 @@ public class OSMParser extends Thread {
 
             ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
             parseRelations(relationReader);
-
+            System.out.println("Stating parsing");
             parse(new FileInputStream(file));
+            fileProgress.finishProgress();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -99,16 +97,14 @@ public class OSMParser extends Thread {
      */
 
     private void parse(InputStream inputStream) {
-        int counter = 0;
         try {
-            XMLStreamReader input = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            XMLReaderWrapper input = new XMLReaderWrapper(inputStream, fileProgress);
             nodes = new LongCoordHashMap();
             long startLoadTime = System.nanoTime();
-
+            //int amountRead = 0;
             whileLoop:
             while (true) {
                 int tagKind = input.next();
-
                 if (tagKind == XMLStreamConstants.START_ELEMENT) {
                     String type = input.getLocalName();
                     switch (type) {
@@ -118,13 +114,11 @@ public class OSMParser extends Thread {
                             float maxLat = Float.parseFloat(input.getAttributeValue(null, "maxlat"));
                             float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                             float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
-                            chunkGenerator = new ChunkGenerator(dataPath, minLat, maxLat, minLon, maxLon, address);
+                            MapConfig config = new MapConfig(minLat, maxLat, minLon, maxLon);
+                            chunkGenerator = new ChunkGenerator(config, address);
                         }
 
                         case "node" -> {
-                            if((++counter)%1_000_000 == 0){
-                                System.out.println("Nodes:" + counter);
-                            }
                             float[] cords = new float[2];
                             long id = Long.parseLong(input.getAttributeValue(null, "id"));
                             cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
@@ -172,9 +166,6 @@ public class OSMParser extends Thread {
                         }
 
                         case "way" -> {
-                            if((++counter)%1_000_000 == 0){
-                                System.out.println("Ways: " + counter);
-                            }
                             long id = Long.parseLong(input.getAttributeValue(null, "id"));
                             createWay(input, nodes, id);
                         }
@@ -273,7 +264,7 @@ public class OSMParser extends Thread {
      * @param nodes The nodes of the way
      * @param id The id of the way
      */
-    private void createWay(XMLStreamReader input, LongCoordHashMap nodes, long id) throws XMLStreamException {
+    private void createWay(XMLReaderWrapper input, LongCoordHashMap nodes, long id) throws XMLStreamException {
         CoordArrayList coords = new CoordArrayList();
         List<String> tags = new ArrayList<>();
         LongArrayList nodeIds = new LongArrayList();

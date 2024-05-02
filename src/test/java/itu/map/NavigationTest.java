@@ -134,6 +134,7 @@ class NavigationTest {
         graph.run();
         return graph;
     }
+
     private GraphBuilder getGraphSomeFootPathSomeMotorway() {
         GraphBuilder graph = new GraphBuilder();
         ArrayList<String> tags = new ArrayList<>();
@@ -251,9 +252,8 @@ class NavigationTest {
         Navigation navigation = new Navigation(graph, 4);
         DrawableWay path = navigation.getPath(1, 13);
 
-        //float[] expected = new float[]{2f,4f,1f,1f};
-        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
-*/
+    //     //float[] expected = new float[]{2f,4f,1f,1f};
+    //     float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
+    //     assertArrayEquals(expected, path.getOuterCoords());
+    // }*/
 }

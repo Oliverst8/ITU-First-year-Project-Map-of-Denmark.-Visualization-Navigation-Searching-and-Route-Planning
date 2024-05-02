@@ -1,6 +1,7 @@
 module dk.itu.map {
     requires java.xml;
     
+    requires javafx.base;
     requires javafx.fxml;
     requires transitive javafx.controls;
     requires transitive javafx.graphics;
@@ -19,6 +20,7 @@ module dk.itu.map {
 
     exports dk.itu.map;
     exports dk.itu.map.fxml;
+    exports dk.itu.map.fxml.models;
     exports dk.itu.map.parser;
     exports dk.itu.map.structures;
     exports dk.itu.map.structures.ArrayLists;

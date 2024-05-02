@@ -1,6 +1,7 @@
 package dk.itu.map.fxml.views;
 
 import dk.itu.map.structures.TernaryTree;
+import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
@@ -8,7 +9,15 @@ import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.HashMap;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -77,11 +86,11 @@ public class MapView {
 
     // Amount of chunks seen
     private float currentChunkAmountSeen = 1;
+    private float zoomAmount;
 
     private AnimationTimer render;
-    private int themeNumber = 0;
     private int vehicleCode = 4;
-    private boolean setStartPoint = false, setEndPoint = false;
+    private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -96,7 +105,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
+        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -110,6 +119,8 @@ public class MapView {
 
             canvas.get(key).widthProperty().bind(root.widthProperty());
             canvas.get(key).heightProperty().bind(root.heightProperty());
+            canvas.get(key).widthProperty().addListener(e -> redraw());
+            canvas.get(key).heightProperty().addListener(e -> redraw());
         }
 
         trans = new Affine();
@@ -122,8 +133,6 @@ public class MapView {
             redraw();
         });
 
-        startDist = getZoomDistance();
-
 
         render = new AnimationTimer() {
             @Override
@@ -131,28 +140,11 @@ public class MapView {
                 redraw();
             }
         };
-
-        /*autocompleteStartPoint.setCompleter(textInput -> {
-            System.out.println("Autocompleting start");
-            Map<String[], TernaryTree.AddressNode> results = controller.searchAddress(textInput);
-            List<String> suggestions = new ArrayList<>();
-            int i = 0;
-            for(String[] result : results.keySet()){
-                suggestions.add(result[0] + ": " + result[1]);
-            }
-            System.out.println("Suggestions: " + suggestions);
-            return suggestions;
-            //return Arrays.asList("Jonathan", "Jose");
-        });
-
-        autocompleteStartPoint.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("New value selected from the auto-complete popup: " + newValue);
-        });
-*/
     }
 
     @FXML
     void canvasClicked(MouseEvent e){
+        updateZoomAmount();
         if(setStartPoint){
             float[] startPoint = new float[]{(float) e.getX(), (float) e.getY()};
             startPoint = convertToLatLon(startPoint);
@@ -161,7 +153,7 @@ public class MapView {
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -171,7 +163,18 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, getZoomDistance() / startDist * 100, model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+        } else if(setPointOfInterest){
+            float[] pointOfInterest = new float[]{(float) e.getX(), (float) e.getY()};
+            pointOfInterest = convertToLatLon(pointOfInterest);
+            System.out.println("Point of interest set to: " + pointOfInterest[0] + ", " + pointOfInterest[1]);
+            setPointOfInterest = false;
+            try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
+                writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            redraw();
         }
     }
 
@@ -266,21 +269,6 @@ public class MapView {
     void importMap(ActionEvent event) {
     }
 
-    /*@FXML
-    void startPointTyped(KeyEvent event) {
-        System.out.println("Start point typed");
-        //System.out.println(autocompleteStartPoint.getText());
-        autocompleteTextField(autocompleteStartPoint);
-    }
-
-    @FXML
-    void endPointTyped(KeyEvent event) {
-        System.out.println("End point typed");
-        autocompleteTextField(autocompleteEndPoint);
-    }*/
-
-
-
     /**
      * Pans the map
      * 
@@ -308,25 +296,41 @@ public class MapView {
     /**
      * Redraws the map
      */
-    private void redraw() {
-        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
-        updateZoomLevel();
-        currentChunkAmountSeen = controller.updateChunks(getDetailLevel(), getUpperLeftCorner(), getLowerRightCorner());
-        updateZoomLevel();
 
-        Map<String, Set<Drawable>> ways = new HashMap<>();
+    public static boolean overridePrint = false;
+    long prevTime = 0;
+    public void redraw() {
+        //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
+        updateZoomAmount();
+        boolean print = false;
+        if (System.currentTimeMillis() - prevTime > 300) {
+            prevTime = System.currentTimeMillis();
+            print = true;
+            overridePrint = false;
+        }
+        controller.updateChunks(getZoomLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
+        updateZoomAmount();
+        if (overridePrint) {
+            print = true;
+            overridePrint = false;
+        }
+
+        controller.getWrittenChunks();
+
+        Map<String, Set<Drawable>> layers = new HashMap<>();
         
         for(String key : mapLayers){
-            ways.put(key, new HashSet<>());
+            layers.put(key, new HashSet<>());
         }
         Set<Drawable> navigationSet = getNavigationDrawables();
+        Set<Drawable> pointOfInterests = getPointOfInterests();
 
+        layers.put("navigation", navigationSet);
+        layers.put("pointOfInterest", pointOfInterests);
 
-        ways.put("navigation", navigationSet);
+        updateZoomAmount();
 
-        float zoom = getZoomDistance() / startDist * 100;
-
-        for(int i = getDetailLevel(); i <= 4; i++) {
+        for(int i = getZoomLevel(); i <= 4; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);
@@ -334,20 +338,42 @@ public class MapView {
                     Drawable way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
-                            ways.get(way.getPrimaryType()).add(way);
+                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest":
+                            layers.get(way.getPrimaryType()).add(way);
                             break;
                     }
                 }
             }
         }
+        Map<String, Long> renderTimes = new HashMap<>();
 
-        for (Map.Entry<String, Set<Drawable>> entry : ways.entrySet()) {
-            
+        for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
+
+            long startTime = System.currentTimeMillis();
+
             Canvas canvas = this.canvas.get(entry.getKey());
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoomAmount, getZoomLevel(), model.theme).run();
 
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoom, model.theme).run();
+            long endTime = System.currentTimeMillis();
+
+            renderTimes.put(entry.getKey(), endTime - startTime);
         }
+
+        if (!print) return;
+        // System.out.println("Render times: ");
+        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
+        //     String layer = String.format("%-15s", entry.getKey());
+        //     long renderTime = entry.getValue();
+        //     drawTimes += renderTime;
+
+        //     System.out.println(layer + ": " + renderTime + " ");
+        // }
+        // System.out.println("Current zoomLevel: " + getZoomLevel());
+        // System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
+        // System.out.println("Total draw time: " + drawTimes + "ms");
+        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
+        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
+        // System.out.println();
     }
 
     private Set<Drawable> getNavigationDrawables() {
@@ -358,6 +384,22 @@ public class MapView {
             navigationSet.add(drawable);
         }
         return navigationSet;
+    }
+
+    private Set<Drawable> getPointOfInterests() {
+        Set<Drawable> pointOfInterests = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] coords = line.split(", ");
+                float lat = Float.parseFloat(coords[0]);
+                float lon = Float.parseFloat(coords[1]);
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pointOfInterests;
     }
 
     /**
@@ -377,11 +419,11 @@ public class MapView {
     /**
      * @return int the detail level of the map
      */
-    private int getDetailLevel(){
-        if(zoomLevel > 0.07) return 4;
-        if(zoomLevel > 0.01) return 3;
-        if(zoomLevel > 0.01) return 2;
-        if(zoomLevel > 6.9539517E-4) return 1;
+    private int getZoomLevel(){
+        if(zoomAmount > 10) return 4;
+        if(zoomAmount > 5) return 3;
+        if(zoomAmount > 3) return 2;
+        if(zoomAmount > 1) return 1;
         return 0;
     }
 
@@ -397,9 +439,8 @@ public class MapView {
     /**
      * Updates the zoom level
      */
-    private void updateZoomLevel() {
-        float newZoom = getZoomDistance();
-        zoomLevel = (newZoom / startDist) * 100;
+    private void updateZoomAmount() {
+        zoomAmount = getZoomDistance() * 100;
     }
 
     /**
@@ -440,6 +481,11 @@ public class MapView {
     void navigateNow(ActionEvent event){
         controller.navigate(vehicleCode);
         redraw();
+    }
+
+    @FXML
+    void addPointOfInterest(ActionEvent event){
+        setPointOfInterest = true;
     }
 
     @FXML

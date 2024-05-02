@@ -74,6 +74,7 @@
                 <Canvas fx:id="canvasAmenity" />
                 <Canvas fx:id="canvasHighway" />
                 <Canvas fx:id="canvasNavigation" />
+                <Canvas fx:id="canvasPointOfInterest" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
             <AnchorPane fx:id="navigationPane" disable="true" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0" visible="false">
                <children>

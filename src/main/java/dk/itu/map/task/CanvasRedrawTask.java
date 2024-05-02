@@ -5,37 +5,37 @@ import dk.itu.map.structures.Drawable;
 
 import java.util.Set;
 
-import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
-public class CanvasRedrawTask extends Task<Void> {
+public class CanvasRedrawTask {
     private final Canvas canvas;
     private final Affine trans;
-    private final float zoom;
-    private Set<Drawable> ways = null;
+    private final float zoomAmount;
+    private final int zoomLevel;
+    private Set<Drawable> drawables = null;
     Theme theme;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Drawable> ways, Affine trans, float zoom, Theme theme) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> drawable, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
         this.canvas = canvas;
-        this.ways = ways;
+        this.drawables = drawable;
         this.trans = trans;
-        this.zoom = zoom;
+        this.zoomAmount = zoomAmount;
+        this.zoomLevel = zoomLevel;
         this.theme = theme;
     }
 
-    @Override
-    protected Void call() throws Exception {
+    public Void run() {
         // Redraw the canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         wipeCanvas(gc);
-
+        int skipAmount = (int)Math.pow(3, zoomLevel);
         // Draw the chunks
-        for (Drawable way : ways) {
-            way.draw(gc, zoom, theme);
+        for (Drawable drawable : drawables) {
+            drawable.draw(gc, zoomAmount, skipAmount, theme);
         }
 
         return null;

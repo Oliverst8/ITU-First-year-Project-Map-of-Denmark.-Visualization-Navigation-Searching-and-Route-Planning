@@ -24,6 +24,18 @@ java {
     }
 }
 
+// Uncomment this when you want to create a JAR file.
+// jar {
+//     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//     manifest {
+//         attributes "Main-Class": "dk.itu.map.Main"
+//     }
+
+//     from {
+//         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+//     }
+// }
+
 application {
     // Define the main class for the application.
     mainModule = 'dk.itu.map'
@@ -49,6 +61,19 @@ dependencies {
     // https://mvnrepository.com/artifact/com.gluonhq.attach/util
     implementation group: 'com.gluonhq.attach', name: 'util', version: '4.0.20'
 
+    // JavaFx | Uncomment when you want to build.
+    // implementation group: 'org.openjfx', name: 'javafx-base', version: '21.0.3', classifier: 'win'
+    // implementation group: 'org.openjfx', name: 'javafx-base', version: '21.0.3', classifier: 'mac'
+    // implementation group: 'org.openjfx', name: 'javafx-base', version: '21.0.3', classifier: 'linux'
+    // implementation group: 'org.openjfx', name: 'javafx-fxml', version: '21.0.3', classifier: 'win'
+    // implementation group: 'org.openjfx', name: 'javafx-fxml', version: '21.0.3', classifier: 'mac'
+    // implementation group: 'org.openjfx', name: 'javafx-fxml', version: '21.0.3', classifier: 'linux'
+    // implementation group: 'org.openjfx', name: 'javafx-controls', version: '21.0.3', classifier: 'win'
+    // implementation group: 'org.openjfx', name: 'javafx-controls', version: '21.0.3', classifier: 'mac'
+    // implementation group: 'org.openjfx', name: 'javafx-controls', version: '21.0.3', classifier: 'linux'
+    // implementation group: 'org.openjfx', name: 'javafx-graphics', version: '21.0.3', classifier: 'win'
+    // implementation group: 'org.openjfx', name: 'javafx-graphics', version: '21.0.3', classifier: 'mac'
+    // implementation group: 'org.openjfx', name: 'javafx-graphics', version: '21.0.3', classifier: 'linux'
 }
 
 test {

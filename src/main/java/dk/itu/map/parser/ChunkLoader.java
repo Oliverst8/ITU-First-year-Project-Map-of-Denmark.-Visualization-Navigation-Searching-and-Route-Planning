@@ -1,92 +1,117 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
+import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.EOFException;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
-public class ChunkLoader {
-    private final String dataPath;
+public class ChunkLoader extends Thread {
 
-    public float minLat, maxLat, minLon, maxLon;
-    public int chunkColumnAmount, chunkRowAmount, chunkAmount;
-    public float CHUNK_SIZE;
+    private final MapConfig config;
+    
+    // private List<List<Drawable>> finishedChunks;
+    // private List<Integer> finishedChunkIndexes;
+    // private List<Integer> finishedChunkLayers;
+    private Map<Integer, Map<Integer, List<Drawable>>> finishedChunks;
+    private final LinkedList<Integer>[] chunkIndexQueue;
+    private final HashSet<Integer>[] chunkQueueSet;
+    private int queueSize;
 
+    private Runnable callback;
+    
     /**
      * Initialises the filehandler
      *
-     * @param dataPath
      */
-    public ChunkLoader(String dataPath) {
-        this.dataPath = dataPath;
-        loadConfig();
+    @SuppressWarnings("unchecked")
+    public ChunkLoader() {
+        this.config = new MapConfig();
+        // this.finishedChunks = Collections.synchronizedList(new ArrayList<>());
+        // this.finishedChunkIndexes = Collections.synchronizedList(new ArrayList<>());
+        // this.finishedChunkLayers = Collections.synchronizedList(new ArrayList<>());
+        this.finishedChunks = new HashMap<>();
+        this.chunkIndexQueue = new LinkedList[config.layerCount];
+        this.chunkQueueSet = new HashSet[config.layerCount];
+        for (int i = 0; i < config.layerCount; i++) {
+            chunkIndexQueue[i] = new LinkedList<>();
+            chunkQueueSet[i] = new HashSet<>();
+        }
+        queueSize = 0;
+
+        Thread thread = new Thread(this);
+        thread.start();
     }
 
-    /**
-     * Load the config file, and set the variables
-     */
-    private void loadConfig() {
-        try {
-            File file = new File(this.dataPath + "/config");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.minLon = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.maxLon = Float.parseFloat(reader.readLine().split(" ")[1]);
-            this.chunkColumnAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.chunkRowAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.chunkAmount = Integer.parseInt(reader.readLine().split(" ")[1]);
-            this.CHUNK_SIZE = Float.parseFloat(reader.readLine().split(" ")[1]);
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void setCallback(Runnable callback) {
+        this.callback = callback;
+    }
+
+
+    public void readFiles(int[] chunks, int zoomLevel) {
+        for (int chunk : chunks) {
+            if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) continue;
+            if (chunkQueueSet[zoomLevel].contains(chunk)) continue;
+            chunkIndexQueue[zoomLevel].add(chunk);
+            chunkQueueSet[zoomLevel].add(chunk);
+            queueSize++;
         }
     }
 
-    /**
-     * Load the data from the chunkfiles
-     *
-     * @param chunks    The chunks to load
-     * @param zoomLevel The zoom level
-     * @return The ways
-     */
+    public Map<Integer, Map<Integer, List<Drawable>>> getFinishedChunks() {
+        Map<Integer, Map<Integer, List<Drawable>>> temp = finishedChunks;
+        finishedChunks = new HashMap<>();
+        return temp;
+    }
 
-    public Map<Integer, List<Drawable>> readFiles(int[] chunks, int zoomLevel) {
-        Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
-
-        IntStream.of(chunks).parallel().forEach(chunk -> {
-            if (chunk < 0 || chunk >= chunkAmount) return;
-
-            ways.putIfAbsent(chunk, new ArrayList<>());
-
-            File file = new File(this.dataPath + "/zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+    public void run() {
+        while (true) {
+            try {
+                if (queueSize <= 0) {
+                    Thread.sleep(100);
+                    continue;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                continue;
+            }
+            int chunkIndex = -1;
+            int zoomLayer = -1;
+            for (int i = config.layerCount-1; i >= 0; i--) {
+                if (chunkIndexQueue[i].size() > 0) {
+                    chunkIndex = chunkIndexQueue[i].remove();
+                    chunkQueueSet[i].remove(chunkIndex);
+                    zoomLayer = i;
+                    queueSize--;
+                    break;
+                }
+            }
+            if (chunkIndex == -1) continue;
+            List<Drawable> chunk = new ArrayList<>();
+            
+            File file = new File(App.mapPath + "zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
 
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            String[] tags;
             try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 while (true) {
                     id = stream.readLong();
@@ -100,14 +125,67 @@ public class ChunkLoader {
                     for (int j = 0; j < innerCoordsLength; j++) {
                         innerCoords.add(stream.readFloat(), stream.readFloat());
                     }
-                    tags = new String[stream.readInt()];
-                    for (int j = 0; j < tags.length; j++) {
-                        tags[j] = stream.readUTF();
+
+                    String primaryType = stream.readUTF();
+                    String secondaryType = stream.readUTF();
+                    chunk.add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
+                }
+                /*
+                 * The stream will throw an end of file exception when its done,
+                 * this way we can skip checking if we are done reading every loop, and save
+                 * time
+                 */
+            } catch (EOFException e) {
+                // End of file reached
+                finishedChunks.putIfAbsent(zoomLayer, new HashMap<>());
+                finishedChunks.get(zoomLayer).put(chunkIndex, chunk);
+                if (queueSize % 20 == 0) Platform.runLater(callback);
+                continue;
+            } catch (IOException e) {
+                // Since we run it in parallel we need to return a runtime exception since we
+                // can throw the IOException out of the scope
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Load the data from the chunkfiles
+     *
+     * @param chunks    The chunks to load
+     * @param zoomLevel The zoom level
+     * @return The ways
+     */
+    public Map<Integer, List<Drawable>> readFilesold(int[] chunks, int zoomLevel) {
+        Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
+        // long starTime = System.currentTimeMillis();
+        IntStream.of(chunks).parallel().forEach(chunk -> {
+            if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) return;
+
+            ways.putIfAbsent(chunk, new ArrayList<>());
+
+            File file = new File(App.mapPath + "zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+
+            long id;
+            CoordArrayList outerCoords;
+            CoordArrayList innerCoords;
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                while (true) {
+                    id = stream.readLong();
+                    int outerCoordsLength = stream.readInt();
+                    outerCoords = new CoordArrayList(outerCoordsLength);
+                    for (int j = 0; j < outerCoordsLength; j++) {
+                        outerCoords.add(stream.readFloat(), stream.readFloat());
+                    }
+                    int innerCoordsLength = stream.readInt();
+                    innerCoords = new CoordArrayList(innerCoordsLength);
+                    for (int j = 0; j < innerCoordsLength; j++) {
+                        innerCoords.add(stream.readFloat(), stream.readFloat());
                     }
 
                     String primaryType = stream.readUTF();
                     String secondaryType = stream.readUTF();
-                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, tags, id, primaryType, secondaryType));
+                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
                 }
                 /*
                  * The stream will throw an end of file exception when its done,
@@ -124,37 +202,19 @@ public class ChunkLoader {
             }
         });
 
+        // long endTime = System.currentTimeMillis();
+        // System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
+        // MapView.overridePrint = true;
         return ways;
     }
 
-    /**
-     * Converts a latitude and longitude to a chunk index
-     *
-     * @param lat The latitude
-     * @param lon The longitude
-     * @return The chunk index
-     */
-    public int latLonToChunkIndex(float lat, float lon) {
-        return (int) Math.floor((lon - minLon) / CHUNK_SIZE) +
-                (int) Math.floor((lat - minLat) / CHUNK_SIZE) * chunkColumnAmount;
+    public int pointToChunkIndex(Point2D point, int zoomLevel) {
+        return config.pointToChunkIndex(point, zoomLevel);
     }
 
-    /**
-     * Converts a javaFX-point to a chunk index
-     *
-     * @param p The point
-     * @return The chunk index
-     */
-    public int pointToChunkIndex(Point2D p) {
-        float X = (float) p.getX() / 0.56f;
-        X = Math.min(X, maxLon);
-        X = Math.max(X, minLon);
-        float Y = (float) p.getY() * -1;
-        Y = Math.min(Y, maxLat);
-        Y = Math.max(Y, minLat);
-        int chunkIndex = latLonToChunkIndex(Y, X);
-        chunkIndex = Math.min(chunkIndex, chunkAmount - 1);
-        chunkIndex = Math.max(chunkIndex, 0);
-        return chunkIndex;
+    public MapConfig getConfig() {
+        return config;
     }
+
+
 }

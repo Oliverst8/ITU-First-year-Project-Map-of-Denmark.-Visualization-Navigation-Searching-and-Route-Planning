@@ -14,16 +14,13 @@ public class Point implements Drawable{
         this.primaryType = primaryType;
     }
 
-    public void draw(GraphicsContext gc, float zoom, Theme theme){
+    public void draw(GraphicsContext gc, float zoom, int skipAmount, Theme theme){
         gc.setStroke(Color.BEIGE);
 
-        //float width = 0.0003f;
-        //float height = 0.0003f;
-        float width = 0.03f;
-        float height = 0.03f;
-        float x = (this.x * 0.56f) - width / 2;
-        float y = (this.y * -1) - height / 2;
-        gc.fillOval( x, y, width, height);
+        double size = calcLineWidth(0.003f, zoom);
+        double x = (this.x * 0.56f) - size / 2;
+        double y = (this.y * -1) - size / 2;
+        gc.fillOval( x, y, size, size);
     }
 
     @Override

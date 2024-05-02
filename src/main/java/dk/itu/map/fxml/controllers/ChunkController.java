@@ -5,26 +5,31 @@ import java.io.File;
 import dk.itu.map.App;
 import dk.itu.map.fxml.Screen;
 import dk.itu.map.fxml.models.ChunkModel;
+import dk.itu.map.parser.FileProgress;
 import dk.itu.map.parser.OSMParser;
 
 public class ChunkController {
     
     ChunkModel model;
+    private String name;
 
-    public ChunkController(ChunkModel model) {
+    public ChunkController(ChunkModel model, String name) {
         this.model = model;
-
+        App.mapPath = App.DATA_PATH + name + "/";
+        this.name = name;
     }
 
-    
     /**
      * Imports a map from a file
      * @param filePath The path to the file
      * @param name The name of the map to be saved to
      */
-    public void importMap(String filePath, String name) {
-        if (!new File("maps" + "/" + name + "/config").exists()) {
-            OSMParser parser = new OSMParser(new File(filePath), "maps" + "/" + name);
+    public void importMap(String filePath, FileProgress fileProgress) {
+        if (!new File(App.mapPath + "/config").exists()) {
+            File file = new File(filePath);
+            fileProgress.setFile(file);
+            fileProgress.start();
+            OSMParser parser = new OSMParser(file, fileProgress);
             parser.setCallback((Runnable)() -> {
                 System.out.println("Finished importing map!");
                 App.setView(new Screen.Map(name));

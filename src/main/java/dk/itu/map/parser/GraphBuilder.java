@@ -27,18 +27,6 @@ public class GraphBuilder extends Graph implements Runnable {
         ways = Collections.synchronizedList(new LinkedList<>());
     }
 
-    /**
-     * Calculates the distance between two points
-     * @param x1 the x coordinate of the first point
-     * @param y1 the y coordinate of the first point
-     * @param x2 the x coordinate of the second point
-     * @param y2 the y coordinate of the second point
-     * @return the distance between the two points
-     */
-    private float dist(float x1, float y1, float x2, float y2){
-        return (float) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
-    }
-
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
     //ADVARSEL FUNGERER IKKE
@@ -77,7 +65,7 @@ public class GraphBuilder extends Graph implements Runnable {
                 case "living_street", "rest_area":
                     speedLimit = 15;
                     break;
-                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track":
+                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track", "service":
                         speedLimit = 50;
                         break;
                 case "primary", "primary_link", "trunk", "trunk_link":
@@ -233,7 +221,6 @@ public class GraphBuilder extends Graph implements Runnable {
             case "corridor":
                 return 1;
             case "cycleway":
-                return 2;
             case "bridleway":
             case "path":
                 return 3;
@@ -254,6 +241,7 @@ public class GraphBuilder extends Graph implements Runnable {
             case "living_street":
             case "road":
             case "track":
+            case "service":
                 return 7;
             default:
                 return 0;

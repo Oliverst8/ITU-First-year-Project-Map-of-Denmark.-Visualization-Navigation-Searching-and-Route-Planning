@@ -28,13 +28,15 @@ public class MapModel {
         navigationWays = new Drawable[]{null,null,null,null,null};
     }
 
+    
+
     /**
      * Gets the minimum longitude of the map
      * 
      * @return the minimum longitude of the map
      */
     public float getMinLon() {
-        return chunkLoader.minLon;
+        return chunkLoader.getConfig().minLon;
     }
 
     /**
@@ -43,7 +45,7 @@ public class MapModel {
      * @return the maximum longitude of the map
      */
     public float getMinLat() {
-        return chunkLoader.minLat;
+        return chunkLoader.getConfig().minLat;
     }
 
     /**
@@ -52,7 +54,7 @@ public class MapModel {
      * @return the minimum latitude of the map
      */
     public float getMaxLat() {
-        return chunkLoader.maxLat;
+        return chunkLoader.getConfig().maxLat;
     }
 
     /**
@@ -61,7 +63,11 @@ public class MapModel {
      * @return the maximum latitude of the map
      */
     public int getChunkAmount() {
-        return chunkLoader.chunkAmount;
+        return chunkLoader.getConfig().chunkAmount;
+    }
+
+    public int getLayerCount() {
+        return chunkLoader.getConfig().layerCount;
     }
 
     public Point getStartPoint() {
