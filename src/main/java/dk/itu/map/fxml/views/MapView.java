@@ -87,6 +87,8 @@ public class MapView {
 
             canvas.get(key).widthProperty().bind(root.widthProperty());
             canvas.get(key).heightProperty().bind(root.heightProperty());
+            canvas.get(key).widthProperty().addListener(e -> redraw());
+            canvas.get(key).heightProperty().addListener(e -> redraw());
         }
 
         trans = new Affine();
@@ -255,7 +257,6 @@ public class MapView {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
         boolean print = false;
-        long totalStart = System.currentTimeMillis();
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
             print = true;
@@ -267,6 +268,8 @@ public class MapView {
             print = true;
             overridePrint = false;
         }
+
+        controller.getWrittenChunks();
 
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
@@ -296,7 +299,6 @@ public class MapView {
                 }
             }
         }
-        long wastedTime = System.currentTimeMillis();
         Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
@@ -312,7 +314,6 @@ public class MapView {
         }
         
         if (!print) return;
-        long drawTimes = 0;
         // System.out.println("Render times: ");
         // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
         //     String layer = String.format("%-15s", entry.getKey());
