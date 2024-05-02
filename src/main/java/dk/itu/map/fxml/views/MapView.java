@@ -1,5 +1,7 @@
 package dk.itu.map.fxml.views;
 
+import dk.itu.map.structures.TernaryTree;
+import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.Point;
 import dk.itu.map.task.CanvasRedrawTask;
@@ -7,6 +9,10 @@ import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -20,10 +26,14 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Slider;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
@@ -34,12 +44,32 @@ import javafx.scene.transform.NonInvertibleTransformException;
 public class MapView {
     @FXML
     private VBox root;
-
+    @FXML
+    private ComboBox<TernaryTree.searchAddress> startComboBox;
+    @FXML
+    private ComboBox<TernaryTree.searchAddress> endComboBox;
+    @FXML
+    private TextField textFieldStart;
+    @FXML
+    private TextField textFieldEnd;
     @FXML
     private AnchorPane canvasParent;
-
+    @FXML
+    private AnchorPane navigationPane;
+    @FXML
+    private Button startNavigationButton;
+    @FXML
+    private Button walkButton;
+    @FXML
+    private Button bikeButton;
+    @FXML
+    private Button carButton;
+    @FXML
+    private Button addMarkerButton;
     @FXML
     private Slider zoomSlider;
+
+
     private String[] mapLayers;
     private Map<String, Canvas> canvas;
     
@@ -53,11 +83,19 @@ public class MapView {
     // Last mouse position
     private float lastY;
     // Zoom level
+    private float zoomLevel;
+    // Initial distance between two points
+    private float startDist;
+    private final TernaryTree.searchAddress startAddress = new TernaryTree.searchAddress(null, null, null);
+    private final TernaryTree.searchAddress endAddress = new TernaryTree.searchAddress(null, null, null);
+
+    // Amount of chunks seen
+    private float currentChunkAmountSeen = 1;
     private float zoomAmount;
 
     private AnimationTimer render;
     private int vehicleCode = 4;
-    private boolean setStartPoint = false, setEndPoint = false;
+    private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -72,7 +110,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place"};
+        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -123,6 +161,7 @@ public class MapView {
             System.out.println("Start point set to: " + startPoint[0] + ", " + startPoint[1]);
             setStartPoint = false;
             Point point = new Point(startPoint[0], startPoint[1], "navigation");
+            textFieldStart.setText(startPoint[0] + ", " + startPoint[1]);
             model.setStartPoint(point);
             model.removeRoute();
             new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
@@ -132,10 +171,24 @@ public class MapView {
             System.out.println("End point set to: " + endPoint[0] + ", " + endPoint[1]);
             setEndPoint = false;
             Point point = new Point(endPoint[0], endPoint[1],"navigation");
+            textFieldEnd.setText(endPoint[0] + ", " + endPoint[1]);
             model.setEndPoint(point);
             model.removeRoute();
 
             new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+        } else if(setPointOfInterest){
+            float[] pointOfInterest = new float[]{(float) e.getX(), (float) e.getY()};
+            pointOfInterest = convertToLatLon(pointOfInterest);
+            System.out.println("Point of interest set to: " + pointOfInterest[0] + ", " + pointOfInterest[1]);
+            setPointOfInterest = false;
+            startNavigationButton.setDisable(false);
+            addMarkerButton.setStyle("-fx-border-color: transparent");
+            try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
+                writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            redraw();
         }
     }
 
@@ -165,21 +218,35 @@ public class MapView {
         redraw();
     }
     @FXML
-    void switchToYetAnotherTheme(){
-        model.theme.setTheme(Themes.Wierd);
+    void switchToRandomTheme(){
+        model.theme.setTheme(Themes.RANDOM);
         redraw();
     }
     @FXML
     void switchToCarNavigation(){
         vehicleCode = 4;
+        walkButton.setStyle("-fx-border-color: transparent");
+        bikeButton.setStyle("-fx-border-color: transparent");
+        carButton.setStyle("-fx-border-color:  #00CED1");
+        navigateNow(null);
     }
     @FXML
     void switchToBikeNavigation(){
         vehicleCode = 2;
+        walkButton.setStyle("-fx-border-color: transparent");
+        bikeButton.setStyle("-fx-border-color: #00CED1");
+        carButton.setStyle("-fx-border-color:  transparent");
+        navigateNow(null);
+
     }
     @FXML
     void switchToWalkNavigation(){
         vehicleCode = 1;
+        walkButton.setStyle("-fx-border-color: #00CED1");
+        bikeButton.setStyle("-fx-border-color: transparent");
+        carButton.setStyle("-fx-border-color: transparent");
+        navigateNow(null);
+
     }
 
     @FXML
@@ -215,6 +282,78 @@ public class MapView {
     @FXML
     void importMap(ActionEvent event) {
     }
+    @FXML
+    void setStartPoint(ActionEvent event){
+        setStartPoint = true;
+        setEndPoint = false;
+        textFieldStart.setText("");
+        textFieldStart.setStyle("-fx-border-color: transparent");
+    }
+
+    @FXML
+    void setEndPoint(ActionEvent event){
+        setEndPoint = true;
+        setStartPoint = false;
+        textFieldEnd.setText("");
+        textFieldEnd.setStyle("-fx-border-color: transparent");
+    }
+
+    @FXML
+    void navigateNow(ActionEvent event){
+        controller.navigate(vehicleCode);
+        redraw();
+    }
+
+    @FXML
+    void addPointOfInterest(ActionEvent event){
+        setPointOfInterest = true;
+        startNavigationButton.setDisable(true);
+        addMarkerButton.setStyle("-fx-border-color: #7FFF00");
+    }
+
+    @FXML
+    void searchStartAddress(KeyEvent event){
+        searchAddress(textFieldStart, startComboBox, startAddress);
+    }
+    @FXML
+    void searchEndAddress(KeyEvent event){
+        searchAddress(textFieldEnd, endComboBox, endAddress);
+    }
+
+    @FXML
+    void addressSelectedStart(ActionEvent event){
+        addressSelected(textFieldStart, startComboBox, startAddress);
+    }
+
+    @FXML
+    void addressSelectedEnd(ActionEvent event){
+        addressSelected(textFieldEnd, endComboBox, endAddress);
+    }
+    @FXML
+    void showNavigation(){
+        navigationPane.setVisible(true);
+        navigationPane.setDisable(false);
+        startNavigationButton.setVisible(false);
+        startNavigationButton.setDisable(true);
+        addMarkerButton.setVisible(false);
+        addMarkerButton.setDisable(true);
+    }
+    @FXML
+    void hideNavigation(){
+        navigationPane.setVisible(false);
+        navigationPane.setDisable(true);
+        startNavigationButton.setVisible(true);
+        startNavigationButton.setDisable(false);
+        addMarkerButton.setVisible(true);
+        addMarkerButton.setDisable(false);
+    }
+
+    @FXML
+    void setTextToCoords(float x, float y){
+
+        textFieldStart.setText(x + ", " + y);
+
+    }
 
     /**
      * Pans the map
@@ -245,14 +384,13 @@ public class MapView {
     /**
      * Redraws the map
      */
-    
+
     public static boolean overridePrint = false;
     long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
         boolean print = false;
-        long totalStart = System.currentTimeMillis();
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
             print = true;
@@ -273,9 +411,10 @@ public class MapView {
             layers.put(key, new HashSet<>());
         }
         Set<Drawable> navigationSet = getNavigationDrawables();
-
+        Set<Drawable> pointOfInterests = getPointOfInterests();
 
         layers.put("navigation", navigationSet);
+        layers.put("pointOfInterest", pointOfInterests);
 
         updateZoomAmount();
 
@@ -287,14 +426,13 @@ public class MapView {
                     Drawable way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place":
+                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest":
                             layers.get(way.getPrimaryType()).add(way);
                             break;
                     }
                 }
             }
         }
-        long wastedTime = System.currentTimeMillis();
         Map<String, Long> renderTimes = new HashMap<>();
 
         for (Map.Entry<String, Set<Drawable>> entry : layers.entrySet()) {
@@ -308,15 +446,14 @@ public class MapView {
 
             renderTimes.put(entry.getKey(), endTime - startTime);
         }
-        
+
         if (!print) return;
-        long drawTimes = 0;
         // System.out.println("Render times: ");
         // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
         //     String layer = String.format("%-15s", entry.getKey());
         //     long renderTime = entry.getValue();
         //     drawTimes += renderTime;
-            
+
         //     System.out.println(layer + ": " + renderTime + " ");
         // }
         // System.out.println("Current zoomLevel: " + getZoomLevel());
@@ -335,6 +472,22 @@ public class MapView {
             navigationSet.add(drawable);
         }
         return navigationSet;
+    }
+
+    private Set<Drawable> getPointOfInterests() {
+        Set<Drawable> pointOfInterests = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] coords = line.split(", ");
+                float lat = Float.parseFloat(coords[0]);
+                float lon = Float.parseFloat(coords[1]);
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pointOfInterests;
     }
 
     /**
@@ -398,23 +551,66 @@ public class MapView {
         return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
-    @FXML
-    void setStartPoint(ActionEvent event){
-        System.out.println("Can now set start point");
-        setStartPoint = true;
-        setEndPoint = false;
+
+
+
+    private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
+        TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
+        textField.setStyle("-fx-border-color: transparent");
+        if(address.streetName == null){
+            if(selected == null) return;
+            textField.setText(selected.streetName);
+        } else {
+            if(selected == null) return;
+            textField.setText(selected.toString());
+            if(textField == this.textFieldStart) model.setStartPoint(selected.point);
+            else model.setEndPoint(selected.point);
+            textField.setStyle("-fx-border-color: #7FFF00");
+            redraw();
+        }
+        address.clone(selected);
+        System.out.println(address);
+        System.out.println(startAddress);
     }
 
-    @FXML
-    void setEndPoint(ActionEvent event){
-        System.out.println("Can now set end point");
-        setEndPoint = true;
-        setStartPoint = false;
+    private void searchAddress(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
+
+        List<TernaryTree.searchAddress> addresses;
+
+        String currentText = textField.getText();
+
+        boolean shouldRestartSearch = false;
+
+        if (address.streetName == null) addresses = searchSteet(currentText);
+        else{
+            int i = 0;
+            for(char c : address.streetName.toCharArray()){
+                if(i >= currentText.length() || c != currentText.charAt(i++)){
+                    shouldRestartSearch = true;
+                    break;
+                }
+            }
+            if (shouldRestartSearch) {
+                address.reset();
+                addresses = searchSteet(currentText);
+            } else addresses = searchFullAddress(address, currentText);
+        }
+
+
+        comboBox.getItems().clear();
+        comboBox.getItems().addAll(addresses);
+        comboBox.setVisibleRowCount(10);
+        comboBox.show();
+
     }
 
-    @FXML
-    void navigateNow(ActionEvent event){
-        controller.navigate(vehicleCode);
-        redraw();
+    private List<TernaryTree.searchAddress> searchSteet(String searchWord){
+        return controller.searchAddress(searchWord);
     }
+
+    private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node, String currentText){
+        return controller.fillAddress(node, currentText);
+    }
+
+
 }

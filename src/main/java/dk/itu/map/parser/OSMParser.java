@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import javafx.application.Platform;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
@@ -19,14 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ProgressBar;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
@@ -40,6 +37,8 @@ public class OSMParser extends Thread {
     private Runnable callback;
 
     private ChunkGenerator chunkGenerator;
+    private TernaryTree address;
+
     private final FileProgress fileProgress;
     /**
      * Constructor for the OSMParser class
@@ -52,6 +51,7 @@ public class OSMParser extends Thread {
 
         relations = new ArrayList<>();
         relationMap = new HashMap<>();
+        address = new TernaryTree();
     }
 
     /**
@@ -115,7 +115,7 @@ public class OSMParser extends Thread {
                             float minLon = Float.parseFloat(input.getAttributeValue(null, "minlon"));
                             float maxLon = Float.parseFloat(input.getAttributeValue(null, "maxlon"));
                             MapConfig config = new MapConfig(minLat, maxLat, minLon, maxLon);
-                            chunkGenerator = new ChunkGenerator(config);
+                            chunkGenerator = new ChunkGenerator(config, address);
                         }
 
                         case "node" -> {
@@ -124,6 +124,45 @@ public class OSMParser extends Thread {
                             cords[0] = Float.parseFloat(input.getAttributeValue(null, "lat"));
                             cords[1] = Float.parseFloat(input.getAttributeValue(null, "lon"));
                             nodes.put(id, cords);
+                            String[] tags = new String[4];
+                            /*ArrayList<String> tags = new ArrayList<>(4);
+                            for(int i = 0; i < 4; i++){
+                                tags.add(null);
+                            }*/
+                            whileTagLoop:
+                            while(true){
+                                int eventType = input.next();
+                                if(eventType == XMLStreamConstants.END_ELEMENT && input.getLocalName().equals("node")){
+                                    break;
+                                }
+                                if (eventType == XMLStreamConstants.START_ELEMENT) {
+                                    String tagType  = input.getAttributeValue(null, "k");
+                                    int position = -1;
+                                    switch (tagType){
+                                        case "addr:street":
+                                            position = 0;
+                                            break;
+                                        case "addr:housenumber":
+                                            position = 1;
+                                            break;
+                                        case "addr:postcode":
+                                            position = 2;
+                                            break;
+                                        case "addr:city":
+                                            position = 3;
+                                            break;
+                                        default:
+                                            continue whileTagLoop;
+                                    }
+                                    tags[position] = input.getAttributeValue(null, "v");
+                                }
+                            }
+
+                            if(tags[0] != null) {
+                                for(int i = 1; i < tags.length; i++) if(tags[i] == null) tags[i] = "";
+                                address.addStreetName(tags, cords[0], cords[1]);
+                            }
+
                         }
 
                         case "way" -> {

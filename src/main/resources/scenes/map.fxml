@@ -30,13 +30,18 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <VBox fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -52,7 +57,7 @@
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#switchToStandardTheme" text="Standard Theme" />
                                 <MenuItem mnemonicParsing="false" onAction="#switchToDarkTheme" text="Darkmode" />
-                                <MenuItem mnemonicParsing="false" onAction="#switchToYetAnotherTheme" text="Yet another theme" />
+                                <MenuItem mnemonicParsing="false" onAction="#switchToRandomTheme" text="Random Theme" />
                             </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
@@ -70,13 +75,31 @@
                 <Canvas fx:id="canvasAmenity" />
                 <Canvas fx:id="canvasHighway" />
                 <Canvas fx:id="canvasNavigation" />
+                <Canvas fx:id="canvasPointOfInterest" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />
-            <Button layoutX="684.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="30.0" prefWidth="25.0" text="x" />
-            <Button layoutX="725.0" layoutY="20.0" minWidth="25.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="30.0" prefWidth="25.0" text="x" />
-            <Button layoutX="684.0" layoutY="59.0" mnemonicParsing="false" onAction="#navigateNow" text="Navigate" />
-            <Button layoutX="654.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" text="Walk" />
-            <Button layoutX="738.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToCarNavigation" text="Car" />
-            <Button layoutX="697.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" text="Bike" />
+            <AnchorPane fx:id="navigationPane" disable="true" layoutX="21.0" layoutY="22.0" prefHeight="126.0" prefWidth="254.0" visible="false">
+               <children>
+                  <Rectangle fx:id="navigateRectangle" arcHeight="5.0" arcWidth="5.0" fill="#e9eef2" height="126.0" stroke="#cccccc" strokeType="INSIDE" width="254.0" />
+                  <Button layoutX="201.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg start" />
+                  <Button fx:id="walkButton" layoutX="40.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" prefHeight="25.0" prefWidth="50.0" text="Walk" />
+                  <Button fx:id="carButton" layoutX="160.0" layoutY="85.0" mnemonicParsing="false" onAction="#switchToCarNavigation" prefHeight="21.0" prefWidth="50.0" style="-fx-border-color: #00CED1;" text="Car" />
+                  <Button fx:id="bikeButton" layoutX="100.0" layoutY="86.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" prefHeight="25.0" prefWidth="50.0" text="Bike" />
+                  <ComboBox fx:id="startComboBox" layoutX="51.0" layoutY="13.0" onAction="#addressSelectedStart" prefWidth="150.0" promptText="Start address" />
+                  <TextField fx:id="textFieldStart" layoutX="51.0" layoutY="13.0" onInputMethodTextChanged="#searchStartAddress" onKeyPressed="#searchStartAddress" onKeyReleased="#searchStartAddress" onKeyTyped="#searchStartAddress" prefHeight="25.0" promptText="Where from?" />
+                  <Text fx:id="fromText" layoutX="17.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="From:" textAlignment="CENTER" />
+                  <Text fx:id="toText" layoutX="24.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To:" textAlignment="CENTER" />
+                  <ComboBox fx:id="endComboBox" layoutX="51.0" layoutY="49.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#addressSelectedEnd" prefWidth="150.0" promptText="End address" />
+                  <TextField fx:id="textFieldEnd" layoutX="51.0" layoutY="48.0" onInputMethodTextChanged="#searchEndAddress" onKeyPressed="#searchEndAddress" onKeyReleased="#searchEndAddress" onKeyTyped="#searchEndAddress" prefHeight="25.0" promptText="Where to?" />
+                  <Button layoutX="201.0" layoutY="48.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="19.0" text="Vælg slut" />
+                  <Button fx:id="endNavigationButton" layoutX="232.0" layoutY="9.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="15.0" prefWidth="15.0" text="x">
+                     <font>
+                        <Font size="7.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
+            <Button fx:id="startNavigationButton" layoutX="21.0" layoutY="9.0" mnemonicParsing="false" onAction="#showNavigation" text="Start navigation" textAlignment="CENTER" />
+            <Button fx:id="addMarkerButton" layoutX="130.0" layoutY="10.0" mnemonicParsing="false" onAction="#addPointOfInterest" prefWidth="100.0" text="Add marker" />
             <Slider layoutX="7.0" layoutY="435.0" fx:id="zoomSlider" orientation="VERTICAL" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>

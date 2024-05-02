@@ -5,6 +5,7 @@ import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.views.MapView;
 import dk.itu.map.parser.ChunkLoader;
 import dk.itu.map.parser.UtilityLoader;
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
@@ -148,16 +149,17 @@ public class MapController {
             throw new RuntimeException(e);
         }
         model.setGraph(utilityLoader.getGraph());
+        model.setAddress(utilityLoader.getAddress());
     }
 
     public void navigate(int vehicleCode) {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
         if(startPoint == null || endPoint == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Start or end point missing");
-            alert.setContentText("Please select a start and end point before navigating");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No way found");
+            alert.setHeaderText("Start and end cant be connected");
+            alert.setContentText("This might be because you cant drive a connecting road, please try another road.");
             alert.showAndWait();
             return;
         }
@@ -172,5 +174,13 @@ public class MapController {
             return;
         }
         model.setRoute(path);
+    }
+
+    public List<TernaryTree.searchAddress> searchAddress(String input) {
+        return model.getAddress().autoComplete(input, 10);
+    }
+
+    public List<TernaryTree.searchAddress> fillAddress(TernaryTree.searchAddress node, String currentText){
+        return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node, currentText);
     }
 }

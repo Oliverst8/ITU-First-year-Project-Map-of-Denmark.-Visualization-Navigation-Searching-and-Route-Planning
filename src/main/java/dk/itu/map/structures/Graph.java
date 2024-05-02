@@ -13,10 +13,11 @@ public class Graph {
     protected final LongIntHashMap idToIndex;
     protected WriteAbleArrayList<IntArrayList> vertexList; //List that holds the edges of each vertex
     protected final IntArrayList edgeDestinations; //List that holds the destination of each edge (Get index from vertexList)
-    protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
-    protected final FloatArrayList timeWeights; //List that holds the weight in hours of each edge
+
     protected final FloatArrayList distanceWeights; //List that holds the weight in km of each edge
+    protected final FloatArrayList timeWeights; //List that holds the weight in hours of each edge
     protected final ByteArrayList vehicleRestrictions; //List that holds which vehicles are allowed to use each edge
+    protected IntArrayList oldToNewVertexIndex; //List that holds the new index of each vertex
     protected TwoDTree coords; //List that holds the coordinates of each vertex
 
     /**

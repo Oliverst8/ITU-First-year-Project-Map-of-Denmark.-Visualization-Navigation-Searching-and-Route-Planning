@@ -1,5 +1,6 @@
 package dk.itu.map.parser;
 
+import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.App;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
@@ -21,7 +22,7 @@ class ZoomLayer extends ArrayList<Chunk> {}
 public class ChunkGenerator implements Runnable {
 
     private MapConfig config;
-    
+
     private ArrayList<ZoomLayer> zoomLayers;
     private final File[][] files;
     private List<MapElement> rawWays;
@@ -32,6 +33,8 @@ public class ChunkGenerator implements Runnable {
 
     private final Thread chunkingThread;
 
+    private final TernaryTree address;
+
 
     /**
      * Constructor for the ChunkGenerator class
@@ -41,7 +44,7 @@ public class ChunkGenerator implements Runnable {
      * @param minLon The minimum longitude
      * @param maxLon The maximum longitude
      */
-    public ChunkGenerator(MapConfig config) {
+    public ChunkGenerator(MapConfig config,TernaryTree address) {
         graph = new GraphBuilder();
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
@@ -51,6 +54,8 @@ public class ChunkGenerator implements Runnable {
         graphThread.start();
 
         this.config = config;
+
+        this.address = address;
 
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
@@ -63,7 +68,7 @@ public class ChunkGenerator implements Runnable {
 
         createFiles(App.mapPath);
     }
-    
+
     /**
      * Create the files for the chunks
      *
@@ -76,7 +81,7 @@ public class ChunkGenerator implements Runnable {
             for (int i = 0; i < config.layerCount; i++) {
                 File innerFolder = new File(dataPath + "zoom" + i);
                 innerFolder.mkdir();
-                
+
                 int chunkAmount = config.getChunkAmount(i);
                 for (int j = 0; j < chunkAmount; j++) {
                     files[i][j] = new File(dataPath + "zoom" + i + "/chunk" + j + ".txt");
@@ -84,6 +89,7 @@ public class ChunkGenerator implements Runnable {
                 }
             }
             (new File(dataPath + "utilities")).mkdir();
+            new File(dataPath + "utilities/pointOfInterest.txt").createNewFile();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -251,9 +257,12 @@ public class ChunkGenerator implements Runnable {
             writeFiles();
         }
         long startTime = System.nanoTime();
+        Thread thread = new Thread(address);
+        thread.start();
         graph.stop();
         try {
             graphThread.join();
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -292,6 +301,11 @@ public class ChunkGenerator implements Runnable {
      */
     private void writeUtilities() {
         graph.writeToFile(App.mapPath + "utilities");
+        try {
+            address.write(App.mapPath + "/utilities" + "/address.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

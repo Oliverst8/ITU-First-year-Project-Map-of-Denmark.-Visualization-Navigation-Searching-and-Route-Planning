@@ -8,33 +8,33 @@
 // import static org.junit.jupiter.api.Assertions.*;
 // public class TwoDTreeTest {
 
-//     @Test
-//     void testNearestNeighborRootIsIt() {
-//         CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2});
-//         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
-//         builder.build();
-//         TwoDTree twoDtree = new TwoDTree();
-//         int[] tree = builder.getTree();
-//         for(int i = 0; i < tree.length; i++){
-//             twoDtree.add(coordArrayList.get(tree[i]));
-//         }
-//         int nearest = twoDtree.nearestNeighbour(new float[]{1, 1});
-//         assertEquals(0, nearest);
-//     }
+    /*@Test
+    void testNearestNeighborRootIsIt() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        TwoDTree twoDtree = new TwoDTree();
+        int[] tree = builder.getTree();
+        for(int i = 0; i < tree.length; i++){
+            twoDtree.add(coordArrayList.get(tree[i]));
+        }
+        int nearest = twoDtree.nearestNeighbour(new float[]{1, 1});
+        assertEquals(0, nearest);
+    }
 
-//     @Test
-//     void testNearestNeighborRootIsNotItGoOneDown() {
-//         CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2});
-//         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
-//         builder.build();
-//         TwoDTree twoDtree = new TwoDTree();
-//         int[] tree = builder.getTree();
-//         for(int i = 0; i < tree.length; i++){
-//             twoDtree.add(coordArrayList.get(tree[i]));
-//         }
-//         int nearest = twoDtree.nearestNeighbour(new float[]{0, 0});
-//         assertEquals(1, nearest);
-//     }
+    @Test
+    void testNearestNeighborRootIsNotItGoOneDown() {
+        CoordArrayList coordArrayList = new CoordArrayList(new float[]{0, 0, 1, 1, 2,2});
+        TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+        builder.build();
+        TwoDTree twoDtree = new TwoDTree();
+        int[] tree = builder.getTree();
+        for(int i = 0; i < tree.length; i++){
+            twoDtree.add(coordArrayList.get(tree[i]));
+        }
+        int nearest = twoDtree.nearestNeighbour(new float[]{0, 0});
+        assertEquals(1, nearest);
+    }
 
 //     @Test
 //     void testNearestNeighborRootIsNotItGoTwoDown() {
@@ -46,7 +46,7 @@
 //         TwoDTree twoDtree = new TwoDTree(tree.length);
 //         for(int i = 0; i < tree.length; i++){
 //             twoDtree.add(coordArrayList.get(tree[i]));
-//         }*/
+//         }
 //         int nearest = twoDtree.nearestNeighbour(new float[]{3.5f, 4});
 //         assertEquals(5, nearest);
 //     }
@@ -65,6 +65,6 @@
 //         float[] expected = new float[]{3,1};
 //         float[] actual = twoDtree.get(nearest);
 //         assertArrayEquals(actual, expected);
-//     }
+//     }*/
 
 // }
