@@ -178,29 +178,43 @@ public class TernaryTree implements Runnable, WriteAble{
         return results;
     }
 
-    public List<searchAddress> fillAddress(String[] address, AddressNode node) {
+    public List<searchAddress> fillAddress(String[] address, AddressNode node, String current) {
         List<searchAddress> list = new ArrayList<>();
-
+        current = current.substring(address[0].length());
+        if(!current.isEmpty() && current.charAt(0) == ' ') current = current.substring(1);
+        System.out.println("Current:" + current + ":");
+        addressLoop:
         for(int i = 0; i < node.zipIndexes.size(); i++){
             if(zip.get(node.zipIndexes.get(i)).equals(address[1])){
-//                String[] newAddress = new String[4];
-//                newAddress[0] = address[0];
-//                newAddress[1] = streetNumber.get(node.streetNumberIndexes.get(i));
-//                newAddress[2] = address[1];
-//                newAddress[3] = cities.get(node.cityIndexes.get(i));
+                String newStreetNumber = streetNumber.get(node.streetNumberIndexes.get(i));;
+                String newCity = cities.get(node.cityIndexes.get(i));;
+
+                if (!checkIfShouldSuggest(current, newStreetNumber)) continue addressLoop;
+
                 searchAddress newAddress = new searchAddress(address[0], address[1], node);
-                newAddress.streetNumber = streetNumber.get(node.streetNumberIndexes.get(i));
-                newAddress.city = cities.get(node.cityIndexes.get(i));
+                newAddress.streetNumber = newStreetNumber;
+                newAddress.city = newCity;
                 float[] coords = node.coords.get(i);
-                if(address[0].equalsIgnoreCase("hutchinson Square") && newAddress.streetNumber.equals("15")){
-                    System.out.println("FOUND!!!");
-                }
                 newAddress.point = new Point(coords[1], coords[0], "navigation");
                 list.add(newAddress);
             }
         }
-        if(list.isEmpty()) throw new IllegalArgumentException("Zip not found");
+        //if(list.isEmpty()) throw new IllegalArgumentException("Zip not found");
         return list;
+    }
+
+    private static boolean checkIfShouldSuggest(String current, String newStreetNumber) {
+        char[] charArray = current.toCharArray();
+        int j = 0;
+        if(j >= charArray.length) return true;
+        char c = charArray[j];
+        for (char cSub : newStreetNumber.toCharArray()) {
+            if(j >= charArray.length) return true;
+            c = charArray[j];
+            j++;
+            if (c != cSub) return false;
+        }
+        return true;
     }
 
     @Override
@@ -419,9 +433,6 @@ public class TernaryTree implements Runnable, WriteAble{
         }
 
         public void addAddress(String[] address, float lat, float lon){
-            if(address[0].equalsIgnoreCase("hutchinson Square") && address[1].equals("15")){
-                System.out.println("FOUND!!!");
-            }
             coords.add(lat, lon);
             int streetNumberIndex;
             if(streetNumberMap.containsKey(address[1])){

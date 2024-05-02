@@ -520,7 +520,7 @@ public class MapView {
             if (shouldRestartSearch) {
                 address.reset();
                 addresses = searchSteet(currentText);
-            } else addresses = searchFullAddress(address);
+            } else addresses = searchFullAddress(address, currentText);
         }
 
 
@@ -535,8 +535,8 @@ public class MapView {
         return controller.searchAddress(searchWord);
     }
 
-    private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node){
-        return controller.fillAddress(node);
+    private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node, String currentText){
+        return controller.fillAddress(node, currentText);
     }
 
 

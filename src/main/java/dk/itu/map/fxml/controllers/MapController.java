@@ -176,7 +176,7 @@ public class MapController {
         return model.getAddress().autoComplete(input, 10);
     }
 
-    public List<TernaryTree.searchAddress> fillAddress(TernaryTree.searchAddress node){
-        return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node);
+    public List<TernaryTree.searchAddress> fillAddress(TernaryTree.searchAddress node, String currentText){
+        return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node, currentText);
     }
 }

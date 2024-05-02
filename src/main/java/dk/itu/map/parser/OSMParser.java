@@ -166,9 +166,6 @@ public class OSMParser extends Thread {
 
                             if(tags[0] != null) {
                                 for(int i = 1; i < tags.length; i++) if(tags[i] == null) tags[i] = "";
-                                if(tags[0].equalsIgnoreCase("hutchinson Square") && tags[1].equals("15")){
-                                    System.out.println("FOUND!!!");
-                                }
                                 address.addStreetName(tags, cords[0], cords[1]);
                             }
 
