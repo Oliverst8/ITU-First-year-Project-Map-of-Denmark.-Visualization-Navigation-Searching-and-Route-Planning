@@ -126,7 +126,7 @@ public class MapModel {
     public enum Themes {
         LIGHT,
         DARK,
-        Wierd,
+        RANDOM,
     }
 
     public class Theme {
@@ -137,8 +137,8 @@ public class MapModel {
             this.name = "light";
             this.color = new HashMap<>();
             setLight();
-            //setDark();
-            //setWierd();
+            setDark();
+            setRandom();
         }
 
         public void setTheme(Themes newTheme) {
@@ -149,8 +149,9 @@ public class MapModel {
                 case DARK:
                     name = "dark";
                     break;
-                case Wierd:
-                    name = "wierd";
+                case RANDOM:
+                    setRandom();
+                    name = "random";
                     break;
             }
         }
@@ -229,6 +230,154 @@ public class MapModel {
             primary.put("building", secondary);
             
             color.put("light", primary);
+        }
+
+        private void setDark() {
+            Map<String, Map<String, Color>> primary = new HashMap<>();
+            Map<String, Color> secondary;
+
+            // Navigation
+            secondary = new HashMap<>();
+            secondary.put("path", Color.DARKCYAN);
+            secondary.put("pathToRoad", Color.DARKGRAY);
+            primary.put("navigation", secondary);
+
+            // Aeroway
+            secondary = new HashMap<>();
+            secondary.put("aerodrome", Color.web("#2B2B2B"));
+            secondary.put("apron", Color.web("#2B2B2B"));
+            secondary.put("runway", Color.web("#3C3F41"));
+            secondary.put("taxiway", Color.web("#3C3F41"));
+            primary.put("aeroway", secondary);
+
+            // Highway
+            secondary = new HashMap<>();
+            secondary.put("motorway", Color.web("#5C6370"));
+            secondary.put("motorway_link", Color.web("#5C6370"));
+            secondary.put("tertiary", Color.web("#6E7681"));
+            secondary.put("tertiary_link", Color.web("#6E7681"));
+            secondary.put("service", Color.web("#6E7681"));
+            secondary.put("residential", Color.web("#6E7681"));
+            secondary.put("unclassified", Color.web("#6E7681"));
+            secondary.put("trunk", Color.web("#5C6370"));
+            secondary.put("trunk_link", Color.web("#5C6370"));
+            secondary.put("primary", Color.web("#5C6370"));
+            secondary.put("primary_link", Color.web("#5C6370"));
+            secondary.put("secondary", Color.web("#6E7681"));
+            secondary.put("secondary_link", Color.web("#6E7681"));
+            primary.put("highway", secondary);
+
+            // Natural
+            secondary = new HashMap<>();
+            secondary.put("scrub", Color.web("#7F848E"));
+            secondary.put("beach", Color.web("#7F848E"));
+            secondary.put("water", Color.web("#4B5263"));
+            secondary.put("peninsula", Color.web("#6E7681"));
+            primary.put("natural", secondary);
+
+            // Place
+            secondary = new HashMap<>();
+            secondary.put("island", Color.web("#6E7681"));
+            secondary.put("islet", Color.web("#6E7681"));
+            primary.put("place", secondary);
+
+            // Landuse
+            secondary = new HashMap<>();
+            secondary.put("allotments", Color.web("#3C3F41"));
+            secondary.put("industrial", Color.web("#3C3F41"));
+            secondary.put("residential", Color.web("#3C3F41"));
+            primary.put("landuse", secondary);
+
+            // Building
+            secondary = new HashMap<>();
+            secondary.put("yes", Color.web("#4B5263"));
+            secondary.put("shed", Color.web("#4B5263"));
+            secondary.put("office", Color.web("#4B5263"));
+            secondary.put("college", Color.web("#4B5263"));
+            secondary.put("detached", Color.web("#4B5263"));
+            secondary.put("dormitory", Color.web("#4B5263"));
+            secondary.put("university", Color.web("#4B5263"));
+            secondary.put("apartments", Color.web("#4B5263"));
+            secondary.put("allotment_house", Color.web("#4B5263"));
+            primary.put("building", secondary);
+
+            color.put("dark", primary);
+        }
+
+        private void setRandom() {
+            Map<String, Map<String, Color>> primary = new HashMap<>();
+            Map<String, Color> secondary;
+
+            // Navigation
+            secondary = new HashMap<>();
+            secondary.put("path", getRandomColor());
+            secondary.put("pathToRoad", getRandomColor());
+            primary.put("navigation", secondary);
+
+            // Aeroway
+            secondary = new HashMap<>();
+            secondary.put("aerodrome", getRandomColor());
+            secondary.put("apron", getRandomColor());
+            secondary.put("runway", getRandomColor());
+            secondary.put("taxiway", getRandomColor());
+            primary.put("aeroway", secondary);
+
+            // Highway
+            secondary = new HashMap<>();
+            secondary.put("motorway", getRandomColor());
+            secondary.put("motorway_link", getRandomColor());
+            secondary.put("tertiary", getRandomColor());
+            secondary.put("tertiary_link", getRandomColor());
+            secondary.put("service", getRandomColor());
+            secondary.put("residential", getRandomColor());
+            secondary.put("unclassified", getRandomColor());
+            secondary.put("trunk", getRandomColor());
+            secondary.put("trunk_link", getRandomColor());
+            secondary.put("primary", getRandomColor());
+            secondary.put("primary_link", getRandomColor());
+            secondary.put("secondary", getRandomColor());
+            secondary.put("secondary_link", getRandomColor());
+            primary.put("highway", secondary);
+
+            // Natural
+            secondary = new HashMap<>();
+            secondary.put("scrub", getRandomColor());
+            secondary.put("beach", getRandomColor());
+            secondary.put("water", getRandomColor());
+            secondary.put("peninsula", getRandomColor());
+            primary.put("natural", secondary);
+
+            // Place
+            secondary = new HashMap<>();
+            secondary.put("island", getRandomColor());
+            secondary.put("islet", getRandomColor());
+            primary.put("place", secondary);
+
+            // Landuse
+            secondary = new HashMap<>();
+            secondary.put("allotments", getRandomColor());
+            secondary.put("industrial", getRandomColor());
+            secondary.put("residential", getRandomColor());
+            primary.put("landuse", secondary);
+
+            // Building
+            secondary = new HashMap<>();
+            secondary.put("yes", getRandomColor());
+            secondary.put("shed", getRandomColor());
+            secondary.put("office", getRandomColor());
+            secondary.put("college", getRandomColor());
+            secondary.put("detached", getRandomColor());
+            secondary.put("dormitory", getRandomColor());
+            secondary.put("university", getRandomColor());
+            secondary.put("apartments", getRandomColor());
+            secondary.put("allotment_house", getRandomColor());
+            primary.put("building", secondary);
+
+            color.put("random", primary);
+        }
+
+        public Color getRandomColor() {
+            return Color.color(Math.random(), Math.random(), Math.random());
         }
     }
 }

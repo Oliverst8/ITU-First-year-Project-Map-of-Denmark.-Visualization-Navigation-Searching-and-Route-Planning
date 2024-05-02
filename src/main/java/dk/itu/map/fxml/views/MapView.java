@@ -172,8 +172,8 @@ public class MapView {
         redraw();
     }
     @FXML
-    void switchToYetAnotherTheme(){
-        model.theme.setTheme(Themes.Wierd);
+    void switchToRandomTheme(){
+        model.theme.setTheme(Themes.RANDOM);
         redraw();
     }
     @FXML
