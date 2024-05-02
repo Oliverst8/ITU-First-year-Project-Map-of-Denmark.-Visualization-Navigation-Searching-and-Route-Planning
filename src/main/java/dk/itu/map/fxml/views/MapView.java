@@ -470,6 +470,13 @@ public class MapView {
         startNavigationButton.setDisable(false);
     }
 
+    @FXML
+    void setTextToCoords(float x, float y){
+
+        textFieldStart.setText(x + ", " + y);
+
+    }
+
 
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
         TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
@@ -479,7 +486,8 @@ public class MapView {
         } else {
             if(selected == null) return;
             textField.setText(selected.toString());
-            model.setStartPoint(selected.point);
+            if(textField == this.textFieldStart) model.setStartPoint(selected.point);
+            else model.setEndPoint(selected.point);
             redraw();
         }
         address.clone(selected);
