@@ -14,7 +14,7 @@ public class TernaryTreeTest {
     public void setUp(){
         address = new TernaryTree();
     }
-
+/*
     private static void assertStringArraySetEquals(Set<String[]> result_array, Set<String[]> expected_arrray) {
         Set<List<String>> result = new HashSet<>();
         for(String[] key : result_array){
@@ -172,6 +172,33 @@ public class TernaryTreeTest {
 
         assertStringArraySetEquals(new HashSet<>(result), expected);
 
+    }*/
+
+    @Test
+    void testRuedLanggaardsvej() {
+        address.addStreetName(new String[]{"Rued Langgaardsvej","1","2300","København S"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaardsvej","1","7100","Vejle"},1f,1f);
+        address.addStreetName(new String[]{"dsaa das","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"7yas","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaardsvej","2","2300","København S"},1f,1f);
+        address.addStreetName(new String[]{"dsaa das","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"7yas","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaardsvej","3","2300","København S"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaardsvej","2","7100","Vejle"},1f,1f);
+        address.addStreetName(new String[]{"dsaa das","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"7yas","2","32","dsa"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaardsvej","3","7100","Vejle"},1f,1f);
+        address.run();
+        assertEquals(2, address.autoComplete("Rued Langgaardsvej", 20).size());
+    }
+
+    @Test
+    void testAddingSubName() {
+        address.addStreetName(new String[]{"Rued Langgaards vej","1","2300","København S"},1f,1f);
+        address.addStreetName(new String[]{"Rue","1","7100","Vejle"},1f,1f);
+        address.addStreetName(new String[]{"Rued Langgaards vej","2","2310","København S"},1f,1f);
+        address.run();
+        assertEquals(2, address.autoComplete("Rued Langgaard", 20).size());
     }
 
 

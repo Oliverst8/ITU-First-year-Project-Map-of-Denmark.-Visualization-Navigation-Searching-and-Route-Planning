@@ -63,9 +63,9 @@ public class TernaryTree implements Runnable, WriteAble{
         } else if(cmp < 0){
             node.right = insert(node.right, value, pos, lat, lon);
         } else if(pos == value[0].length()-1){
-            //node.isTerminal = true;
             if(!node.isTerminal) {
-                node = new AddressNode(value, value[0].charAt(pos), lat, lon);
+                node = new AddressNode(value, value[0].charAt(pos), lat, lon, node);
+                node.temp = value[0];
             } else ((AddressNode) node).addAddress(value, lat, lon);
         }else {
             node.middle = insert(node.middle, value, pos+1, lat, lon);
@@ -104,31 +104,19 @@ public class TernaryTree implements Runnable, WriteAble{
         if(node == null) return null;
 
         if(pos >= value.length()) {
-            //return new InformationNode(node, pos, false);
             return null;
         }
         int cmp = node.compareTo(value.charAt(pos));
         if(cmp == 0){
             if(pos == value.length()-1){
-                //return new InformationNode(node, pos, true);
                 return node;
             }
-            //searchResult =
             return search(node.middle, value, pos+1);
-
-            //if(searchResult == null) return new InformationNode(node,pos, false);
         } else if(cmp > 0){
-            //searchResult =
             return search(node.left, value, pos);
-            //if(searchResult == null) return new InformationNode(node,pos, false);
         } else {
-            //searchResult = search(node.right, value, pos);
             return search(node.right, value, pos);
-            //if(searchResult == null) return new InformationNode(node,pos, false);
         }
-
-        //return searchResult;
-
     }
 
     public List<searchAddress> autoComplete(String value, int maxResults){
@@ -165,7 +153,6 @@ public class TernaryTree implements Runnable, WriteAble{
                 branchStrings.add(new StringBuilder(currentString));
             }
 
-            //if(current.isTerminal) {
             if(current instanceof AddressNode){
                 currentString.append(current.value);
                 addToResults(currentString.toString(), current, results);
@@ -199,7 +186,6 @@ public class TernaryTree implements Runnable, WriteAble{
                 list.add(newAddress);
             }
         }
-        //if(list.isEmpty()) throw new IllegalArgumentException("Zip not found");
         return list;
     }
 
@@ -227,8 +213,6 @@ public class TernaryTree implements Runnable, WriteAble{
                 stream.writeChar('\0');
                 continue;
             }
-            //stream.writeChar(node.value);
-            //stream.writeBoolean(node.isTerminal);
             node.write(stream);
             queue.add(node.left);
             queue.add(node.middle);
@@ -261,8 +245,6 @@ public class TernaryTree implements Runnable, WriteAble{
             Node current = queue.remove();
             char left = stream.readChar();
             if(left != '\0'){
-                //current.left = new Node(left);
-                //current.left.isTerminal = stream.readBoolean();
                 if(stream.readBoolean()){
                     current.left = new AddressNode(left);
                     current.left.read(stream);
@@ -274,8 +256,6 @@ public class TernaryTree implements Runnable, WriteAble{
             }
             char middle = stream.readChar();
             if(middle != '\0'){
-                //current.middle = new Node(middle);
-                //current.middle.isTerminal = stream.readBoolean();
                 if(stream.readBoolean()){
                     current.middle = new AddressNode(middle);
                     current.middle.read(stream);
@@ -287,8 +267,6 @@ public class TernaryTree implements Runnable, WriteAble{
             }
             char right = stream.readChar();
             if(right != '\0'){
-                //current.right = new Node(right);
-                //current.right.isTerminal = stream.readBoolean();
                 if(stream.readBoolean()){
                     current.right = new AddressNode(right);
                     current.right.read(stream);
@@ -360,6 +338,7 @@ public class TernaryTree implements Runnable, WriteAble{
     }
 
     public class Node implements WriteAble{
+        String temp;
         public Node left;
         public Node middle;
         public Node right;
@@ -392,7 +371,6 @@ public class TernaryTree implements Runnable, WriteAble{
         @Override
         public void read(DataInputStream stream) throws IOException {
             isTerminal = false;
-            //value = stream.readChar();
         }
 
         @Override
@@ -407,10 +385,10 @@ public class TernaryTree implements Runnable, WriteAble{
     }
 
     public class AddressNode extends Node{
+
         IntArrayList streetNumberIndexes;
         IntArrayList zipIndexes;
         IntArrayList cityIndexes;
-        //float lat, lon;
         CoordArrayList coords = new CoordArrayList();
 
         public AddressNode(char value){
@@ -421,15 +399,21 @@ public class TernaryTree implements Runnable, WriteAble{
             streetNumberIndexes = new IntArrayList();
         }
 
+
         public AddressNode(String[] address, char value, float lat, float lon){
             super(value);
             isTerminal = true;
             cityIndexes = new IntArrayList();
             zipIndexes = new IntArrayList();
             streetNumberIndexes = new IntArrayList();
-            //this.lat = lat;
-            //this.lon = lon;
             addAddress(address, lat, lon);
+        }
+
+        public AddressNode(String[] address, char value, float lat, float lon, Node node){
+            this(address, value, lat, lon);
+            this.left = node.left;
+            this.middle = node.middle;
+            this.right = node.right;
         }
 
         public void addAddress(String[] address, float lat, float lon){
@@ -463,9 +447,6 @@ public class TernaryTree implements Runnable, WriteAble{
                 cityMap.put(address[3], cities.size()-1);
                 cityIndexes.add(cities.size()-1);
             }
-            if(address[1].equals("7") && address[0].equalsIgnoreCase("Rued Langgaards vej")){
-                System.out.println("FOUND");
-            }
         }
 
         @Override
@@ -481,11 +462,15 @@ public class TernaryTree implements Runnable, WriteAble{
         @Override
         public void read(DataInputStream stream) throws IOException {
             isTerminal = true;
-            //value = stream.readChar();
             coords.read(stream);
             streetNumberIndexes.read(stream);
             zipIndexes.read(stream);
             cityIndexes.read(stream);
+        }
+
+        @Override
+        public String toString(){
+            return "Value: " + value + " Terminal: " + isTerminal + " StreetNumberIndexes: " + streetNumberIndexes + " ZipIndexes: " + zipIndexes + " CityIndexes: " + cityIndexes + " Coords: " + coords;
         }
 
         @Override
