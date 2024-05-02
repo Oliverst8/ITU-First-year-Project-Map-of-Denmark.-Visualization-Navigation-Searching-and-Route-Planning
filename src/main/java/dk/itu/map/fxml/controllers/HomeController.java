@@ -53,11 +53,16 @@ public class HomeController {
     }
 
     public void loadSavedMaps(MenuButton mapList) {
-        File directoryPath = new File(App.DATA_PATH);
+        File externalDirectoryPath = new File(App.DATA_PATH);
 
-        String[] maps = directoryPath.list();
+        String[] internalMaps = new String[]{"Isle"};
+        String[] externapMaps = externalDirectoryPath.list();
 
-        // If the directory is empty, return.
+        addMaps(mapList, internalMaps, "intrnal");
+        addMaps(mapList, externapMaps, "external");
+    }
+
+    private void addMaps(MenuButton mapList, String[] maps, String type) {
         if (maps == null) return;
 
         for (String map : maps) {
@@ -67,26 +72,7 @@ public class HomeController {
             item.setOnAction(e -> {
                 mapList.hide();
 
-                App.setView(new Screen.Map(item.getText(), "external"));
-            });
-        }
-
-        // Import internal maps
-        File internalDirectoryPath = new File(getClass().getResource("/maps").getPath());
-
-        String[] internalMaps = internalDirectoryPath.list();
-
-        // If the directory is empty, return.
-        if (internalMaps == null) return;
-        
-        for (String map : internalMaps) {
-            MenuItem item = new MenuItem(map);
-            mapList.getItems().add(item);
-
-            item.setOnAction(e -> {
-                mapList.hide();
-
-                App.setView(new Screen.Map(item.getText(), "internal"));
+                App.setView(new Screen.Map(item.getText(), type));
             });
         }
     }
