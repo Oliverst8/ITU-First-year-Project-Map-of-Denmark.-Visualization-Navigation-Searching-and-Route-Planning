@@ -48,6 +48,12 @@ public class MapView {
     private AnchorPane navigationPane;
     @FXML
     private Button startNavigationButton;
+    @FXML
+    private Button walkButton;
+    @FXML
+    private Button bikeButton;
+    @FXML
+    private Button carButton;
 
 
     private String[] mapLayers;
@@ -202,14 +208,23 @@ public class MapView {
     @FXML
     void switchToCarNavigation(){
         vehicleCode = 4;
+        walkButton.setStyle("-fx-border-color: transparent");
+        bikeButton.setStyle("-fx-border-color: transparent");
+        carButton.setStyle("-fx-border-color:  #00CED1");
     }
     @FXML
     void switchToBikeNavigation(){
         vehicleCode = 2;
+        walkButton.setStyle("-fx-border-color: transparent");
+        bikeButton.setStyle("-fx-border-color: #00CED1");
+        carButton.setStyle("-fx-border-color:  transparent");
     }
     @FXML
     void switchToWalkNavigation(){
         vehicleCode = 1;
+        walkButton.setStyle("-fx-border-color: #00CED1");
+        bikeButton.setStyle("-fx-border-color: transparent");
+        carButton.setStyle("-fx-border-color: transparent");
     }
 
     @FXML
@@ -443,12 +458,16 @@ public class MapView {
     @FXML
     void showNavigation(){
         navigationPane.setVisible(true);
+        navigationPane.setDisable(false);
         startNavigationButton.setVisible(false);
+        startNavigationButton.setDisable(true);
     }
     @FXML
     void hideNavigation(){
         navigationPane.setVisible(false);
+        navigationPane.setDisable(true);
         startNavigationButton.setVisible(true);
+        startNavigationButton.setDisable(false);
     }
 
 
