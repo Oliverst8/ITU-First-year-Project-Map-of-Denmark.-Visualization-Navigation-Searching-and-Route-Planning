@@ -82,6 +82,8 @@ public class MapView {
 
             canvas.get(key).widthProperty().bind(root.widthProperty());
             canvas.get(key).heightProperty().bind(root.heightProperty());
+            canvas.get(key).widthProperty().addListener(e -> redraw());
+            canvas.get(key).heightProperty().addListener(e -> redraw());
         }
 
         trans = new Affine();
@@ -251,6 +253,8 @@ public class MapView {
             print = true;
             overridePrint = false;
         }
+
+        controller.getWrittenChunks();
 
         Map<String, Set<Drawable>> layers = new HashMap<>();
         
