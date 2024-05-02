@@ -12,7 +12,7 @@ public class UtilityLoader extends Thread{
     private TernaryTree address;
 
     public UtilityLoader(String name) {
-        this.path = App.DATA_PATH + name + "/utilities";
+        this.path = App.mapPath + "/utilities";
         graph = new Graph();
     }
 
