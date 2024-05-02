@@ -34,6 +34,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -76,6 +77,7 @@
             <Button layoutX="654.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToWalkNavigation" text="Walk" />
             <Button layoutX="738.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToCarNavigation" text="Car" />
             <Button layoutX="697.0" layoutY="98.0" mnemonicParsing="false" onAction="#switchToBikeNavigation" text="Bike" />
+            <Slider layoutX="7.0" layoutY="435.0" fx:id="zoomSlider" orientation="VERTICAL" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>
         </AnchorPane>

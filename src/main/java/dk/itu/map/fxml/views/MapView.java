@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -36,6 +37,9 @@ public class MapView {
 
     @FXML
     private AnchorPane canvasParent;
+
+    @FXML
+    private Slider zoomSlider;
     private String[] mapLayers;
     private Map<String, Canvas> canvas;
     
@@ -103,6 +107,13 @@ public class MapView {
                 redraw();
             }
         };
+
+        // zoomSlider.setMajorTickUnit(25);
+        zoomSlider.setMin(0);
+        zoomSlider.setMax(15);
+        // zoomSlider.setMinorTickCount(5);
+        zoomSlider.setValue(50);
+        System.out.println(zoomSlider.getValue());
     }
 
     @FXML
@@ -226,9 +237,11 @@ public class MapView {
      * @param factor the factor to zoom by
      */
     public void zoom(double dx, double dy, double factor) {
+        if (Math.log(trans.getMxx()) > zoomSlider.getMax() && factor > 1) return;
         trans.prependTranslation(-dx, -dy);
         trans.prependScale(factor, factor);
         trans.prependTranslation(dx, dy);
+        zoomSlider.setValue(zoomSlider.getMax()-Math.log(trans.getMxx()));
     }
 
     /**
