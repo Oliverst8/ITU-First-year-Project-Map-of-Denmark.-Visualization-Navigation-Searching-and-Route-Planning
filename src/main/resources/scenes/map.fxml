@@ -56,7 +56,7 @@
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#switchToStandardTheme" text="Standard Theme" />
                                 <MenuItem mnemonicParsing="false" onAction="#switchToDarkTheme" text="Darkmode" />
-                                <MenuItem mnemonicParsing="false" onAction="#switchToYetAnotherTheme" text="Yet another theme" />
+                                <MenuItem mnemonicParsing="false" onAction="#switchToRandomTheme" text="Random Theme" />
                             </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
@@ -98,6 +98,7 @@
                </children>
             </AnchorPane>
             <Button fx:id="startNavigationButton" layoutX="21.0" layoutY="9.0" mnemonicParsing="false" onAction="#showNavigation" text="Start navigation" textAlignment="CENTER" />
+            <Button fx:id="addMarkerButton" layoutX="130.0" layoutY="10.0" mnemonicParsing="false" onAction="#addPointOfInterest" prefWidth="100.0" text="Add marker" />
                 <!-- <Slider blockIncrement="1.0" layoutX="594.0" layoutY="219.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" /> -->
             </children>
         </AnchorPane>

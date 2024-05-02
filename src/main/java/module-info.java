@@ -8,7 +8,6 @@ module dk.itu.map {
     
     requires org.apache.commons.io;
     requires org.apache.commons.compress;
-    requires javafx.base;
 
     requires com.gluonhq.charm.glisten;
     
