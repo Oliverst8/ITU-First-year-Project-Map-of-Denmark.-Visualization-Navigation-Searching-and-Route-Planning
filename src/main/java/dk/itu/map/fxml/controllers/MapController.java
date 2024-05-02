@@ -152,10 +152,10 @@ public class MapController {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
         if(startPoint == null || endPoint == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Start or end point missing");
-            alert.setContentText("Please select a start and end point before navigating");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No way found");
+            alert.setHeaderText("Start and end cant be connected");
+            alert.setContentText("This might be because you cant drive a connecting road, please try another road.");
             alert.showAndWait();
             return;
         }
