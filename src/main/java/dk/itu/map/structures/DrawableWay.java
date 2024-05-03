@@ -200,12 +200,12 @@ public class DrawableWay implements Drawable {
         return innerCoords.size() != 0;
     }
 
-    public float[] getOuterCoords() {
-        return outerCoords.toArray();
+    public CoordArrayList getOuterCoords() {
+        return outerCoords;
     }
 
-    public float[] getInnerCoords() {
-        return innerCoords.toArray();
+    public CoordArrayList getInnerCoords() {
+        return innerCoords;
     }
 
     public long getId() {

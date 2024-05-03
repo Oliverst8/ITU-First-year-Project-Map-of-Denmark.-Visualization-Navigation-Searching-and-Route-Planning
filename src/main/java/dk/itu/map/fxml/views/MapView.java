@@ -166,7 +166,7 @@ public class MapView {
             textFieldStart.setPromptText("Where from?");
             model.setStartPoint(point);
             model.removeRoute();
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme, this).run();
         } else if(setEndPoint){
             float[] endPoint = new float[]{(float) e.getX(), (float) e.getY()};
             endPoint = convertToLatLon(endPoint);
@@ -178,7 +178,7 @@ public class MapView {
             model.setEndPoint(point);
             model.removeRoute();
 
-            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas.get("navigation"), getNavigationDrawables(), trans, zoomAmount, getZoomLevel(), model.theme, this).run();
         } else if(setPointOfInterest){
             float[] pointOfInterest = new float[]{(float) e.getX(), (float) e.getY()};
             pointOfInterest = convertToLatLon(pointOfInterest);
@@ -446,7 +446,7 @@ public class MapView {
             long startTime = System.currentTimeMillis();
 
             Canvas canvas = this.canvas.get(entry.getKey());
-            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoomAmount, getZoomLevel(), model.theme).run();
+            new CanvasRedrawTask(canvas, entry.getValue(), trans, zoomAmount, getZoomLevel(), model.theme, this).run();
 
             long endTime = System.currentTimeMillis();
 
@@ -499,14 +499,14 @@ public class MapView {
     /**
      * @return Point2D the upper left corner of the canvas
      */
-    private Point2D getUpperLeftCorner() {
+    public Point2D getUpperLeftCorner() {
         return convertTo2DPoint(0, 0);
     }
 
     /**
      * @return Point2D the lower right corner of the canvas
      */
-    private Point2D getLowerRightCorner() {
+    public Point2D getLowerRightCorner() {
         return convertTo2DPoint(canvas.get("building").getWidth(), canvas.get("building").getHeight());
     }
 
