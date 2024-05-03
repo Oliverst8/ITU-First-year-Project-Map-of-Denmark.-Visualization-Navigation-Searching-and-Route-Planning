@@ -1,6 +1,7 @@
 package dk.itu.map.task;
 
 import dk.itu.map.fxml.models.MapModel.Theme;
+import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.Drawable;
 
 import java.util.Set;
@@ -21,16 +22,14 @@ public class CanvasRedrawTask {
     private final int zoomLevel;
     private Set<Drawable> drawables = null;
     Theme theme;
-    MapView mapView;
 
-    public CanvasRedrawTask(Canvas canvas, Set<Drawable> drawable, Affine trans, float zoomAmount, int zoomLevel, Theme theme, MapView mapWiew) {
+    public CanvasRedrawTask(Canvas canvas, Set<Drawable> drawable, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
         this.canvas = canvas;
         this.drawables = drawable;
         this.trans = trans;
         this.zoomAmount = zoomAmount;
         this.zoomLevel = zoomLevel;
         this.theme = theme;
-        this.mapView = mapWiew;
     }
 
     public Void run() {
@@ -38,12 +37,20 @@ public class CanvasRedrawTask {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         wipeCanvas(gc);
-        int skipAmount = (int)Math.pow(3, zoomLevel);
         // Draw the chunks
         for (Drawable drawable : drawables) {
-            if(drawable instanceof DrawableWay){
-                float[] coord = ((DrawableWay) drawable).getOuterCoords().get(0);
-                if((drawable.getPrimaryType().equals("place") || drawable.getPrimaryType().equals("natural")) && !isCoordInView(coord)) skipAmount = 243;
+            int skipAmount = (int)Math.pow(3, zoomLevel);
+            if(drawable instanceof DrawableWay && (drawable.getPrimaryType().equals("place") || drawable.getPrimaryType().equals("natural"))){
+                boolean isInView = false;
+                CoordArrayList outerCoords = ((DrawableWay) drawable).getOuterCoords();
+                for(int i = 0; i < outerCoords.size(); i+= skipAmount){
+                    if(isCoordInView(outerCoords.get(i))){
+                        isInView = true;
+                        break;
+                    }
+                }
+
+                if(!isInView) skipAmount = 64;
             }
             drawable.draw(gc, zoomAmount, skipAmount, theme);
         }
@@ -51,12 +58,21 @@ public class CanvasRedrawTask {
     }
 
     public boolean isCoordInView(float[] coord) {
-        float[] min = convertToLatLon(mapView.getUpperLeftCorner());
-        float[] max = convertToLatLon(mapView.getLowerRightCorner());
-        return coord[0] >= min[0] && coord[0] <= max[0] && coord[1] >= min[1] && coord[1] <= max[1];
+        float[] topLeft = convertToLatLon(0f,0f);
+        float[] bottomRight = convertToLatLon((float) canvas.getHeight(), (float) canvas.getWidth());
+        return coord[1] >= topLeft[0] && coord[1] <= bottomRight[0] && coord[0] <= topLeft[1] && coord[0] >= bottomRight[1];
     }
 
-    public float[] convertToLatLon(Point2D point) {
+    private Point2D convertTo2DPoint(double x, double y) {
+        try {
+            return trans.inverseTransform(x, y);
+        } catch (NonInvertibleTransformException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private float[] convertToLatLon(float x, float y) {
+        Point2D point = convertTo2DPoint(x, y);
         return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
