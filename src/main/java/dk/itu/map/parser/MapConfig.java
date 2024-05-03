@@ -12,8 +12,8 @@ import javafx.geometry.Point2D;
 
 public class MapConfig {
 
-    public final float CHUNK_SIZE;// = 0.05f;
-    public final byte layerCount;// = 5;
+    public final float CHUNK_SIZE;
+    public final byte layerCount;
 
     public final float minLat, maxLat, minLon, maxLon;
 
@@ -21,7 +21,7 @@ public class MapConfig {
 
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
         this.CHUNK_SIZE = 0.02f;
-        this.layerCount = 5;
+        this.layerCount = 6;
         this.minLat = minLat;
         this.maxLat = maxLat;
         this.minLon = minLon;

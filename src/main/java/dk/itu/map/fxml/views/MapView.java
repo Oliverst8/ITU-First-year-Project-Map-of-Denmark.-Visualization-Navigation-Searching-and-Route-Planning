@@ -424,7 +424,7 @@ public class MapView {
 
         updateZoomAmount();
 
-        for(int i = getZoomLevel(); i <= 4; i++) {
+        for(int i = getZoomLevel(); i < 6; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);
@@ -514,6 +514,7 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
+        if(zoomAmount > 20) return 5;
         if(zoomAmount > 10) return 4;
         if(zoomAmount > 5) return 3;
         if(zoomAmount > 3) return 2;

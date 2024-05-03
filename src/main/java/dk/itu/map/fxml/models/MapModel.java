@@ -24,7 +24,7 @@ public class MapModel {
         graph = new Graph();
         this.mapType = mapType;
         chunkLayers = new ArrayList<>();
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i < 6; i++) {
             chunkLayers.add(new HashMap<>());
         }
         navigationWays = new Drawable[]{null, null, null, null, null};
