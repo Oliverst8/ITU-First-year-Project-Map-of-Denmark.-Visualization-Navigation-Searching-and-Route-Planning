@@ -38,7 +38,6 @@ public class Navigation {
         setDistTo(startPoint, startPoint, 0f, 0f);
         while(!queue.isEmpty()){
             int min = queue.delMin();
-
             if(min == endPoint) return true;
             relax(min);
         }

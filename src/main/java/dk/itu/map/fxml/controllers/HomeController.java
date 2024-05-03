@@ -1,15 +1,16 @@
 package dk.itu.map.fxml.controllers;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 import dk.itu.map.App;
 import dk.itu.map.fxml.Screen;
 import dk.itu.map.fxml.models.HomeModel;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
 
 public class HomeController {
 
@@ -48,11 +49,10 @@ public class HomeController {
         dialog.setGraphic(null);
         dialog.setContentText("Map Name:");
         dialog.resizableProperty().setValue(false);
-
         return dialog.showAndWait().get();
     }
 
-    public void loadSavedMaps(MenuButton mapList) {
+    public void loadSavedMaps(MenuButton mapList, MenuButton deleteList) {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
         String[] internalMaps = new String[]{"Isle"};
@@ -60,6 +60,8 @@ public class HomeController {
 
         addMaps(mapList, internalMaps, "intrnal");
         addMaps(mapList, externapMaps, "external");
+
+        addMaps(deleteList, externapMaps, "delete");
     }
 
     private void addMaps(MenuButton mapList, String[] maps, String type) {
@@ -69,11 +71,27 @@ public class HomeController {
             MenuItem item = new MenuItem(map);
             mapList.getItems().add(item);
 
-            item.setOnAction(e -> {
-                mapList.hide();
+            if(type.equalsIgnoreCase("delete")){
+                item.setOnAction(e -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete: " + map);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if(result.isPresent() && result.get() == ButtonType.OK){
+                        File fileToBeDeleted = new File("./maps/" + map);
+                            System.out.println(fileToBeDeleted);
+                        try {
+                            FileUtils.deleteDirectory(fileToBeDeleted);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                });
+            } else{
+                item.setOnAction(e -> {
+                    mapList.hide();
 
-                App.setView(new Screen.Map(item.getText(), type));
-            });
+                    App.setView(new Screen.Map(item.getText(), type));
+                });
+            }
         }
     }
 }
