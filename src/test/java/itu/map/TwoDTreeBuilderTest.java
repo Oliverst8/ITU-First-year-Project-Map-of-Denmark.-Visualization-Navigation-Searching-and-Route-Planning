@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TwoDTreeBuilderTest {
-/*
+
     TwoDTreeBuilder kdTreeBuilder;
     static CoordArrayList coords;
 
@@ -55,27 +55,27 @@ public class TwoDTreeBuilderTest {
         assertArrayEquals(expected, actual);
     }
 
-    // @Test
-    // void buildTreeChildShouldBeToTTheRight() {
-    //     CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,2,0});
-    //     TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
-    //     builder.build();
+     @Test
+     void buildTreeChildShouldBeToTTheRight() {
+         CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,1,2});
+         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+         builder.build();
 
-    //     int[] actual = builder.getTree();
-    //     int[] expected = new int[]{0,-1,1};
-    //     assertArrayEquals(expected, actual);
-    // }
+         int[] actual = builder.getTree();
+         int[] expected = new int[]{0,-1,1};
+         assertArrayEquals(expected, actual);
+     }
 
-    // @Test
-    // void buildTreeChildShouldBeToTTheLeft() {
-    //     CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,0,2});
-    //     TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
-    //     builder.build();
+     @Test
+     void buildTreeChildShouldBeToTTheLeft() {
+         CoordArrayList coordArrayList = new CoordArrayList(new float[]{1,1,2,0});
+         TwoDTreeBuilder builder = new TwoDTreeBuilder(coordArrayList);
+         builder.build();
 
-    //     int[] actual = builder.getTree();
-    //     int[] expected = new int[]{0,1,-1};
-    //     assertArrayEquals(expected, actual);
-    // }
+         int[] actual = builder.getTree();
+         int[] expected = new int[]{0,1,-1};
+         assertArrayEquals(expected, actual);
+     }
 
     @Test
     void buildTree3() {
@@ -107,6 +107,16 @@ public class TwoDTreeBuilderTest {
         int[] expected = new int[]{0,-1,1};
         assertArrayEquals(expected, actual);
     }
-*/
+
+    @Test
+    void testDuplicatesPoints(){
+        CoordArrayList coords = TestUtilities.createCoordArrayList(1,1,1,1,1,1,1,1,1,1);
+        kdTreeBuilder = new TwoDTreeBuilder(coords);
+        kdTreeBuilder.build();
+        int[] expected = new int[]{2,0,4,-1,1,3,-1};
+    }
+
+
+
 
 }
