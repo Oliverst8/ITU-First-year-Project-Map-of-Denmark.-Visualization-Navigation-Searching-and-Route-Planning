@@ -42,11 +42,11 @@
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" layoutX="233.0" layoutY="35.0" prefHeight="17.0" prefWidth="175.0" />
-      <Button layoutX="360.0" layoutY="266.0" mnemonicParsing="false" onAction="#importMap" text="Import new" />
-      <MenuButton fx:id="mapList" layoutX="354.0" layoutY="300.0" prefHeight="26.0" prefWidth="90.0" text="Load">
+      <Button layoutX="355.0" layoutY="271.0" mnemonicParsing="false" onAction="#importMap" text="Import new" textAlignment="CENTER" />
+      <MenuButton fx:id="mapList" layoutX="355.0" layoutY="304.0" prefHeight="26.0" prefWidth="90.0" text="Load">
 
       </MenuButton>
-      <Text layoutX="231.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" textAlignment="CENTER" wrappingWidth="335.7139358520508">
+      <Text layoutX="231.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MapIT" textAlignment="CENTER" wrappingWidth="335.7139358520508">
          <font>
             <Font name="Century" size="54.0" />
          </font>
