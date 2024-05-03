@@ -9,6 +9,8 @@ public class HomeView {
     
     @FXML
     private MenuButton mapList;
+    @FXML
+    private MenuButton mapDeleteList;
     private final HomeController controller;
     
     public HomeView(HomeController controller) {
@@ -17,7 +19,7 @@ public class HomeView {
     
     @FXML
     public void initialize() {
-        controller.loadSavedMaps(mapList);
+        controller.loadSavedMaps(mapList, mapDeleteList);
     }
 
     @FXML
