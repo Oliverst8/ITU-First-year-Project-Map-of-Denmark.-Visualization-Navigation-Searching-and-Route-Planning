@@ -35,6 +35,7 @@ public class CanvasRedrawTask {
         int skipAmount = (int)Math.pow(3, zoomLevel);
         // Draw the chunks
         for (Drawable drawable : drawables) {
+            if(drawable.getPrimaryType().equals("place") || drawable.getPrimaryType().equals("natural")) skipAmount = 243;
             drawable.draw(gc, zoomAmount, skipAmount, theme);
         }
 
