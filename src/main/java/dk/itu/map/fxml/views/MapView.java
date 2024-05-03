@@ -111,7 +111,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
+        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -421,10 +421,11 @@ public class MapView {
 
         layers.put("navigation", navigationSet);
         layers.put("pointOfInterest", pointOfInterests);
+        layers.put("landmass", model.landLayer);
 
         updateZoomAmount();
 
-        for(int i = getZoomLevel(); i < 6; i++) {
+        for(int i = getZoomLevel(); i < 5; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);

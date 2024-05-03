@@ -50,7 +50,7 @@ public class CanvasRedrawTask {
                     }
                 }
 
-                if(!isInView) skipAmount = 64;
+                if(!isInView) skipAmount = 243;
             }
             drawable.draw(gc, zoomAmount, skipAmount, theme);
         }

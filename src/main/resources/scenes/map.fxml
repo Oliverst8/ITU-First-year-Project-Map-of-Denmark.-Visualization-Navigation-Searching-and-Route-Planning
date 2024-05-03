@@ -69,6 +69,7 @@
         </MenuBar>
         <AnchorPane fx:id="canvasParent" style="-fx-background-color: #90DAEE;" VBox.vgrow="ALWAYS">
             <children>
+                <Canvas fx:id="canvasLandmass" />
                 <Canvas fx:id="canvasPlace" />
                 <Canvas fx:id="canvasNatural" />
                 <Canvas fx:id="canvasLanduse" />
