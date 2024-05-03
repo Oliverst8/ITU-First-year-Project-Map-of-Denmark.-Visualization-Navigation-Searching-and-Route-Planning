@@ -51,7 +51,7 @@ public class TernaryTree implements Runnable, WriteAble{
         float lon = streetPosition.remove(0);
         root = insert(street, lat, lon);
         while(running){
-            while(!streetNames.isEmpty()){
+            while(!streetNames.isEmpty() && (streetPosition.size() >= 2)){
                 street = streetNames.remove(0);
                 lat = streetPosition.remove(0);
                 lon = streetPosition.remove(0);
