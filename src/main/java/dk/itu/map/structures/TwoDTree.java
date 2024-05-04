@@ -64,14 +64,7 @@ public class TwoDTree extends CoordArrayList {
         }
 
         int nextCheck = nearest(goal, child, best, (axis + 1) % 2, vehicleCode, graph);
-        IntArrayList edges = graph.getEdgeList(nextCheck);
-        boolean canBeUsed = false;
-        for(int j = 0; j < edges.size(); j++){
-            int edge = edges.get(j);
-            if((graph.getVehicleRestrictions().get(edge) & vehicleCode) > 0 ){
-                canBeUsed = true;
-            }
-        }
+        boolean canBeUsed = graph.canThisBeDrivenOn(nextCheck, vehicleCode);
         if(canBeUsed){
             best = distance(goal, get(best)) > distance(goal, get(nextCheck)) ? nextCheck : best;
         }

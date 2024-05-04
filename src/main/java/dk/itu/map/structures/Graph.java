@@ -197,5 +197,17 @@ public class Graph {
     public FloatArrayList getTimeWeights() {
         return timeWeights;
     }
+    public int getOldVertex(int index){
+        return oldToNewVertexIndex.get(index);
+    }
+    public boolean canThisBeDrivenOn(int vertex, int vehicleCode){
+        IntArrayList edges = vertexList.get(vertex);
+        for(int i = 0; i < edges.size(); i++){
+            if((vehicleRestrictions.get(edges.get(i)) & vehicleCode) > 0){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
