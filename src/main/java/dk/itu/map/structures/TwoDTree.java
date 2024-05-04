@@ -47,20 +47,20 @@ public class TwoDTree extends CoordArrayList {
         return nearest(point, 0, 0, 0, vehicleCode, graph);
     }
 
-    private int nearest(float[] goal, int i, int best, int axis, int vehicleCode, Graph graph) {
+    private int nearest(float[] goal, int currentNode, int best, int axis, int vehicleCode, Graph graph) {
 
-        if(goal == get(i)) return i;
+        if(goal == get(currentNode)) return currentNode;
 
-        boolean shouldGoRight = shouldGoRight(goal, get(i), axis);
+        boolean shouldGoRight = shouldGoRight(goal, get(currentNode), axis);
 
-        int rightChild = getRightChild(i);
-        int leftChild = getLeftChild(i);
+        int rightChild = getRightChild(currentNode);
+        int leftChild = getLeftChild(currentNode);
 
         int child = shouldGoRight ? rightChild : leftChild;
 
         if(child == -1){
             child = shouldGoRight ? leftChild : rightChild;
-            if(child == -1) return i;
+            if(child == -1) return currentNode;
         }
 
         int nextCheck = nearest(goal, child, best, (axis + 1) % 2, vehicleCode, graph);
@@ -71,61 +71,13 @@ public class TwoDTree extends CoordArrayList {
 
         if(child == rightChild){
             if(leftChild == -1) return best;
-            float rPrime = distToLine(goal, get(i), axis);
+            float rPrime = distToLine(goal, get(currentNode), axis);
             if(distance(goal, get(best)) > rPrime) best = nearest(goal, leftChild, best, (axis + 1) % 2, vehicleCode, graph);
         } else {
             if(rightChild == -1) return best;
-            float rPrime = distToLine(goal, get(i), axis);
+            float rPrime = distToLine(goal, get(currentNode), axis);
             if(distance(goal, get(best)) > rPrime) best = nearest(goal, rightChild, best, (axis + 1) % 2, vehicleCode, graph);
         }
         return best;
-    }
-
-
-/*
-    public float[] nearestNeighbour(float[] coords) {
-        Queue<Integer> queue = new LinkedList<>();
-        float r = distance(coords, get(0));
-        float rPrime = distToLine(coords, get(0), 0);
-        int nearest = 0;
-        int axis = 0;
-
-        queue.add(nearest);
-
-
-        while(!queue.isEmpty()) {
-            int i = queue.poll();
-            boolean goRight; // = goRight(coords, get(i), axis);
-
-            int leftChild = getLeftChild(i);
-            int rightChild = getRightChild(i);
-
-            if(leftChild == -1 && rightChild == -1) {
-                continue;
-            } else if(leftChild == -1) {
-                goRight = true;
-            } else if(rightChild == -1) {
-                goRight = false;
-            } else {
-                goRight = shouldGoRight(coords, get(leftChild), axis);
-            }
-
-            if(goRight){
-
-
-            } else {
-
-            }
-
-            axis = (axis + 1) % 2;
-        }
-
-
-
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
- */
-    public int nearestNeighbour(float x, float y, int vehicleCode, Graph graph) {
-        return nearestNeighbour(new float[]{x,y}, vehicleCode, graph);
     }
 }
