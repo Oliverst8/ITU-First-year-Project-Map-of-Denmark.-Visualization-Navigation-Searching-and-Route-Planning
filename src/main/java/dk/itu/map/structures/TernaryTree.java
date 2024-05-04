@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.util.*;
 
 public class TernaryTree implements Runnable, WriteAble{
-    private final List<String[]> streetNames;
-    private final List<Float> streetPosition;
-    private Map<String, Integer> streetNumberMap, zipMap, cityMap;
-    private List<String> streetNumber, zip, cities;
-    private Node root;
-    private int size;
-    private boolean running;
+    private final List<String[]> streetNames; //List (Queue) to keep track of addresses to add to the tree
+    private final List<Float> streetPosition; //List (Queue) to keep track of addresses coordinates (Lat, lon)
+    private Map<String, Integer> streetNumberMap, zipMap, cityMap; //Map that maps from strings to their position in the laters lists (Only used while building)
+    private List<String> streetNumber, zip, cities; //List that holds the different streetnumber, zip and cities
+    private Node root; //The root of the tree
+    private int size; //The size of the tree
+    private boolean running; //Boolean to tell weather or should keep building
 
+    /**
+     * Constructor for the TernaryTree
+     * Initializes private fields
+     */
     public TernaryTree(){
         size = 0;
         streetNames = Collections.synchronizedList(new LinkedList<>());
@@ -30,12 +34,22 @@ public class TernaryTree implements Runnable, WriteAble{
         cities = new ArrayList<>();
     }
 
-    public void addStreetName(String[] streetName, float X, float Y){
+    /**
+     * Add a streetname to be inserted into the tree
+     * @param streetName The street to be inserted (Position 0 is the streetname, position 1 is the streetnumber, position 2 is the zip, position 3 is the city)
+     * @param lat the lattitude of the street
+     * @param lon the longitude of the street
+     */
+    public void addStreetName(String[] streetName, float lat, float lon){
         streetNames.add(streetName);
-        streetPosition.add(X);
-        streetPosition.add(Y);
+        streetPosition.add(lat);
+        streetPosition.add(lon);
     }
 
+    /**
+     * Method to start building the tree. Should always be called through a thread
+     * Will keep building the tree until the streetNames list is empty and .finish() has been called
+     */
     public void run(){
         running = true;
         while(streetNames.isEmpty()) {
@@ -66,10 +80,26 @@ public class TernaryTree implements Runnable, WriteAble{
         System.out.println("Finsihed tree");
     }
 
-    private Node insert(String[] value, float X, float Y){
-        return insert(root, value, 0, X, Y);
+    /**
+     * Inserts a street into the tree
+     * @param value The street to be inserted (Position 0 is the streetname, position 1 is the streetnumber, position 2 is the zip, position 3 is the city)
+     * @param lat the lattitude of the address
+     * @param lon the longitude of the address
+     * @return The first node of the address
+     */
+    private Node insert(String[] value, float lat, float lon){
+        return insert(root, value, 0, lat, lon);
     }
 
+    /**
+     * Recursive method to insert a adress into the tree
+     * @param node the node to be inserted into/under
+     * @param value the address to be inserted
+     * @param pos what character in the streetname that has been gotten to
+     * @param lat the lattitude of the address
+     * @param lon the longitude of the address
+     * @return The inserted node
+     */
     private Node insert(Node node, String[] value, int pos, float lat, float lon){
         if(pos >= value[0].length()) return node;
         if (node == null){
@@ -84,7 +114,6 @@ public class TernaryTree implements Runnable, WriteAble{
         } else if(pos == value[0].length()-1){
             if(!node.isTerminal) {
                 node = new AddressNode(value, value[0].charAt(pos), lat, lon, node);
-                node.temp = value[0];
             } else ((AddressNode) node).addAddress(value, lat, lon);
         }else {
             node.middle = insert(node.middle, value, pos+1, lat, lon);
@@ -92,6 +121,12 @@ public class TernaryTree implements Runnable, WriteAble{
         return node;
     }
 
+    /**
+     * Method to add a street to the results list of an autocomplete
+     * @param value The street to be added
+     * @param input The last node of the street
+     * @param results the list the results should be added to. Creates a searchAdress of the steetname zip code, and the given node
+     */
     private void addToResults(String value, Node input, List<searchAddress> results){
         AddressNode node = (AddressNode) input;
         HashMap<String, Set<String>> zipToRoad = new HashMap<>();
@@ -111,14 +146,30 @@ public class TernaryTree implements Runnable, WriteAble{
         }
     }
 
+    /**
+     * Method to get the size of the tree
+     * @return the size of the tree
+     */
     public int Size(){
         return size;
     }
 
+    /**
+     * Method to search for a street in the tree
+     * @param value the street to be searched for
+     * @return the terminal node of the street. (Returns null if it dosent have a terminal node in the tree (Dosent exist))
+     */
     public Node search(String value){
         return search(root, value, 0);
     }
 
+    /**
+     * Recursive method to search for a street in the tree
+     * @param node the node to be searched from
+     * @param value the street to be searched for
+     * @param pos the position in the streetname that has been gotten to
+     * @return The node of the last character of the string. (Returns null if it dosent exist in the tree)
+     */
     public Node search(Node node, String value, int pos){
         if(node == null) return null;
 
@@ -138,6 +189,12 @@ public class TernaryTree implements Runnable, WriteAble{
         }
     }
 
+    /**
+     * Method to autocomplete a streetname
+     * @param value the streetname to be autocompleted
+     * @param maxResults the maximum amount of results to be returned (Will return more if there are multiple street with the name (Differnet zipcodes))
+     * @return a list of searchAddresses that match the streetname containing the found streetname,the zip code, and the node it is found at
+     */
     public List<searchAddress> autoComplete(String value, int maxResults){
         Node searchResult = search(value);
         List<searchAddress> results = new ArrayList<>();
@@ -184,6 +241,13 @@ public class TernaryTree implements Runnable, WriteAble{
         return results;
     }
 
+    /**
+     * Creates a list of searchAddresses that match the given address and zip code
+     * @param address the selected address autocompleted (position 0 is the streetname and position 1 is the zip code)
+     * @param node the terminal node of the adress
+     * @param current the string to be autocompleted
+     * @return a list of results
+     */
     public List<searchAddress> fillAddress(String[] address, AddressNode node, String current) {
         List<searchAddress> list = new ArrayList<>();
         current = current.substring(address[0].length());
@@ -208,6 +272,12 @@ public class TernaryTree implements Runnable, WriteAble{
         return list;
     }
 
+    /**
+     * Checks if a street and number matches the current string
+     * @param current the current string
+     * @param newStreetNumber the new street number
+     * @return true if the street can be gotten from the current string
+     */
     private static boolean checkIfShouldSuggest(String current, String newStreetNumber) {
         char[] charArray = current.toCharArray();
         int j = 0;
@@ -222,10 +292,18 @@ public class TernaryTree implements Runnable, WriteAble{
         return true;
     }
 
+    /**
+     * Tells the thread to stop building the tree
+     */
     public void finish(){
         running = false;
     }
 
+    /**
+     * Method to write the tree to a file
+     * @param stream the stream to write to
+     * @throws IOException if the stream cant be written to
+     */
     @Override
     public void write(DataOutputStream stream) throws IOException {
         Queue<Node> queue = new LinkedList<>();
@@ -256,7 +334,11 @@ public class TernaryTree implements Runnable, WriteAble{
 
     }
 
-
+    /**
+     * Method to read the tree from a file
+     * @param stream the stream to read from
+     * @throws IOException if the stream cant be read from
+     */
     @Override
     public void read(DataInputStream stream) throws IOException {
         Queue<Node> queue = new LinkedList<>();
@@ -317,6 +399,11 @@ public class TernaryTree implements Runnable, WriteAble{
         }
     }
 
+    /**
+     * Method to check if graph is equal to another graph
+     * @param obj the object to be compared to
+     * @return true if all the fields that are used past build fase is equal
+     */
     @Override
     public boolean equals(Object obj){
         if(obj == null) return false;
@@ -348,38 +435,67 @@ public class TernaryTree implements Runnable, WriteAble{
         return true;
     }
 
+    /**
+     * Method to get the city list
+     * @return the list of cities in the tree
+     */
     public List<String> getCities() {
         return cities;
     }
 
+    /**
+     * Method to get the zip codes in the tree
+     * @return the list of zip codes in the tree
+     */
     public List<String> getZip() {
         return zip;
     }
 
+    /**
+     * Method to get the street numbers in the tree
+     * @return the list of street numbers in the tree
+     */
     public List<String> getStreetNumber() {
         return streetNumber;
     }
 
     public class Node implements WriteAble{
-        String temp;
-        public Node left;
-        public Node middle;
-        public Node right;
-        public char value;
-        public boolean isTerminal;
+        public Node left; //The left child of the node
+        public Node middle; //The middle child of the node
+        public Node right; //The right child of the node
+        public char value; //The value of the node
+        public boolean isTerminal; //Boolean to tell if the node is a terminal node
 
+        /**
+         * Constructor for the node
+         * @param value the value of the node
+         */
         public Node(char value){
             this.value = value;
         }
 
+        /**
+         * Method to get the string representation of the node
+         * @return the string representation of the node
+         */
         public String toString(){
             return "Value: " + value + " Terminal: " + isTerminal + (left != null ? " Has left" : " left is null") + (middle != null ? " Has middle" : " middle is null") + (right != null ? " Has right" : " right is null");
         }
 
+        /**
+         * Method to compare the value of the node to another value
+         * @param otherValue the value to be compared to
+         * @return the comparison of the two values (1 if this is bigger, 0 if equal, -1 if this is smaller)
+         */
         public int compareTo(char otherValue){
             return Character.compare(Character.toLowerCase(value), Character.toLowerCase(otherValue));
         }
 
+        /**
+         * Method to write the node to a file
+         * @param stream the stream to write to
+         * @throws IOException if the stream cant be written to
+         */
         @Override
         public void write(DataOutputStream stream) throws IOException {
             stream.writeChar(value);
@@ -387,15 +503,20 @@ public class TernaryTree implements Runnable, WriteAble{
         }
 
         /**
-         * This expects that terminal is false
-         * @param stream
-         * @throws IOException
+         * Makes the isTerminal field false
+         * @param stream the stream to read from
+         * @throws IOException if the stream cant be read from
          */
         @Override
         public void read(DataInputStream stream) throws IOException {
             isTerminal = false;
         }
 
+        /**
+         * Method to check if the node is equal to another node
+         * @param obj the object to be compared to
+         * @return true if the two nodes are equal in value and terminal value
+         */
         @Override
         public boolean equals(Object obj){
             if(obj == null) return false;
@@ -409,11 +530,15 @@ public class TernaryTree implements Runnable, WriteAble{
 
     public class AddressNode extends Node{
 
-        IntArrayList streetNumberIndexes;
-        IntArrayList zipIndexes;
-        IntArrayList cityIndexes;
-        CoordArrayList coords = new CoordArrayList();
+        IntArrayList streetNumberIndexes; //List of indexes to the streetnumber list
+        IntArrayList zipIndexes; //List of indexes to the zip list
+        IntArrayList cityIndexes; //List of indexes to the city list
+        CoordArrayList coords = new CoordArrayList(); //List of coordinates of the address
 
+        /**
+         * Constructor for the AddressNode
+         * @param value the value of the node
+         */
         public AddressNode(char value){
             super(value);
             isTerminal = true;
@@ -422,7 +547,13 @@ public class TernaryTree implements Runnable, WriteAble{
             streetNumberIndexes = new IntArrayList();
         }
 
-
+        /**
+         * Constructor for the AddressNode
+         * @param address the address to be added to the node
+         * @param value the value of the node
+         * @param lat the lattitude of the address
+         * @param lon the longitude of the address
+         */
         public AddressNode(String[] address, char value, float lat, float lon){
             super(value);
             isTerminal = true;
@@ -432,6 +563,14 @@ public class TernaryTree implements Runnable, WriteAble{
             addAddress(address, lat, lon);
         }
 
+        /**
+         * Constructor for the AddressNode
+         * @param address the address to be added to the node
+         * @param value the value of the node
+         * @param lat the lattitude of the address
+         * @param lon the longitude of the address
+         * @param node the node this should be a copy off
+         */
         public AddressNode(String[] address, char value, float lat, float lon, Node node){
             this(address, value, lat, lon);
             this.left = node.left;
@@ -439,6 +578,12 @@ public class TernaryTree implements Runnable, WriteAble{
             this.right = node.right;
         }
 
+        /**
+         * Adds an address to the node
+         * @param address the address to be added
+         * @param lat the lattitude of the address
+         * @param lon the longitude of the address
+         */
         public void addAddress(String[] address, float lat, float lon){
             coords.add(lat, lon);
             int streetNumberIndex;
@@ -472,6 +617,11 @@ public class TernaryTree implements Runnable, WriteAble{
             }
         }
 
+        /**
+         * Method to write the node to a file
+         * @param stream the stream to write to
+         * @throws IOException if the stream cant be written to
+         */
         @Override
         public void write(DataOutputStream stream) throws IOException {
             stream.writeChar(value);
@@ -482,6 +632,11 @@ public class TernaryTree implements Runnable, WriteAble{
             cityIndexes.write(stream);
         }
 
+        /**
+         * Method to read the node from a file
+         * @param stream the stream to read from
+         * @throws IOException if the stream cant be read from
+         */
         @Override
         public void read(DataInputStream stream) throws IOException {
             isTerminal = true;
@@ -491,11 +646,19 @@ public class TernaryTree implements Runnable, WriteAble{
             cityIndexes.read(stream);
         }
 
+        /**
+         * @return the string representation of the node
+         */
         @Override
         public String toString(){
             return "Value: " + value + " Terminal: " + isTerminal + " StreetNumberIndexes: " + streetNumberIndexes + " ZipIndexes: " + zipIndexes + " CityIndexes: " + cityIndexes + " Coords: " + coords;
         }
 
+        /**
+         * Method to check if the node is equal to another node
+         * @param obj the object to be compared to
+         * @return true if the two nodes are equal in value, terminal value, streetnumberindexes, zipindexes, cityindexes and coords
+         */
         @Override
         public boolean equals(Object obj) {
             if (!super.equals(obj)) return false;
@@ -509,13 +672,19 @@ public class TernaryTree implements Runnable, WriteAble{
     }
 
     public static class searchAddress {
-        public String streetName;
-        public String streetNumber;
-        public String zip;
-        public String city;
-        public Point point;
-        public AddressNode node;
+        public String streetName; //The streetname of the address
+        public String streetNumber; //The streetnumber of the address
+        public String zip; //The zip code of the address
+        public String city; //The city of the address
+        public Point point; //The location of the address
+        public AddressNode node; //The node of the address
 
+        /**
+         * Constructor for the searchAddress
+         * @param streetName the streetname of the address
+         * @param zip the zip code of the address
+         * @param node the node of the address
+         */
         public searchAddress(String streetName, String zip, AddressNode node){
             this.streetName = streetName;
             this.streetNumber = null;
@@ -524,6 +693,10 @@ public class TernaryTree implements Runnable, WriteAble{
             this.node = node;
         }
 
+        /**
+         * Clones the fields of another node to this one
+         * @param other the node to be cloned
+         */
         public void clone(searchAddress other){
             this.streetName = other.streetName;
             this.streetNumber = other.streetNumber;
@@ -532,12 +705,18 @@ public class TernaryTree implements Runnable, WriteAble{
             this.node = other.node;
         }
 
+        /**
+         * @return the string representation of the address
+         */
         @Override
         public String toString(){
             if(streetNumber == null && city == null) return streetName + ": " + zip;
             return streetName + " " + streetNumber + ", " + zip + " " + city;
         }
 
+        /**
+         * Resets the field of the node to null
+         */
         public void reset() {
             this.streetName = null;
             this.streetNumber = null;
