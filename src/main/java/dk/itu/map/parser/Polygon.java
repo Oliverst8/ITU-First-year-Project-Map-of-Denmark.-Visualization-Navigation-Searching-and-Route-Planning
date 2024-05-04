@@ -135,7 +135,7 @@ public class Polygon extends MapElement {
 
             current = current.getNext();
         }
-        
+
         return orderedWays;
     }
 
