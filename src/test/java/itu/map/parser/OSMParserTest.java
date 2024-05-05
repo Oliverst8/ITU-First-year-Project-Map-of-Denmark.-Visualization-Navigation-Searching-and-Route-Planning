@@ -3,6 +3,7 @@ package itu.map.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import dk.itu.map.App;
 import dk.itu.map.parser.FileProgress;
 import dk.itu.map.structures.Drawable;
 import javafx.scene.control.ProgressBar;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import dk.itu.map.parser.ChunkLoader;
@@ -21,7 +23,7 @@ import itu.map.TestUtilities;
 public class OSMParserTest {
     
 //     @Test
-//     public void OSMParserWriteAndReadTest() throws InterruptedException {
+//     public void OSMParserWriteAndReadTest() throws InterruptedException, IOException {
 //         String path = TestUtilities.getTestFilesPath();
 //         App.DATA_PATH = path;
 //         App.mapPath = path + "/testmap/";
@@ -50,5 +52,6 @@ public class OSMParserTest {
 //         //Map<Integer, List<Drawable>> chunkMap = chunkLoader.getChunkMap();
 //                 System.out.println(chunkMap.size());
 //         assertEquals(chunkMap.get(0).size(), 16);
+//         FileUtils.deleteDirectory(new File(App.mapPath));
 //     }
 }
