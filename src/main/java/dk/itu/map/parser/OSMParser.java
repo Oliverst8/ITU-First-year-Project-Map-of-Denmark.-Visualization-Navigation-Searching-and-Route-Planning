@@ -294,9 +294,13 @@ public class OSMParser extends Thread {
         Way way = new Way(id, tags, coords, nodeIds);
 
         if (relationMap.containsKey(id)) {
-            relationMap.get(id).forEach(relation -> {
-                relation.addWay(way);
-            });
+            if (relationMap.get(id).size() == 1) {
+                relationMap.get(id).getFirst().addWay(way);
+            } else {
+                relationMap.get(id).forEach(relation -> {
+                    relation.addWay(new Way(id, tags, coords.copy(), nodeIds));
+                });
+            }
         }
 
         chunkGenerator.addWay(way);

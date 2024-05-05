@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 public class MapModel {
     // A list that holds the different zoom levels, and their chunks
     public final List<Map<Integer, List<Drawable>>> chunkLayers;
+    public Set<Drawable> landLayer;
     // The chunk loader
     public ChunkLoader chunkLoader;
     private Graph graph;
@@ -27,9 +28,10 @@ public class MapModel {
         graph = new Graph();
         this.mapType = mapType;
         chunkLayers = new ArrayList<>();
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i < 5; i++) {
             chunkLayers.add(new HashMap<>());
         }
+        landLayer = new HashSet<>();
         navigationWays = new Drawable[]{null, null, null, null, null};
     }
 
@@ -82,7 +84,7 @@ public class MapModel {
      * @return The amount of layers in the map
      */
     public int getLayerCount() {
-        return chunkLoader.getConfig().layerCount;
+        return chunkLoader.getConfig().layerCount-1;
     }
 
     /**

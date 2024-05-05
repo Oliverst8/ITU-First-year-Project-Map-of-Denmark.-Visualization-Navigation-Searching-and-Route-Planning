@@ -126,20 +126,28 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     /**
+     * @return clone of the array
+     */
+    public CoordArrayList copy() {
+        return new CoordArrayList(toArray());
+    }
+
+    /**
      * Converts the list to a float array.
      * @return float[]
      */
     public float[] toArray() {
-        float[] output = new float[size*2];
+        float[] output = new float[size * 2];
         for (int i = 0; i < size; i++) {
-            output[i*2] = arrayLat[i];
-            output[i*2+1] = arrayLon[i];
+            output[i * 2] = arrayLat[i];
+            output[i * 2 + 1] = arrayLon[i];
         }
         return output;
     }
 
     /**
-     * Adds a value to the end of the list.
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
      * @param valueX to be inserted
      * @param valueY to be inserted
      */
@@ -186,7 +194,7 @@ public class CoordArrayList extends PrimitiveArrayList {
      * @param values to be inserted
      */
     public void addAll(float[] values) {
-        while (size + values.length/2 > arrayLat.length) {
+        while (size + values.length / 2 > arrayLat.length) {
             resize();
         }
         for(int i = 0; i < values.length; i+=2) {

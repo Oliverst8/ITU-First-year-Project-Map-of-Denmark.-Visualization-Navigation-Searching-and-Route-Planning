@@ -12,13 +12,7 @@ import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import javafx.application.Platform;
@@ -106,7 +100,7 @@ public class ChunkLoader extends Thread {
             }
             int chunkIndex = -1;
             int zoomLayer = -1;
-            for (int i = config.layerCount-1; i >= 0; i--) {
+            for (int i = config.layerCount-2; i >= 0; i--) {
                 if (chunkIndexQueue[i].size() > 0) {
                     chunkIndex = chunkIndexQueue[i].remove();
                     chunkQueueSet[i].remove(chunkIndex);
@@ -158,6 +152,50 @@ public class ChunkLoader extends Thread {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public Set<Drawable> readLandLayer(){
+        Set<Drawable> list = new HashSet<>();
+        int zoomLayer = config.layerCount-1;
+        int landChunkAmount = config.getChunkAmount(zoomLayer);
+        for(int i = 0; i < landChunkAmount; i++){
+            File file = new File(App.mapPath + "zoom" + zoomLayer + "/chunk" + i + ".txt");
+
+            long id;
+            CoordArrayList outerCoords;
+            CoordArrayList innerCoords;
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                while (true) {
+                    id = stream.readLong();
+                    int outerCoordsLength = stream.readInt();
+                    outerCoords = new CoordArrayList(outerCoordsLength);
+                    for (int j = 0; j < outerCoordsLength; j++) {
+                        outerCoords.add(stream.readFloat(), stream.readFloat());
+                    }
+                    int innerCoordsLength = stream.readInt();
+                    innerCoords = new CoordArrayList(innerCoordsLength);
+                    for (int j = 0; j < innerCoordsLength; j++) {
+                        innerCoords.add(stream.readFloat(), stream.readFloat());
+                    }
+
+                    String primaryType = stream.readUTF();
+                    String secondaryType = stream.readUTF();
+                    list.add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
+                }
+                /*
+                 * The stream will throw an end of file exception when its done,
+                 * this way we can skip checking if we are done reading every loop, and save
+                 * time
+                 */
+            } catch (EOFException e) {
+            } catch (IOException e) {
+                // Since we run it in parallel we need to return a runtime exception since we
+                // can throw the IOException out of the scope
+                throw new RuntimeException(e);
+            }
+        }
+
+        return list;
     }
 
     /**

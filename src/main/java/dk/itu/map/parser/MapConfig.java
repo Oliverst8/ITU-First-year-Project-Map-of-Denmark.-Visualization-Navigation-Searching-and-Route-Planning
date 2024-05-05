@@ -26,8 +26,8 @@ public class MapConfig {
      * @param maxLon The maximum longitude
      */
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
-        this.CHUNK_SIZE = 0.02f;
-        this.layerCount = 5;
+        this.CHUNK_SIZE = 0.01f;
+        this.layerCount = 6;
         this.minLat = minLat;
         this.maxLat = maxLat;
         this.minLon = minLon;

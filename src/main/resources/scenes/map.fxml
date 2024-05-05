@@ -69,6 +69,7 @@
         </MenuBar>
         <AnchorPane fx:id="canvasParent" style="-fx-background-color: #90DAEE;" VBox.vgrow="ALWAYS">
             <children>
+                <Canvas fx:id="canvasLandmass" />
                 <Canvas fx:id="canvasPlace" />
                 <Canvas fx:id="canvasNatural" />
                 <Canvas fx:id="canvasLanduse" />
@@ -112,7 +113,14 @@
                   <Text fx:id="toText" layoutX="14.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To:" textAlignment="CENTER" />
                   <ComboBox fx:id="endComboBox" layoutX="51.0" layoutY="49.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#addressSelectedEnd" prefWidth="200.0" promptText="End address" />
                   <TextField fx:id="textFieldEnd" layoutX="51.0" layoutY="48.0" onInputMethodTextChanged="#searchEndAddress" onKeyPressed="#searchEndAddress" onKeyReleased="#searchEndAddress" onKeyTyped="#searchEndAddress" prefHeight="25.0" prefWidth="200.0" promptText="Where to?" />
-                  <Button layoutX="251.0" layoutY="49.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="25.0" text="Vælg slut" />
+                  <Button layoutX="251.0" layoutY="49.0" minWidth="19.0" mnemonicParsing="false" onAction="#setEndPoint" prefHeight="25.0" prefWidth="25.0" text="Vælg slut">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true" translateX="-3.2">
+                           <image>
+                              <Image url="@../icons/location.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                   <Button fx:id="endNavigationButton" layoutX="282.0" layoutY="7.0" minHeight="1.0" minWidth="1.0" mnemonicParsing="false" onAction="#hideNavigation" prefHeight="20.0" prefWidth="20.0">
                      <font>
                         <Font size="7.0" />
@@ -125,17 +133,14 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button layoutX="251.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="25.0" style="-fx-border-radius: 200;" text="Vælg start" />
-                  <ImageView fitHeight="16.0" fitWidth="19.0" layoutX="256.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icons/location.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="16.0" fitWidth="19.0" layoutX="256.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../icons/location.png" />
-                     </image>
-                  </ImageView>
+                  <Button layoutX="251.0" layoutY="13.0" minWidth="19.0" mnemonicParsing="false" onAction="#setStartPoint" prefHeight="25.0" prefWidth="25.0" style="-fx-border-radius: 200;" text="Vælg start">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true" translateX="-3.3">
+                           <image>
+                              <Image url="@../icons/location.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                </children>
             </AnchorPane>
             <Button fx:id="startNavigationButton" layoutX="21.0" layoutY="9.0" mnemonicParsing="false" onAction="#showNavigation" prefWidth="120.0" text="Start navigation" textAlignment="CENTER" />

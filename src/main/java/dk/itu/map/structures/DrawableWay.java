@@ -246,15 +246,15 @@ public class DrawableWay implements Drawable {
     /**
      * @return the outer coordinates of the way
      */
-    public float[] getOuterCoords() {
-        return outerCoords.toArray();
+    public CoordArrayList getOuterCoords() {
+        return outerCoords;
     }
 
     /**
      * @return the inner coordinates of the way
      */
-    public float[] getInnerCoords() {
-        return innerCoords.toArray();
+    public CoordArrayList getInnerCoords() {
+        return innerCoords;
     }
 
     /**

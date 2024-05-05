@@ -66,6 +66,7 @@ public class MapController {
         });
 
         setUtilities(utilityLoader);
+        model.landLayer = model.chunkLoader.readLandLayer();
     }
 
     /**

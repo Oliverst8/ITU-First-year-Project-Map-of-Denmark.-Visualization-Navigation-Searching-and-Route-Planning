@@ -166,7 +166,7 @@ public class ChunkGenerator implements Runnable {
                 case "place":
                     switch (tags.get(i + 1)) {
                         case "island", "islet":
-                            if (zoomLevel < 4) zoomLevel = 4;
+                            if (zoomLevel < 5) zoomLevel = 5;
                             break;
                     }
                     break;
@@ -204,7 +204,7 @@ public class ChunkGenerator implements Runnable {
                 case "natural":
                     switch (tags.get(i + 1)) {
                         case "peninsula":
-                            if (zoomLevel < 4) zoomLevel = 4;
+                            if (zoomLevel < 5) zoomLevel = 5;
                             break;
                     }
 
