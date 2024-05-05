@@ -32,6 +32,7 @@ public class TernaryTree implements Runnable, WriteAble{
         streetNumber = new ArrayList<>();
         zip = new ArrayList<>();
         cities = new ArrayList<>();
+        running = true;
     }
 
     /**
@@ -51,7 +52,6 @@ public class TernaryTree implements Runnable, WriteAble{
      * Will keep building the tree until the streetNames list is empty and .finish() has been called
      */
     public void run(){
-        running = true;
         while(streetNames.isEmpty()) {
             try {
                 Thread.sleep(10);
@@ -64,7 +64,7 @@ public class TernaryTree implements Runnable, WriteAble{
         float lat = streetPosition.remove(0);
         float lon = streetPosition.remove(0);
         root = insert(street, lat, lon);
-        while(running){
+        while(running || (!streetNames.isEmpty() && (streetPosition.size() >= 2))){
             while(!streetNames.isEmpty() && (streetPosition.size() >= 2)){
                 street = streetNames.remove(0);
                 lat = streetPosition.remove(0);
@@ -723,6 +723,21 @@ public class TernaryTree implements Runnable, WriteAble{
             this.zip = null;
             this.city = null;
             this.node = null;
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if(!(obj instanceof searchAddress)) return false;
+            searchAddress other = (searchAddress) obj;
+            if(!this.streetName.equals(other.streetName)) return false;
+            if(!this.zip.equals(other.zip)) return false;
+            if(!Objects.equals(this.streetNumber, other.streetNumber)) return false;
+            if(!Objects.equals(this.city, other.city)) return false;
+            if(!this.node.equals(other.node)) return false;
+            if(!this.point.equals(other.point)) return false;
+            return true;
+
+
         }
     }
 

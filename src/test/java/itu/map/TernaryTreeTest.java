@@ -1,6 +1,8 @@
 package itu.map;
 
+import dk.itu.map.structures.Point;
 import dk.itu.map.structures.TernaryTree;
+import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -129,6 +131,7 @@ public class TernaryTreeTest {
         address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
+        address.finish();
         address.run();
         List<TernaryTree.searchAddress> result = address.autoComplete("Ballafletcher", 20);
         List<String[]> expected = new ArrayList<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
@@ -149,35 +152,54 @@ public class TernaryTreeTest {
         address.addStreetName(new String[]{"Ballafletcher Road 17 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 12 Cronkbourne","1","2","3"},1f,1f);
         address.addStreetName(new String[]{"Ballafletcher Road 13 Cronkbourne","1","2","3"},1f,1f);
+        address.finish();
         address.run();
         List<TernaryTree.searchAddress> result = address.autoComplete("Ballafletcher", 20);
         List<String[]> expected = new ArrayList<>(List.of(new String[]{"Ballafletcher Road 17 Cronkbourne","2"}, new String[]{"Ballafletcher Road 12 Cronkbourne","2"}, new String[]{"Ballafletcher Road 13 Cronkbourne","2"}));
         assertEquals(result, expected);
     }
 
-//    @Test
-//    void testFillAddressExpectsMultiple() {
-//        Random random = new Random();
-//        for(int i = 0; i < 1000; i++){
-//            StringBuilder streetName = new StringBuilder();
-//            for(int j = 0; j < 10; j++){
-//                streetName.append((char) ('a' + random.nextInt(26)));
-//            }
-//            address.addStreetName(new String[]{streetName.toString(),"1","2","3"},1f,1f);
-//        }
-//        address.addStreetName(new String[]{"Ballafletcher Road","1","23","Herlev"},1f,1f);
-//        address.addStreetName(new String[]{"Ballafletcher Road","2","23","Herlev"},1f,1f);
-//        address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"},1f,1f);
-//        address.run();
-//
-//        List<TernaryTree.searchAddress> map = address.autoComplete("Ballafletcher", 20);
-//        TernaryTree.searchAddress autocomplete = map.iterator().next();
-//
-//        List<String[]> result = address.fillAddress(autocomplete, map.get(0));
-//        List<String[]> expected = new ArrayList<>(List.of(new String[]{"Ballafletcher Road","1","23","Herlev"}, new String[]{"Ballafletcher Road","2","23","Herlev"}, new String[]{"Ballafletcher Road","3","23","Islev"}));
-//
-//        assertEquals(result, expected);
-//    }
+    @Test
+    void testFillAddressExpectsMultiple() {
+        Random random = new Random();
+        for(int i = 0; i < 1000; i++){
+            StringBuilder streetName = new StringBuilder();
+            for(int j = 0; j < 10; j++){
+                streetName.append((char) ('a' + random.nextInt(26)));
+            }
+            address.addStreetName(new String[]{streetName.toString(),"1","2","3"},1f,1f);
+        }
+        address.addStreetName(new String[]{"Ballafletcher Road","1","23","Herlev"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road","2","23","Herlev"},1f,1f);
+        address.addStreetName(new String[]{"Ballafletcher Road","3","23","Islev"},1f,1f);
+
+        address.finish();
+        address.run();
+
+        List<TernaryTree.searchAddress> map = address.autoComplete("Ballafletcher", 20);
+        TernaryTree.searchAddress autocomplete = map.iterator().next();
+
+        //List<String[]> result = address.fillAddress(autocomplete, map.get(0), "Ballafletcher");
+        List<TernaryTree.searchAddress> result = address.fillAddress(new String[]{autocomplete.streetName, autocomplete.zip}, autocomplete.node, "Ballafletcher Road");
+        //List<String[]> expected = new ArrayList<>(List.of(new String[]{"Ballafletcher Road","1","23","Herlev"}, new String[]{"Ballafletcher Road","2","23","Herlev"}, new String[]{"Ballafletcher Road","3","23","Islev"}));
+        List<TernaryTree.searchAddress> expected = new ArrayList<>();
+        TernaryTree.searchAddress expected1 = new TernaryTree.searchAddress("Ballafletcher Road","23",autocomplete.node);
+        expected1.streetNumber = "1";
+        expected1.city = "Herlev";
+        expected1.point = new Point(1f,1f,"navigation", Color.PURPLE);
+        expected.add(expected1);
+        TernaryTree.searchAddress expected2 = new TernaryTree.searchAddress("Ballafletcher Road","23",autocomplete.node);
+        expected2.streetNumber = "2";
+        expected2.city = "Herlev";
+        expected2.point = new Point(1f,1f,"navigation", Color.PURPLE);
+        expected.add(expected2);
+        TernaryTree.searchAddress expected3 = new TernaryTree.searchAddress("Ballafletcher Road","23",autocomplete.node);
+        expected3.streetNumber = "3";
+        expected3.city = "Islev";
+        expected3.point = new Point(1f,1f,"navigation", Color.PURPLE);
+        expected.add(expected3);
+        assertEquals(result, expected);
+    }
 
 
 }
