@@ -438,15 +438,6 @@ public class GraphBuilderTest {
 
         ByteArrayList actual = graph.getVehicleRestrictions();
 
-        for(int i = 0; i < actual.size(); i++){
-            System.out.print(actual.get(i) + " ");
-        }
-        System.out.println();
-        for(int i = 0; i < expected.size(); i++){
-            System.out.print(expected.get(i) + " ");
-        }
-
-
         for(int i = 0; i < expected.size(); i++){
             assertEquals(expected.get(i), actual.get(i));
         }
