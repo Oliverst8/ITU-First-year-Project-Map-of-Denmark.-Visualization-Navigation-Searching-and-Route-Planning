@@ -19,22 +19,6 @@ public interface Drawable {
         } else {
             return lineWidth * 0.05131;
         }
-        /*
-         * scalefactor 0.030
-         * saclefactor2 2.131
-         *
-         * scalefactor 0.066
-         * scalefactor2 0.86
-         *
-         * scalefactor 0.220
-         * scalefactor2 0.510
-         *
-         * scalefactor 5.31
-         * scalefactor2 0.238
-         *
-         * scalefactor 38.92
-         * scalefactor2 0.178
-         */
     }
 
 }

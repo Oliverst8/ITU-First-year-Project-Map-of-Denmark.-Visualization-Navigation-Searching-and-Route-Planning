@@ -98,6 +98,11 @@ public class MapView {
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
 
+    /**
+     * Creates a new MapView
+     * @param controller The controller to be used
+     * @param model      The model to be used
+     */
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
         this.model = model;
@@ -452,24 +457,12 @@ public class MapView {
 
             renderTimes.put(entry.getKey(), endTime - startTime);
         }
-
-        if (!print) return;
-        // System.out.println("Render times: ");
-        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
-        //     String layer = String.format("%-15s", entry.getKey());
-        //     long renderTime = entry.getValue();
-        //     drawTimes += renderTime;
-
-        //     System.out.println(layer + ": " + renderTime + " ");
-        // }
-        // System.out.println("Current zoomLevel: " + getZoomLevel());
-        // System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
-        // System.out.println("Total draw time: " + drawTimes + "ms");
-        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
-        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
-        // System.out.println();
     }
 
+    /**
+     * Gets the navigation drawables
+     * @return Set<Drawable> the navigation drawables
+     */
     private Set<Drawable> getNavigationDrawables() {
         Set<Drawable> navigationSet = new HashSet<>();
 
@@ -480,6 +473,10 @@ public class MapView {
         return navigationSet;
     }
 
+    /**
+     * Gets the point of interests
+     * @return Set<Drawable> the point of interests
+     */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
@@ -552,17 +549,21 @@ public class MapView {
         }
     }
 
+    /**
+     * Converts from lat/lon to canvas coordinates
+     * @param startPoint the start point
+     * @return float[] the converted point
+     */
     private float[] convertToLatLon(float[] startPoint) {
         Point2D point = convertTo2DPoint(startPoint[0], startPoint[1]);
         return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
-
-
-
+    // TODO: Write javadoc
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
         TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
         textField.setStyle("-fx-border-color: transparent");
+
         if(address.streetName == null){
             if(selected == null) return;
             textField.setText(selected.streetName);
@@ -574,11 +575,11 @@ public class MapView {
             textField.setStyle("-fx-border-color: #7FFF00");
             redraw();
         }
+
         address.clone(selected);
-        System.out.println(address);
-        System.out.println(startAddress);
     }
 
+    // TODO: Write javadoc
     private void searchAddress(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
 
         List<TernaryTree.searchAddress> addresses;
@@ -587,8 +588,9 @@ public class MapView {
 
         boolean shouldRestartSearch = false;
 
-        if (address.streetName == null) addresses = searchSteet(currentText);
-        else{
+        if (address.streetName == null) {
+            addresses = searchSteet(currentText);
+        } else {
             int i = 0;
             for(char c : address.streetName.toCharArray()){
                 if(i >= currentText.length() || c != currentText.charAt(i++)){
@@ -602,21 +604,19 @@ public class MapView {
             } else addresses = searchFullAddress(address, currentText);
         }
 
-
         comboBox.getItems().clear();
         comboBox.getItems().addAll(addresses);
         comboBox.setVisibleRowCount(10);
         comboBox.show();
-
     }
 
+    // TODO: Write javadoc
     private List<TernaryTree.searchAddress> searchSteet(String searchWord){
         return controller.searchAddress(searchWord);
     }
 
+    // TODO: Write javadoc
     private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node, String currentText){
         return controller.fillAddress(node, currentText);
     }
-
-
 }

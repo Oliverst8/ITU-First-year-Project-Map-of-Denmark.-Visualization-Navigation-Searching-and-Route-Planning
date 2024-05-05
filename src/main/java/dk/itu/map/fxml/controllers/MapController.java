@@ -8,31 +8,33 @@ import dk.itu.map.parser.UtilityLoader;
 import dk.itu.map.structures.TernaryTree;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
+import dk.itu.map.structures.Point;
+import dk.itu.map.utility.Navigation;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
-import dk.itu.map.structures.Point;
-import dk.itu.map.utility.Navigation;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 
 public class MapController {
-
     private MapModel model;
     private MapView view;
 
     /**
-     * Constructor for the MapController, set the following variables
-     * 
-     * @param model
-     */
+        Creates a new ChunkController
+        @param model The model to be used
+    */
     public MapController(MapModel model) {
         this.model = model;
     }
 
+    /**
+     * Sets the view of the controller
+     * @param view The view to be set
+     */
     public void setView(MapView view) {
         if (this.view != null) {
             throw new RuntimeException("cannot reset view");
@@ -53,7 +55,7 @@ public class MapController {
             App.mapPath = App.DATA_PATH + mapName + "/";
         }
 
-        UtilityLoader utilityLoader = new UtilityLoader(mapName);
+        UtilityLoader utilityLoader = new UtilityLoader();
         utilityLoader.start();
 
         model.chunkLoader = new ChunkLoader();
@@ -66,6 +68,10 @@ public class MapController {
         setUtilities(utilityLoader);
     }
 
+    /**
+     * Gets the chunks that have been written to the chunkLayers
+     * @return true if new chunks have been written
+     */
     public boolean getWrittenChunks() {
         Map<Integer, Map<Integer, List<Drawable>>> newChunks = model.chunkLoader.getFinishedChunks();
         for (int i = 0; i < model.getLayerCount(); i++) {
@@ -82,7 +88,6 @@ public class MapController {
     /**
      * Gets the chunks in the smallest rectangle that contains both chunk1 and
      * chunk2
-     * 
      * @param chunk1      the first chunk in the rectangle
      * @param chunk2      the second chunk in the rectangle
      * @param columAmount the amount of chunks in a column
@@ -146,6 +151,10 @@ public class MapController {
         // }
     }
 
+    /**
+     * Sets the utilities of the model
+     * @param utilityLoader The utilityLoader to get the utilities from
+     */
     private void setUtilities(UtilityLoader utilityLoader) {
         try {
             utilityLoader.join();
@@ -156,6 +165,10 @@ public class MapController {
         model.setAddress(utilityLoader.getAddress());
     }
 
+    /**
+     * Navigates from the start point to the end point
+     * @param vehicleCode The code of the vehicle to be used
+     */
     public void navigate(int vehicleCode) {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
@@ -180,6 +193,11 @@ public class MapController {
         model.setRoute(path);
     }
 
+    /**
+     * Searches for an address
+     * @param input 
+     * @return
+     */
     public List<TernaryTree.searchAddress> searchAddress(String input) {
         return model.getAddress().autoComplete(input, 10);
     }

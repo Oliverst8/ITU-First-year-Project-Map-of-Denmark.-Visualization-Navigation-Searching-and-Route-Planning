@@ -7,8 +7,7 @@ public class ChangablePriorityQueue {
     private int size;
     private int currentSize;
 
-
-    public ChangablePriorityQueue(Graph graph){
+    public ChangablePriorityQueue(Graph graph) {
         currentSize = 0;
         size = graph.size();
         value = new float[size];
@@ -19,7 +18,7 @@ public class ChangablePriorityQueue {
         }
     }
 
-    private void swim(int index){
+    private void swim(int index) {
         if(index == 0) return;
         int parentIndex = (index-1)/4;
         while(value[heap[parentIndex]] > value[heap[index]]) {
@@ -30,7 +29,7 @@ public class ChangablePriorityQueue {
         }
     }
 
-    private void sink(int index){
+    private void sink(int index) {
         whileLoop:
         while(true){
             int smallestChild = index * 4 + 1;
@@ -52,8 +51,8 @@ public class ChangablePriorityQueue {
         heap[index1] = heap[index2];
         heap[index2] = oldIndex;
     }
-    public void decreaseValueTo(int id, float newDistance){
 
+    public void decreaseValueTo(int id, float newDistance) {
         int index = id;
 
         if(value[id] >= Float.MAX_VALUE) {
@@ -70,7 +69,8 @@ public class ChangablePriorityQueue {
 
         swim(index);
     }
-    public int deleteMinValue(){
+
+    public int deleteMinValue() {
         int min = heap[0];
 
         //value[min] = Float.POSITIVE_INFINITY;
@@ -83,10 +83,12 @@ public class ChangablePriorityQueue {
 
         return min;
     }
-    public int size(){
+
+    public int size() {
         return size;
     }
-    public float getValue(int index){
+
+    public float getValue(int index) {
         return value[index];
     }
 

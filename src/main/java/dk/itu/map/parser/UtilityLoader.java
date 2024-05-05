@@ -11,7 +11,10 @@ public class UtilityLoader extends Thread{
     private String path;
     private TernaryTree address;
 
-    public UtilityLoader(String name) {
+    /**
+     * Create an instance of a UtilityLoader
+     */
+    public UtilityLoader() {
         this.path = App.mapPath + "/utilities";
         graph = new Graph();
     }
@@ -32,24 +35,33 @@ public class UtilityLoader extends Thread{
         }
     }
 
+    /**
+     * Get the graph
+     * @return the graph
+     */
     public Graph getGraph() {
         return graph;
     }
 
+    /**
+     * Get the address
+     * @return the address
+     */
     public TernaryTree getAddress() {
-        //System.out.println(address.autoComplete("a",10));
-//        Map<String[], TernaryTree.AddressNode> result = address.autoComplete("Andreas Road",10);
-//        for (Map.Entry<String[], TernaryTree.AddressNode> entry : result.entrySet()) {
-//            System.out.println(entry.getKey()[0] + ", " + entry.getKey()[1]);
-//        }
-//        System.out.println(address.autoComplete("a",10).size());
         return address;
     }
 
+    /**
+     * A utility class to load an address
+     */
     private class AddressLoader extends Thread {
         private TernaryTree address;
         private String path;
 
+        /**
+         * Create an instance of an AddressLoader
+         * @param path the path to the map file
+         */
         public AddressLoader(String path) {
             address = new TernaryTree();
             this.path = path + "/address.txt";
@@ -64,15 +76,26 @@ public class UtilityLoader extends Thread{
             }
         }
 
+        /**
+         * Get the address
+         * @return the address
+         */
         public TernaryTree getAddress() {
             return address;
         }
     }
 
+    /**
+     * A utility class to load a graph
+     */
     private class graphLoader extends Thread {
         private Graph graph;
         private String path;
 
+        /**
+         * Create an instance of a graphLoader
+         * @param path the path to the map file
+         */
         public graphLoader(String path) {
             this.path = path;
             graph = new Graph();
@@ -87,9 +110,12 @@ public class UtilityLoader extends Thread{
             }
         }
 
+        /**
+         * Get the graph
+         * @return the graph
+         */
         public Graph getGraph() {
             return graph;
         }
     }
-
 }

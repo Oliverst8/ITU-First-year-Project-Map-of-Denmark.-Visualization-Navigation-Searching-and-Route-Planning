@@ -6,13 +6,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 
 public class HomeView {
-    
     @FXML
     private MenuButton mapList;
     @FXML
     private MenuButton mapDeleteList;
     private final HomeController controller;
     
+    /**
+     * Creates a new HomeView
+     * @param controller The controller to be used
+     */
     public HomeView(HomeController controller) {
         this.controller = controller;
     }

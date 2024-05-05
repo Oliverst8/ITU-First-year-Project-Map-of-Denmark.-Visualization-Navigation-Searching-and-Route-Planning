@@ -18,6 +18,16 @@ public class CanvasRedrawTask {
     private Set<Drawable> drawables = null;
     Theme theme;
 
+    /**
+     * Create a new CanvasRedrawTask
+     * The task is responsible for redrawing the canvas with the given drawables
+     * @param canvas The canvas to be redrawn on
+     * @param drawable The drawables to be drawn
+     * @param trans The transformation to be applied
+     * @param zoomAmount The zoom amount to be applied
+     * @param zoomLevel The zoom level to be used when drawing
+     * @param theme The theme to be used when drawing
+     */
     public CanvasRedrawTask(Canvas canvas, Set<Drawable> drawable, Affine trans, float zoomAmount, int zoomLevel, Theme theme) {
         this.canvas = canvas;
         this.drawables = drawable;
@@ -27,6 +37,9 @@ public class CanvasRedrawTask {
         this.theme = theme;
     }
 
+    /**
+     * Run the canvas redraw task
+     */
     public Void run() {
         // Redraw the canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -41,6 +54,10 @@ public class CanvasRedrawTask {
         return null;
     }
 
+    /**
+     * Wipe the canvas
+     * @param gc The graphics context to be used
+     */
     private void wipeCanvas(GraphicsContext gc) {
         gc.setTransform(new Affine());
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

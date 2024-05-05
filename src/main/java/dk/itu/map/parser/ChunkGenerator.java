@@ -20,7 +20,6 @@ class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-
     private MapConfig config;
 
     private ArrayList<ZoomLayer> zoomLayers;
@@ -35,7 +34,6 @@ public class ChunkGenerator implements Runnable {
     private final Thread addressTreeThread;
 
     private final TernaryTree address;
-
 
     /**
      * Constructor for the ChunkGenerator class
@@ -55,7 +53,6 @@ public class ChunkGenerator implements Runnable {
         graphThread.start();
         addressTreeThread = new Thread(address);
         addressTreeThread.start();
-
 
         this.config = config;
 

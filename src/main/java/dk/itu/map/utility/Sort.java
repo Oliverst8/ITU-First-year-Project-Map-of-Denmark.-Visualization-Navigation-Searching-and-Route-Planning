@@ -4,6 +4,11 @@ public class Sort extends Thread{
     private int[] aux;
     protected int[] arrayToSort;
 
+    /**
+     * Create an instance of a Sort
+     * Sort is using the mergesort algorithm
+     * @param arr the array to sort
+     */
     public Sort(int[] arr){
         this.arrayToSort = arr;
     }
@@ -13,6 +18,10 @@ public class Sort extends Thread{
         sort(arrayToSort);
     }
 
+    /**
+     * Sort the array
+     * @param arr the array to sort
+     */
     protected void sort(int[] arr){
         int N = arr.length;
         aux = new int[N];
@@ -23,6 +32,13 @@ public class Sort extends Thread{
         }
     }
 
+    /**
+     * Merge subarrays
+     * @param a the array to merge
+     * @param low the low index
+     * @param middle the middle index
+     * @param high the high index
+     */
     private void merge(int[] a, int low, int middle, int high){
         int i = low, j = middle + 1;
         for(int k = low; k <= high; k++){
@@ -36,10 +52,20 @@ public class Sort extends Thread{
         }
     }
 
+    /**
+     * Compare two integers
+     * @param i the first integer
+     * @param j the second integer
+     * @return -1 if i is less than j, 0 if i is equal to j, 1 if i is greater than j
+     */
     protected int compare(int i, int j){
         return Integer.compare(i, j);
     }
 
+    /**
+     * Get the result
+     * @return the sorted array
+     */
     public int[] getResult(){
         return arrayToSort;
     }

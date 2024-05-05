@@ -13,12 +13,23 @@ public abstract class MapElement {
     protected String secondaryType;
     private long[] nodeIDs;
 
+    /**
+     * Creates a new MapElement
+     * @param id The id of the element
+     * @param tags The tags of the element
+     */
     public MapElement(long id, List<String> tags) {
         this.id = id;
         this.tags = tags;
         setTypes();
     }
 
+    /**
+     * Creates a new MapElement
+     * @param id The id of the element
+     * @param tags The tags of the element
+     * @param nodeIDs The node IDs of the element
+     */
     public MapElement(long id, List<String> tags, LongArrayList nodeIDs) {
         this.id = id;
         this.tags = tags;
@@ -26,6 +37,9 @@ public abstract class MapElement {
         setTypes();
     }
 
+    /**
+     * Sets the types of the element
+     */
     private void setTypes() {
         for(int i = 0; i < tags.size(); i += 2) {
             switch (tags.get(i)) {
@@ -69,27 +83,49 @@ public abstract class MapElement {
         }
     }
 
+    /**
+     * @return The id of the element
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * @return The tags of the element
+     */
     public List<String> getTags() {
         return tags;
     }
 
-
+    /**
+     * Writes the element to a stream
+     * @param stream The stream to write to
+     * @throws java.io.IOException
+     */
     abstract void stream(DataOutputStream stream) throws java.io.IOException;
     
+    /**
+     * @return The coordinates of the element
+     */
     public abstract CoordArrayList getCoords();
 
+    /**
+     * @return The node IDs of the element
+     */
     public long[] getNodeIDs() {
         return nodeIDs;
     }
 
+    /**
+     * @return The primary type of the element
+     */
     public String getPrimaryType() {
         return primaryType;
     }
 
+    /**
+     * @return The secondary type of the element
+     */
     public String getSecondaryType() {
         return secondaryType;
     }
