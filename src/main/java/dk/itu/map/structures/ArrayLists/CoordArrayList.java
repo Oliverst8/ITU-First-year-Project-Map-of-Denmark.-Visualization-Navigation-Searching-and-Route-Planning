@@ -147,6 +147,12 @@ public class CoordArrayList extends PrimitiveArrayList {
         }
     }
 
+    /**
+     * Returns a new instance of the array, with the same values
+     */
+    public CoordArrayList copy() {
+        return new CoordArrayList(toArray());
+    }
 
     @Override
     public void write(String path) throws FileNotFoundException, IOException {

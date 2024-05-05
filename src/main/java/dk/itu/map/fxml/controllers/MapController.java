@@ -64,6 +64,7 @@ public class MapController {
         });
 
         setUtilities(utilityLoader);
+        model.landLayer = model.chunkLoader.readLandLayer();
     }
 
     public boolean getWrittenChunks() {
