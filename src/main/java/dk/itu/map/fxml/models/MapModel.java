@@ -303,7 +303,13 @@ public class MapModel {
             secondary.put("allotments", Color.web("#F5F3F3"));
             secondary.put("industrial", Color.web("#F5F3F3"));
             secondary.put("residential", Color.web("#F5F3F3"));
+            secondary.put("military", Color.web("#F5F3F3"));
             primary.put("landuse", secondary);
+
+            // Leisure
+            secondary = new HashMap<>();
+            secondary.put("park", Color.web("#C9F5DB"));
+            primary.put("leisure", secondary);
 
             // Building
             secondary = new HashMap<>();
@@ -375,7 +381,13 @@ public class MapModel {
             secondary.put("allotments", Color.web("#3C3F41"));
             secondary.put("industrial", Color.web("#3C3F41"));
             secondary.put("residential", Color.web("#3C3F41"));
+            secondary.put("military", Color.web("#3C3F41"));
             primary.put("landuse", secondary);
+
+            // Leisure
+            secondary = new HashMap<>();
+            secondary.put("park", Color.web("#3C3F41"));
+            primary.put("leisure", secondary);
 
             // Building
             secondary = new HashMap<>();
@@ -447,7 +459,13 @@ public class MapModel {
             secondary.put("allotments", getRandomColor());
             secondary.put("industrial", getRandomColor());
             secondary.put("residential", getRandomColor());
+            secondary.put("military", getRandomColor());
             primary.put("landuse", secondary);
+
+            // Leisure
+            secondary = new HashMap<>();
+            secondary.put("park", getRandomColor());
+            primary.put("leisure", secondary);
 
             // Building
             secondary = new HashMap<>();
