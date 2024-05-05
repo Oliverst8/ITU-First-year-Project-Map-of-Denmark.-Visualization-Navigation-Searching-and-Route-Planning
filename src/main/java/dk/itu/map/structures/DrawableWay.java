@@ -9,7 +9,6 @@ public class DrawableWay implements Drawable {
     private final CoordArrayList innerCoords;
     private String primaryType;
     private String secondaryType;
-    public boolean randomColors = false;
     private final long id;
 
     /**
@@ -23,7 +22,14 @@ public class DrawableWay implements Drawable {
         this.secondaryType = secondaryType;
     }
 
-
+    /**
+     * Create a new DrawableWay
+     * @param outerCoords the outer coordinates of the way
+     * @param innerCoords the inner coordinates of the way
+     * @param id the id of the way
+     * @param primaryType the primary type of the way used for coloring
+     * @param secondaryType the secondary type of the way used for coloring
+     */
     public DrawableWay(CoordArrayList outerCoords, CoordArrayList innerCoords, long id, String primaryType, String secondaryType) {
         this.id = id;
         this.primaryType = primaryType;
@@ -59,14 +65,36 @@ public class DrawableWay implements Drawable {
         return builder.toString();
     }
 
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DrawableWay) {
+            return ((DrawableWay) obj).id == id;
+        }
+        return false;
+    }
+
+    /**
+     * @return the primary type of the way
+     */
     public String getPrimaryType(){
         return primaryType;
     }
 
+    /**
+     * @return the secondary type of the way
+     */
     public String getSecondaryType(){
         return secondaryType;
     }
 
+    /**
+     * Draw the way on the canvas using the given graphics context
+     */
     public void draw(GraphicsContext gc, float scaleFactor, int skipAmount, Theme theme) {
         gc.beginPath();
         drawCoords(gc, outerCoords, skipAmount);
@@ -76,7 +104,13 @@ public class DrawableWay implements Drawable {
         gc.closePath();
     }
 
-    public void drawCoords(GraphicsContext gc, CoordArrayList coords, int skipAmount) {
+    /**
+     * Draw the coordinates on the canvas
+     * @param gc the graphics context to draw on
+     * @param coords the coordinates to draw
+     * @param skipAmount the amount of coordinates to skip
+     */
+    private void drawCoords(GraphicsContext gc, CoordArrayList coords, int skipAmount) {
         if (coords.size() == 0) return;
         float startX = 0f, startY = 0f;
         boolean startNew = true;
@@ -96,6 +130,12 @@ public class DrawableWay implements Drawable {
         }
     }
 
+    /**
+     * Set the colors of the way
+     * @param gc the graphics context to apply the colors to
+     * @param scaleFactor the scale factor of the map to be used
+     * @param theme the theme to be used
+     */
     private void setColors(GraphicsContext gc, float scaleFactor, Theme theme ) {
         colorSelect:
         switch(primaryType) {
@@ -196,34 +236,31 @@ public class DrawableWay implements Drawable {
         }
     }
 
+    /**
+     * @return true if the way is a relation, false otherwise
+     */
     public boolean isRelation() {
         return innerCoords.size() != 0;
     }
 
+    /**
+     * @return the outer coordinates of the way
+     */
     public float[] getOuterCoords() {
         return outerCoords.toArray();
     }
 
+    /**
+     * @return the inner coordinates of the way
+     */
     public float[] getInnerCoords() {
         return innerCoords.toArray();
     }
 
+    /**
+     * @return the id of the way
+     */
     public long getId() {
         return id;
-    }
-
-    public void setRandomColors(){ randomColors = !randomColors; }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof DrawableWay) {
-            return ((DrawableWay) obj).id == id;
-        }
-        return false;
     }
 }
