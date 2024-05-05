@@ -28,8 +28,8 @@ public class ByteArrayList extends PrimitiveArrayList {
      * @param init_size to be initialized
      */
     public ByteArrayList(int init_size) {
-        super();
-        array = new byte[init_size];
+        super(init_size);
+        array = new byte[capacity];
     }
 
     /**
@@ -38,6 +38,7 @@ public class ByteArrayList extends PrimitiveArrayList {
     @Override
     protected void resize() {
         byte[] newArray = new byte[array.length*2];
+        capacity = array.length*2;
         System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
     }
@@ -65,32 +66,11 @@ public class ByteArrayList extends PrimitiveArrayList {
     }
 
     @Override
-    public void write(String path) throws IOException {
-        DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
-        );
-        write(stream);
-        stream.close();
-    }
-
-    @Override
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {
             stream.writeByte(array[i]);
         }
-    }
-
-    @Override
-    public void read(String path) throws IOException {
-        DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
-        );
-        read(stream);
     }
 
     @Override

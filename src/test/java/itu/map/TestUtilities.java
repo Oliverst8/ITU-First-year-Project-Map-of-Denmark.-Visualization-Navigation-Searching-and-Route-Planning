@@ -2,6 +2,10 @@ package itu.map;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.LongArrayList;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 public class TestUtilities {
     public static LongArrayList createLongArrayList(long... values) {
@@ -22,5 +26,9 @@ public class TestUtilities {
 
     public static String getTestFilesPath() {
         return "src/test/java/itu/map/testFiles/";
+    }
+
+    public static void deleteFile(String path) throws IOException {
+        FileUtils.delete(new File(path));
     }
 }

@@ -101,4 +101,44 @@ public class FloatArrayListTest {
             fail("Exception thrown: " + e);
         }
     }
+
+    @Test
+    void testEqualsShouldEqual() {
+        FloatArrayList list1 = new FloatArrayList();
+        list1.add(1);
+        list1.add(2);
+        list1.add(3);
+        list1.add(4);
+
+        FloatArrayList list2 = new FloatArrayList();
+        list2.add(1);
+        list2.add(2);
+        list2.add(3);
+        list2.add(4);
+
+        assertEquals(list1, list2);
+    }
+
+    @Test
+    void testAddShouldResize() {
+        FloatArrayList list = new FloatArrayList(1);
+        list.add(1f);
+        list.add(2f);
+
+        assertEquals(2, list.capacity());
+    }
+
+    @Test
+    void testGet(){
+        FloatArrayList list = new FloatArrayList();
+        list.add(1);
+        assertEquals(1, list.get(0));
+    }
+
+    @Test
+    void testSize(){
+        FloatArrayList list = new FloatArrayList();
+        list.add(1);
+        assertEquals(1, list.size());
+    }
 }
