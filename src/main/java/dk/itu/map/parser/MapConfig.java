@@ -1,11 +1,16 @@
 package dk.itu.map.parser;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 
 import dk.itu.map.App;
@@ -47,8 +52,8 @@ public class MapConfig {
     public MapConfig(String mapType) {
         try {
             isInternal = mapType.equals("internal") ? true : false;
-            File file = locateFile("config");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            InputStream file = locateFile("config");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.minLon = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -157,18 +162,21 @@ public class MapConfig {
      * Finds the location of a file
      * @param filePath The path to the file
      * @return The file
+     * @throws FileNotFoundException 
      */
-    public File locateFile(String filePath) {
+    public InputStream locateFile(String filePath) {
         if(isInternal) {
+            //return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getFile());
+            return getClass().getResourceAsStream("/maps/" + App.mapName + "/" + filePath);
+        } else {
             try {
-                return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).toURI());
-            } catch (URISyntaxException e) {
-                System.out.println("Could not find file: " + filePath);
+                return new FileInputStream(new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath));
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found");
                 System.exit(1);
                 return null;
             }
-        } else {
-            return new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
+            //eturn new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
         }
     }
 }

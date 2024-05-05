@@ -113,7 +113,7 @@ public class Graph {
      */
     public void loadFromDataPath(String path, MapConfig mapConfig) throws IOException {
         String folderPath = path + "/graph";
-        File[] files = new File[]{
+        InputStream[] files = new InputStream[]{
             mapConfig.locateFile(folderPath + "/vertexList.txt"),
             mapConfig.locateFile(folderPath + "/edgeDestinations.txt"),
             mapConfig.locateFile(folderPath + "/vehicleRestrictions.txt"),
@@ -126,22 +126,12 @@ public class Graph {
         DataInputStream[] streams = new DataInputStream[files.length];
 
         for(int i = 0; i < files.length; i++){
-            try {
-                streams[i] = new DataInputStream(
-                    new BufferedInputStream(
-                        new FileInputStream(files[i].getAbsolutePath())
-                    )
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            streams[i] = new DataInputStream(new BufferedInputStream(files[i]));
         }
+
         try{
-            DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                    new FileInputStream(files[1].getAbsolutePath())
-                )
-            );
+            DataInputStream stream = new DataInputStream(new BufferedInputStream(files[1]));
+
             int sizeOfIdToIndex = stream.readInt();
             for(int i = 0; i < sizeOfIdToIndex; i++){
                 vertexList.add(new IntArrayList(0));

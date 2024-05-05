@@ -7,6 +7,7 @@ import dk.itu.map.structures.DrawableWay;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
@@ -112,12 +113,12 @@ public class ChunkLoader extends Thread {
             if (chunkIndex == -1) continue;
             List<Drawable> chunk = new ArrayList<>();
             
-            File file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
+            InputStream file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
 
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(file))) {
                 while (true) {
                     id = stream.readLong();
                     int outerCoordsLength = stream.readInt();
@@ -161,12 +162,12 @@ public class ChunkLoader extends Thread {
         int zoomLayer = config.layerCount-1;
         int landChunkAmount = config.getChunkAmount(zoomLayer);
         for(int i = 0; i < landChunkAmount; i++){
-            File file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
+            InputStream file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
 
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(file))) {
                 while (true) {
                     id = stream.readLong();
                     int outerCoordsLength = stream.readInt();
@@ -215,12 +216,12 @@ public class ChunkLoader extends Thread {
 
             ways.putIfAbsent(chunk, new ArrayList<>());
 
-            File file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+            InputStream file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
             long id;
             CoordArrayList outerCoords;
             CoordArrayList innerCoords;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(file))) {
                 while (true) {
                     id = stream.readLong();
                     int outerCoordsLength = stream.readInt();

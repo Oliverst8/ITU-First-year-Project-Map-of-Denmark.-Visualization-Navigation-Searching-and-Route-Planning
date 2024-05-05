@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -502,7 +503,7 @@ public class MapView {
      */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(model.chunkLoader.getConfig().locateFile("utilities/pointOfInterest.txt")))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(model.chunkLoader.getConfig().locateFile("utilities/pointOfInterest.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] coords = line.split(", ");
