@@ -6,16 +6,18 @@ import dk.itu.map.structures.Graph;
 
 import java.io.IOException;
 
-public class UtilityLoader extends Thread{
+public class UtilityLoader extends Thread {
     private Graph graph;
     private String path;
     private TernaryTree address;
+    private final MapConfig mapConfig;
 
     /**
      * Create an instance of a UtilityLoader
      */
-    public UtilityLoader() {
+    public UtilityLoader(MapConfig mapConfig) {
         this.path = App.mapPath + "/utilities";
+        this.mapConfig = mapConfig;
         graph = new Graph();
     }
 
@@ -104,7 +106,7 @@ public class UtilityLoader extends Thread{
         @Override
         public void run() {
             try {
-                graph.loadFromDataPath(path);
+                graph.loadFromDataPath(path, mapConfig);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

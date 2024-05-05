@@ -55,15 +55,15 @@ public class MapController {
             App.mapPath = App.DATA_PATH + mapName + "/";
         }
 
-        UtilityLoader utilityLoader = new UtilityLoader();
-        utilityLoader.start();
-
-        model.chunkLoader = new ChunkLoader();
+        model.chunkLoader = new ChunkLoader(model.getMapType());
         model.chunkLoader.setCallback(() -> {
             boolean shouldRedraw = getWrittenChunks();
-
+            
             if (view != null && shouldRedraw) view.redraw();
         });
+        
+        UtilityLoader utilityLoader = new UtilityLoader(model.chunkLoader.getConfig());
+        utilityLoader.start();
 
         setUtilities(utilityLoader);
         model.landLayer = model.chunkLoader.readLandLayer();

@@ -39,8 +39,8 @@ public class ChunkLoader extends Thread {
      *
      */
     @SuppressWarnings("unchecked")
-    public ChunkLoader() {
-        this.config = new MapConfig();
+    public ChunkLoader(String mapType) {
+        this.config = new MapConfig(mapType);
         this.finishedChunks = new HashMap<>();
         this.chunkIndexQueue = new List[config.layerCount];
         this.chunkQueueSet = new HashSet[config.layerCount];
@@ -112,7 +112,7 @@ public class ChunkLoader extends Thread {
             if (chunkIndex == -1) continue;
             List<Drawable> chunk = new ArrayList<>();
             
-            File file = new File(App.mapPath + "zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
+            File file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
 
             long id;
             CoordArrayList outerCoords;
@@ -161,7 +161,7 @@ public class ChunkLoader extends Thread {
         int zoomLayer = config.layerCount-1;
         int landChunkAmount = config.getChunkAmount(zoomLayer);
         for(int i = 0; i < landChunkAmount; i++){
-            File file = new File(App.mapPath + "zoom" + zoomLayer + "/chunk" + i + ".txt");
+            File file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
 
             long id;
             CoordArrayList outerCoords;
@@ -215,7 +215,7 @@ public class ChunkLoader extends Thread {
 
             ways.putIfAbsent(chunk, new ArrayList<>());
 
-            File file = new File(App.mapPath + "zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+            File file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
 
             long id;
             CoordArrayList outerCoords;

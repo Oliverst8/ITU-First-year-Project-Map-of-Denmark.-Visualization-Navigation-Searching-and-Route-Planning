@@ -1,5 +1,6 @@
 package dk.itu.map.structures;
 
+import dk.itu.map.parser.MapConfig;
 import dk.itu.map.structures.ArrayLists.ByteArrayList;
 import dk.itu.map.structures.ArrayLists.FloatArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
@@ -110,18 +111,16 @@ public class Graph {
      * @param path the path where the graph folder is located
      * @throws IOException
      */
-    public void loadFromDataPath(String path) throws IOException {
+    public void loadFromDataPath(String path, MapConfig mapConfig) throws IOException {
         String folderPath = path + "/graph";
         File[] files = new File[]{
-            new File(folderPath + "/idToIndex.txt"),
-            new File(folderPath + "/vertexList.txt"),
-            new File(folderPath + "/edgeDestinations.txt"),
-            new File(folderPath + "/vehicleRestrictions.txt"),
-            new File(folderPath + "/distanceWeights.txt"),
-            new File(folderPath + "/timeWeights.txt"),
-            new File(folderPath + "/coords.txt"),
-            new File(folderPath + "/oldToNewVertexIndex.txt")
-            //new File(folderPath + "/wayIDs.txt")
+            mapConfig.locateFile(folderPath + "/vertexList.txt"),
+            mapConfig.locateFile(folderPath + "/edgeDestinations.txt"),
+            mapConfig.locateFile(folderPath + "/vehicleRestrictions.txt"),
+            mapConfig.locateFile(folderPath + "/distanceWeights.txt"),
+            mapConfig.locateFile(folderPath + "/timeWeights.txt"),
+            mapConfig.locateFile(folderPath + "/coords.txt"),
+            mapConfig.locateFile(folderPath + "/oldToNewVertexIndex.txt"),
         };
 
         DataInputStream[] streams = new DataInputStream[files.length];

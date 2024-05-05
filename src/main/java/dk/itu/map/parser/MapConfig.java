@@ -11,6 +11,8 @@ import dk.itu.map.App;
 import javafx.geometry.Point2D;
 
 public class MapConfig {
+    public final String mapType;
+
     public final float CHUNK_SIZE;
     public final byte layerCount;
 
@@ -26,6 +28,7 @@ public class MapConfig {
      * @param maxLon The maximum longitude
      */
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
+        this.mapType = null;
         this.CHUNK_SIZE = 0.01f;
         this.layerCount = 6;
         this.minLat = minLat;
@@ -40,9 +43,10 @@ public class MapConfig {
     /**
      * Load the config file, and set the variables
      */
-    public MapConfig() {
+    public MapConfig(String mapType) {
         try {
-            File file = new File(App.mapPath + "config");
+            this.mapType = mapType;
+            File file = locateFile("config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -145,6 +149,19 @@ public class MapConfig {
                 writer.close();
         } catch (IOException e) {
             System.out.println();
+        }
+    }
+
+    /**
+     * Finds the location of a file
+     * @param filePath The path to the file
+     * @return The file
+     */
+    public File locateFile(String filePath) {
+        if(mapType.equals("internal")) {
+            return new File(getClass().getResource("/maps/" + filePath).getPath());
+        } else {
+            return new File(App.DATA_PATH + "/" + filePath);
         }
     }
 }
