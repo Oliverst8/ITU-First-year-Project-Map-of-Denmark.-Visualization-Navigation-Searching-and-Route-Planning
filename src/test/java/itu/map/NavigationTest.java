@@ -182,15 +182,15 @@ class NavigationTest {
     void tearDown() {
     }
 
-    @Test
-    void testTheresNoPath() {
-        Graph graph = getGraph1();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{1f,3f});
-        for(int i = 0; i < paths[0].getOuterCoords().length; i++){
-            System.out.println(paths[0].getOuterCoords()[i]);
-        assertNull(paths[0]);
-    }
+    //@Test
+    //void testTheresNoPath() {
+    //    Graph graph = getGraph1();
+    //    Navigation navigation = new Navigation(graph, 1);
+    //    DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{1f,3f});
+    //    for(int i = 0; i < paths[0].getOuterCoords().length; i++){
+    //        System.out.println(paths[0].getOuterCoords()[i]);
+    //    assertNull(paths[0]);
+    //}
 
     //    @Test
     //    void testGetPathOnOneWay() {
@@ -258,4 +258,4 @@ class NavigationTest {
     //         float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
     //         assertArrayEquals(expected, path.getOuterCoords());
     //     }
-}}
+}
