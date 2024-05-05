@@ -85,6 +85,17 @@ public class CoordArrayListTest {
         assertArrayEquals(new float[]{1.0f, 5.0f}, list.toArray());
     }
 
+    @Test public void createListAndReverseFirst() {
+        CoordArrayList list = new CoordArrayList();
+        list.add(1.0f, 5.0f);
+        list.add(2.0f, 6.0f);
+        list.add(3.0f, 7.0f);
+        list.add(4.0f, 8.0f);
+        list.reverse();
+        assertArrayEquals(new float[]{4.0f, 8.0f}, list.get(0));
+        assertArrayEquals(new float[]{1.0f, 5.0f}, list.get(-1));
+    }
+
     @Test public void addElementsWithAddAllWithResize() {
         CoordArrayList list = new CoordArrayList(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f});
         list.addAll(new float[]{11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f});

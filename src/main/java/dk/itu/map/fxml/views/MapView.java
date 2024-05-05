@@ -111,7 +111,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
+        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -421,10 +421,11 @@ public class MapView {
 
         layers.put("navigation", navigationSet);
         layers.put("pointOfInterest", pointOfInterests);
+        layers.put("landmass", model.landLayer);
 
         updateZoomAmount();
 
-        for(int i = getZoomLevel(); i <= 4; i++) {
+        for(int i = getZoomLevel(); i < 5; i++) {
             Map<Integer, List<Drawable>> chunkLayer = model.getChunksInZoomLevel(i);
             for (int chunk : chunkLayer.keySet()) {
                 List<Drawable> chunkLayerList = chunkLayer.get(chunk);
@@ -499,14 +500,14 @@ public class MapView {
     /**
      * @return Point2D the upper left corner of the canvas
      */
-    private Point2D getUpperLeftCorner() {
+    public Point2D getUpperLeftCorner() {
         return convertTo2DPoint(0, 0);
     }
 
     /**
      * @return Point2D the lower right corner of the canvas
      */
-    private Point2D getLowerRightCorner() {
+    public Point2D getLowerRightCorner() {
         return convertTo2DPoint(canvas.get("building").getWidth(), canvas.get("building").getHeight());
     }
 
@@ -514,6 +515,7 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
+        if(zoomAmount > 20) return 5;
         if(zoomAmount > 10) return 4;
         if(zoomAmount > 5) return 3;
         if(zoomAmount > 3) return 2;

@@ -5,12 +5,16 @@ import dk.itu.map.utility.Sort;
 
 public class TwoDTreeBuilder {
 
-    private int[][] sortedIndexes;
+    private int[][] sortedIndexes; //Array of the indexs in sorted order (pos 0 sorted by x, pos 1 sorted by y)
 
-    private CoordArrayList coords;
+    private CoordArrayList coords; //Array of the coordinates
 
-    private int[] tree;
+    private int[] tree; //Array of the tree
 
+    /**
+     * Constructor for the TwoDTreeBuilder
+     * @param coords The coordinates to build the tree from
+     */
     public TwoDTreeBuilder(CoordArrayList coords) {
         this.coords = coords;
         this.sortedIndexes = new int[2][];
@@ -19,18 +23,31 @@ public class TwoDTreeBuilder {
         tree = new int[size];
     }
 
+    /**
+     * Sets the left child of a parent
+     * @param parent The parent position
+     * @param child The child value
+     */
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
         if(childIndex >= tree.length && child == -1) return;
         tree[childIndex] = child;
     }
 
+    /**
+     * Sets the right child of a parent
+     * @param parent The parent position
+     * @param child The child value
+     */
     private void setRightChild(int parent, int child) {
         int childIndex = parent * 2 + 2;
         if(childIndex >= tree.length && child == -1) return;
         tree[childIndex] = child;
     }
 
+    /**
+     * Builds the tree
+     */
     public void build(){
         PointSort pointX = new PointSort(coords.size(), 0);
         PointSort pointY = new PointSort(coords.size(), 1);
@@ -68,7 +85,13 @@ public class TwoDTreeBuilder {
 
     }
 
-
+    /**
+     * Checks if an array is sorted
+     * @param array The array to check
+     * @param axis The axis to check on
+     * @param isSorted If it can increment value, if two points are equal
+     * @return If the array is sorted
+     */
     public boolean checkIfSorted(int[] array, int axis, boolean isSorted){
         for(int i = 0; i < array.length - 1; i++){
             if(compare(array[i] , array[i + 1], axis, isSorted) > 0) return false;
@@ -76,8 +99,13 @@ public class TwoDTreeBuilder {
         return true;
     }
 
-
-
+    /**
+     * Sorts an array using insertion sort
+     * @param array The array to sort
+     * @param axis The axis to sort on
+     * @param range The range to sort
+     * @param start The start index
+     */
     public void insertionSort(int[] array, int axis, int range, int start){
         for(int i = start; i < start + range; i++){
             int j = i;
@@ -90,17 +118,35 @@ public class TwoDTreeBuilder {
         }
     }
 
-
+    /**
+     * Gets the left child index of a parent
+     * @param parentIndex The parent index
+     * @return The left child index
+     */
     private int getLeftChildIndex(int parentIndex){
         return parentIndex * 2 + 1;
     }
 
+    /**
+     * Gets the right child index of a parent
+     * @param parentIndex The parent index
+     * @return The right child index
+     */
     private int getRightChildIndex(int parentIndex){
         return parentIndex * 2 + 2;
     }
 
 
-
+    /**
+     * Partitions and builds the tree
+     * @param start The start index of the array
+     * @param range The range of the array to be build from
+     * @param rootIndex The root index the new part of the tree is búild from
+     * @param primaryAxis The primary axis to build the tree from
+     * @param readArray The array to read from
+     * @param writeArray The array to write to
+     * @return the root of the tree
+     */
     public int partition(int start, int range, int rootIndex, int primaryAxis, int[][] readArray, int[][] writeArray) {
 
         int medianIndex = start + (range - 1) / 2;
@@ -173,10 +219,25 @@ public class TwoDTreeBuilder {
 
     }
 
+    /**
+     * Compares two points (If two points are equal it increments one)
+     * @param index1 The index of the first point
+     * @param index2 The index of the second point
+     * @param primaryAxis The primary axis to compare on
+     * @return The comparison value
+     */
     private int compare(int index1, int index2, int primaryAxis) {
         return compare(index1, index2, primaryAxis, true);
     }
 
+    /**
+     * Compares two points
+     * @param index1 The index of the first point
+     * @param index2 The index of the second point
+     * @param primaryAxis The primary axis to compare on
+     * @param shouldChange If two points are equal, should it increment one
+     * @return The comparison value
+     */
     private int compare(int index1, int index2, int primaryAxis, boolean shouldChange) {
 
         float[] coord1 = coords.get(index1);
@@ -197,24 +258,42 @@ public class TwoDTreeBuilder {
         return cmp;
     }
 
+    /**
+     * @return The tree
+     */
     public int[] getTree(){
         return tree;
     }
 
     private class PointSort extends Sort {
-        private int[] array;
-        private int primaryAxis;
+        private int[] array; //Array to sort
+        private int primaryAxis; //The primary axis to sort on
+
+        /**
+         * Constructor for the PointSort
+         * @param size The size of the array
+         * @param primaryAxis The primary axis to sort on
+         */
         public PointSort(int size, int primaryAxis) {
             super(new int[]{});
             this.array = new int[size];
             this.primaryAxis = primaryAxis;
         }
 
+        /**
+         * Compares two points
+         * @param i The index of the first point
+         * @param j The index of the second point
+         * @return The comparison value
+         */
         @Override
         protected int compare(int i, int j){
             return TwoDTreeBuilder.this.compare(i, j, primaryAxis);
         }
 
+        /**
+         * Runs the sorting
+         */
         @Override
         public void run(){
             for(int i = 0; i < array.length; i++){
@@ -224,7 +303,9 @@ public class TwoDTreeBuilder {
             super.run();
         }
 
-
+        /**
+         * @return the sorted array
+         */
         public int[] getSortedIndexes(){
             return super.getResult();
         }
