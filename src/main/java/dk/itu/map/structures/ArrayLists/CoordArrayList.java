@@ -150,7 +150,7 @@ public class CoordArrayList extends PrimitiveArrayList {
     /**
      * Returns a new instance of the array, with the same values
      */
-    public CoordArrayList copy() {
+    public CoordArrayList clone() {
         return new CoordArrayList(toArray());
     }
 

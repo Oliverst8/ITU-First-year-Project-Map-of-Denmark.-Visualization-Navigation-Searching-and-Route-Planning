@@ -37,8 +37,6 @@ public class MapModel {
     }
 
     /**
-     * Gets the minimum longitude of the map
-     * 
      * @return the minimum longitude of the map
      */
     public float getMinLon() {
@@ -46,26 +44,27 @@ public class MapModel {
     }
 
     /**
-     * Gets the maximum longitude of the map
-     * 
      * @return the maximum longitude of the map
+     */
+    public float getMaxLon() {
+        return chunkLoader.getConfig().maxLon;
+    }
+
+    /**
+     * @return the minimum latitude of the map
      */
     public float getMinLat() {
         return chunkLoader.getConfig().minLat;
     }
 
     /**
-     * Gets the minimum latitude of the map
-     * 
-     * @return the minimum latitude of the map
+     * @return the maximum latitude of the map
      */
     public float getMaxLat() {
         return chunkLoader.getConfig().maxLat;
     }
 
     /**
-     * Gets the maximum latitude of the map
-     * 
      * @return the maximum latitude of the map
      */
     public int getChunkAmount() {
@@ -74,6 +73,10 @@ public class MapModel {
 
     public int getLayerCount() {
         return chunkLoader.getConfig().layerCount-1;
+    }
+
+    public float getChunkSize() {
+        return chunkLoader.getConfig().CHUNK_SIZE;
     }
 
     public Point getStartPoint() {

@@ -297,7 +297,7 @@ public class OSMParser extends Thread {
                 relationMap.get(id).getFirst().addWay(way);
             } else {
                 relationMap.get(id).forEach(relation -> {
-                    relation.addWay(new Way(id, tags, coords.copy(), nodeIds));
+                    relation.addWay(new Way(id, tags, coords.clone(), nodeIds));
                 });
             }
         }
