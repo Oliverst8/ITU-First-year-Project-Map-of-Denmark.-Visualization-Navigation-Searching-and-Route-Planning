@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class TernaryTree implements Runnable, WriteAble{
-    private final List<String[]> streetNames; //List (Queue) to keep track of addresses to add to the tree
+    public final List<String[]> streetNames; //List (Queue) to keep track of addresses to add to the tree
     private final List<Float> streetPosition; //List (Queue) to keep track of addresses coordinates (Lat, lon)
     private Map<String, Integer> streetNumberMap, zipMap, cityMap; //Map that maps from strings to their position in the laters lists (Only used while building)
     private List<String> streetNumber, zip, cities; //List that holds the different streetnumber, zip and cities

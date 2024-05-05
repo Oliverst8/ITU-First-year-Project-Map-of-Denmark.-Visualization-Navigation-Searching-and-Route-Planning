@@ -32,33 +32,6 @@ public class DrawableWay implements Drawable {
         this.innerCoords = innerCoords;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Nodes:\n");
-        builder.append(outerCoords.size());
-        builder.append("\n");
-        for (int i = 0; i < outerCoords.size(); i++) {
-            float[] coord = outerCoords.get(i);
-            builder.append(coord[0]);
-            builder.append(" ");
-            builder.append(coord[1]);
-            builder.append("\n");
-        }
-        builder.append("Inner nodes:\n");
-        builder.append(innerCoords.size());
-        builder.append("\n");
-        for (int i = 0; i < innerCoords.size(); i++) {
-            float[] coord = innerCoords.get(i);
-            builder.append(coord[0]);
-            builder.append(" ");
-            builder.append(coord[1]);
-            builder.append("\n");
-        }
-
-        return builder.toString();
-    }
-
     public String getPrimaryType(){
         return primaryType;
     }
@@ -211,8 +184,6 @@ public class DrawableWay implements Drawable {
     public long getId() {
         return id;
     }
-
-    public void setRandomColors(){ randomColors = !randomColors; }
 
     @Override
     public int hashCode() {
