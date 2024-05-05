@@ -143,7 +143,6 @@ public class MapView {
             redraw();
         });
 
-
         render = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -503,7 +502,7 @@ public class MapView {
      */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(App.DATA_PATH + App.mapName + "/utilities/pointOfInterest.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(model.chunkLoader.getConfig().locateFile("utilities/pointOfInterest.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] coords = line.split(", ");

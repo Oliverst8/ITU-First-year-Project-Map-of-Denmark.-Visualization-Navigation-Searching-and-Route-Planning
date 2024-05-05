@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import dk.itu.map.App;
 import javafx.geometry.Point2D;
@@ -159,7 +160,13 @@ public class MapConfig {
      */
     public File locateFile(String filePath) {
         if(isInternal) {
-            return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getPath());
+            try {
+                return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).toURI());
+            } catch (URISyntaxException e) {
+                System.out.println("Could not find file: " + filePath);
+                System.exit(1);
+                return null;
+            }
         } else {
             return new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
         }
