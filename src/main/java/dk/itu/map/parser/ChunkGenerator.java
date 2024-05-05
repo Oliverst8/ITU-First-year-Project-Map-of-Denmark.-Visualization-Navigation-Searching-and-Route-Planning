@@ -120,6 +120,13 @@ public class ChunkGenerator implements Runnable {
      * @param way The way to be added
      */
     public void addWay(MapElement way) {
+        if (rawWays.size() > 1_000_000) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
         rawWays.add(way);
     }
     

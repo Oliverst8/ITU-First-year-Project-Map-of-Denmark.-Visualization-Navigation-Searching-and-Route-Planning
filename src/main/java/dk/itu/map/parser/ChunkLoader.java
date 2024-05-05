@@ -11,8 +11,14 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import javafx.application.Platform;
@@ -22,11 +28,8 @@ public class ChunkLoader extends Thread {
 
     private final MapConfig config;
     
-    // private List<List<Drawable>> finishedChunks;
-    // private List<Integer> finishedChunkIndexes;
-    // private List<Integer> finishedChunkLayers;
     private Map<Integer, Map<Integer, List<Drawable>>> finishedChunks;
-    private final LinkedList<Integer>[] chunkIndexQueue;
+    private final List<Integer>[] chunkIndexQueue;
     private final HashSet<Integer>[] chunkQueueSet;
     private int queueSize;
 
@@ -39,14 +42,11 @@ public class ChunkLoader extends Thread {
     @SuppressWarnings("unchecked")
     public ChunkLoader() {
         this.config = new MapConfig();
-        // this.finishedChunks = Collections.synchronizedList(new ArrayList<>());
-        // this.finishedChunkIndexes = Collections.synchronizedList(new ArrayList<>());
-        // this.finishedChunkLayers = Collections.synchronizedList(new ArrayList<>());
         this.finishedChunks = new HashMap<>();
-        this.chunkIndexQueue = new LinkedList[config.layerCount];
+        this.chunkIndexQueue = new List[config.layerCount];
         this.chunkQueueSet = new HashSet[config.layerCount];
         for (int i = 0; i < config.layerCount; i++) {
-            chunkIndexQueue[i] = new LinkedList<>();
+            chunkIndexQueue[i] = Collections.synchronizedList(new LinkedList<>());
             chunkQueueSet[i] = new HashSet<>();
         }
         queueSize = 0;
@@ -91,7 +91,7 @@ public class ChunkLoader extends Thread {
             int zoomLayer = -1;
             for (int i = config.layerCount-2; i >= 0; i--) {
                 if (chunkIndexQueue[i].size() > 0) {
-                    chunkIndex = chunkIndexQueue[i].remove();
+                    chunkIndex = chunkIndexQueue[i].remove(0);
                     chunkQueueSet[i].remove(chunkIndex);
                     zoomLayer = i;
                     queueSize--;
@@ -131,8 +131,10 @@ public class ChunkLoader extends Thread {
                  */
             } catch (EOFException e) {
                 // End of file reached
-                finishedChunks.putIfAbsent(zoomLayer, new HashMap<>());
-                finishedChunks.get(zoomLayer).put(chunkIndex, chunk);
+                Map<Integer, List<Drawable>> temp = finishedChunks.getOrDefault(zoomLayer, new HashMap<>());
+                temp.put(chunkIndex, chunk);
+                finishedChunks.put(zoomLayer, temp);
+
                 if (queueSize % 20 == 0) Platform.runLater(callback);
                 continue;
             } catch (IOException e) {
