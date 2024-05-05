@@ -7,6 +7,12 @@ public interface Drawable {
     public void draw(GraphicsContext gc, float zoom, int skipAmount, Theme theme);
     public String getPrimaryType();
 
+    /**
+     * Calculates the line width based on the scale factor
+     * @param lineWidth the initial line width
+     * @param scaleFactor the scale factor
+     * @return the calculated line width
+     */
     default double calcLineWidth(float lineWidth, float scaleFactor) {
         if (scaleFactor > 38.92) {
             return lineWidth * scaleFactor * 0.178;
@@ -19,22 +25,5 @@ public interface Drawable {
         } else {
             return lineWidth * 0.05131;
         }
-        /*
-         * scalefactor 0.030
-         * saclefactor2 2.131
-         *
-         * scalefactor 0.066
-         * scalefactor2 0.86
-         *
-         * scalefactor 0.220
-         * scalefactor2 0.510
-         *
-         * scalefactor 5.31
-         * scalefactor2 0.238
-         *
-         * scalefactor 38.92
-         * scalefactor2 0.178
-         */
     }
-
 }

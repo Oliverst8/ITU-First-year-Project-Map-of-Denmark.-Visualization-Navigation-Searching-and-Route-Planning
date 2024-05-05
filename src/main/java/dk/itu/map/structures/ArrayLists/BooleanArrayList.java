@@ -1,7 +1,5 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
-
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
@@ -10,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 
-public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
+public class BooleanArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private boolean[] array;
 
@@ -45,9 +43,6 @@ public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
         size = array.length;
     }
 
-    /**
-     * Resizes the array to double the size
-     */
     @Override
     protected void resize() {
         boolean[] newArray = new boolean[array.length*2];
@@ -55,40 +50,12 @@ public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
         array = newArray;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(boolean value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-        if(size > biggestIndex) biggestIndex = size-1;
-    }
-
-    public void set(int index, boolean value){
-        array[index] = value;
-        if(index > biggestIndex) biggestIndex = index;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return int the value at the given index
-     */
-    public boolean get(int index) {
-        return array[index];
-    }
-
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
 
         write(stream);
@@ -107,9 +74,9 @@ public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(String path) throws IOException {
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
 
         read(stream);
@@ -146,7 +113,43 @@ public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
         else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(boolean value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+        if(size > biggestIndex) biggestIndex = size-1;
+    }
 
+    /**
+     * Sets the value at the given index.
+     * @param index to be set
+     * @param value new value
+     */
+    public void set(int index, boolean value){
+        array[index] = value;
+        if(index > biggestIndex) biggestIndex = index;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return int the value at the given index
+     */
+    public boolean get(int index) {
+        return array[index];
+    }
+
+    /**
+     * Adds all the values in the given array to the end of the list
+     * @param values to be added
+     */
     public void addAll(int[] values) {
         while (size + values.length > array.length) {
             resize();
@@ -156,6 +159,10 @@ public class BooleanArrayList extends PrimitiveArrayList implements WriteAble {
         size += values.length;
     }
 
+    /**
+     * Returns as a boolean array
+     * @return int[] the array
+     */
     public boolean[] toArray() {
         boolean[] result = new boolean[size];
         System.arraycopy(array, 0, result, 0, size);

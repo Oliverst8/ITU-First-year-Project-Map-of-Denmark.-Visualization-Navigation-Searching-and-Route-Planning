@@ -16,6 +16,10 @@ public class FileProgress extends Thread{
     private File file;
     private boolean finishedProgress;
 
+    /**
+     * Creates a new FileProgress
+     * @param progressBar The progress bar to be used
+     */
     public FileProgress(ProgressBar progressBar){
         this.progressBar = progressBar;
         finishedProgress = false;
@@ -36,6 +40,9 @@ public class FileProgress extends Thread{
         }
     }
 
+    /**
+     * Sets the total number of lines in the current file
+     */
     public void setTotalLines() {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
             totalLines = (long) (reader.lines().parallel().count() * 2.86);
@@ -44,15 +51,24 @@ public class FileProgress extends Thread{
         }
     }
 
-
+    /**
+     * Updates the progress of the file
+     */
     public void updateProgress() {
         progress++;
     }
 
+    /**
+     * Sets the file to be used
+     * @param file The file to be used
+     */
     public void setFile(File file) {
         this.file = file;
     }
 
+    /**
+     * Finishes the progress
+     */
     public void finishProgress(){
         finishedProgress = true;
     }

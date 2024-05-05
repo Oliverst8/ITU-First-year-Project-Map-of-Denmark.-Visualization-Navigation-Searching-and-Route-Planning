@@ -53,40 +53,12 @@ public class IntArrayList extends PrimitiveArrayList {
         array = newArray;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(int value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-        if(size > biggestIndex) biggestIndex = size-1;
-    }
-
-    public void set(int index, int value){
-        array[index] = value;
-        if(index > biggestIndex) biggestIndex = index;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return int the value at the given index
-     */
-    public int get(int index) {
-        return array[index];
-    }
-
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
 
         write(stream);
@@ -144,7 +116,43 @@ public class IntArrayList extends PrimitiveArrayList {
         else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(int value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+        if(size > biggestIndex) biggestIndex = size-1;
+    }
 
+    /**
+     * Sets the value at the given index.
+     * @param index to be set
+     * @param value to be set
+     */
+    public void set(int index, int value){
+        array[index] = value;
+        if(index > biggestIndex) biggestIndex = index;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return int the value at the given index
+     */
+    public int get(int index) {
+        return array[index];
+    }
+
+    /**
+     * Adds all values in the array to the end of the list
+     * @param values to be added
+     */
     public void addAll(int[] values) {
         while (size + values.length > array.length) {
             resize();
@@ -154,6 +162,10 @@ public class IntArrayList extends PrimitiveArrayList {
         size += values.length;
     }
 
+    /**
+     * Converts the list to an int array.
+     * @return int[]
+     */
     public int[] toArray() {
         int[] result = new int[size];
         System.arraycopy(array, 0, result, 0, size);

@@ -9,10 +9,14 @@ import dk.itu.map.parser.FileProgress;
 import dk.itu.map.parser.OSMParser;
 
 public class ChunkController {
-    
     ChunkModel model;
     private String name;
 
+    /**
+     * Creates a new ChunkController
+     * @param model The model to be used
+     * @param name The name of the map
+     */
     public ChunkController(ChunkModel model, String name) {
         this.model = model;
         App.mapPath = App.DATA_PATH + name + "/";

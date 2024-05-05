@@ -30,6 +30,7 @@ public class GraphBuilder extends Graph implements Runnable {
     //Vi kender ikke enheden her, men det er måske givet i bredde- (eller længde-?) grader?
     // Skal måske konverteres, men det er vel ligemeget egentlig, (indtil vi konvertere til tid?)
     //ADVARSEL FUNGERER IKKE
+    // Håber vedkommende er okay :((
     /**
      * Calculates the weight of a way
      * @param way the way to calculate the weight of
@@ -42,6 +43,12 @@ public class GraphBuilder extends Graph implements Runnable {
         return distanceInKM(coord1, coord2);
     }
 
+    /**
+     * Calculates the time it takes to travel a way
+     * @param way the way to calculate the time of
+     * @param nodeId the id of the node to calculate the time from
+     * @return the time it takes to travel the way
+     */
     private float calcWeightTime(MapElement way, int nodeId) {
         String[] speedLimitString = null;
         int speedLimit = 0;
@@ -84,9 +91,14 @@ public class GraphBuilder extends Graph implements Runnable {
         float[] coord2 = coords.get(nodeId+1);
 
         return distanceInKM(coord1, coord2)/speedLimit;
-
-
     }
+
+    /**
+     * Calculates the distance between two coordinates
+     * @param coord1 the first coordinate
+     * @param coord2 the second coordinate
+     * @return the distance between the two coordinates
+     */
     private float distanceInKM(float[] coord1, float[] coord2) {
         double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
         double latDistance = Math.abs(coord1[1] - coord2[1])*110.574;
@@ -119,14 +131,17 @@ public class GraphBuilder extends Graph implements Runnable {
         sortCoordsAndIndexes(treeIndexes);
     }
 
+    /**
+     * Sorts the coordinates and indexes of the graph
+     * @param newVertices the new vertices to sort
+     */
     private void sortCoordsAndIndexes(int[] newVertices) {
         oldToNewVertexIndex = new IntArrayList(vertexList.size());
-
 
         WriteAbleArrayList<IntArrayList> newVertexList = new WriteAbleArrayList<>(newVertices.length);
         TwoDTree newCoords = new TwoDTree(newVertices.length);
 
-        for(int i = 0; i < newVertices.length; i++){
+        for(int i = 0; i < newVertices.length; i++) {
 
             if(newVertices[i] == -1){
                 newVertexList.add(new IntArrayList(0));
@@ -137,9 +152,9 @@ public class GraphBuilder extends Graph implements Runnable {
                 newCoords.add(coords.get(newVertices[i]));
             }
         }
+
         vertexList = newVertexList;
         coords = newCoords;
-
     }
 
     /**
@@ -163,8 +178,6 @@ public class GraphBuilder extends Graph implements Runnable {
                 // or look at the LongFloatArrayHashMap in FileHandler, or just give them as arguments
 
                 //Here we could add node ids to an nodeIDArray, if we want them later
-
-
             }
         }
     }
@@ -208,11 +221,12 @@ public class GraphBuilder extends Graph implements Runnable {
         // but as long as we just call these methods here, we should be okay I think
     }
 
+    /**
+     * Sets the vehicle restriction of a way
+     * @param way the way to set the vehicle restriction of
+     * @return the vehicle restriction of the way
+     */
     private byte setVehicleRestriction(MapElement way) {
-        if(way.getId() == 37948939){
-            System.out.println();
-        }
-
         String secondayType = way.getSecondaryType();
         switch(secondayType){
             case "pedestrian":

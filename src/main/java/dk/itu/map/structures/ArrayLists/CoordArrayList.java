@@ -64,102 +64,12 @@ public class CoordArrayList extends PrimitiveArrayList {
         arrayLon[index2] = tempLon;
     }
 
-    /**
-     * Converts the list to a float array.
-     * @return float[]
-     */
-    public float[] toArray() {
-        float[] output = new float[size*2];
-        for (int i = 0; i < size; i++) {
-            output[i*2] = arrayLat[i];
-            output[i*2+1] = arrayLon[i];
-        }
-        return output;
-    }
-
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param valueX to be inserted
-     * @param valueY to be inserted
-     */
-    public void add(float valueX, float valueY) {
-        if (size + 1 > arrayLat.length) {
-            resize();
-        }
-        arrayLat[size] = valueX;
-        arrayLon[size] = valueY;
-        size++;
-    }
-
-    public void add(float[] coords){
-        add(coords[0], coords[1]);
-    }
-
-    public void set(int index, float[] coords){
-        arrayLat[index] = coords[0];
-        arrayLon[index] = coords[1];
-    }
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return float value at the index
-     */
-    public float[] get(int index) {
-        if (index < 0)
-            return new float[]{arrayLat[size+index], arrayLon[size+index]};
-        else
-            return new float[]{arrayLat[index], arrayLon[index]};
-    }
-
-    /**
-     * Adds an array of values to the empty spots in the array.
-     * If the array is full, it will resize the array.
-     * @param values to be inserted
-     */
-    public void addAll(float[] values) {
-        while (size + values.length/2 > arrayLat.length) {
-            resize();
-        }
-        for(int i = 0; i < values.length; i+=2) {
-            arrayLat[size] = values[i];
-            arrayLon[size] = values[i+1];
-            size++;
-        }
-    }
-
-    /**
-     * Reverses the array.
-     * Will swap in coordinate pairs.
-     * It will swap the first and last values, then the second and second to last values, and so on.
-     * If the size is odd, the middle value will not be swapped.
-     */
-    public void reverse() {
-        for (int i = 0; i < size / 2; i++) {
-            float tempX = arrayLat[i];
-            float tempY = arrayLon[i];
-
-            arrayLat[i] = arrayLat[size - i - 1];
-            arrayLon[i] = arrayLon[size - i - 1];
-
-            arrayLat[size - i - 1] = tempX;
-            arrayLon[size - i - 1] = tempY;
-        }
-    }
-
-    /**
-     * Returns a new instance of the array, with the same values
-     */
-    public CoordArrayList clone() {
-        return new CoordArrayList(toArray());
-    }
-
     @Override
     public void write(String path) throws FileNotFoundException, IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
         write(stream);
         stream.close();
@@ -177,9 +87,9 @@ public class CoordArrayList extends PrimitiveArrayList {
     @Override
     public void read(String path) throws IOException{
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
         read(stream);
     }
@@ -213,5 +123,103 @@ public class CoordArrayList extends PrimitiveArrayList {
             }
         }
         return true;
+    }
+
+    /**
+     * @return clone of the array
+     */
+    public CoordArrayList clone() {
+        return new CoordArrayList(toArray());
+    }
+
+    /**
+     * Converts the list to a float array.
+     * @return float[]
+     */
+    public float[] toArray() {
+        float[] output = new float[size * 2];
+        for (int i = 0; i < size; i++) {
+            output[i * 2] = arrayLat[i];
+            output[i * 2 + 1] = arrayLon[i];
+        }
+        return output;
+    }
+
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param valueX to be inserted
+     * @param valueY to be inserted
+     */
+    public void add(float valueX, float valueY) {
+        if (size + 1 > arrayLat.length) {
+            resize();
+        }
+        arrayLat[size] = valueX;
+        arrayLon[size] = valueY;
+        size++;
+    }
+
+    /**
+     * Adds a value to the end of the list.
+     * @param coords
+     */
+    public void add(float[] coords){
+        add(coords[0], coords[1]);
+    }
+
+    /**
+     * Sets the value at the given index.
+     * @param index to be set
+     * @param value new value
+     */
+    public void set(int index, float[] coords){
+        arrayLat[index] = coords[0];
+        arrayLon[index] = coords[1];
+    }
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return float value at the index
+     */
+    public float[] get(int index) {
+        if (index < 0)
+            return new float[]{arrayLat[size+index], arrayLon[size+index]};
+        else
+            return new float[]{arrayLat[index], arrayLon[index]};
+    }
+
+    /**
+     * Adds an array of values to the empty spots in the list.
+     * @param values to be inserted
+     */
+    public void addAll(float[] values) {
+        while (size + values.length / 2 > arrayLat.length) {
+            resize();
+        }
+        for(int i = 0; i < values.length; i+=2) {
+            arrayLat[size] = values[i];
+            arrayLon[size] = values[i+1];
+            size++;
+        }
+    }
+
+    /**
+     * Reverses the array.
+     * Will swap in coordinate pairs.
+     * It will swap the first and last values, then the second and second to last values, and so on.
+     * If the size is odd, the middle value will not be swapped.
+     */
+    public void reverse() {
+        for (int i = 0; i < size / 2; i++) {
+            float tempX = arrayLat[i];
+            float tempY = arrayLon[i];
+
+            arrayLat[i] = arrayLat[size - i - 1];
+            arrayLon[i] = arrayLon[size - i - 1];
+
+            arrayLat[size - i - 1] = tempX;
+            arrayLon[size - i - 1] = tempY;
+        }
     }
 }

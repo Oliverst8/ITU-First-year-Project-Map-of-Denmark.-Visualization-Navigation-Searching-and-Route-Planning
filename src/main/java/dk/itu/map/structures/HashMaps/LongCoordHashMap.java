@@ -5,11 +5,13 @@ package dk.itu.map.structures.HashMaps;
  * Note: The key cannot be 0.</pre>
  */
 public class LongCoordHashMap extends PrimitiveHashMap {
-
     private long[] keys;
     private float[] valueX;
     private float[] valueY;
 
+    /**
+     * Instantiates a new LongCoordHashMap with the default capacity.
+     */
     public LongCoordHashMap() {
         keys = new long[INITIAL_CAPACITY];
         valueX = new float[INITIAL_CAPACITY];

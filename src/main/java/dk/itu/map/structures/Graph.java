@@ -36,6 +36,23 @@ public class Graph {
         //wayIDs = new LongArrayList();
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Graph){
+            Graph other = (Graph) obj;
+            if(!idToIndex.equals(other.idToIndex)) return false;
+            if(!vertexList.equals(other.vertexList)) return false;
+            if(!edgeDestinations.equals(other.edgeDestinations)) return false;
+            if(!vehicleRestrictions.equals(other.vehicleRestrictions)) return false;
+            if(!distanceWeights.equals(other.distanceWeights)) return false;
+            if(!timeWeights.equals(other.timeWeights)) return false;
+            if(!coords.equals(other.coords)) return false;
+            if(!oldToNewVertexIndex.equals(other.oldToNewVertexIndex)) return false;
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @return the number of vertices in the graph
      */
@@ -96,15 +113,15 @@ public class Graph {
     public void loadFromDataPath(String path) throws IOException {
         String folderPath = path + "/graph";
         File[] files = new File[]{
-                new File(folderPath + "/idToIndex.txt"),
-                new File(folderPath + "/vertexList.txt"),
-                new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/vehicleRestrictions.txt"),
-                new File(folderPath + "/distanceWeights.txt"),
-                new File(folderPath + "/timeWeights.txt"),
-                new File(folderPath + "/coords.txt"),
-                new File(folderPath + "/oldToNewVertexIndex.txt")
-                //new File(folderPath + "/wayIDs.txt")
+            new File(folderPath + "/idToIndex.txt"),
+            new File(folderPath + "/vertexList.txt"),
+            new File(folderPath + "/edgeDestinations.txt"),
+            new File(folderPath + "/vehicleRestrictions.txt"),
+            new File(folderPath + "/distanceWeights.txt"),
+            new File(folderPath + "/timeWeights.txt"),
+            new File(folderPath + "/coords.txt"),
+            new File(folderPath + "/oldToNewVertexIndex.txt")
+            //new File(folderPath + "/wayIDs.txt")
         };
 
         DataInputStream[] streams = new DataInputStream[files.length];
@@ -112,9 +129,9 @@ public class Graph {
         for(int i = 0; i < files.length; i++){
             try {
                 streams[i] = new DataInputStream(
-                        new BufferedInputStream(
-                                new FileInputStream(files[i].getAbsolutePath())
-                        )
+                    new BufferedInputStream(
+                        new FileInputStream(files[i].getAbsolutePath())
+                    )
                 );
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -122,9 +139,9 @@ public class Graph {
         }
         try{
             DataInputStream stream = new DataInputStream(
-                    new BufferedInputStream(
-                            new FileInputStream(files[1].getAbsolutePath())
-                    )
+                new BufferedInputStream(
+                    new FileInputStream(files[1].getAbsolutePath())
+                )
             );
             int sizeOfIdToIndex = stream.readInt();
             for(int i = 0; i < sizeOfIdToIndex; i++){
@@ -136,18 +153,16 @@ public class Graph {
             throw new RuntimeException(e);
         }
 
-
-
         WriteAble[] instanceVariables = new WriteAble[]{
-                idToIndex,
-                vertexList,
-                edgeDestinations,
-                vehicleRestrictions,
-                distanceWeights,
-                timeWeights,
-                coords,
-                oldToNewVertexIndex
-                //wayIDs
+            idToIndex,
+            vertexList,
+            edgeDestinations,
+            vehicleRestrictions,
+            distanceWeights,
+            timeWeights,
+            coords,
+            oldToNewVertexIndex
+            //wayIDs
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
@@ -163,39 +178,42 @@ public class Graph {
         }
     }
 
+    /**
+     * @return the edhes in the graph
+     */
     public IntArrayList getEdges() {
         return edgeDestinations;
     }
 
+    /**
+     * Find the nearest neighbor to a given coordinate
+     * @param coords the coordinates to find the nearest neighbor to
+     * @param vehicleCode the vehicle code to be used when filtering for the nearest neighbor
+     * @param graph the graph to find the nearest neighbor in
+     * @return the id of the nearest neighbor
+     */
     public int getNearestNeigherborID(float[] coords, int vehicleCode, Graph graph) {
         return this.coords.nearestNeighbour(coords, vehicleCode, graph);
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof Graph){
-            Graph other = (Graph) obj;
-            if(!idToIndex.equals(other.idToIndex)) return false;
-            if(!vertexList.equals(other.vertexList)) return false;
-            if(!edgeDestinations.equals(other.edgeDestinations)) return false;
-            if(!vehicleRestrictions.equals(other.vehicleRestrictions)) return false;
-            if(!distanceWeights.equals(other.distanceWeights)) return false;
-            if(!timeWeights.equals(other.timeWeights)) return false;
-            if(!coords.equals(other.coords)) return false;
-            if(!oldToNewVertexIndex.equals(other.oldToNewVertexIndex)) return false;
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * @return the vehicle restrictions in the graph
+     */
     public ByteArrayList getVehicleRestrictions() {
         return vehicleRestrictions;
     }
+
+    /**
+     * @return the distance weights in the graph
+     */
     public FloatArrayList getDistanceWeights() {
         return distanceWeights;
     }
+
+    /**
+     * @return the time weights in the graph
+     */
     public FloatArrayList getTimeWeights() {
         return timeWeights;
     }
-
 }

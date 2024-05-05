@@ -25,7 +25,6 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
 public class ChunkLoader extends Thread {
-
     private final MapConfig config;
     
     private Map<Integer, Map<Integer, List<Drawable>>> finishedChunks;
@@ -55,11 +54,16 @@ public class ChunkLoader extends Thread {
         thread.start();
     }
 
+    // TODO: Write javadoc
     public void setCallback(Runnable callback) {
         this.callback = callback;
     }
 
-
+    /**
+     * Reads the files from the chunks
+     * @param chunks    The chunks to read
+     * @param zoomLevel The zoom level
+     */
     public void readFiles(int[] chunks, int zoomLevel) {
         for (int chunk : chunks) {
             if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) continue;
@@ -70,12 +74,19 @@ public class ChunkLoader extends Thread {
         }
     }
 
+    /**
+     * Get the finished chunks
+     * @return The finished chunks
+     */
     public Map<Integer, Map<Integer, List<Drawable>>> getFinishedChunks() {
         Map<Integer, Map<Integer, List<Drawable>>> temp = finishedChunks;
         finishedChunks = new HashMap<>();
         return temp;
     }
 
+    /**
+     * Run the chunkloader thread
+     */
     public void run() {
         while (true) {
             try {
@@ -248,13 +259,21 @@ public class ChunkLoader extends Thread {
         return ways;
     }
 
+    /**
+     * Converts a point to a chunk index
+     * @param point     The point to convert
+     * @param zoomLevel The zoom level to be used
+     * @return The chunk index
+     */
     public int pointToChunkIndex(Point2D point, int zoomLevel) {
         return config.pointToChunkIndex(point, zoomLevel);
     }
 
+    /**
+     * Get the config
+     * @return The config
+     */
     public MapConfig getConfig() {
         return config;
     }
-
-
 }

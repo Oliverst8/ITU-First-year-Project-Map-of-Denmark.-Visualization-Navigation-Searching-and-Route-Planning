@@ -1,7 +1,5 @@
 package dk.itu.map.structures.ArrayLists;
 
-import dk.itu.map.structures.WriteAble;
-
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
@@ -10,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 
-public class CharArrayList extends PrimitiveArrayList implements WriteAble {
+public class CharArrayList extends PrimitiveArrayList {
     // The array that holds the values
     private char[] array;
 
@@ -45,9 +43,6 @@ public class CharArrayList extends PrimitiveArrayList implements WriteAble {
         size = array.length;
     }
 
-    /**
-     * Resizes the array to double the size
-     */
     @Override
     protected void resize() {
         char[] newArray = new char[array.length*2];
@@ -55,41 +50,12 @@ public class CharArrayList extends PrimitiveArrayList implements WriteAble {
         array = newArray;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(char value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-        if(size > biggestIndex) biggestIndex = size-1;
-    }
-
-    public void set(int index, char value){
-        while(index >= array.length) resize();
-        array[index] = value;
-        if(index > biggestIndex) biggestIndex = index;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return int the value at the given index
-     */
-    public char get(int index) {
-        return array[index];
-    }
-
     @Override
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
 
         write(stream);
@@ -108,9 +74,9 @@ public class CharArrayList extends PrimitiveArrayList implements WriteAble {
     @Override
     public void read(String path) throws IOException {
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
 
         read(stream);
@@ -147,7 +113,44 @@ public class CharArrayList extends PrimitiveArrayList implements WriteAble {
         else if(index2 > biggestIndex) biggestIndex = index2;
     }
 
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(char value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+        if(size > biggestIndex) biggestIndex = size-1;
+    }
 
+    /**
+     * Adds a value to the given index in the list.
+     * @param index to be inserted
+     * @param value to be inserted
+     */
+    public void set(int index, char value){
+        while(index >= array.length) resize();
+        array[index] = value;
+        if(index > biggestIndex) biggestIndex = index;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return int the value at the given index
+     */
+    public char get(int index) {
+        return array[index];
+    }
+
+    /**
+     * Adds all the values to the array to the end of the list.
+     * @param values to be added
+     */
     public void addAll(int[] values) {
         while (size + values.length > array.length) {
             resize();
@@ -157,6 +160,9 @@ public class CharArrayList extends PrimitiveArrayList implements WriteAble {
         size += values.length;
     }
 
+    /**
+     * @return the list as a char array
+     */
     public char[] toArray() {
         char[] result = new char[size];
         System.arraycopy(array, 0, result, 0, size);

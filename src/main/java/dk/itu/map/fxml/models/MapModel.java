@@ -8,7 +8,6 @@ import dk.itu.map.structures.TernaryTree;
 import javafx.scene.paint.Color;
 
 public class MapModel {
-    
     // A list that holds the different zoom levels, and their chunks
     public final List<Map<Integer, List<Drawable>>> chunkLayers;
     public Set<Drawable> landLayer;
@@ -21,6 +20,10 @@ public class MapModel {
 
     private final Drawable[] navigationWays;
 
+    /**
+     * Creates a new MapModel
+     * @param mapType The type of the map
+     */
     public MapModel(String mapType) {
         graph = new Graph();
         this.mapType = mapType;
@@ -32,6 +35,10 @@ public class MapModel {
         navigationWays = new Drawable[]{null, null, null, null, null};
     }
 
+    /**
+     * Get the type of the map
+     * @return The type of the map
+     */
     public String getMapType() {
         return mapType;
     }
@@ -71,36 +78,66 @@ public class MapModel {
         return chunkLoader.getConfig().chunkAmount;
     }
 
+    /**
+     * Gets the amount of layers in the map
+     * @return The amount of layers in the map
+     */
     public int getLayerCount() {
         return chunkLoader.getConfig().layerCount-1;
     }
 
+    /**
+     * Gets the size of chunks
+     */
     public float getChunkSize() {
         return chunkLoader.getConfig().CHUNK_SIZE;
     }
 
+    /**
+     * Gets the navigation start point
+     * @return The navigation start point
+     */
     public Point getStartPoint() {
         return ((Point) navigationWays[0]);
     }
 
+    /**
+     * Sets the navigation start point
+     * @param startPoint The navigation start point to be set
+     */
     public void setStartPoint(Point startPoint) {
         this.navigationWays[0] = startPoint;
     }
 
+    /**
+     * Gets the navigation end point
+     * @return The navigation end point
+     */
     public Point getEndPoint() {
         return ((Point) navigationWays[1]);
     }
 
+    /**
+     * Sets the navigation end point
+     * @param endPoint The navigation end point to be set
+     */
     public void setEndPoint(Point endPoint) {
         this.navigationWays[1] = endPoint;
     }
 
+    /**
+     * Sets the navigation route
+     * @param endPoint The navigation end point to be set
+     */
     public void setRoute(DrawableWay[] routes) {
         this.navigationWays[2] = routes[0]; //sets the navigation route from nearest usable road to nearest usable road, from start- to endpoint
         this.navigationWays[3] = routes[1]; //sets a path from the start point to the nearest usable road
         this.navigationWays[4] = routes[2]; //sets a path from the endpoint to the nearest usable road
     }
 
+    /**
+     * Removes the navigation route
+     */
     public void removeRoute() {
         this.navigationWays[2] = null;
         this.navigationWays[3] = null;
@@ -119,26 +156,49 @@ public class MapModel {
         return chunkLayers.get(zoomLevel);
     }
 
+    /**
+     * Gets the current graph
+     * @return the current graph
+     */
     public Graph getGraph() {
         return graph;
     }
 
+    /**
+     * Sets the graph
+     * @param graph The graph to be set
+     */
     public void setGraph(Graph graph) {
         this.graph = graph;
     }
 
+    /**
+     * Get the navigation ways
+     * @return The navigation ways
+     */
     public Drawable[] getNavigationWays(){
         return navigationWays;
     }
 
+    /**
+     * Set the address
+     * @param address The address to be set
+     */
     public void setAddress(TernaryTree address) {
         this.address = address;
     }
 
+    /**
+     * Get the address
+     * @return The address
+     */
     public TernaryTree getAddress() {
         return address;
     }
 
+    /**
+     * Themes available for the map
+     */
     public enum Themes {
         LIGHT,
         DARK,
@@ -149,6 +209,9 @@ public class MapModel {
         private String name;
         private Map<String, Map<String, Map<String, Color>>> color; // Theme - primary - secondary - color
 
+        /**
+         * Creates an instance of the Theme class
+         */
         public Theme() {
             this.name = "light";
             this.color = new HashMap<>();
@@ -157,6 +220,10 @@ public class MapModel {
             setRandom();
         }
 
+        /**
+         * Sets the theme used for the map
+         * @param newTheme The theme to be set
+         */
         public void setTheme(Themes newTheme) {
             switch (newTheme) {
                 case LIGHT:
@@ -172,6 +239,12 @@ public class MapModel {
             }
         }
 
+        /**
+         * Get the color associated with the primary and secondary keys
+         * @param primary The primary key
+         * @param secondary The secondary key
+         * @return The color associated with the primary and secondary keys
+         */
         public Color getColor(String primary, String secondary) {
             return color.get(name).get(primary).get(secondary);
         }
@@ -392,7 +465,7 @@ public class MapModel {
             color.put("random", primary);
         }
 
-        public Color getRandomColor() {
+        private Color getRandomColor() {
             return Color.color(Math.random(), Math.random(), Math.random());
         }
     }

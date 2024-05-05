@@ -18,6 +18,11 @@ public class Navigation {
     //This is 4 for car, 2 for bike and 1 for walk.
     private final int vehicleCode;
 
+    /**
+     * Create an instance of a Navigation
+     * @param graph the graph to navigate
+     * @param vehicleCode the vehicle code to be used in the navigation
+     */
     public Navigation(Graph graph, int vehicleCode) {
         this.graph = graph;
         this.vehicleCode = vehicleCode;
@@ -32,18 +37,30 @@ public class Navigation {
         }
     }
 
+    /**
+     * Build the paths
+     * @param startPoint the start point
+     * @param endPoint the end point
+     * @return true if a path is found, false otherwise
+     */
     private boolean buildPaths(int startPoint, int endPoint) {
         queue = new IndexMinPQ<>(graph.size());
         queue.insert(startPoint, 0f);
         setDistTo(startPoint, startPoint, 0f, 0f);
+
         while(!queue.isEmpty()){
             int min = queue.delMin();
             if(min == endPoint) return true;
             relax(min);
         }
+
         return false;
     }
 
+    /**
+     * Relax the vertex
+     * @param vertex the vertex to relax
+     */
     private void relax(int vertex) {
         IntArrayList edges = graph.getEdgeList(vertex);
         for(int i = 0; i < edges.size(); i++){
@@ -73,17 +90,36 @@ public class Navigation {
         }
     }
 
+    /**
+     * Set the distance to the vertex
+     * @param vertex the vertex to set the distance to
+     * @param vertexFrom the vertex to set the distance from
+     * @param dist the distance
+     * @param time the time
+     */
     private void setDistTo(int vertex, int vertexFrom, float dist, float time) {
         distTo[vertex] = dist;
         timeTo[vertex] = time;
         vertexTo[vertex] = vertexFrom;
     }
 
+    /**
+     * Set the distance to the vertex
+     * @param vertex the vertex to set the distance to
+     * @param vertexFrom the vertex to set the distance from
+     * @param dist the distance
+     */
     private void setDistTo(int vertex, int vertexFrom, float dist) {
         distTo[vertex] = dist;
         vertexTo[vertex] = vertexFrom;
     }
 
+    /**
+     * Get the path between two coordinates
+     * @param startCoords the start coordinates
+     * @param endCoords the end coordinates
+     * @return the path
+     */
     public DrawableWay[] getPath(float[] startCoords, float[] endCoords){
 
         int nearestStartPointID = graph.getNearestNeigherborID(new float[]{startCoords[0],startCoords[1]}, vehicleCode, graph);
@@ -117,6 +153,5 @@ public class Navigation {
         paths[2] = new DrawableWay(endPath, -3, "navigation", "pathToRoad");
 
         return paths;
-
     }
 }

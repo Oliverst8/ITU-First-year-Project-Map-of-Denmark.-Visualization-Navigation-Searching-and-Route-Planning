@@ -11,7 +11,6 @@ import dk.itu.map.App;
 import javafx.geometry.Point2D;
 
 public class MapConfig {
-
     public final float CHUNK_SIZE;
     public final byte layerCount;
 
@@ -19,6 +18,13 @@ public class MapConfig {
 
     public final int columnAmount, rowAmount, chunkAmount;
 
+    /**
+     * Creates a new MapConfig
+     * @param minLat The minimum latitude
+     * @param maxLat The maximum latitude
+     * @param minLon The minimum longitude
+     * @param maxLon The maximum longitude
+     */
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
         this.CHUNK_SIZE = 0.01f;
         this.layerCount = 6;
@@ -31,7 +37,6 @@ public class MapConfig {
         this.chunkAmount = columnAmount * rowAmount;
     }
 
-    
     /**
      * Load the config file, and set the variables
      */
@@ -102,18 +107,30 @@ public class MapConfig {
         return columnAmount + roundUp >> zoomLevel;
     }
 
+    /**
+     * Get the row amount in the map on a given zoom level
+     * @param zoomLevel the desired zoom level
+     * @return the row amount
+     */
     public int getRowAmount(int zoomLevel) {
         int roundUp = (1<<zoomLevel)-1;
         return rowAmount + roundUp >> zoomLevel;
     }
 
+    /**
+     * Get the amount of chunks in the map on a given zoom level
+     * @param zoomLevel the desired zoom level
+     * @return the amount of chunks
+     */
     public int getChunkAmount(int zoomLevel) {
         return getColumnAmount(zoomLevel) * getRowAmount(zoomLevel);
     }
     
+    /**
+     * Writes the config to a file
+     */
     public void writeConfig() {
         try {
-
             FileWriter writer = new FileWriter(App.mapPath + "/config");
             writer.write(
                 "minLat: " + minLat + "\n" +
@@ -130,5 +147,4 @@ public class MapConfig {
             System.out.println();
         }
     }
-
 }

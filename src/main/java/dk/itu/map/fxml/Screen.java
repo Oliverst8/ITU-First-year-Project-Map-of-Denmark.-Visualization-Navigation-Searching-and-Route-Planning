@@ -17,7 +17,6 @@ public abstract class Screen<M, C> {
     public Object view; // drawing
 
     public static class Home extends Screen<HomeModel, HomeController> {
-
         public Home() {
             this.fxml = "home.fxml";
             this.model = new HomeModel();
@@ -27,7 +26,6 @@ public abstract class Screen<M, C> {
     }
 
     public static class Map extends Screen<MapModel, MapController> {
-
         public Map(String mapName, String mapType) {
             this.fxml = "map.fxml";
             this.model = new MapModel(mapType);
@@ -39,7 +37,6 @@ public abstract class Screen<M, C> {
     }
 
     public static class Chunker extends Screen<ChunkModel, ChunkController> {
-
         public Chunker(String OSMFile, String mapName) {
             this.fxml = "chunking.fxml";
             this.model = new ChunkModel(OSMFile);
