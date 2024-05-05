@@ -98,4 +98,5 @@ public class IntArrayListTest {
             fail("Exception thrown: " + e);
         }
     }
+
 }
