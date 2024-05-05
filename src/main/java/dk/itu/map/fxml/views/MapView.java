@@ -84,14 +84,11 @@ public class MapView {
     // Last mouse position
     private float lastY;
     // Zoom level
-    private float zoomLevel;
     // Initial distance between two points
-    private float startDist;
     private final TernaryTree.searchAddress startAddress = new TernaryTree.searchAddress(null, null, null);
     private final TernaryTree.searchAddress endAddress = new TernaryTree.searchAddress(null, null, null);
 
     // Amount of chunks seen
-    private float currentChunkAmountSeen = 1;
     private float zoomAmount;
 
     private AnimationTimer render;
@@ -116,7 +113,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
+        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "leisure", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -401,16 +398,13 @@ public class MapView {
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
-        boolean print = false;
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
-            print = true;
             overridePrint = false;
         }
         controller.updateChunks(getZoomLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
         updateZoomAmount();
         if (overridePrint) {
-            print = true;
             overridePrint = false;
         }
 

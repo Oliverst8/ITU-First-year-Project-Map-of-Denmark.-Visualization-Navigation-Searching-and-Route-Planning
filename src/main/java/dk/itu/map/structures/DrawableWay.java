@@ -216,7 +216,16 @@ public class DrawableWay implements Drawable {
 
             case "landuse":
                 switch(secondaryType) {
-                    case "allotments", "industrial", "residential":
+                    case "allotments", "industrial", "residential", "military":
+                        gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
+                        gc.setFill(theme.getColor(primaryType, secondaryType));
+                        gc.fill();
+                        break colorSelect;
+                }
+            
+            case "leisure":
+                switch(secondaryType) {
+                    case "park":
                         gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
@@ -225,7 +234,7 @@ public class DrawableWay implements Drawable {
 
             case "building":
                 switch(secondaryType) {
-                    case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
+                    case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house", "commercial", "school":
                         gc.setLineWidth(calcLineWidth(0.00001f, scaleFactor));
                         gc.setStroke(theme.getColor(primaryType, secondaryType));
                         gc.setFill(theme.getColor(primaryType, secondaryType));

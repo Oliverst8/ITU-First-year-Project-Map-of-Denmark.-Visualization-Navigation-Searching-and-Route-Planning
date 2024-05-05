@@ -46,38 +46,34 @@ public abstract class MapElement {
                 case "highway":
                     primaryType = "highway";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "leisure":
                     primaryType = "leisure";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "amenity":
                     primaryType = "amenity";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "building":
                     primaryType = "building";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "aeroway":
                     primaryType = "aeroway";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "landuse":
                     primaryType = "landuse";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "natural":
                     primaryType = "natural";
                     secondaryType = tags.get(i + 1);
-                    return;
+                    break;
                 case "place":
                     primaryType = "place";
                     secondaryType = tags.get(i + 1);
-                    return;
-                default:
-                    primaryType = "null";
-                    secondaryType = "null";
                     break;
             }
         }
