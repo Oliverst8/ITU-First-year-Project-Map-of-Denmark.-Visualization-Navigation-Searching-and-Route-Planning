@@ -8,6 +8,7 @@ import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
+import dk.itu.map.parser.MapConfig;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -97,6 +98,7 @@ public class MapView {
     private AnimationTimer render;
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
+    private boolean showGrid = false;
 
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
@@ -361,6 +363,12 @@ public class MapView {
 
     }
 
+    @FXML
+    void toggleGrid() {
+        showGrid = !showGrid;
+        redraw();
+    }
+
     /**
      * Pans the map
      * 
@@ -391,11 +399,13 @@ public class MapView {
      * Redraws the map
      */
 
+    
     public static boolean overridePrint = false;
     long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
+        long totalStart = System.currentTimeMillis();
         boolean print = false;
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
@@ -454,7 +464,28 @@ public class MapView {
             renderTimes.put(entry.getKey(), endTime - startTime);
         }
 
+        if (showGrid) {
+            GraphicsContext gc = canvas.get("pointOfInterest").getGraphicsContext2D();
+            for (float x = model.getMinLat(); x < model.getMaxLat(); x += model.getChunkSize()*Math.pow(2, getZoomLevel())) {
+                gc.setLineWidth(0.0003 * (getZoomLevel() + 1));
+                gc.setStroke(Color.BLACK);
+                gc.beginPath();
+                gc.moveTo(model.getMinLon()*0.56, -x);
+                gc.lineTo(model.getMaxLon()*0.56, -x);
+                gc.stroke();
+            }
+            for (float y = model.getMinLon(); y < model.getMaxLon(); y += model.getChunkSize()*Math.pow(2, getZoomLevel())) {
+                gc.setLineWidth(0.0003 * (getZoomLevel() + 1));
+                gc.setStroke(Color.BLACK);
+                gc.beginPath();
+                gc.moveTo(y*0.56, -model.getMinLat());
+                gc.lineTo(y*0.56, -model.getMaxLat());
+                gc.stroke();
+            }
+        }
+            
         if (!print) return;
+        // int drawTimes = 0;
         // System.out.println("Render times: ");
         // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
         //     String layer = String.format("%-15s", entry.getKey());
