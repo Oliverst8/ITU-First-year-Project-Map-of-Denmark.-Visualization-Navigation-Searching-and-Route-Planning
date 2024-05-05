@@ -190,7 +190,7 @@ public class MapView {
             setPointOfInterest = false;
             startNavigationButton.setDisable(false);
             addMarkerButton.setStyle("-fx-border-color: transparent");
-            try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
+            try (FileWriter writer = new FileWriter(App.mapName+"utilities/pointOfInterest.txt", true)) {
                 writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -503,7 +503,7 @@ public class MapView {
      */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(App.DATA_PATH + App.mapName + "/utilities/pointOfInterest.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] coords = line.split(", ");

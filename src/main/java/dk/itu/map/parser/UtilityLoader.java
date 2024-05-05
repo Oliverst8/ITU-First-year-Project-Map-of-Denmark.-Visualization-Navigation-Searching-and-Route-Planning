@@ -16,7 +16,7 @@ public class UtilityLoader extends Thread {
      * Create an instance of a UtilityLoader
      */
     public UtilityLoader(MapConfig mapConfig) {
-        this.path = App.mapPath + "/utilities";
+        this.path = App.mapName + "/utilities";
         this.mapConfig = mapConfig;
         graph = new Graph();
     }

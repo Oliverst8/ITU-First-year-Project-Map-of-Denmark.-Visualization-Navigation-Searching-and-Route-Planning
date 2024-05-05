@@ -11,7 +11,7 @@ import dk.itu.map.App;
 import javafx.geometry.Point2D;
 
 public class MapConfig {
-    public final String mapType;
+    private final boolean isInternal;
 
     public final float CHUNK_SIZE;
     public final byte layerCount;
@@ -28,7 +28,7 @@ public class MapConfig {
      * @param maxLon The maximum longitude
      */
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
-        this.mapType = null;
+        isInternal = false;
         this.CHUNK_SIZE = 0.01f;
         this.layerCount = 6;
         this.minLat = minLat;
@@ -45,7 +45,7 @@ public class MapConfig {
      */
     public MapConfig(String mapType) {
         try {
-            this.mapType = mapType;
+            isInternal = mapType.equals("internal") ? true : false;
             File file = locateFile("config");
             BufferedReader reader = new BufferedReader(new FileReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -135,7 +135,7 @@ public class MapConfig {
      */
     public void writeConfig() {
         try {
-            FileWriter writer = new FileWriter(App.mapPath + "/config");
+            FileWriter writer = new FileWriter(App.mapName + "/config");
             writer.write(
                 "minLat: " + minLat + "\n" +
                 "maxLat: " + maxLat + "\n" +
@@ -158,10 +158,10 @@ public class MapConfig {
      * @return The file
      */
     public File locateFile(String filePath) {
-        if(mapType.equals("internal")) {
-            return new File(getClass().getResource("/maps/" + filePath).getPath());
+        if(isInternal) {
+            return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getPath());
         } else {
-            return new File(App.DATA_PATH + "/" + filePath);
+            return new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
         }
     }
 }

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 
 public class App extends Application {
     static public final String DATA_PATH = "maps/";
-    static public String mapPath;
+    static public String mapName;
     // The stage is the window that the application is running in
     private static Stage stage;
     // The view builder is responsible for creating the view

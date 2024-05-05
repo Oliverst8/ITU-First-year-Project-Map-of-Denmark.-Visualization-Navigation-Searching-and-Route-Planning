@@ -75,7 +75,7 @@ public class HomeController {
         String[] internalMaps = new String[]{"Isle"};
         String[] externapMaps = externalDirectoryPath.list();
 
-        addMaps(mapList, internalMaps, "intrnal");
+        addMaps(mapList, internalMaps, "internal");
         addMaps(mapList, externapMaps, "external");
 
         addMaps(deleteList, externapMaps, "delete");
