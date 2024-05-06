@@ -7,6 +7,7 @@ import dk.itu.map.structures.DrawableWay;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
@@ -109,8 +110,17 @@ public class ChunkLoader extends Thread {
             }
             if (chunkIndex == -1) continue;
             List<Drawable> chunk = new ArrayList<>();
-            
-            InputStream file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
+
+            InputStream file;
+            try {
+                file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
+            } catch (FileNotFoundException e) {
+                
+                Map<Integer, List<Drawable>> temp = finishedChunks.getOrDefault(zoomLayer, new HashMap<>());
+                temp.put(chunkIndex, chunk);
+                finishedChunks.put(zoomLayer, temp);
+                continue;
+            }
 
             long id;
             CoordArrayList outerCoords;
@@ -154,12 +164,18 @@ public class ChunkLoader extends Thread {
         }
     }
 
-    public Set<Drawable> readLandLayer(){
+    public Set<Drawable> readLandLayer() {
         Set<Drawable> list = new HashSet<>();
         int zoomLayer = config.layerCount-1;
         int landChunkAmount = config.getChunkAmount(zoomLayer);
-        for(int i = 0; i < landChunkAmount; i++){
-            InputStream file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
+        for (int i = 0; i < landChunkAmount; i++) {
+            
+            InputStream file;
+            try {
+                file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
+            } catch (FileNotFoundException e) {
+                continue;
+            }
 
             long id;
             CoordArrayList outerCoords;
@@ -213,7 +229,12 @@ public class ChunkLoader extends Thread {
 
             ways.putIfAbsent(chunk, new ArrayList<>());
 
-            InputStream file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+            InputStream file;
+            try {
+                file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
+            } catch (FileNotFoundException e) {
+                return;
+            }
 
             long id;
             CoordArrayList outerCoords;

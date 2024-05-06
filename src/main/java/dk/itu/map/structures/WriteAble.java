@@ -33,7 +33,7 @@ public interface WriteAble {
      * @param path the path to the file
      * @throws IOException If an error occurs while reading the file
      */
-    default void read(String path, MapConfig mapConfig) throws IOException{
+    default void read(String path, MapConfig mapConfig) throws IOException {
         DataInputStream stream = new DataInputStream(new BufferedInputStream(mapConfig.locateFile(path)));
 
         read(stream);

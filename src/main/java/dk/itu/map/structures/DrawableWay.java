@@ -137,6 +137,7 @@ public class DrawableWay implements Drawable {
      * @param theme the theme to be used
      */
     private void setColors(GraphicsContext gc, float scaleFactor, Theme theme ) {
+        gc.setStroke(theme.getColor("highway", "residential"));
         colorSelect:
         switch(primaryType) {
             case "navigation":
