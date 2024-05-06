@@ -1,9 +1,0 @@
-minLat: 55.9931
-maxLat: 55.9992
-minLon: 12.4167
-maxLon: 12.4345
-chunkColumnAmount: 2
-chunkRowAmount: 1
-chunkAmount: 2
-LayerCount: 6
-CHUNK_SIZE: 0.01
