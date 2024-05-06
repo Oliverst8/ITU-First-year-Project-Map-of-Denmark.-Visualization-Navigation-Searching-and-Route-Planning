@@ -34,10 +34,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -52,10 +50,6 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#importMap" text="Import" />
-                        <MenuItem mnemonicParsing="false" text="Open" />
-                        <Menu mnemonicParsing="false" text="Open Recent" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu mnemonicParsing="false" text="Theme">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#switchToStandardTheme" text="Standard Theme" />
@@ -63,14 +57,19 @@
                                 <MenuItem mnemonicParsing="false" onAction="#switchToRandomTheme" text="Random Theme" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Debug">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#toggleGrid" text="Grid" />
-                            </items>
-                        </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Debug">
+               <items>
+                  <Menu mnemonicParsing="false" text="Debug">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#toggleGrid" text="Grid" />
+                     </items>
+                  </Menu>
+                  <MenuItem mnemonicParsing="false" onAction="#debugPrintZoomLevel" text="Show zoomamount" />
+               </items>
+            </Menu>
             </menus>
         </MenuBar>
         <AnchorPane fx:id="canvasParent" style="-fx-background-color: #90DAEE;" VBox.vgrow="ALWAYS">
