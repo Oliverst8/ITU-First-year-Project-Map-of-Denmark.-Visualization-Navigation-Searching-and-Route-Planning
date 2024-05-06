@@ -130,7 +130,7 @@ public class Graph {
         }
 
         try{
-            DataInputStream stream = new DataInputStream(new BufferedInputStream(files[1]));
+            DataInputStream stream = new DataInputStream(new BufferedInputStream(files[0]));
 
             int sizeOfIdToIndex = stream.readInt();
             for(int i = 0; i < sizeOfIdToIndex; i++){
@@ -143,7 +143,6 @@ public class Graph {
         }
 
         WriteAble[] instanceVariables = new WriteAble[]{
-            idToIndex,
             vertexList,
             edgeDestinations,
             vehicleRestrictions,
@@ -151,7 +150,6 @@ public class Graph {
             timeWeights,
             coords,
             oldToNewVertexIndex
-            //wayIDs
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {
