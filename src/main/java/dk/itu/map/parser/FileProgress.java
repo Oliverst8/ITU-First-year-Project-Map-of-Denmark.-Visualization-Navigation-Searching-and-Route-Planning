@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileProgress extends Thread{
-    private ProgressBar progressBar;
+    private final ProgressBar progressBar;
     private long totalLines;
     private long progress;
     private File file;

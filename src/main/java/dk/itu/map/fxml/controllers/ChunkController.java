@@ -31,8 +31,6 @@ public class ChunkController {
     public void importMap(String filePath, FileProgress fileProgress) {
         if (!new File(App.mapName + "/config").exists()) {
             File file = new File(filePath);
-            fileProgress.setFile(file);
-            fileProgress.start();
             OSMParser parser = new OSMParser(file, fileProgress);
             parser.setCallback((Runnable)() -> {
                 System.out.println("Finished importing map!");

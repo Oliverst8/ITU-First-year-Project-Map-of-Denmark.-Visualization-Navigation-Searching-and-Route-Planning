@@ -78,7 +78,8 @@ public class OSMParser extends Thread {
 
                 file = new File(file.getAbsolutePath().replace(".bz2", ""));
             }
-
+            fileProgress.setFile(file);
+            fileProgress.start();
             ReversedLinesFileReader relationReader = ReversedLinesFileReader.builder().setFile(file).get();
             parseRelations(relationReader);
             System.out.println("Stating parsing");
