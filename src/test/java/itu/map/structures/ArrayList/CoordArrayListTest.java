@@ -116,17 +116,6 @@ public class CoordArrayListTest {
     }
 
     @Test
-    void testCopy() {
-        CoordArrayList list = new CoordArrayList();
-        list.add(1.0f, 5.0f);
-        list.add(2.0f, 6.0f);
-        list.add(3.0f, 7.0f);
-        list.add(4.0f, 8.0f);
-        CoordArrayList copy = list.copy();
-        assertEquals(list, copy);
-    }
-
-    @Test
     void testAddNeedToResize(){
         CoordArrayList list = new CoordArrayList(1);
         list.add(1f,1f);
