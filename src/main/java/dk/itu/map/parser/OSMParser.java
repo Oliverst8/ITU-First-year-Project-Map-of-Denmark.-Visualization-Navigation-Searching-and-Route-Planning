@@ -90,6 +90,7 @@ public class OSMParser extends Thread {
             e.printStackTrace();
         }
     }
+
     /**
      * Parse the input stream
      *
@@ -193,12 +194,12 @@ public class OSMParser extends Thread {
             e.printStackTrace();
         }
     }
+
     /**
      * Parse the relations
      *
      * @param reader The reader to be parsed
      */
-
     private void parseRelations(ReversedLinesFileReader reader) throws IOException {
         nextRelation:
         for (String line = reader.readLine().trim(); !line.equals("</way>"); line = reader.readLine().trim()) {
@@ -297,13 +298,11 @@ public class OSMParser extends Thread {
                 relationMap.get(id).getFirst().addWay(way);
             } else {
                 relationMap.get(id).forEach(relation -> {
-                    relation.addWay(new Way(id, tags, coords.copy(), nodeIds));
+                    relation.addWay(new Way(id, tags, coords.clone(), nodeIds));
                 });
             }
         }
 
-
         chunkGenerator.addWay(way);
-
     }
 }

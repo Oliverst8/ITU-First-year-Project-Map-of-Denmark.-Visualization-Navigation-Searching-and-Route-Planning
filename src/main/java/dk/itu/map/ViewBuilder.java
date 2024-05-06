@@ -24,7 +24,6 @@ public class ViewBuilder implements Builder<Region> {
         loader.setLocation(getClass().getResource("/scenes/" + view.fxml));
 
         try {
-
             loader.setController(view.view);
 
             return loader.load();

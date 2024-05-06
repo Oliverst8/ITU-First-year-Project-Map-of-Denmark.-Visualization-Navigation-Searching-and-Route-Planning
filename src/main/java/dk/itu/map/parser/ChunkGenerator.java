@@ -20,7 +20,6 @@ class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-
     private MapConfig config;
 
     private ArrayList<ZoomLayer> zoomLayers;
@@ -35,7 +34,6 @@ public class ChunkGenerator implements Runnable {
     private final Thread addressTreeThread;
 
     private final TernaryTree address;
-
 
     /**
      * Constructor for the ChunkGenerator class
@@ -55,7 +53,6 @@ public class ChunkGenerator implements Runnable {
         graphThread.start();
         addressTreeThread = new Thread(address);
         addressTreeThread.start();
-
 
         this.config = config;
 
@@ -120,6 +117,13 @@ public class ChunkGenerator implements Runnable {
      * @param way The way to be added
      */
     public void addWay(MapElement way) {
+        if (rawWays.size() > 1_000_000) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
         rawWays.add(way);
     }
     
@@ -223,12 +227,23 @@ public class ChunkGenerator implements Runnable {
                         case "allotments", "industrial", "residential":
                             if (zoomLevel < 3) zoomLevel = 3;
                             break;
+                        case "military":
+                            if (zoomLevel < 2) zoomLevel = 2;
+                            break;
+                    }
+                    break;
+
+                case "leisure":
+                    switch (tags.get(i + 1)) {
+                        case "park":
+                            if (zoomLevel < 1) zoomLevel = 1;
+                            break;
                     }
                     break;
                 
                 case "building":
                     switch (tags.get(i + 1)) {
-                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house":
+                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house", "commercial", "school":
                             if (zoomLevel < 0) zoomLevel = 0;
                             break;
                     }

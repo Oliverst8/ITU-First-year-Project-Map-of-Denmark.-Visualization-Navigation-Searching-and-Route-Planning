@@ -13,15 +13,19 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
 public class HomeController {
-
     private final HomeModel model;
 
-    
+    /**
+        Creates a new ChunkController
+        @param model The model to be used
+     */
     public HomeController(HomeModel model) {
         this.model = model;
     }
 
-
+    /**
+     * Imports the map currently present in the model.
+     */
     public void importMap() {
         File selectedFile = getMapFile();
         if (selectedFile == null) return;
@@ -31,6 +35,10 @@ public class HomeController {
         App.setView(new Screen.Chunker(selectedFile.getAbsolutePath(), mapName));
     }
 
+    /**
+     * Opens a file chooser dialog and returns the selected file.
+     * @return The selected file.
+     */
     protected File getMapFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import Map File");
@@ -42,6 +50,10 @@ public class HomeController {
         return fileChooser.showOpenDialog(dialog);
     }
 
+    /**
+     * Opens a dialog and returns the map name.
+     * @return The map name.
+     */
     protected String getMapName() {
         TextInputDialog dialog = new TextInputDialog("Map Name");
         dialog.setTitle("Map Name");
@@ -52,6 +64,11 @@ public class HomeController {
         return dialog.showAndWait().get();
     }
 
+    /**
+     * Loads the saved maps into the menu buttons.
+     * @param mapList The menu button to load the maps into.
+     * @param deleteList The menu button to load the maps into.
+     */
     public void loadSavedMaps(MenuButton mapList, MenuButton deleteList) {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
@@ -64,6 +81,12 @@ public class HomeController {
         addMaps(deleteList, externapMaps, "delete");
     }
 
+    /**
+     * Adds the maps to the menu button.
+     * @param mapList The menu button to add the maps to.
+     * @param maps The maps to add.
+     * @param type The type of maps to add.
+     */
     private void addMaps(MenuButton mapList, String[] maps, String type) {
         if (maps == null) return;
 

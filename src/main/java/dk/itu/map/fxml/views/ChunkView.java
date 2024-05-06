@@ -12,6 +12,11 @@ public class ChunkView {
     @FXML
     public ProgressBar chunkingProgressbar;
 
+    /**
+     * Creates a new ChunkView
+     * @param controller The controller to be used
+     * @param model The model to be used
+     */
     public ChunkView(ChunkController controller, ChunkModel model) {
         this.controller = controller;
         this.model = model;

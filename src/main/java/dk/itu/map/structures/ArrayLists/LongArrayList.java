@@ -3,12 +3,8 @@ package dk.itu.map.structures.ArrayLists;
 import java.util.Arrays;
 
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.DataOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 
 public class LongArrayList extends PrimitiveArrayList {
     // The array that holds the values
@@ -69,6 +65,9 @@ public class LongArrayList extends PrimitiveArrayList {
         array[index2] = temp;
     }
 
+    /**
+     * @return list as an long array
+     */
     public long[] toArray() {
         return Arrays.copyOfRange(array, 0, size);
     }

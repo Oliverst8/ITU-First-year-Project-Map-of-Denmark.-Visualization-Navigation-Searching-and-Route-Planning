@@ -43,26 +43,15 @@ public class ByteArrayList extends PrimitiveArrayList {
         array = newArray;
     }
 
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(byte value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return int the value at the given index
-     */
-    public int get(int index) {
-        return array[index];
+    @Override
+    public void write(String path) throws IOException {
+        DataOutputStream stream = new DataOutputStream(
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
+        );
+        write(stream);
+        stream.close();
     }
 
     @Override
@@ -83,6 +72,16 @@ public class ByteArrayList extends PrimitiveArrayList {
     }
 
     @Override
+    public void read(String path) throws IOException {
+        DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(path)
+                )
+        );
+        read(stream);
+    }
+
+    @Override
     public boolean equals(Object obj){
         if(!(obj instanceof ByteArrayList)) return false;
         ByteArrayList other = (ByteArrayList) obj;
@@ -99,5 +98,4 @@ public class ByteArrayList extends PrimitiveArrayList {
         array[index1] = array[index2];
         array[index2] = temp;
     }
-
 }

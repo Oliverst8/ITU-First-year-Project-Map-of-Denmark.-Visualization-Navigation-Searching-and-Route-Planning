@@ -11,22 +11,24 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
 public class ChunkLoader extends Thread {
-
     private final MapConfig config;
     
-    // private List<List<Drawable>> finishedChunks;
-    // private List<Integer> finishedChunkIndexes;
-    // private List<Integer> finishedChunkLayers;
     private Map<Integer, Map<Integer, List<Drawable>>> finishedChunks;
-    private final LinkedList<Integer>[] chunkIndexQueue;
+    private final List<Integer>[] chunkIndexQueue;
     private final HashSet<Integer>[] chunkQueueSet;
     private int queueSize;
 
@@ -39,14 +41,11 @@ public class ChunkLoader extends Thread {
     @SuppressWarnings("unchecked")
     public ChunkLoader() {
         this.config = new MapConfig();
-        // this.finishedChunks = Collections.synchronizedList(new ArrayList<>());
-        // this.finishedChunkIndexes = Collections.synchronizedList(new ArrayList<>());
-        // this.finishedChunkLayers = Collections.synchronizedList(new ArrayList<>());
         this.finishedChunks = new HashMap<>();
-        this.chunkIndexQueue = new LinkedList[config.layerCount];
+        this.chunkIndexQueue = new List[config.layerCount];
         this.chunkQueueSet = new HashSet[config.layerCount];
         for (int i = 0; i < config.layerCount; i++) {
-            chunkIndexQueue[i] = new LinkedList<>();
+            chunkIndexQueue[i] = Collections.synchronizedList(new LinkedList<>());
             chunkQueueSet[i] = new HashSet<>();
         }
         queueSize = 0;
@@ -55,11 +54,16 @@ public class ChunkLoader extends Thread {
         thread.start();
     }
 
+    // TODO: Write javadoc
     public void setCallback(Runnable callback) {
         this.callback = callback;
     }
 
-
+    /**
+     * Reads the files from the chunks
+     * @param chunks    The chunks to read
+     * @param zoomLevel The zoom level
+     */
     public void readFiles(int[] chunks, int zoomLevel) {
         for (int chunk : chunks) {
             if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) continue;
@@ -70,12 +74,19 @@ public class ChunkLoader extends Thread {
         }
     }
 
+    /**
+     * Get the finished chunks
+     * @return The finished chunks
+     */
     public Map<Integer, Map<Integer, List<Drawable>>> getFinishedChunks() {
         Map<Integer, Map<Integer, List<Drawable>>> temp = finishedChunks;
         finishedChunks = new HashMap<>();
         return temp;
     }
 
+    /**
+     * Run the chunkloader thread
+     */
     public void run() {
         while (true) {
             try {
@@ -91,7 +102,7 @@ public class ChunkLoader extends Thread {
             int zoomLayer = -1;
             for (int i = config.layerCount-2; i >= 0; i--) {
                 if (chunkIndexQueue[i].size() > 0) {
-                    chunkIndex = chunkIndexQueue[i].remove();
+                    chunkIndex = chunkIndexQueue[i].remove(0);
                     chunkQueueSet[i].remove(chunkIndex);
                     zoomLayer = i;
                     queueSize--;
@@ -131,8 +142,10 @@ public class ChunkLoader extends Thread {
                  */
             } catch (EOFException e) {
                 // End of file reached
-                finishedChunks.putIfAbsent(zoomLayer, new HashMap<>());
-                finishedChunks.get(zoomLayer).put(chunkIndex, chunk);
+                Map<Integer, List<Drawable>> temp = finishedChunks.getOrDefault(zoomLayer, new HashMap<>());
+                temp.put(chunkIndex, chunk);
+                finishedChunks.put(zoomLayer, temp);
+
                 if (queueSize % 20 == 0) Platform.runLater(callback);
                 continue;
             } catch (IOException e) {
@@ -246,13 +259,21 @@ public class ChunkLoader extends Thread {
         return ways;
     }
 
+    /**
+     * Converts a point to a chunk index
+     * @param point     The point to convert
+     * @param zoomLevel The zoom level to be used
+     * @return The chunk index
+     */
     public int pointToChunkIndex(Point2D point, int zoomLevel) {
         return config.pointToChunkIndex(point, zoomLevel);
     }
 
+    /**
+     * Get the config
+     * @return The config
+     */
     public MapConfig getConfig() {
         return config;
     }
-
-
 }

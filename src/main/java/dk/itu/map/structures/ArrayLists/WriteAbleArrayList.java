@@ -33,7 +33,9 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
     public void write(String path) throws IOException {
         DataOutputStream stream = new DataOutputStream(
             new BufferedOutputStream(
-                new FileOutputStream(path, true)));
+                new FileOutputStream(path, true)
+            )
+        );
 
         write(stream);
     }
@@ -61,11 +63,11 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
 
     @Override
     public void read(DataInputStream stream) throws IOException {
-            int size = stream.readInt();
-            biggestIndex = size;
-            for(int i = 0; i < size; i++){
-                get(i).read(stream);
-            }
+        int size = stream.readInt();
+        biggestIndex = size;
+        for(int i = 0; i < size; i++){
+            get(i).read(stream);
+        }
     }
 
     @Override

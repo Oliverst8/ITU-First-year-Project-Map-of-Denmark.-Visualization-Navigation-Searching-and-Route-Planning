@@ -21,6 +21,13 @@ public class Polygon extends MapElement {
     private SimpleLinkedList<Way> outerWays;
     private SimpleLinkedList<Way> innerWays;
     
+    /**
+     * Create an instance of a Polygon
+     * @param id the id of the polygon
+     * @param tags the tags of the polygon
+     * @param outerRef the outer references in the polygon
+     * @param innerRef the inner references in the polygon
+     */
     public Polygon(long id, List<String> tags, List<Long> outerRef, List<Long> innerRef) {
         super(id, tags);
 
@@ -68,6 +75,10 @@ public class Polygon extends MapElement {
         return coords;
     }
 
+    /**
+     * Add a way to the polygon
+     * @param way the way to add
+     */
     public void addWay(Way way) {
         stagedWays++;
         long id = way.getId();
@@ -96,6 +107,11 @@ public class Polygon extends MapElement {
         if (stagedInnerWays.length > 0) innerWays = orderWays(stagedInnerWays);
     }
 
+    /**
+     * Count the number of coordinates in a list of ways
+     * @param ways
+     * @return
+     */
     private int countCoords(SimpleLinkedList<Way> ways) {
         int count = 0;
 
@@ -107,6 +123,11 @@ public class Polygon extends MapElement {
         return count;
     }
 
+    /**
+     * Order ways by their first and last nodes.
+     * @param ways the ways to order
+     * @return the ordered ways
+     */
     private SimpleLinkedList<Way> orderWays(Way[] ways) {
         SimpleLinkedList<Way> orderedWays = new SimpleLinkedList<Way>(Arrays.asList(ways));
 
@@ -139,6 +160,12 @@ public class Polygon extends MapElement {
         return orderedWays;
     }
 
+    /**
+     * Compare two coordinates
+     * @param firstCoord
+     * @param lastCoord
+     * @return true if the coordinates are equal, false otherwise
+     */
     private boolean compareCoords(float[] firstCoord, float[] lastCoord) {
         return Arrays.compare(firstCoord, lastCoord) == 0;
     }

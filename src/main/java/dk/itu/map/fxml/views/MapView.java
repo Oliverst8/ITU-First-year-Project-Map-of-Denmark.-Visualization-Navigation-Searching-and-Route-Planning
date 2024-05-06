@@ -8,6 +8,7 @@ import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
+import dk.itu.map.parser.MapConfig;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -84,20 +85,23 @@ public class MapView {
     // Last mouse position
     private float lastY;
     // Zoom level
-    private float zoomLevel;
     // Initial distance between two points
-    private float startDist;
     private final TernaryTree.searchAddress startAddress = new TernaryTree.searchAddress(null, null, null);
     private final TernaryTree.searchAddress endAddress = new TernaryTree.searchAddress(null, null, null);
 
     // Amount of chunks seen
-    private float currentChunkAmountSeen = 1;
     private float zoomAmount;
 
     private AnimationTimer render;
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
+    private boolean showGrid = false;
 
+    /**
+     * Creates a new MapView
+     * @param controller The controller to be used
+     * @param model      The model to be used
+     */
     public MapView(MapController controller, MapModel model) {
         this.controller = controller;
         this.model = model;
@@ -111,7 +115,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest"};
+        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "leisure", "place", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -361,6 +365,12 @@ public class MapView {
 
     }
 
+    @FXML
+    void toggleGrid() {
+        showGrid = !showGrid;
+        redraw();
+    }
+
     /**
      * Pans the map
      * 
@@ -391,21 +401,19 @@ public class MapView {
      * Redraws the map
      */
 
+    
     public static boolean overridePrint = false;
     long prevTime = 0;
     public void redraw() {
         //If you remove the first updateZoomLevel it takes double the amount of time to load the chunks, we dont know why (mvh August & Oliver)
         updateZoomAmount();
-        boolean print = false;
         if (System.currentTimeMillis() - prevTime > 300) {
             prevTime = System.currentTimeMillis();
-            print = true;
             overridePrint = false;
         }
         controller.updateChunks(getZoomLevel(), getUpperLeftCorner(), getLowerRightCorner()/*, print*/);
         updateZoomAmount();
         if (overridePrint) {
-            print = true;
             overridePrint = false;
         }
 
@@ -454,23 +462,31 @@ public class MapView {
             renderTimes.put(entry.getKey(), endTime - startTime);
         }
 
-        if (!print) return;
-        // System.out.println("Render times: ");
-        // for (Map.Entry<String, Long> entry : renderTimes.entrySet()) {
-        //     String layer = String.format("%-15s", entry.getKey());
-        //     long renderTime = entry.getValue();
-        //     drawTimes += renderTime;
-
-        //     System.out.println(layer + ": " + renderTime + " ");
-        // }
-        // System.out.println("Current zoomLevel: " + getZoomLevel());
-        // System.out.println("Currently skipping: " + (int)Math.pow(3, getZoomLevel()));
-        // System.out.println("Total draw time: " + drawTimes + "ms");
-        // System.out.println("Total wasted time: " + (wastedTime - totalStart) + "ms");
-        // System.out.println("Total render time: " + (System.currentTimeMillis() - totalStart) + "ms");
-        // System.out.println();
+        if (showGrid) {
+            GraphicsContext gc = canvas.get("pointOfInterest").getGraphicsContext2D();
+            for (float x = model.getMinLat(); x < model.getMaxLat(); x += model.getChunkSize()*Math.pow(2, getZoomLevel())) {
+                gc.setLineWidth(0.0003 * (getZoomLevel() + 1));
+                gc.setStroke(Color.BLACK);
+                gc.beginPath();
+                gc.moveTo(model.getMinLon()*0.56, -x);
+                gc.lineTo(model.getMaxLon()*0.56, -x);
+                gc.stroke();
+            }
+            for (float y = model.getMinLon(); y < model.getMaxLon(); y += model.getChunkSize()*Math.pow(2, getZoomLevel())) {
+                gc.setLineWidth(0.0003 * (getZoomLevel() + 1));
+                gc.setStroke(Color.BLACK);
+                gc.beginPath();
+                gc.moveTo(y*0.56, -model.getMinLat());
+                gc.lineTo(y*0.56, -model.getMaxLat());
+                gc.stroke();
+            }
+        }
     }
 
+    /**
+     * Gets the navigation drawables
+     * @return Set<Drawable> the navigation drawables
+     */
     private Set<Drawable> getNavigationDrawables() {
         Set<Drawable> navigationSet = new HashSet<>();
 
@@ -481,6 +497,10 @@ public class MapView {
         return navigationSet;
     }
 
+    /**
+     * Gets the point of interests
+     * @return Set<Drawable> the point of interests
+     */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
@@ -554,17 +574,21 @@ public class MapView {
         }
     }
 
+    /**
+     * Converts from lat/lon to canvas coordinates
+     * @param startPoint the start point
+     * @return float[] the converted point
+     */
     private float[] convertToLatLon(float[] startPoint) {
         Point2D point = convertTo2DPoint(startPoint[0], startPoint[1]);
         return new float[]{(float) point.getX()/0.56f, (float) point.getY()*(-1)};
     }
 
-
-
-
+    // TODO: Write javadoc
     private void addressSelected(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
         TernaryTree.searchAddress selected = comboBox.getSelectionModel().getSelectedItem();
         textField.setStyle("-fx-border-color: transparent");
+
         if(address.streetName == null){
             if(selected == null) return;
             textField.setText(selected.streetName);
@@ -576,11 +600,11 @@ public class MapView {
             textField.setStyle("-fx-border-color: #7FFF00");
             redraw();
         }
+
         address.clone(selected);
-        System.out.println(address);
-        System.out.println(startAddress);
     }
 
+    // TODO: Write javadoc
     private void searchAddress(TextField textField, ComboBox<TernaryTree.searchAddress> comboBox, TernaryTree.searchAddress address){
 
         List<TernaryTree.searchAddress> addresses;
@@ -589,8 +613,9 @@ public class MapView {
 
         boolean shouldRestartSearch = false;
 
-        if (address.streetName == null) addresses = searchSteet(currentText);
-        else{
+        if (address.streetName == null) {
+            addresses = searchSteet(currentText);
+        } else {
             int i = 0;
             for(char c : address.streetName.toCharArray()){
                 if(i >= currentText.length() || c != currentText.charAt(i++)){
@@ -604,21 +629,19 @@ public class MapView {
             } else addresses = searchFullAddress(address, currentText);
         }
 
-
         comboBox.getItems().clear();
         comboBox.getItems().addAll(addresses);
         comboBox.setVisibleRowCount(10);
         comboBox.show();
-
     }
 
+    // TODO: Write javadoc
     private List<TernaryTree.searchAddress> searchSteet(String searchWord){
         return controller.searchAddress(searchWord);
     }
 
+    // TODO: Write javadoc
     private List<TernaryTree.searchAddress> searchFullAddress(TernaryTree.searchAddress node, String currentText){
         return controller.fillAddress(node, currentText);
     }
-
-
 }

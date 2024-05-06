@@ -42,9 +42,9 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     @Override
     public void write(String path) throws FileNotFoundException, IOException {
         DataOutputStream stream = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(path)
-                )
+            new BufferedOutputStream(
+                new FileOutputStream(path)
+            )
         );
 
         write(stream);
@@ -62,9 +62,9 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     @Override
     public void read(String path) throws IOException{
         DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
         );
 
         read(stream);
@@ -98,6 +98,10 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
         array[index2] = temp;
     }
 
+    /**
+     * Add a value to the end of the list
+     * @param value the value to add
+     */
     public void add(float value) {
         if(size + 1 > array.length) {
             resize();
@@ -107,6 +111,10 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
         size++;
     }
 
+    /**
+     * Add all values in the array to the end of the list
+     * @param values the values to add
+     */
     public void addAll(float[] values) {
         while (size + values.length > array.length) {
             resize();
@@ -116,10 +124,18 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
         size += values.length;
     }
 
+    /**
+     * Converts the list to a float array.
+     * @return float[]
+     */
     public float[] toArray() {
         return Arrays.copyOf(array, size);
     }
 
+    /**
+     * Converts the list to a double array.
+     * @return double[]
+     */
     public double[] toDoubleArray() {
         double[] output = new double[size];
         for (int i = 0; i < size; i++) {
@@ -129,11 +145,12 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
         return output;
     }
 
+    /**
+     * Get the value at the given index
+     * @param index the index to get
+     * @return the value at the index
+     */
     public float get(int index) {
         return array[index];
-    }
-
-    public int size() {
-        return size;
     }
 }
