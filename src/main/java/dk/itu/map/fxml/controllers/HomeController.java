@@ -1,7 +1,9 @@
 package dk.itu.map.fxml.controllers;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import dk.itu.map.App;
@@ -73,7 +75,11 @@ public class HomeController {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
         String[] internalMaps = new String[]{"Isle"};
-        String[] externapMaps = externalDirectoryPath.list();
+        String[] mapsFolder = externalDirectoryPath.list();
+
+        String[] externapMaps = Arrays.stream(mapsFolder)
+        .filter(s -> !s.contains("-internal"))
+        .toArray(String[]::new);
 
         addMaps(mapList, internalMaps, "internal");
         addMaps(mapList, externapMaps, "external");
