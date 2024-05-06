@@ -1,7 +1,6 @@
 package dk.itu.map.fxml.controllers;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
@@ -33,7 +32,6 @@ public class HomeController {
         if (selectedFile == null) return;
 
         String mapName = getMapName();
-
         App.setView(new Screen.Chunker(selectedFile.getAbsolutePath(), mapName));
     }
 
@@ -74,17 +72,19 @@ public class HomeController {
     public void loadSavedMaps(MenuButton mapList, MenuButton deleteList) {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
-        String[] internalMaps = new String[]{"Denmark"};
-        String[] externapMaps = externalDirectoryPath.list();
-
-//        String[] externapMaps = Arrays.stream(mapsFolder)
-//        .filter(s -> !s.contains("-internal"))
-//        .toArray(String[]::new);
-
+        String[] internalMaps = new String[]{"Isle"};
         addMaps(mapList, internalMaps, "internal");
-        addMaps(mapList, externapMaps, "external");
 
-        addMaps(deleteList, externapMaps, "delete");
+        String[] externalMapsList = externalDirectoryPath.list();
+
+        if (externalMapsList != null && externalMapsList.length > 0 ) {
+            String[] externalMaps = Arrays.stream(externalMapsList)
+            .filter(s -> !s.contains("-internal"))
+            .toArray(String[]::new);
+
+            addMaps(mapList, externalMaps, "external");
+            addMaps(deleteList, externalMaps, "delete");
+        }
     }
 
     /**

@@ -137,7 +137,7 @@ public class MapConfig {
      */
     public void writeConfig() {
         try {
-            FileWriter writer = new FileWriter(App.mapName + "/config");
+            FileWriter writer = new FileWriter(App.mapName + "config");
             writer.write(
                 "minLat: " + minLat + "\n" +
                 "maxLat: " + maxLat + "\n" +

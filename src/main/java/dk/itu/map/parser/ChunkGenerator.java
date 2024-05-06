@@ -20,7 +20,7 @@ class Chunk extends HashSet<MapElement> {}
 class ZoomLayer extends ArrayList<Chunk> {}
 
 public class ChunkGenerator implements Runnable {
-    private MapConfig config;
+    private final MapConfig config;
 
     private ArrayList<ZoomLayer> zoomLayers;
     private final File[][] files;
@@ -86,14 +86,15 @@ public class ChunkGenerator implements Runnable {
             }
             (new File(dataPath + "utilities")).mkdir();
 
+            config.writeConfig();
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
         }
     }
+
     /**
      * Removes the chunks that have been parsed, and makes room for new chunks to be added.
      */
-
     private void resetChunks() {
         zoomLayers = new ArrayList<>(config.layerCount);
         for (int i = 0; i < config.layerCount; i++) {
@@ -311,8 +312,6 @@ public class ChunkGenerator implements Runnable {
                 }
             });
         });
-
-        config.writeConfig();
     }
     /**
      * Write the configuration file, with map constants
@@ -320,7 +319,7 @@ public class ChunkGenerator implements Runnable {
     private void writeUtilities() {
         graph.writeToFile(App.mapName + "utilities");
         try {
-            address.write(App.mapName + "/utilities/address.txt");
+            address.write(App.mapName + "utilities/address.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
