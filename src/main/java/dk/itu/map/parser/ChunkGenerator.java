@@ -60,13 +60,7 @@ public class ChunkGenerator implements Runnable {
 
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
-        resetChunks();
-
         files = new File[config.layerCount][];
-        for (int i = 0; i < files.length; i++) {
-            files[i] = new File[config.getChunkAmount(i)];
-        }
-
         createFiles(App.mapName);
     }
 
@@ -79,14 +73,15 @@ public class ChunkGenerator implements Runnable {
         try {
             File folder = new File(dataPath);
             folder.mkdirs();
+
             for (int i = 0; i < config.layerCount; i++) {
+                files[i] = new File[config.getChunkAmount(i)];
                 File innerFolder = new File(dataPath + "zoom" + i);
                 innerFolder.mkdir();
 
                 int chunkAmount = config.getChunkAmount(i);
                 for (int j = 0; j < chunkAmount; j++) {
                     files[i][j] = new File(dataPath + "zoom" + i + "/chunk" + j + ".txt");
-                    new FileOutputStream(files[i][j]).close();
                 }
             }
             (new File(dataPath + "utilities")).mkdir();
@@ -205,6 +200,7 @@ public class ChunkGenerator implements Runnable {
                             if (zoomLevel < 1) zoomLevel = 1;
                             break;
                         case "path", "footway", "cycleway", "bridleway", "steps", "living_street", "road", "corridor":
+                        default:
                             if (zoomLevel < 0) zoomLevel = 0;
                             break;
                     }
@@ -245,12 +241,7 @@ public class ChunkGenerator implements Runnable {
                     break;
                 
                 case "building":
-                    switch (tags.get(i + 1)) {
-                        default:
-                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house", "commercial", "school":
-                            if (zoomLevel < 0) zoomLevel = 0;
-                            break;
-                    }
+                    if (zoomLevel < 0) zoomLevel = 0;
                     break;
                 }
         }
@@ -263,6 +254,9 @@ public class ChunkGenerator implements Runnable {
      */
     @Override
     public void run() {
+
+        resetChunks();
+
         hasMoreWork = true;
         while (hasMoreWork || !rawWays.isEmpty()) {
             if (rawWays.size() < 100_000 && hasMoreWork) {
@@ -300,6 +294,7 @@ public class ChunkGenerator implements Runnable {
     public void writeFiles() {
         IntStream.range(0, config.layerCount).forEach(i -> {
             IntStream.range(0, zoomLayers.get(i).size()).parallel().forEach(j -> {
+                if (zoomLayers.get(i).get(j).size() == 0) return;
                 try {
                     DataOutputStream stream = new DataOutputStream(
                             new BufferedOutputStream(

@@ -113,15 +113,21 @@ public class Graph {
      */
     public void loadFromDataPath(String path, MapConfig mapConfig) throws IOException {
         String folderPath = path + "/graph";
-        InputStream[] files = new InputStream[]{
-            mapConfig.locateFile(folderPath + "/vertexList.txt"),
-            mapConfig.locateFile(folderPath + "/edgeDestinations.txt"),
-            mapConfig.locateFile(folderPath + "/vehicleRestrictions.txt"),
-            mapConfig.locateFile(folderPath + "/distanceWeights.txt"),
-            mapConfig.locateFile(folderPath + "/timeWeights.txt"),
-            mapConfig.locateFile(folderPath + "/coords.txt"),
-            mapConfig.locateFile(folderPath + "/oldToNewVertexIndex.txt"),
-        };
+        InputStream[] files;
+        try {
+            files = new InputStream[]{
+                mapConfig.locateFile(folderPath + "/vertexList.txt"),
+                mapConfig.locateFile(folderPath + "/edgeDestinations.txt"),
+                mapConfig.locateFile(folderPath + "/vehicleRestrictions.txt"),
+                mapConfig.locateFile(folderPath + "/distanceWeights.txt"),
+                mapConfig.locateFile(folderPath + "/timeWeights.txt"),
+                mapConfig.locateFile(folderPath + "/coords.txt"),
+                mapConfig.locateFile(folderPath + "/oldToNewVertexIndex.txt"),
+            };
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
 
         DataInputStream[] streams = new DataInputStream[files.length];
 

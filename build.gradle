@@ -75,6 +75,10 @@ dependencies {
 //     implementation group: 'org.openjfx', name: 'javafx-graphics', version: '21.0.3', classifier: 'linux'
 }
 
+tasks.withType(JavaExec){
+    jvmArgs = ['-Xms10m', '-Xmx5120m']
+}
+
 test {
     maxHeapSize = "4096m" // maximum heap size
     useJUnitPlatform()
