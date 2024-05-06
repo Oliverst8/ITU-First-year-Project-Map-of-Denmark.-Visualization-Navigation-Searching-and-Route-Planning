@@ -45,18 +45,6 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
     }
 
     @Override
-    public void read(String path) throws IOException {
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
-
-        read(stream);
-        stream.close();
-    }
-
-    @Override
     public void read(DataInputStream stream) throws IOException {
         int size = stream.readInt();
         biggestIndex = size;

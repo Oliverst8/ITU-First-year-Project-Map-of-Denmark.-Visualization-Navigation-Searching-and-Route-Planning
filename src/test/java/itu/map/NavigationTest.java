@@ -173,6 +173,44 @@ class NavigationTest {
         graph.run();
         return graph;
     }
+    private GraphBuilder getGraphSameDistanceDifferentSpeed() {
+        GraphBuilder graph = new GraphBuilder();
+        ArrayList<String> tags = new ArrayList<>();
+        CoordArrayList coords;
+        LongArrayList nodeIDs;
+        Way way;
+
+        //red
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("living_street");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 1f, 100f,});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,3});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //blue
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,1f, 1f,50f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,2});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //green
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,50f, 1f, 100f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{2,3});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        graph.stop();
+        graph.run();
+        return graph;
+    }
 
     @BeforeEach
     void setUp() {
@@ -252,6 +290,16 @@ class NavigationTest {
         DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{2f,4f});
 
         float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
+        assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+    }
+
+    @Test
+    void testGraphSameDistanceDifferentSpeed(){
+        Graph graph = getGraphSameDistanceDifferentSpeed();
+        Navigation navigation = new Navigation(graph, 4);
+        DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{1f,100f});
+
+        float[] expected = new float[]{1f,100f,1f,50f,1f,1f};
         assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
     }
 
