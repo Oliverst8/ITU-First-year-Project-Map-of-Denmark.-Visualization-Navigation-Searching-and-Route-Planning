@@ -51,7 +51,7 @@ public class CanvasRedrawTask {
         wipeCanvas(gc);
         // Draw the chunks
         for (Drawable drawable : drawables) {
-            int skipAmount = (int)Math.pow(3, zoomLevel);
+            int skipAmount = (int)Math.pow(2, zoomLevel);
             if(drawable instanceof DrawableWay && (drawable.getPrimaryType().equals("place") || drawable.getPrimaryType().equals("natural"))){
                 boolean isInView = false;
                 CoordArrayList outerCoords = ((DrawableWay) drawable).getOuterCoords();
@@ -62,7 +62,7 @@ public class CanvasRedrawTask {
                     }
                 }
 
-                if(!isInView) skipAmount = 243;
+                if(!isInView) skipAmount = 200;
             }
             drawable.draw(gc, zoomAmount, skipAmount, theme);
         }

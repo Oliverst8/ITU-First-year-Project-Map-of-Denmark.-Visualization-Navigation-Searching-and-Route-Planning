@@ -296,6 +296,7 @@ public class MapModel {
             secondary = new HashMap<>();
             secondary.put("island", Color.web("#C9F5DB"));
             secondary.put("islet", Color.web("#C9F5DB"));
+            secondary.put("allotments", Color.web("#F5F3F3"));
             primary.put("place", secondary);
 
             // Landuse

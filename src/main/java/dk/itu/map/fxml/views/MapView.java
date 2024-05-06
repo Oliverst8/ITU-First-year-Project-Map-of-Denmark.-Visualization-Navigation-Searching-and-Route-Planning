@@ -336,6 +336,7 @@ public class MapView {
     @FXML
     void debugPrintZoomLevel() {
         System.out.println("Zoom amount: " + zoomAmount);
+        System.out.println("Zoom level: " + getZoomLevel());
     }
 
     @FXML
@@ -558,12 +559,11 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
-        debugPrintZoomLevel();
-        if(zoomAmount > 20) return 5;
-        if(zoomAmount > 10) return 4;
-        if(zoomAmount > 5) return 3;
-        if(zoomAmount > 3) return 2;
-        if(zoomAmount > 1) return 1;
+        if(zoomAmount > 65) return 5;
+        if(zoomAmount > 13) return 4;
+        if(zoomAmount > 2) return 3;
+        if(zoomAmount > 0.5) return 2;
+        if(zoomAmount > 0.25) return 1;
         return 0;
     }
 

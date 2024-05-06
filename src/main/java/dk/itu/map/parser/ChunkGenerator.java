@@ -190,19 +190,22 @@ public class ChunkGenerator implements Runnable {
                     break;
                 
                 case "highway":
-                    if(way.getNodeIDs() != null) graph.addWay(way); //Not adding relations to the graph for now, so it dosnt work with walking
+                    if(way.getNodeIDs() != null) graph.addWay(way);
                     switch (tags.get(i + 1)) {
-                        case "trunk", "primary", "secondary", "motorway", "motorway_link", "primary_link", "trunk_link", "secondary_link":
+                        case "trunk", "motorway", "motorway_link", "trunk_link", "primary", "primary_link":
                             if (zoomLevel < 4) zoomLevel = 4;
                             break;
-                        case "tertiary", "tertiary_link":
+                        case "secondary", "secondary_link", "tertiary", "tertiary_link":
                             if (zoomLevel < 3) zoomLevel = 3;
                             break;
                         case "unclassified":
                             if (zoomLevel < 2) zoomLevel = 2;
                             break;
-                        case "service", "residential", "pedestrian", "track", "path", "footway", "cycleway", "bridleway", "steps", "living_street", "road", "corridor":
-                            if (zoomLevel < 1) zoomLevel = 0;
+                        case "service", "residential", "pedestrian", "track":
+                            if (zoomLevel < 1) zoomLevel = 1;
+                            break;
+                        case "path", "footway", "cycleway", "bridleway", "steps", "living_street", "road", "corridor":
+                            if (zoomLevel < 0) zoomLevel = 0;
                             break;
                     }
                     break;
@@ -215,18 +218,19 @@ public class ChunkGenerator implements Runnable {
                     }
 
                     switch (tags.get(i + 1)) {
-                        case "water", "scrub", "beach":
+                        case "water":
                             if (zoomLevel < 3) zoomLevel = 3;
+                            break;
+                        case "scrub", "beach":
+                            if(zoomLevel < 2) zoomLevel = 2;
                             break;
                     }
                     break;
                 
                 case "landuse":
                     switch (tags.get(i + 1)) {
-                        case "allotments", "industrial", "residential":
-                            if (zoomLevel < 3) zoomLevel = 3;
-                            break;
-                        case "military":
+
+                        case "military","allotments", "industrial", "residential":
                             if (zoomLevel < 2) zoomLevel = 2;
                             break;
                     }
@@ -235,13 +239,14 @@ public class ChunkGenerator implements Runnable {
                 case "leisure":
                     switch (tags.get(i + 1)) {
                         case "park":
-                            if (zoomLevel < 1) zoomLevel = 1;
+                            if (zoomLevel < 2) zoomLevel = 2;
                             break;
                     }
                     break;
                 
                 case "building":
                     switch (tags.get(i + 1)) {
+                        default:
                         case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house", "commercial", "school":
                             if (zoomLevel < 0) zoomLevel = 0;
                             break;

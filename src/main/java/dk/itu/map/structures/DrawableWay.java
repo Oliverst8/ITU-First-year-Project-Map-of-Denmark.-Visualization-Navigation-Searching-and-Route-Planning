@@ -164,7 +164,7 @@ public class DrawableWay implements Drawable {
 
             case "place":
                 switch(secondaryType) {
-                    case "island", "islet":
+                    case "island", "islet", "allotments":
                         gc.setLineWidth(calcLineWidth(0.0001f, scaleFactor));
                         gc.setFill(theme.getColor(primaryType, secondaryType));
                         gc.fill();
