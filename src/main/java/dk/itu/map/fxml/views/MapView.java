@@ -560,10 +560,10 @@ public class MapView {
      */
     private int getZoomLevel(){
         if(zoomAmount > 65) return 5;
-        if(zoomAmount > 13) return 4;
+        if(zoomAmount > 10) return 4;
         if(zoomAmount > 2) return 3;
         if(zoomAmount > 0.5) return 2;
-        if(zoomAmount > 0.25) return 1;
+        if(zoomAmount > 0.15) return 1;
         return 0;
     }
 
