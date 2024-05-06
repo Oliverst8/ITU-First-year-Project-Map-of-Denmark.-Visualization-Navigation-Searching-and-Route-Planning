@@ -90,7 +90,6 @@ public class ChunkGenerator implements Runnable {
                 }
             }
             (new File(dataPath + "utilities")).mkdir();
-            new File(dataPath + "utilities/pointOfInterest.txt").createNewFile();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
