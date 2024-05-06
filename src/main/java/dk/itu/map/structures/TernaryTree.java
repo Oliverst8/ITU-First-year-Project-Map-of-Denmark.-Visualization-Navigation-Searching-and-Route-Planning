@@ -253,13 +253,13 @@ public class TernaryTree implements Runnable, WriteAble{
         current = current.substring(address[0].length());
         if(!current.isEmpty() && current.charAt(0) == ' ') current = current.substring(1);
         System.out.println("Current:" + current + ":");
-        addressLoop:
+
         for(int i = 0; i < node.zipIndexes.size(); i++){
             if(zip.get(node.zipIndexes.get(i)).equals(address[1])){
                 String newStreetNumber = streetNumber.get(node.streetNumberIndexes.get(i));;
                 String newCity = cities.get(node.cityIndexes.get(i));;
 
-                if (!checkIfShouldSuggest(current, newStreetNumber)) continue addressLoop;
+                if (!checkIfShouldSuggest(current, newStreetNumber)) continue;
 
                 searchAddress newAddress = new searchAddress(address[0], address[1], node);
                 newAddress.streetNumber = newStreetNumber;
