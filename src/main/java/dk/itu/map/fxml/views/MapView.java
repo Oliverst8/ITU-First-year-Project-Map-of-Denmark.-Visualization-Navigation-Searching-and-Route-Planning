@@ -527,7 +527,7 @@ public class MapView {
                 String[] coords = line.split(", ");
                 float lat = Float.parseFloat(coords[0]);
                 float lon = Float.parseFloat(coords[1]);
-                pointOfInterests.add(new Point(lat, lon, "pointOfInterest", Color.YELLOW));
+                pointOfInterests.add(new Point(lat, lon, "pointOfInterest", Color.DARKBLUE));
             }
         } catch (IOException e) {
             e.printStackTrace();
