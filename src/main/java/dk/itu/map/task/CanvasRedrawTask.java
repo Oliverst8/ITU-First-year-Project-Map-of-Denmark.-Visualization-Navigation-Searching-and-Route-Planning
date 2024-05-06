@@ -77,7 +77,7 @@ public class CanvasRedrawTask {
     public boolean isCoordInView(float[] coord) {
         float[] topLeft = convertToLatLon(0f,0f);
         float[] bottomRight = convertToLatLon((float) canvas.getHeight(), (float) canvas.getWidth());
-        return coord[1] >= topLeft[0] && coord[1] <= bottomRight[0] && coord[0] <= topLeft[1] && coord[0] >= bottomRight[1];
+        return coord[1] >= topLeft[0]-0.05 && coord[1] <= bottomRight[0]+0.05 && coord[0] <= topLeft[1]+0.05 && coord[0] >= bottomRight[1]-0.05;
     }
 
     /**

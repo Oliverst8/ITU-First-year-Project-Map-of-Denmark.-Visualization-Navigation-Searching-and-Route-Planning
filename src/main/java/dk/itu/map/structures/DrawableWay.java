@@ -55,6 +55,7 @@ public class DrawableWay implements Drawable {
     public void draw(GraphicsContext gc, float scaleFactor, int skipAmount, Theme theme) {
         gc.beginPath();
         drawCoords(gc, outerCoords, skipAmount);
+        drawCoords(gc, innerCoords, skipAmount);
 
         setColors(gc, scaleFactor, theme);
 
@@ -94,6 +95,7 @@ public class DrawableWay implements Drawable {
      * @param theme the theme to be used
      */
     private void setColors(GraphicsContext gc, float scaleFactor, Theme theme ) {
+        gc.setStroke(theme.getColor("highway", "residential"));
         colorSelect:
         switch(primaryType) {
             case "navigation":

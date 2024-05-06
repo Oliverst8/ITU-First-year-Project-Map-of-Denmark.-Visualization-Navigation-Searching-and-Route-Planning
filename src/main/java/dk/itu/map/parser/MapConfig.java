@@ -160,18 +160,13 @@ public class MapConfig {
      * @return The file
      * @throws FileNotFoundException 
      */
-    public InputStream locateFile(String filePath) {
-        if(isInternal) {
+    public InputStream locateFile(String filePath) throws FileNotFoundException {
+        if (isInternal) {
+            //return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getFile());
             return getClass().getResourceAsStream("/maps/" + App.mapName + "/" + filePath);
         } else {
-            try {
-                return new FileInputStream(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found");
-                e.printStackTrace();
-                System.exit(1);
-                return null;
-            }
+            return new FileInputStream(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
+
         }
     }
 }
