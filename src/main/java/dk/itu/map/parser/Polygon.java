@@ -143,7 +143,7 @@ public class Polygon extends MapElement {
 
             Node<Way> search = current;
 
-            while (!compareCoords(current.getValue().getLastCoords(), search.getNext().getValue().getFirstCoords())) {
+            while (search.getNext() != null && !compareCoords(current.getValue().getLastCoords(), search.getNext().getValue().getFirstCoords())) {
                 if (compareCoords(current.getValue().getLastCoords(), search.getNext().getValue().getLastCoords())) {
                     search.getNext().getValue().getCoords().reverse();
                     break;
@@ -152,7 +152,7 @@ public class Polygon extends MapElement {
                 search = search.getNext();
             }
 
-            orderedWays.move(current, search);
+            if(search.getNext()!=null) orderedWays.move(current, search);
 
             current = current.getNext();
         }

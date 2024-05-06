@@ -50,8 +50,17 @@ public class GraphBuilder extends Graph implements Runnable {
      * @return the time it takes to travel the way
      */
     private float calcWeightTime(MapElement way, int nodeId) {
+        int speedLimit = getSpeedLimit(way);
+
+        CoordArrayList coords = way.getCoords();
+        float[] coord1 = coords.get(nodeId);
+        float[] coord2 = coords.get(nodeId+1);
+
+        return distanceInKM(coord1, coord2)/speedLimit;
+    }
+
+    private int getSpeedLimit(MapElement way){
         String[] speedLimitString = null;
-        int speedLimit = 0;
         for(int i = 0; i < way.getTags().size(); i += 2){
             if(way.getTags().get(i).equals("maxspeed")){
                 speedLimitString = way.getTags().get(i+1).split(" ");
@@ -59,38 +68,29 @@ public class GraphBuilder extends Graph implements Runnable {
             }
         }
 
-        if(speedLimitString != null && !speedLimitString[0].equals("none") && !speedLimitString[0].equals("signals") && !speedLimitString[0].equals("DK:urban")){
+        if(speedLimitString != null && speedLimitString[0].matches("[0-9]+")){
             if(speedLimitString.length == 1) {
-                speedLimit = Integer.parseInt(speedLimitString[0]);
+                return Integer.parseInt(speedLimitString[0]);
             } else{
-                speedLimit = (int) (Integer.parseInt(speedLimitString[0])*1.609344);
+                return (int) (Integer.parseInt(speedLimitString[0])*1.609344);
             }
         }
 
-        if(speedLimitString == null || speedLimitString[0].equals("signals") || speedLimitString[0].equals("DK:urban")) {
-            switch(way.getSecondaryType()){
-                case "living_street", "rest_area":
-                    speedLimit = 15;
-                    break;
-                case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track", "service":
-                        speedLimit = 50;
-                        break;
-                case "primary", "primary_link", "trunk", "trunk_link":
-                    speedLimit = 80;
-                    break;
-                case "motorway", "motorway_link":
-                    speedLimit = 130;
-                    break;
-            }
-        } else if(speedLimitString[0].equals("none")){
-            speedLimit = 130;
+        if(speedLimitString != null && speedLimitString[0].equals("none")){
+            return 130;
         }
 
-        CoordArrayList coords = way.getCoords();
-        float[] coord1 = coords.get(nodeId);
-        float[] coord2 = coords.get(nodeId+1);
-
-        return distanceInKM(coord1, coord2)/speedLimit;
+        switch(way.getSecondaryType()){
+            case "living_street", "rest_area":
+                return 15;
+            case "residential", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "road", "track", "service":
+                return 50;
+            case "primary", "primary_link", "trunk", "trunk_link":
+                return 80;
+            case "motorway", "motorway_link":
+                return 130;
+        }
+        return 0;
     }
 
     /**
