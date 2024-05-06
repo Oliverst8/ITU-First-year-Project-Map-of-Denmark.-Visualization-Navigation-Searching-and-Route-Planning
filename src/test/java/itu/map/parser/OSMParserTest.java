@@ -12,7 +12,6 @@ import java.util.Map;
 import dk.itu.map.App;
 import dk.itu.map.parser.FileProgress;
 import dk.itu.map.structures.Drawable;
-import javafx.scene.control.ProgressBar;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
@@ -26,13 +25,13 @@ public class OSMParserTest {
     public void OSMParserWriteAndReadTest() throws InterruptedException, IOException {
         String path = TestUtilities.getTestFilesPath();
         App.DATA_PATH = path;
-        App.mapPath = path + "testmap/";
+        App.mapName = "testmap/";
         FileProgress fileProgress = new FileProgress(null);
         OSMParser parser = new OSMParser(new File(path + "testmap.osm"), fileProgress);
         parser.start();
         parser.join();
 
-        ChunkLoader chunkLoader = new ChunkLoader();
+        ChunkLoader chunkLoader = new ChunkLoader("external");
         Map<Integer, Map<Integer, List<Drawable>>> chunkMap = new HashMap<>();
         chunkLoader.readFiles(new int[]{0}, 0);
         while (chunkMap.size() <= 0) {
@@ -50,6 +49,6 @@ public class OSMParserTest {
         }
         System.out.println(chunkMap.size());
         assertEquals(12, chunkMap.get(0).get(0).size());
-        FileUtils.deleteDirectory(new File(App.mapPath));
+        FileUtils.deleteDirectory(new File(App.mapName));
     }
 }

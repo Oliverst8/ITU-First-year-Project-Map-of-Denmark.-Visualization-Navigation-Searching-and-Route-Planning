@@ -2,13 +2,8 @@ package dk.itu.map.structures.ArrayLists;
 
 import dk.itu.map.structures.WriteAble;
 
+import java.io.*;
 import java.util.ArrayList;
-
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
-import java.io.DataOutputStream;
-import java.io.BufferedOutputStream;
 
 public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> implements WriteAble {
     public WriteAbleArrayList(){

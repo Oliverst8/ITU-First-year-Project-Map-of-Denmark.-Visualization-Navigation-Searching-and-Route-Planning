@@ -144,7 +144,7 @@ public class ChunkLoader extends Thread {
                 temp.put(chunkIndex, chunk);
                 finishedChunks.put(zoomLayer, temp);
 
-                if (queueSize % 20 == 0) Platform.runLater(callback);
+                if (queueSize % 20 == 0 && callback != null) Platform.runLater(callback);
                 continue;
             } catch (IOException e) {
                 // Since we run it in parallel we need to return a runtime exception since we
