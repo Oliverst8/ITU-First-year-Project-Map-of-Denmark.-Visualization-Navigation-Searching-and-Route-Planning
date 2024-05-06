@@ -200,6 +200,7 @@ public class ChunkGenerator implements Runnable {
                             if (zoomLevel < 1) zoomLevel = 1;
                             break;
                         case "path", "footway", "cycleway", "bridleway", "steps", "living_street", "road", "corridor":
+                        default:
                             if (zoomLevel < 0) zoomLevel = 0;
                             break;
                     }
@@ -240,12 +241,7 @@ public class ChunkGenerator implements Runnable {
                     break;
                 
                 case "building":
-                    switch (tags.get(i + 1)) {
-                        default:
-                        case "yes", "shed", "office", "college", "detached", "dormitory", "university", "apartments", "allotment_house", "commercial", "school":
-                            if (zoomLevel < 0) zoomLevel = 0;
-                            break;
-                    }
+                    if (zoomLevel < 0) zoomLevel = 0;
                     break;
                 }
         }
