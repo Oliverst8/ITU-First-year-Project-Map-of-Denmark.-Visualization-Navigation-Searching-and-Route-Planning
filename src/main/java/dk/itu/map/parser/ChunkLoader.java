@@ -1,15 +1,12 @@
 package dk.itu.map.parser;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
-import dk.itu.map.App;
 import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.EOFException;
-import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
