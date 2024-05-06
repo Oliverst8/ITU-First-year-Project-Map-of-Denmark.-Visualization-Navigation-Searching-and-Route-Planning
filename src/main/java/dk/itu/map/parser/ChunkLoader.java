@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -196,65 +195,6 @@ public class ChunkLoader extends Thread {
         }
 
         return list;
-    }
-
-    /**
-     * Load the data from the chunkfiles
-     *
-     * @param chunks    The chunks to load
-     * @param zoomLevel The zoom level
-     * @return The ways
-     */
-    public Map<Integer, List<Drawable>> readFilesold(int[] chunks, int zoomLevel) {
-        Map<Integer, List<Drawable>> ways = Collections.synchronizedMap(new HashMap<>());
-        // long starTime = System.currentTimeMillis();
-        IntStream.of(chunks).parallel().forEach(chunk -> {
-            if (chunk < 0 || chunk >= config.getChunkAmount(zoomLevel)) return;
-
-            ways.putIfAbsent(chunk, new ArrayList<>());
-
-            InputStream file = config.locateFile("zoom" + zoomLevel + "/chunk" + chunk + ".txt");
-
-            long id;
-            CoordArrayList outerCoords;
-            CoordArrayList innerCoords;
-            try (DataInputStream stream = new DataInputStream(new BufferedInputStream(file))) {
-                while (true) {
-                    id = stream.readLong();
-                    int outerCoordsLength = stream.readInt();
-                    outerCoords = new CoordArrayList(outerCoordsLength);
-                    for (int j = 0; j < outerCoordsLength; j++) {
-                        outerCoords.add(stream.readFloat(), stream.readFloat());
-                    }
-                    int innerCoordsLength = stream.readInt();
-                    innerCoords = new CoordArrayList(innerCoordsLength);
-                    for (int j = 0; j < innerCoordsLength; j++) {
-                        innerCoords.add(stream.readFloat(), stream.readFloat());
-                    }
-
-                    String primaryType = stream.readUTF();
-                    String secondaryType = stream.readUTF();
-                    ways.get(chunk).add(new DrawableWay(outerCoords, innerCoords, id, primaryType, secondaryType));
-                }
-                /*
-                 * The stream will throw an end of file exception when its done,
-                 * this way we can skip checking if we are done reading every loop, and save
-                 * time
-                 */
-            } catch (EOFException e) {
-                // End of file reached
-                return;
-            } catch (IOException e) {
-                // Since we run it in parallel we need to return a runtime exception since we
-                // can throw the IOException out of the scope
-                throw new RuntimeException(e);
-            }
-        });
-
-        // long endTime = System.currentTimeMillis();
-        // System.out.println("Reading " + chunks.length + " chunks in " + (endTime - starTime) + "ms");
-        // MapView.overridePrint = true;
-        return ways;
     }
 
     /**
