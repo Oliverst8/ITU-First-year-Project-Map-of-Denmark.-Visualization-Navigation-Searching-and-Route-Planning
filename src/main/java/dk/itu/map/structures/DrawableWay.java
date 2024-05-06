@@ -98,6 +98,7 @@ public class DrawableWay implements Drawable {
     public void draw(GraphicsContext gc, float scaleFactor, int skipAmount, Theme theme) {
         gc.beginPath();
         drawCoords(gc, outerCoords, skipAmount);
+        drawCoords(gc, innerCoords, skipAmount);
 
         setColors(gc, scaleFactor, theme);
 

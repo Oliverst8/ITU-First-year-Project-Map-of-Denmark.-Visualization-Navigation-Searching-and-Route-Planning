@@ -61,6 +61,7 @@ public class ChunkGenerator implements Runnable {
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
         files = new File[config.layerCount][];
+        createFiles(App.mapName);
     }
 
     /**
@@ -254,8 +255,6 @@ public class ChunkGenerator implements Runnable {
     public void run() {
 
         resetChunks();
-
-        createFiles(App.mapName);
 
         hasMoreWork = true;
         while (hasMoreWork || !rawWays.isEmpty()) {
