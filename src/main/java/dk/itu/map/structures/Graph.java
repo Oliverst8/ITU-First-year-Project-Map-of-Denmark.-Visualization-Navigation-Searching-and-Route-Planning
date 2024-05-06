@@ -41,7 +41,7 @@ public class Graph {
     public boolean equals(Object obj){
         if(obj instanceof Graph){
             Graph other = (Graph) obj;
-            if(!idToIndex.equals(other.idToIndex)) return false;
+            //if(!idToIndex.equals(other.idToIndex)) return false;
             if(!vertexList.equals(other.vertexList)) return false;
             if(!edgeDestinations.equals(other.edgeDestinations)) return false;
             if(!vehicleRestrictions.equals(other.vehicleRestrictions)) return false;
@@ -213,4 +213,5 @@ public class Graph {
     public FloatArrayList getTimeWeights() {
         return timeWeights;
     }
+
 }

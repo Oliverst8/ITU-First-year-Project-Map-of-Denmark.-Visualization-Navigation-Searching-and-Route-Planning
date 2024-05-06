@@ -35,8 +35,17 @@ public interface WriteAble {
      */
     default void read(String path, MapConfig mapConfig) throws IOException {
         DataInputStream stream = new DataInputStream(new BufferedInputStream(mapConfig.locateFile(path)));
-
         read(stream);
+        stream.close();
+}
+    default void read(String path) throws IOException{
+        DataInputStream stream = new DataInputStream(
+            new BufferedInputStream(
+                new FileInputStream(path)
+            )
+        );
+        read(stream);
+        stream.close();
     }
 
     /**

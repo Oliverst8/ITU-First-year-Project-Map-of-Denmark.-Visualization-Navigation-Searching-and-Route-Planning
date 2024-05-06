@@ -38,49 +38,6 @@ public class DrawableWay implements Drawable {
         this.innerCoords = innerCoords;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Nodes:\n");
-        builder.append(outerCoords.size());
-        builder.append("\n");
-        for (int i = 0; i < outerCoords.size(); i++) {
-            float[] coord = outerCoords.get(i);
-            builder.append(coord[0]);
-            builder.append(" ");
-            builder.append(coord[1]);
-            builder.append("\n");
-        }
-        builder.append("Inner nodes:\n");
-        builder.append(innerCoords.size());
-        builder.append("\n");
-        for (int i = 0; i < innerCoords.size(); i++) {
-            float[] coord = innerCoords.get(i);
-            builder.append(coord[0]);
-            builder.append(" ");
-            builder.append(coord[1]);
-            builder.append("\n");
-        }
-
-        return builder.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof DrawableWay) {
-            return ((DrawableWay) obj).id == id;
-        }
-        return false;
-    }
-
-    /**
-     * @return the primary type of the way
-     */
     public String getPrimaryType(){
         return primaryType;
     }
@@ -224,7 +181,7 @@ public class DrawableWay implements Drawable {
                         gc.fill();
                         break colorSelect;
                 }
-            
+
             case "leisure":
                 switch(secondaryType) {
                     case "park":
@@ -273,5 +230,18 @@ public class DrawableWay implements Drawable {
      */
     public long getId() {
         return id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DrawableWay) {
+            return ((DrawableWay) obj).id == id;
+        }
+        return false;
     }
 }

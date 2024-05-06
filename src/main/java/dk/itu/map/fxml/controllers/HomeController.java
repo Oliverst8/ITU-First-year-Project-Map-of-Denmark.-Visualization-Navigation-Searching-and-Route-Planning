@@ -74,12 +74,12 @@ public class HomeController {
     public void loadSavedMaps(MenuButton mapList, MenuButton deleteList) {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
-        String[] internalMaps = new String[]{"Isle"};
-        String[] mapsFolder = externalDirectoryPath.list();
+        String[] internalMaps = new String[]{"Denmark"};
+        String[] externapMaps = externalDirectoryPath.list();
 
-        String[] externapMaps = Arrays.stream(mapsFolder)
-        .filter(s -> !s.contains("-internal"))
-        .toArray(String[]::new);
+//        String[] externapMaps = Arrays.stream(mapsFolder)
+//        .filter(s -> !s.contains("-internal"))
+//        .toArray(String[]::new);
 
         addMaps(mapList, internalMaps, "internal");
         addMaps(mapList, externapMaps, "external");

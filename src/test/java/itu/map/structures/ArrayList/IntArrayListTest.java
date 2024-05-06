@@ -86,16 +86,13 @@ public class IntArrayListTest {
 
         try {
             list1.write(path);
-
             IntArrayList list2 = new IntArrayList();
             list2.read(path);
-
             assertArrayEquals(list1.toArray(), list2.toArray());
-
-            File file = new File(path);
-            file.delete();
+            TestUtilities.deleteFile(path);
         } catch (Exception e) {
             fail("Exception thrown: " + e);
         }
     }
+
 }

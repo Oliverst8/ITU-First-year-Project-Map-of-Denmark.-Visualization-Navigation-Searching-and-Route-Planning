@@ -31,7 +31,6 @@ public class TwoDTreeBuilder {
     private void setLeftChild(int parent, int child) {
         int childIndex = parent * 2 + 1;
         if(childIndex >= tree.length && child == -1) return;
-        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
         tree[childIndex] = child;
     }
 
@@ -43,7 +42,6 @@ public class TwoDTreeBuilder {
     private void setRightChild(int parent, int child) {
         int childIndex = parent * 2 + 2;
         if(childIndex >= tree.length && child == -1) return;
-        if(tree[childIndex] != 0) throw new IllegalArgumentException("Child already exists on index: " + childIndex + " value: " + tree[childIndex] + " \nvalue of parent: " + parent + " \nvalue of child: " + child);
         tree[childIndex] = child;
     }
 
@@ -206,7 +204,7 @@ public class TwoDTreeBuilder {
             int cmp = compare(index, median, primaryAxis);
             if(cmp > 0) {
                 writeArray[secondaryAxis][rightStart++] = index;
-            } else if(cmp < 0) {
+            } else {
                 writeArray[secondaryAxis][leftStart++] = index;
             }
         }

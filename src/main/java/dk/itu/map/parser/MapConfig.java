@@ -47,7 +47,7 @@ public class MapConfig {
      */
     public MapConfig(String mapType) {
         try {
-            isInternal = mapType.equals("internal") ? true : false;
+            isInternal = mapType.equals("internal");
             InputStream file = locateFile("config");
             BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -165,7 +165,7 @@ public class MapConfig {
             //return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getFile());
             return getClass().getResourceAsStream("/maps/" + App.mapName + "/" + filePath);
         } else {
-            return new FileInputStream(new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath));
+            return new FileInputStream(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
 
         }
     }

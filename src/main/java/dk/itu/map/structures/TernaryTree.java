@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class TernaryTree implements Runnable, WriteAble{
-    private final List<String[]> streetNames; //List (Queue) to keep track of addresses to add to the tree
+    public final List<String[]> streetNames; //List (Queue) to keep track of addresses to add to the tree
     private final List<Float> streetPosition; //List (Queue) to keep track of addresses coordinates (Lat, lon)
     private Map<String, Integer> streetNumberMap, zipMap, cityMap; //Map that maps from strings to their position in the laters lists (Only used while building)
     private List<String> streetNumber, zip, cities; //List that holds the different streetnumber, zip and cities
@@ -32,6 +32,7 @@ public class TernaryTree implements Runnable, WriteAble{
         streetNumber = new ArrayList<>();
         zip = new ArrayList<>();
         cities = new ArrayList<>();
+        running = true;
     }
 
     /**
@@ -51,7 +52,6 @@ public class TernaryTree implements Runnable, WriteAble{
      * Will keep building the tree until the streetNames list is empty and .finish() has been called
      */
     public void run(){
-        running = true;
         while(streetNames.isEmpty()) {
             try {
                 Thread.sleep(10);
@@ -64,7 +64,7 @@ public class TernaryTree implements Runnable, WriteAble{
         float lat = streetPosition.remove(0);
         float lon = streetPosition.remove(0);
         root = insert(street, lat, lon);
-        while(running){
+        while(running || (!streetNames.isEmpty() && (streetPosition.size() >= 2))){
             while(!streetNames.isEmpty() && (streetPosition.size() >= 2)){
                 street = streetNames.remove(0);
                 lat = streetPosition.remove(0);
@@ -253,13 +253,13 @@ public class TernaryTree implements Runnable, WriteAble{
         current = current.substring(address[0].length());
         if(!current.isEmpty() && current.charAt(0) == ' ') current = current.substring(1);
         System.out.println("Current:" + current + ":");
-        addressLoop:
+
         for(int i = 0; i < node.zipIndexes.size(); i++){
             if(zip.get(node.zipIndexes.get(i)).equals(address[1])){
                 String newStreetNumber = streetNumber.get(node.streetNumberIndexes.get(i));;
                 String newCity = cities.get(node.cityIndexes.get(i));;
 
-                if (!checkIfShouldSuggest(current, newStreetNumber)) continue addressLoop;
+                if (!checkIfShouldSuggest(current, newStreetNumber)) continue;
 
                 searchAddress newAddress = new searchAddress(address[0], address[1], node);
                 newAddress.streetNumber = newStreetNumber;
@@ -723,6 +723,19 @@ public class TernaryTree implements Runnable, WriteAble{
             this.zip = null;
             this.city = null;
             this.node = null;
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if(!(obj instanceof searchAddress)) return false;
+            searchAddress other = (searchAddress) obj;
+            if(!this.streetName.equals(other.streetName)) return false;
+            if(!this.zip.equals(other.zip)) return false;
+            if(!Objects.equals(this.streetNumber, other.streetNumber)) return false;
+            if(!Objects.equals(this.city, other.city)) return false;
+            if(!this.node.equals(other.node)) return false;
+            if(!Objects.equals(this.point, other.point)) return false;
+            return true;
         }
     }
 

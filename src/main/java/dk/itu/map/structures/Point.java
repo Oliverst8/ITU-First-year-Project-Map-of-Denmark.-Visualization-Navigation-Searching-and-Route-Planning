@@ -54,4 +54,16 @@ public class Point implements Drawable{
     public float[] getCoords(){
         return new float[]{y, x};
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Point)) {
+            return false;
+        }
+        Point point = (Point) obj;
+        return point.x == x && point.y == y && point.primaryType.equals(primaryType) && point.color.equals(color);
+    }
 }

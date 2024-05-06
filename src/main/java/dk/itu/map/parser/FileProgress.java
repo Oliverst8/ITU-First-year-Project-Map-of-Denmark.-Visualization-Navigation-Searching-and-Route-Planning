@@ -28,6 +28,8 @@ public class FileProgress extends Thread{
     @Override
     public void run(){
 
+        if(progressBar == null) return;
+
         setTotalLines();
 
         while(!finishedProgress){

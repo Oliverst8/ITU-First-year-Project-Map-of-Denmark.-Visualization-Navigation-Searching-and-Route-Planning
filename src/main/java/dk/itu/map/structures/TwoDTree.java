@@ -3,6 +3,8 @@ package dk.itu.map.structures;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
 
+import java.util.Arrays;
+
 public class TwoDTree extends CoordArrayList {
 
     /**
@@ -112,7 +114,7 @@ public class TwoDTree extends CoordArrayList {
      */
     private int nearest(float[] goal, int i, int best, int axis, int vehicleCode, Graph graph) {
 
-        if(goal == get(i)) return i;
+        if(Arrays.equals(goal, get(i))) return i;
 
         boolean shouldGoRight = shouldGoRight(goal, get(i), axis);
 

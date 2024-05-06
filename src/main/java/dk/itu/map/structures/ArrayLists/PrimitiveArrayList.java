@@ -23,7 +23,7 @@ public abstract class PrimitiveArrayList implements WriteAble{
 
     public PrimitiveArrayList(int init_size) {
         size = 0;
-        capacity = init_size;
+        capacity = Math.max(init_size, 1);
     }
 
     /**

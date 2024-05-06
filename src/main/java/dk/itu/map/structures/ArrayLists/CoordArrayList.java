@@ -65,17 +65,6 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     @Override
-    public void write(String path) throws FileNotFoundException, IOException {
-        DataOutputStream stream = new DataOutputStream(
-            new BufferedOutputStream(
-                new FileOutputStream(path)
-            )
-        );
-        write(stream);
-        stream.close();
-    }
-
-    @Override
     public void write(DataOutputStream stream) throws IOException {
         stream.writeInt(size);
         for (int i = 0; i < size; i++) {

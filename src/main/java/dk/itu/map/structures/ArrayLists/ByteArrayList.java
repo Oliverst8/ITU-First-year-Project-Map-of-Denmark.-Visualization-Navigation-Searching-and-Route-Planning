@@ -26,8 +26,30 @@ public class ByteArrayList extends PrimitiveArrayList {
      * @param init_size to be initialized
      */
     public ByteArrayList(int init_size) {
-        super();
-        array = new byte[init_size];
+        super(init_size);
+        array = new byte[capacity];
+    }
+
+    /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(byte value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return int the value at the given index
+     */
+    public int get(int index) {
+        return array[index];
     }
 
     /**
@@ -36,19 +58,9 @@ public class ByteArrayList extends PrimitiveArrayList {
     @Override
     protected void resize() {
         byte[] newArray = new byte[array.length*2];
+        capacity = array.length*2;
         System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
-    }
-
-    @Override
-    public void write(String path) throws IOException {
-        DataOutputStream stream = new DataOutputStream(
-            new BufferedOutputStream(
-                new FileOutputStream(path)
-            )
-        );
-        write(stream);
-        stream.close();
     }
 
     @Override
@@ -57,6 +69,7 @@ public class ByteArrayList extends PrimitiveArrayList {
         for (int i = 0; i < size; i++) {
             stream.writeByte(array[i]);
         }
+        stream.close();
     }
 
     @Override
@@ -84,27 +97,5 @@ public class ByteArrayList extends PrimitiveArrayList {
         byte temp = array[index1];
         array[index1] = array[index2];
         array[index2] = temp;
-    }
-
-    /**
-     * Adds a value to the empty spot in the array.
-     * If the array is full, it will resize the array.
-     * @param value to be inserted
-     */
-    public void add(byte value) {
-        if(size + 1 > array.length) {
-            resize();
-        }
-        array[size] = value;
-        size++;
-    }
-
-    /**
-     * Returns the value at the given index.
-     * @param index to be gotten
-     * @return int the value at the given index
-     */
-    public int get(int index) {
-        return array[index];
     }
 }

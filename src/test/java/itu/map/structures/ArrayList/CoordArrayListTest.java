@@ -2,7 +2,11 @@ package itu.map.structures.ArrayList;
 
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 
+import itu.map.TestUtilities;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CoordArrayListTest {
@@ -110,4 +114,88 @@ public class CoordArrayListTest {
         list.add(4.0f, 8.0f);
         assertArrayEquals(new float[]{3.0f, 7.0f}, list.get(-2));
     }
+
+    @Test
+    void testAddNeedToResize(){
+        CoordArrayList list = new CoordArrayList(1);
+        list.add(1f,1f);
+        list.add(2f,2f);
+        assertEquals(2, list.size());
+        assertEquals(2, list.capacity());
+    }
+
+    @Test
+    void testWriteAndRead() throws IOException, InterruptedException {
+        CoordArrayList list = new CoordArrayList();
+        list.add(1.0f, 5.0f);
+        list.add(2.0f, 6.0f);
+        list.add(3.0f, 7.0f);
+        list.add(4.0f, 8.0f);
+        CoordArrayList list2 = new CoordArrayList();
+        String path = TestUtilities.getTestFilesPath() + "CoordArrayListTest.testWriteAndRead";
+        list.write(path);
+        Thread.sleep(10);
+        list2.read(path);
+        TestUtilities.deleteFile(path);
+        assertEquals(list, list2);
+    }
+
+    @Test
+    void testConstructorWithList(){
+        float[] array = new float[]{1f,1f,2f,2f};
+        CoordArrayList list = new CoordArrayList(array);
+        assertArrayEquals(array, list.toArray());
+    }
+
+    @Test
+    void testConstructorWithInitSize() {
+        CoordArrayList list = new CoordArrayList(5);
+        assertEquals(5, list.capacity());
+    }
+
+    @Test
+    void testEqualsSame(){
+        CoordArrayList list = new CoordArrayList();
+        assertEquals(list, list);
+    }
+
+    @Test
+    void testEqualsOtherIsNull(){
+        CoordArrayList list = new CoordArrayList();
+        assertNotEquals(list, null);
+    }
+
+    @Test
+    void testEqualsDifferentObject() {
+        CoordArrayList list = new CoordArrayList();
+        assertNotEquals(list, new Object());
+    }
+
+    @Test
+    void testEqualsShouldNotEqualInLon() {
+        CoordArrayList list = new CoordArrayList();
+        CoordArrayList list2 = new CoordArrayList();
+        list.add(1f,1f);
+        list2.add(1f,2f);
+        assertNotEquals(list, list2);
+    }
+
+    @Test
+    void testEqualsShouldNotEqualInLat() {
+        CoordArrayList list = new CoordArrayList();
+        CoordArrayList list2 = new CoordArrayList();
+        list.add(1f,1f);
+        list2.add(2f,1f);
+        assertNotEquals(list, list2);
+    }
+
+    @Test
+    void testEqualsDifferentSize() {
+        CoordArrayList list = new CoordArrayList();
+        CoordArrayList list2 = new CoordArrayList();
+        list.add(1f,1f);
+        assertNotEquals(list, list2);
+    }
+
+
 }

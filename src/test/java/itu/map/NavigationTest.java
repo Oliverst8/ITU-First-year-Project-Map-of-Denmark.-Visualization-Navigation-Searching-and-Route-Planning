@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NavigationTest {
-/*
+
     private GraphBuilder getGraph1(){
         GraphBuilder graph = new GraphBuilder();
         ArrayList<String> tags = new ArrayList<>();
@@ -173,6 +173,44 @@ class NavigationTest {
         graph.run();
         return graph;
     }
+    private GraphBuilder getGraphSameDistanceDifferentSpeed() {
+        GraphBuilder graph = new GraphBuilder();
+        ArrayList<String> tags = new ArrayList<>();
+        CoordArrayList coords;
+        LongArrayList nodeIDs;
+        Way way;
+
+        //red
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("living_street");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f, 1f, 1f, 100f,});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,3});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //blue
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,1f, 1f,50f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{1,2});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        //green
+        tags = new ArrayList<>();
+        tags.add("highway");
+        tags.add("motorway");
+        coords = TestUtilities.createCoordArrayList(new float[]{1f,50f, 1f, 100f});
+        nodeIDs = TestUtilities.createLongArrayList(new long[]{2,3});
+        way = new Way(1l, tags, coords, nodeIDs);
+        graph.addWay(way);
+
+        graph.stop();
+        graph.run();
+        return graph;
+    }
 
     @BeforeEach
     void setUp() {
@@ -186,74 +224,83 @@ class NavigationTest {
     void testTheresNoPath() {
         Graph graph = getGraph1();
         Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 3);
-        assertNull(path);
+        DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{1f,3f});
+        assertNull(paths);
     }
 
-    @Test
-    void testGetPathOnOneWay() {
-        Graph graph = getGraph1();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(2,4);
-        float[] expected = new float[]{1f, 4f, 1f, 3f, 1f,2f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
 
-    @Test
-    void testGetPathWithTwoWays() {
-        Graph graph = getGraph1();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 9);
-        float[] expected = new float[]{4f, 4f, 3f, 3f, 4f, 2f, 1f, 1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
+        @Test
+        void testGetPathOnOneWay() {
+            Graph graph = getGraph1();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,2f},new float[]{1f,4f});
+            float[] expected = new float[]{1f, 4f, 1f, 3f, 1f,2f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
 
-    @Test
-    void testGetFasterPath(){
-        Graph graph = getGraph1();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 7);
-        float[] expected = new float[]{4f,2f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
+        @Test
+        void testGetPathWithTwoWays() {
+            Graph graph = getGraph1();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{4f,4f});
+            float[] expected = new float[]{4f, 4f, 3f, 3f, 4f, 2f, 1f, 1f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
 
-    @Test
-    void testGetFasterPathWithMoreNodes(){
-        Graph graph = getGraph1();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 12);
-        System.out.println(Arrays.toString(path.getOuterCoords()));
-        float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
+        @Test
+        void testGetFasterPath(){
+            Graph graph = getGraph1();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{4f,2f});
+            float[] expected = new float[]{4f,2f,1f,1f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
 
-    @Test
-    void testGetFasterPathWithMoreNodes2(){
-        Graph graph = getGraph2();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 12);
-        System.out.println(Arrays.toString(path.getOuterCoords()));
-        float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
-    @Test
-    void testShortestWayIsVehicleRestrictedByFoot(){
-        Graph graph = getGraphSomeFootPathSomeMotorway();
-        Navigation navigation = new Navigation(graph, 1);
-        DrawableWay path = navigation.getPath(1, 13);
+        @Test
+        void testGetFasterPathWithMoreNodes(){
+            Graph graph = getGraph1();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{8f,7f});
+            float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
 
-        //float[] expected = new float[]{2f,4f,1f,1f};
-        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
-        assertArrayEquals(expected, path.getOuterCoords());
-    }
+        @Test
+        void testGetFasterPathWithMoreNodes2(){
+            Graph graph = getGraph2();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{8f,7f});
+            float[] expected = new float[]{8f,7f,5f,6f,4f,5f,2f,4f,1f,1f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
+
+        @Test
+        void testShortestWayIsVehicleRestrictedByFoot(){
+            Graph graph = getGraphSomeFootPathSomeMotorway();
+            Navigation navigation = new Navigation(graph, 1);
+            DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{2f,4f});
+
+            float[] expected = new float[]{2f,4f,1f,1f};
+            assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+        }
     @Test
     void testShortestWayIsVehicleRestrictedByCar(){
         Graph graph = getGraphSomeFootPathSomeMotorway();
         Navigation navigation = new Navigation(graph, 4);
-        DrawableWay path = navigation.getPath(1, 13);
+        DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{2f,4f});
 
-    //     //float[] expected = new float[]{2f,4f,1f,1f};
-    //     float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
-    //     assertArrayEquals(expected, path.getOuterCoords());
-    // }*/
+        float[] expected = new float[]{2f,4f,4f,5f,5f,6f,8f,7f,1f,100f,1f,1f};
+        assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+    }
+
+    @Test
+    void testGraphSameDistanceDifferentSpeed(){
+        Graph graph = getGraphSameDistanceDifferentSpeed();
+        Navigation navigation = new Navigation(graph, 4);
+        DrawableWay[] paths = navigation.getPath(new float[]{1f,1f}, new float[]{1f,100f});
+
+        float[] expected = new float[]{1f,100f,1f,50f,1f,1f};
+        assertArrayEquals(expected, paths[0].getOuterCoords().toArray());
+    }
+
 }

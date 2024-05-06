@@ -19,6 +19,7 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     }
 
     public FloatArrayList(int init_size) {
+        super(init_size);
         array = new float[init_size];
         size = 0;
     }
@@ -31,20 +32,9 @@ public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     @Override
     protected void resize() {
         float[] newArray = new float[array.length*2];
+        capacity = array.length*2;
         System.arraycopy(array, 0, newArray, 0, array.length);
         array = newArray;
-    }
-
-    @Override
-    public void write(String path) throws FileNotFoundException, IOException {
-        DataOutputStream stream = new DataOutputStream(
-            new BufferedOutputStream(
-                new FileOutputStream(path)
-            )
-        );
-
-        write(stream);
-        stream.close();
     }
 
     @Override
