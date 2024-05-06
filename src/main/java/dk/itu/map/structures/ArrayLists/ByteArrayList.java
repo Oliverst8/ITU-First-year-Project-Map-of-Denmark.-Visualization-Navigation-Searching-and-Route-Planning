@@ -33,6 +33,28 @@ public class ByteArrayList extends PrimitiveArrayList {
     }
 
     /**
+     * Adds a value to the empty spot in the array.
+     * If the array is full, it will resize the array.
+     * @param value to be inserted
+     */
+    public void add(byte value) {
+        if(size + 1 > array.length) {
+            resize();
+        }
+        array[size] = value;
+        size++;
+    }
+
+    /**
+     * Returns the value at the given index.
+     * @param index to be gotten
+     * @return int the value at the given index
+     */
+    public int get(int index) {
+        return array[index];
+    }
+
+    /**
      * Resizes the array to double the size
      */
     @Override
