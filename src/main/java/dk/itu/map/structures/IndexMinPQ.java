@@ -90,15 +90,6 @@ public class IndexMinPQ<Key extends Comparable<Key>>{
     }
 
     /**
-     * Returns the number of keys on this priority queue.
-     *
-     * @return the number of keys on this priority queue
-     */
-    public int size() {
-        return n;
-    }
-
-    /**
      * Associates key with index {@code i}.
      *
      * @param  i an index
@@ -133,22 +124,6 @@ public class IndexMinPQ<Key extends Comparable<Key>>{
         keys[min] = null;    // to help with garbage collection
         pq[n+1] = -1;        // not needed
         return min;
-    }
-
-    /**
-     * Change the key associated with index {@code i} to the specified value.
-     *
-     * @param  i the index of the key to change
-     * @param  key change the key associated with index {@code i} to this key
-     * @throws IllegalArgumentException unless {@code 0 <= i < maxN}
-     * @throws NoSuchElementException no key is associated with index {@code i}
-     */
-    public void changeKey(int i, Key key) {
-        validateIndex(i);
-        if (!contains(i)) throw new NoSuchElementException("index is not in the priority queue");
-        keys[i] = key;
-        swim(qp[i]);
-        sink(qp[i]);
     }
 
     /**
