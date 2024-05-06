@@ -130,7 +130,11 @@ public class Graph {
         }
 
         try{
-            DataInputStream stream = new DataInputStream(new BufferedInputStream(files[0]));
+            DataInputStream stream = new DataInputStream(
+                new BufferedInputStream(
+                    mapConfig.locateFile(folderPath + "/vertexList.txt")
+                )
+            );
 
             int sizeOfIdToIndex = stream.readInt();
             for(int i = 0; i < sizeOfIdToIndex; i++){
