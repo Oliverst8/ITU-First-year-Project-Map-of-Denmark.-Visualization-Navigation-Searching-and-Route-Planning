@@ -1,5 +1,6 @@
 package itu.map;
 
+import dk.itu.map.App;
 import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.parser.MapConfig;
 import dk.itu.map.structures.ArrayLists.*;
@@ -337,17 +338,18 @@ public class GraphBuilderTest {
         assertEquals(expectedDestinations.size(), actualDestinations.size());
     }
 
-//    @Test
-//    void testWriteAndRead() throws InterruptedException, IOException {
-//        String dataPath = TestUtilities.getTestFilesPath();
-//        graphBuilder = getGraph();
-//        graphBuilder.writeToFile(dataPath);
-//        GraphBuilder graph = new GraphBuilder();
-//        graph.loadFromDataPath(dataPath, new MapConfig(1f, 1f, 1f, 1f));
-//        FileUtils.deleteDirectory(new File(dataPath + "/graph"));
-//        //assertEquals(graph, graphBuilder);
-//        assertTrue(graph.equals(graphBuilder));
-//    }
+    @Test
+    void testWriteAndRead() throws InterruptedException, IOException {
+        String dataPath = TestUtilities.getTestFilesPath();
+        App.DATA_PATH = dataPath;
+        App.mapName = "testmap/";
+        graphBuilder = getGraph();
+        graphBuilder.writeToFile(dataPath+"/testmap/utilities/");
+        GraphBuilder graph = new GraphBuilder();
+        graph.loadFromDataPath("utilities/", new MapConfig("external"));
+        FileUtils.deleteDirectory(new File( "/graph"));
+        assertEquals(graph, graphBuilder);
+    }
 
     public GraphBuilder getGraph() throws InterruptedException {
         GraphBuilder graph = new GraphBuilder();
