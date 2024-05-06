@@ -334,6 +334,11 @@ public class MapView {
     }
 
     @FXML
+    void debugPrintZoomLevel() {
+        System.out.println("Zoom amount: " + zoomAmount);
+    }
+
+    @FXML
     void searchStartAddress(KeyEvent event){
         searchAddress(textFieldStart, startComboBox, startAddress);
     }
@@ -553,6 +558,7 @@ public class MapView {
      * @return int the detail level of the map
      */
     private int getZoomLevel(){
+        debugPrintZoomLevel();
         if(zoomAmount > 20) return 5;
         if(zoomAmount > 10) return 4;
         if(zoomAmount > 5) return 3;
