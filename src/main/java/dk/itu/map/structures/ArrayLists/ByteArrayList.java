@@ -1,10 +1,8 @@
 package dk.itu.map.structures.ArrayLists;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -59,16 +57,6 @@ public class ByteArrayList extends PrimitiveArrayList {
         for (int i = 0; i < size; i++) {
             stream.writeByte(array[i]);
         }
-    }
-
-    @Override
-    public void read(String path) throws IOException {
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
-        read(stream);
     }
 
     @Override

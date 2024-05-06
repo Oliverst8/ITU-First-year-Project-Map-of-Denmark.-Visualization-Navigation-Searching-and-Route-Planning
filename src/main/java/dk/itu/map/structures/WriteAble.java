@@ -2,6 +2,8 @@ package dk.itu.map.structures;
 
 import java.io.*;
 
+import dk.itu.map.parser.MapConfig;
+
 public interface WriteAble {
     /**
      * Write the object to a file
@@ -31,12 +33,8 @@ public interface WriteAble {
      * @param path the path to the file
      * @throws IOException If an error occurs while reading the file
      */
-    default void read(String path) throws IOException{
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
+    default void read(String path, MapConfig mapConfig) throws IOException{
+        DataInputStream stream = new DataInputStream(new BufferedInputStream(mapConfig.locateFile(path)));
 
         read(stream);
     }

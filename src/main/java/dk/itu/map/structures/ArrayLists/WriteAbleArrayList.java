@@ -5,11 +5,9 @@ import dk.itu.map.structures.WriteAble;
 import java.util.ArrayList;
 
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.DataOutputStream;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 
 public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> implements WriteAble {
@@ -48,17 +46,6 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
         }
 
         stream.close();
-    }
-
-    @Override
-    public void read(String path) throws IOException {
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
-
-        read(stream);
     }
 
     @Override

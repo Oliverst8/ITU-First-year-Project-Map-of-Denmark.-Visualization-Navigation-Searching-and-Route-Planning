@@ -296,15 +296,13 @@ public class GraphBuilder extends Graph implements Runnable {
         };
 
         WriteAble[] instanceVariables = new WriteAble[]{
-                idToIndex,
-                vertexList,
-                edgeDestinations,
-                vehicleRestrictions,
-                distanceWeights,
-                timeWeights,
-                coords,
-                oldToNewVertexIndex,
-                //wayIDs
+            vertexList,
+            edgeDestinations,
+            vehicleRestrictions,
+            distanceWeights,
+            timeWeights,
+            coords,
+            oldToNewVertexIndex,
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {

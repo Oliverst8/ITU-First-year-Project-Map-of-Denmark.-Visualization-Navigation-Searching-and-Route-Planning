@@ -173,10 +173,10 @@ public class MapConfig {
                 return new FileInputStream(new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath));
             } catch (FileNotFoundException e) {
                 System.out.println("File not found");
+                e.printStackTrace();
                 System.exit(1);
                 return null;
             }
-            //eturn new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
         }
     }
 }

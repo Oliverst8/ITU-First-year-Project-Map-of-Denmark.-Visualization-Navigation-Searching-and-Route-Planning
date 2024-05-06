@@ -85,16 +85,6 @@ public class CoordArrayList extends PrimitiveArrayList {
     }
 
     @Override
-    public void read(String path) throws IOException{
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
-        read(stream);
-    }
-
-    @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
         arrayLat = new float[size];
