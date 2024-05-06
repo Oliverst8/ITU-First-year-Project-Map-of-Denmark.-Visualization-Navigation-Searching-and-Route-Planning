@@ -62,11 +62,7 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="Debug">
                <items>
-                  <Menu mnemonicParsing="false" text="Debug">
-                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#toggleGrid" text="Grid" />
-                     </items>
-                  </Menu>
+                  <MenuItem mnemonicParsing="false" onAction="#toggleGrid" text="Grid" />
                   <MenuItem mnemonicParsing="false" onAction="#debugPrintZoomLevel" text="Show zoomamount" />
                </items>
             </Menu>
