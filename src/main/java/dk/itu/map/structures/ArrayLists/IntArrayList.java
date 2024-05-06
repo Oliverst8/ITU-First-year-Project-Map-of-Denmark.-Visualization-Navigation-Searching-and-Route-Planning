@@ -54,18 +54,6 @@ public class IntArrayList extends PrimitiveArrayList {
     }
 
     @Override
-    public void write(String path) throws IOException {
-        DataOutputStream stream = new DataOutputStream(
-            new BufferedOutputStream(
-                new FileOutputStream(path)
-            )
-        );
-
-        write(stream);
-        stream.close();
-    }
-
-    @Override
     public void write(DataOutputStream stream) throws IOException {
         size = Math.max(size, biggestIndex+1);
         stream.writeInt(size);
@@ -74,16 +62,6 @@ public class IntArrayList extends PrimitiveArrayList {
         }
     }
 
-    @Override
-    public void read(String path) throws IOException {
-        DataInputStream stream = new DataInputStream(
-            new BufferedInputStream(
-                new FileInputStream(path)
-            )
-        );
-
-        read(stream);
-    }
 
     @Override
     public void read(DataInputStream stream) throws IOException {

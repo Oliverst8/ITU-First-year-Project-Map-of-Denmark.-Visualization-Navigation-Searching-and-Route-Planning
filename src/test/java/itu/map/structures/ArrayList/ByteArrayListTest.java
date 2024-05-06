@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ByteArrayListTest {
     ByteArrayList byteArrayList;
@@ -60,17 +61,11 @@ public class ByteArrayListTest {
     }
 
     @Test
-    void testEqualsSame() {
-        byteArrayList.add((byte) 1);
-        byteArrayList.equals(byteArrayList);
-    }
-
-    @Test
     void testEqualsShouldBeEqual() {
         ByteArrayList byteArrayList2 = new ByteArrayList();
         byteArrayList.add((byte) 1);
         byteArrayList2.add((byte) 1);
-        byteArrayList.equals(byteArrayList2);
+        assertEquals(byteArrayList, byteArrayList2);
     }
 
     @Test
@@ -78,7 +73,7 @@ public class ByteArrayListTest {
         ByteArrayList byteArrayList2 = new ByteArrayList();
         byteArrayList.add((byte) 1);
         byteArrayList2.add((byte) 2);
-        byteArrayList.equals(byteArrayList2);
+        assertNotEquals(byteArrayList, byteArrayList2);
     }
 
     @Test
@@ -87,12 +82,12 @@ public class ByteArrayListTest {
         byteArrayList.add((byte) 1);
         byteArrayList2.add((byte) 1);
         byteArrayList2.add((byte) 2);
-        byteArrayList.equals(byteArrayList2);
+        assertNotEquals(byteArrayList, byteArrayList2);
     }
 
     @Test
     void testEqualsDifferentObjectType(){
-        byteArrayList.equals(new Object());
+        assertNotEquals(byteArrayList, new Object());
     }
 
     @Test
@@ -104,6 +99,6 @@ public class ByteArrayListTest {
         byteArrayList.write(path);
         byteArrayList2.read(path);
         TestUtilities.deleteFile(path);
-        byteArrayList.equals(byteArrayList2);
+        assertEquals(byteArrayList, byteArrayList2);
     }
 }

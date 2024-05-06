@@ -37,8 +37,8 @@ public interface WriteAble {
                 new FileInputStream(path)
             )
         );
-
         read(stream);
+        stream.close();
     }
 
     /**

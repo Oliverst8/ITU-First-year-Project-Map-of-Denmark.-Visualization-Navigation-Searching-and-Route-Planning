@@ -89,14 +89,10 @@ public class FloatArrayListTest {
 
         try {
             list1.write(path);
-
             FloatArrayList list2 = new FloatArrayList();
             list2.read(path);
-
             assertArrayEquals(list1.toArray(), list2.toArray());
-
-            File file = new File(path);
-            file.delete();
+            TestUtilities.deleteFile(path);
         } catch (Exception e) {
             fail("Exception thrown: " + e);
         }

@@ -38,6 +38,7 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
         );
 
         write(stream);
+        stream.close();
     }
 
     @Override
@@ -59,6 +60,7 @@ public class WriteAbleArrayList <T extends WriteAble> extends ArrayList<T> imple
         );
 
         read(stream);
+        stream.close();
     }
 
     @Override

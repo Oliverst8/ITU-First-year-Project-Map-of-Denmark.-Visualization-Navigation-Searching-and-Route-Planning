@@ -125,7 +125,7 @@ public class CoordArrayListTest {
     }
 
     @Test
-    void testWriteAndRead() throws IOException {
+    void testWriteAndRead() throws IOException, InterruptedException {
         CoordArrayList list = new CoordArrayList();
         list.add(1.0f, 5.0f);
         list.add(2.0f, 6.0f);
@@ -134,6 +134,7 @@ public class CoordArrayListTest {
         CoordArrayList list2 = new CoordArrayList();
         String path = TestUtilities.getTestFilesPath() + "CoordArrayListTest.testWriteAndRead";
         list.write(path);
+        Thread.sleep(10);
         list2.read(path);
         TestUtilities.deleteFile(path);
         assertEquals(list, list2);

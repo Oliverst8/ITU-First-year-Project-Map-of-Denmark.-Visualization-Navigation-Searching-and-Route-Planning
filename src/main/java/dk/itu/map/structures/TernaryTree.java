@@ -734,10 +734,8 @@ public class TernaryTree implements Runnable, WriteAble{
             if(!Objects.equals(this.streetNumber, other.streetNumber)) return false;
             if(!Objects.equals(this.city, other.city)) return false;
             if(!this.node.equals(other.node)) return false;
-            if(!this.point.equals(other.point)) return false;
+            if(!Objects.equals(this.point, other.point)) return false;
             return true;
-
-
         }
     }
 
