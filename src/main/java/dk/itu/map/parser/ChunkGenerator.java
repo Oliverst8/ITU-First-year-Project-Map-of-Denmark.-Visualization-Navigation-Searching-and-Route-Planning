@@ -23,7 +23,7 @@ public class ChunkGenerator implements Runnable {
     private MapConfig config;
 
     private ArrayList<ZoomLayer> zoomLayers;
-    private final File[][] files;
+    private File[][] files;
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
@@ -59,15 +59,6 @@ public class ChunkGenerator implements Runnable {
         this.address = address;
 
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
-
-        resetChunks();
-
-        files = new File[config.layerCount][];
-        for (int i = 0; i < files.length; i++) {
-            files[i] = new File[config.getChunkAmount(i)];
-        }
-
-        createFiles(App.mapName);
     }
 
     /**
@@ -86,7 +77,6 @@ public class ChunkGenerator implements Runnable {
                 int chunkAmount = config.getChunkAmount(i);
                 for (int j = 0; j < chunkAmount; j++) {
                     files[i][j] = new File(dataPath + "zoom" + i + "/chunk" + j + ".txt");
-                    new FileOutputStream(files[i][j]).close();
                 }
             }
             (new File(dataPath + "utilities")).mkdir();
@@ -258,6 +248,16 @@ public class ChunkGenerator implements Runnable {
      */
     @Override
     public void run() {
+
+        resetChunks();
+
+        files = new File[config.layerCount][];
+        for (int i = 0; i < files.length; i++) {
+            files[i] = new File[config.getChunkAmount(i)];
+        }
+
+        createFiles(App.mapName);
+
         hasMoreWork = true;
         while (hasMoreWork || !rawWays.isEmpty()) {
             if (rawWays.size() < 100_000 && hasMoreWork) {
