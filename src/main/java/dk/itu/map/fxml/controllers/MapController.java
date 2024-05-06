@@ -49,21 +49,17 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
-        if(model.getMapType().equals("internal")) {
-            App.mapPath = getClass().getResource("/maps/" + mapName + "/").getPath();
-        } else {
-            App.mapPath = App.DATA_PATH + mapName + "/";
-        }
+        App.mapName = mapName;
 
-        UtilityLoader utilityLoader = new UtilityLoader();
-        utilityLoader.start();
-
-        model.chunkLoader = new ChunkLoader();
+        model.chunkLoader = new ChunkLoader(model.getMapType());
         model.chunkLoader.setCallback(() -> {
             boolean shouldRedraw = getWrittenChunks();
-
+            
             if (view != null && shouldRedraw) view.redraw();
         });
+        
+        UtilityLoader utilityLoader = new UtilityLoader(model.chunkLoader.getConfig());
+        utilityLoader.start();
 
         setUtilities(utilityLoader);
         model.landLayer = model.chunkLoader.readLandLayer();

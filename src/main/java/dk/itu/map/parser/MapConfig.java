@@ -2,15 +2,19 @@ package dk.itu.map.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import dk.itu.map.App;
 import javafx.geometry.Point2D;
 
 public class MapConfig {
+    private final boolean isInternal;
+
     public final float CHUNK_SIZE;
     public final byte layerCount;
 
@@ -26,6 +30,7 @@ public class MapConfig {
      * @param maxLon The maximum longitude
      */
     public MapConfig(float minLat, float maxLat, float minLon, float maxLon) {
+        isInternal = false;
         this.CHUNK_SIZE = 0.01f;
         this.layerCount = 6;
         this.minLat = minLat;
@@ -40,10 +45,11 @@ public class MapConfig {
     /**
      * Load the config file, and set the variables
      */
-    public MapConfig() {
+    public MapConfig(String mapType) {
         try {
-            File file = new File(App.mapPath + "config");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            isInternal = mapType.equals("internal") ? true : false;
+            InputStream file = locateFile("config");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file));
             this.minLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.maxLat = Float.parseFloat(reader.readLine().split(" ")[1]);
             this.minLon = Float.parseFloat(reader.readLine().split(" ")[1]);
@@ -131,7 +137,7 @@ public class MapConfig {
      */
     public void writeConfig() {
         try {
-            FileWriter writer = new FileWriter(App.mapPath + "/config");
+            FileWriter writer = new FileWriter(App.mapName + "/config");
             writer.write(
                 "minLat: " + minLat + "\n" +
                 "maxLat: " + maxLat + "\n" +
@@ -145,6 +151,28 @@ public class MapConfig {
                 writer.close();
         } catch (IOException e) {
             System.out.println();
+        }
+    }
+
+    /**
+     * Finds the location of a file
+     * @param filePath The path to the file
+     * @return The file
+     * @throws FileNotFoundException 
+     */
+    public InputStream locateFile(String filePath) {
+        if(isInternal) {
+            //return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getFile());
+            return getClass().getResourceAsStream("/maps/" + App.mapName + "/" + filePath);
+        } else {
+            try {
+                return new FileInputStream(new File(App.DATA_PATH + "/" + App.mapName + "/" + filePath));
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found");
+                e.printStackTrace();
+                System.exit(1);
+                return null;
+            }
         }
     }
 }

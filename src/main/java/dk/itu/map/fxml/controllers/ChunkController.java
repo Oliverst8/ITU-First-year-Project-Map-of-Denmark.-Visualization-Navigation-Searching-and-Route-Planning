@@ -19,7 +19,7 @@ public class ChunkController {
      */
     public ChunkController(ChunkModel model, String name) {
         this.model = model;
-        App.mapPath = App.DATA_PATH + name + "/";
+        App.mapName = App.DATA_PATH + name + "/";
         this.name = name;
     }
 
@@ -29,7 +29,7 @@ public class ChunkController {
      * @param name The name of the map to be saved to
      */
     public void importMap(String filePath, FileProgress fileProgress) {
-        if (!new File(App.mapPath + "/config").exists()) {
+        if (!new File(App.mapName + "/config").exists()) {
             File file = new File(filePath);
             fileProgress.setFile(file);
             fileProgress.start();

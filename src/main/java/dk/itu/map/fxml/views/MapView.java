@@ -8,9 +8,9 @@ import dk.itu.map.task.CanvasRedrawTask;
 import dk.itu.map.fxml.controllers.MapController;
 import dk.itu.map.fxml.models.MapModel;
 import dk.itu.map.fxml.models.MapModel.Themes;
-import dk.itu.map.parser.MapConfig;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -143,7 +143,6 @@ public class MapView {
             redraw();
         });
 
-
         render = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -190,7 +189,20 @@ public class MapView {
             setPointOfInterest = false;
             startNavigationButton.setDisable(false);
             addMarkerButton.setStyle("-fx-border-color: transparent");
-            try (FileWriter writer = new FileWriter(App.mapPath+"utilities/pointOfInterest.txt", true)) {
+
+            String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName + "-internal/" : App.DATA_PATH + App.mapName + "/";
+            File file = new File(path + "utilities/pointOfInterest.txt");
+
+            if (!file.exists()) {
+                try {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            try (FileWriter writer = new FileWriter(path + "utilities/pointOfInterest.txt", true)) {
                 writer.write(pointOfInterest[0] + ", " + pointOfInterest[1] + "\n");
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -503,7 +515,13 @@ public class MapView {
      */
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(App.mapPath+"utilities/pointOfInterest.txt"))) {
+
+        String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName + "-internal/" : App.DATA_PATH + App.mapName + "/";
+        File file = new File(path + "utilities/pointOfInterest.txt");
+
+        if (!file.exists()) return pointOfInterests;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(path + "utilities/pointOfInterest.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] coords = line.split(", ");

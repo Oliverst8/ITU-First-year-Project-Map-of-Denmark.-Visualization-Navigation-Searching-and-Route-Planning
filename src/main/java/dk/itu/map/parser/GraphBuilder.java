@@ -286,27 +286,23 @@ public class GraphBuilder extends Graph implements Runnable {
         (new File(folderPath)).mkdirs();
 
         File[] files = new File[]{
-                new File(folderPath + "/idToIndex.txt"),
-                new File(folderPath + "/vertexList.txt"),
-                new File(folderPath + "/edgeDestinations.txt"),
-                new File(folderPath + "/vehicleRestrictions.txt"),
-                new File(folderPath + "/distanceWeights.txt"),
-                new File(folderPath + "/timeWeights.txt"),
-                new File(folderPath + "/coords.txt"),
-                new File(folderPath + "/oldToNewVertexIndex.txt"),
-                //new File(folderPath + "/wayIDs.txt")
+            new File(folderPath + "/vertexList.txt"),
+            new File(folderPath + "/edgeDestinations.txt"),
+            new File(folderPath + "/vehicleRestrictions.txt"),
+            new File(folderPath + "/distanceWeights.txt"),
+            new File(folderPath + "/timeWeights.txt"),
+            new File(folderPath + "/coords.txt"),
+            new File(folderPath + "/oldToNewVertexIndex.txt"),
         };
 
         WriteAble[] instanceVariables = new WriteAble[]{
-                idToIndex,
-                vertexList,
-                edgeDestinations,
-                vehicleRestrictions,
-                distanceWeights,
-                timeWeights,
-                coords,
-                oldToNewVertexIndex,
-                //wayIDs
+            vertexList,
+            edgeDestinations,
+            vehicleRestrictions,
+            distanceWeights,
+            timeWeights,
+            coords,
+            oldToNewVertexIndex,
         };
 
         IntStream.range(0, instanceVariables.length).parallel().forEach(i -> {

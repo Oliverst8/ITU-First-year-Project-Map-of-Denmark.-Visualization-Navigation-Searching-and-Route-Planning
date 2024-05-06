@@ -67,7 +67,7 @@ public class ChunkGenerator implements Runnable {
             files[i] = new File[config.getChunkAmount(i)];
         }
 
-        createFiles(App.mapPath);
+        createFiles(App.mapName);
     }
 
     /**
@@ -90,7 +90,6 @@ public class ChunkGenerator implements Runnable {
                 }
             }
             (new File(dataPath + "utilities")).mkdir();
-            new File(dataPath + "utilities/pointOfInterest.txt").createNewFile();
 
         } catch (Exception e) {
             System.out.println("failed " + e.getMessage());
@@ -319,9 +318,9 @@ public class ChunkGenerator implements Runnable {
      * Write the configuration file, with map constants
      */
     private void writeUtilities() {
-        graph.writeToFile(App.mapPath + "utilities");
+        graph.writeToFile(App.mapName + "utilities");
         try {
-            address.write(App.mapPath + "/utilities" + "/address.txt");
+            address.write(App.mapName + "/utilities/address.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

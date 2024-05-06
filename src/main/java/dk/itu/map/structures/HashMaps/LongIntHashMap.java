@@ -47,16 +47,6 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
     }
 
     @Override
-    public void read(String path) throws IOException{
-        DataInputStream stream = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(path)
-                )
-        );
-        read(stream);
-    }
-
-    @Override
     public void read(DataInputStream stream) throws IOException {
         size = stream.readInt();
         capacity = stream.readInt();
