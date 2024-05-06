@@ -27,13 +27,13 @@ public class ChunkGenerator implements Runnable {
     private List<MapElement> rawWays;
     private boolean hasMoreWork;
     private final int MIN_ARRAY_LENGTH = 150_000;
-    private final GraphBuilder graph;
-    private final Thread graphThread;
+//    private final GraphBuilder graph;
+//    private final Thread graphThread;
 
     private final Thread chunkingThread;
-    private final Thread addressTreeThread;
+//    private final Thread addressTreeThread;
 
-    private final TernaryTree address;
+//    private final TernaryTree address;
 
     /**
      * Constructor for the ChunkGenerator class
@@ -44,19 +44,19 @@ public class ChunkGenerator implements Runnable {
      * @param maxLon The maximum longitude
      */
     public ChunkGenerator(MapConfig config,TernaryTree address) {
-        graph = new GraphBuilder();
+//        graph = new GraphBuilder();
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
         this.chunkingThread = new Thread(this);
         this.chunkingThread.start();
-        graphThread = new Thread(graph);
-        graphThread.start();
-        addressTreeThread = new Thread(address);
-        addressTreeThread.start();
+//        graphThread = new Thread(graph);
+//        graphThread.start();
+//        addressTreeThread = new Thread(address);
+//        addressTreeThread.start();
 
         this.config = config;
 
-        this.address = address;
+//        this.address = address;
 
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
@@ -185,7 +185,7 @@ public class ChunkGenerator implements Runnable {
                     break;
                 
                 case "highway":
-                    if(way.getNodeIDs() != null) graph.addWay(way);
+//                    if(way.getNodeIDs() != null) graph.addWay(way);
                     switch (tags.get(i + 1)) {
                         case "trunk", "motorway", "motorway_link", "trunk_link", "primary", "primary_link":
                             if (zoomLevel < 4) zoomLevel = 4;
@@ -275,15 +275,15 @@ public class ChunkGenerator implements Runnable {
             writeFiles();
         }
         long startTime = System.nanoTime();
-        address.finish();
-        graph.stop();
-        try {
-            graphThread.join();
-            addressTreeThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        writeUtilities();
+//        address.finish();
+//        graph.stop();
+//        try {
+//            graphThread.join();
+//            addressTreeThread.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        writeUtilities();
 
         long endTime = System.nanoTime();
         System.out.println("Writing graph to file took: " + (endTime-startTime)/1_000_000_000.0 + "s");
@@ -317,14 +317,14 @@ public class ChunkGenerator implements Runnable {
     /**
      * Write the configuration file, with map constants
      */
-    private void writeUtilities() {
-        graph.writeToFile(App.mapName + "utilities");
-        try {
-            address.write(App.mapName + "/utilities/address.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void writeUtilities() {
+//        graph.writeToFile(App.mapName + "utilities");
+//        try {
+//            address.write(App.mapName + "/utilities/address.txt");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Used to mark the finish of ChunkGenerator and prevent it from continuing

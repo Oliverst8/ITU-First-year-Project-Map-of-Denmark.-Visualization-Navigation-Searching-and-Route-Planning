@@ -20,21 +20,21 @@ public class UtilityLoader extends Thread {
         graph = new Graph();
     }
 
-    @Override
-    public void run() {
-        graphLoader graphLoader = new graphLoader(path);
-        AddressLoader addressLoader = new AddressLoader(path);
-        addressLoader.start();
-        graphLoader.start();
-        graph = graphLoader.getGraph();
-        address = addressLoader.getAddress();
-        try {
-            addressLoader.join();
-            graphLoader.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    public void run() {
+//        graphLoader graphLoader = new graphLoader(path);
+//        AddressLoader addressLoader = new AddressLoader(path);
+//        addressLoader.start();
+//        graphLoader.start();
+//        graph = graphLoader.getGraph();
+//        address = addressLoader.getAddress();
+//        try {
+//            addressLoader.join();
+//            graphLoader.join();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     /**
      * Get the graph
