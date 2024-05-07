@@ -1,7 +1,7 @@
 # BFST2024Group8
 
 ## How to run
-### 1. Download javaFX 21.1.0 from [here](https://gluonhq.com/products/javafx/);
+### 1. Download javaFX 21.0.3 from [here](https://gluonhq.com/products/javafx/);
 ### 2. Extract the downloaded file;
 ### 3. Navigate to javafx folder
 ### 4. Run the following command:
