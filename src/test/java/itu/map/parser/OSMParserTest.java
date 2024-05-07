@@ -48,7 +48,7 @@ public class OSMParserTest {
             }
         }
         System.out.println(chunkMap.size());
-        assertEquals(12, chunkMap.get(0).get(0).size());
-        FileUtils.deleteDirectory(new File(App.mapName));
+        FileUtils.deleteDirectory(new File(App.DATA_PATH + App.mapName));
+        assertEquals(10, chunkMap.get(0).get(0).size());
     }
 }

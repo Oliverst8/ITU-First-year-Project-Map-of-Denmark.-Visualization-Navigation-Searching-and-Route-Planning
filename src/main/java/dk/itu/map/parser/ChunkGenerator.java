@@ -55,7 +55,7 @@ public class ChunkGenerator implements Runnable {
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
         files = new File[config.layerCount][];
-        createFiles(App.mapName);
+        createFiles(App.DATA_PATH + App.mapName);
 
         this.chunkingThread = new Thread(this);
         this.chunkingThread.start();
@@ -326,9 +326,9 @@ public class ChunkGenerator implements Runnable {
      * Write the configuration file, with map constants
      */
     private void writeUtilities() {
-        graph.writeToFile(App.mapName + "utilities");
+        graph.writeToFile(App.DATA_PATH + App.mapName + "utilities");
         try {
-            address.write(App.mapName + "/utilities/address.txt");
+            address.write(App.DATA_PATH + App.mapName + "utilities/address.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

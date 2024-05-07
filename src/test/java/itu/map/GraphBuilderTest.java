@@ -342,12 +342,13 @@ public class GraphBuilderTest {
     void testWriteAndRead() throws InterruptedException, IOException {
         String dataPath = TestUtilities.getTestFilesPath();
         App.DATA_PATH = dataPath;
-        App.mapName = "testmap/";
+        App.mapName = "graphTestMap/";
         graphBuilder = getGraph();
-        graphBuilder.writeToFile(dataPath+"/testmap/utilities/");
+        graphBuilder.writeToFile(dataPath + App.mapName + "utilities");
+        MapConfig mapConfig = new MapConfig(0f,0f,0f,0f);
         GraphBuilder graph = new GraphBuilder();
-        graph.loadFromDataPath("utilities/", new MapConfig("external"));
-        FileUtils.deleteDirectory(new File( "/graph"));
+        graph.loadFromDataPath("utilities/", mapConfig);
+        FileUtils.deleteDirectory(new File( dataPath+ App.mapName));
         assertEquals(graph, graphBuilder);
     }
 
