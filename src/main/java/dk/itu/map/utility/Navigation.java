@@ -1,5 +1,6 @@
 package dk.itu.map.utility;
 
+import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.IndexMinPQ;
 import dk.itu.map.structures.DrawableWay;
@@ -71,7 +72,7 @@ public class Navigation {
 
             int destination = graph.getDestination(edge);
 
-            float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge);
+            float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge) + findHeuristicDistance(vertex, graph.getCoords(destination));
             if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1)){
                 if(queue.contains(destination)) queue.decreaseKey(destination, newDistWeight);
                 else queue.insert(destination, newDistWeight);
@@ -79,7 +80,7 @@ public class Navigation {
             }
 
             if(vehicleCode == 4){
-                float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
+                float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge) + findHeuristicTime(vertex, graph.getCoords(destination));
 
                 if((newTimeWeight < timeTo[destination])){
                     if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
@@ -153,5 +154,15 @@ public class Navigation {
         paths[2] = new DrawableWay(endPath, -3, "navigation", "pathToRoad");
 
         return paths;
+    }
+    private float findHeuristicDistance(int vertex, float[] endCoords){
+        float[] startCoords = graph.getCoords(vertex);
+        float distance = GraphBuilder.distanceInKM(new float[]{startCoords[0], startCoords[1]}, new float[]{endCoords[0], endCoords[1]});
+        return distance;
+    }
+    private float findHeuristicTime(int vertex, float[] endCoords){
+        float[] startCoords = graph.getCoords(vertex);
+        float distance = GraphBuilder.distanceInKM(new float[]{startCoords[0], startCoords[1]}, new float[]{endCoords[0], endCoords[1]});
+        return distance/130;
     }
 }

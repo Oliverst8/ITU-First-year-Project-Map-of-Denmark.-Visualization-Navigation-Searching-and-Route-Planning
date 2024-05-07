@@ -93,18 +93,6 @@ public class GraphBuilder extends Graph implements Runnable {
         return distanceInKM(coord1, coord2)/speedLimit;
     }
 
-    /**
-     * Calculates the distance between two coordinates
-     * @param coord1 the first coordinate
-     * @param coord2 the second coordinate
-     * @return the distance between the two coordinates
-     */
-    private float distanceInKM(float[] coord1, float[] coord2) {
-        double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
-        double latDistance = Math.abs(coord1[1] - coord2[1])*110.574;
-
-        return (float) Math.sqrt(lonDistance*lonDistance + latDistance*latDistance);
-    }
 
     /**
      * Parses ways added to the graph
@@ -312,5 +300,18 @@ public class GraphBuilder extends Graph implements Runnable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    /**
+     * Calculates the distance between two coordinates
+     * @param coord1 the first coordinate
+     * @param coord2 the second coordinate
+     * @return the distance between the two coordinates
+     */
+    public static float distanceInKM(float[] coord1, float[] coord2) {
+        double lonDistance = Math.abs(coord1[0] - coord2[0])*111.320*0.56;
+        double latDistance = Math.abs(coord1[1] - coord2[1])*110.574;
+
+        return (float) Math.sqrt(lonDistance*lonDistance + latDistance*latDistance);
     }
 }
