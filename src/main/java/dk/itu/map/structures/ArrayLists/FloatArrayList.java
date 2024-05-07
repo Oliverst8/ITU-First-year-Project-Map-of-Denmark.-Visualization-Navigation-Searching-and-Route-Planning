@@ -5,10 +5,7 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.DataOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 
 public class FloatArrayList extends PrimitiveArrayList implements Serializable {
     private float[] array;

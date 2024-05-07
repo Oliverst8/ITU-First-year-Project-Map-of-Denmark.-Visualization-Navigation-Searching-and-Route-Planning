@@ -3,8 +3,6 @@ package dk.itu.map.structures.ArrayLists;
 import java.io.IOException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
 
 public class IntArrayList extends PrimitiveArrayList {
     // The array that holds the values
