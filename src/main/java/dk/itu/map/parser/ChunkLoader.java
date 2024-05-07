@@ -113,6 +113,7 @@ public class ChunkLoader extends Thread {
             InputStream file;
             try {
                 file = config.locateFile("zoom" + zoomLayer + "/chunk" + chunkIndex + ".txt");
+                if (file == null) continue;
             } catch (FileNotFoundException e) {
                 
                 Map<Integer, List<Drawable>> temp = finishedChunks.getOrDefault(zoomLayer, new HashMap<>());
@@ -172,6 +173,7 @@ public class ChunkLoader extends Thread {
             InputStream file;
             try {
                 file = config.locateFile("zoom" + zoomLayer + "/chunk" + i + ".txt");
+                if (file == null) continue;
             } catch (FileNotFoundException e) {
                 continue;
             }
