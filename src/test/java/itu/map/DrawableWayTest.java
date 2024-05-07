@@ -83,9 +83,9 @@ public class DrawableWayTest {
 
         way.draw(gc, 1, 1, mapModel.theme);
 
-        assertEquals(gc.getStroke().toString(), "0x000000ff");
-        assertEquals(gc.getLineWidth(), 5.0999998711631635E-5);
-        assertEquals(gc.getFill().toString(), "0xf7eccfff");
+        assertEquals("0xb1c0cfff", gc.getStroke().toString());
+        assertEquals(5.0999998711631635E-5, gc.getLineWidth());
+        assertEquals("0xf7eccfff", gc.getFill().toString());
 
     }
 }

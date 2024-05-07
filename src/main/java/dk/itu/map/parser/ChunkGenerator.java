@@ -47,12 +47,6 @@ public class ChunkGenerator implements Runnable {
         graph = new GraphBuilder();
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        this.chunkingThread = new Thread(this);
-        this.chunkingThread.start();
-        graphThread = new Thread(graph);
-        graphThread.start();
-        addressTreeThread = new Thread(address);
-        addressTreeThread.start();
 
         this.config = config;
 
@@ -61,7 +55,14 @@ public class ChunkGenerator implements Runnable {
         System.out.println("Beginning " + config.rowAmount + " " + config.columnAmount);
 
         files = new File[config.layerCount][];
-        createFiles(App.mapName);
+        createFiles(App.DATA_PATH + App.mapName);
+
+        this.chunkingThread = new Thread(this);
+        this.chunkingThread.start();
+        graphThread = new Thread(graph);
+        graphThread.start();
+        addressTreeThread = new Thread(address);
+        addressTreeThread.start();
     }
 
     /**
@@ -251,6 +252,13 @@ public class ChunkGenerator implements Runnable {
     }
 
     /**
+     * Finish the address tree
+     */
+    public void finishAddress(){
+        address.finish();
+    }
+
+    /**
      * The main loop of the ChunkGenerator
      */
     @Override
@@ -317,9 +325,9 @@ public class ChunkGenerator implements Runnable {
      * Write the configuration file, with map constants
      */
     private void writeUtilities() {
-        graph.writeToFile(App.mapName + "utilities");
+        graph.writeToFile(App.DATA_PATH + App.mapName + "utilities");
         try {
-            address.write(App.mapName + "utilities/address.txt");
+            address.write(App.DATA_PATH + App.mapName + "utilities/address.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
