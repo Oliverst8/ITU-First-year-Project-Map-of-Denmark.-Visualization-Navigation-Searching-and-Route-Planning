@@ -3,6 +3,7 @@ package itu.map;
 import dk.itu.map.structures.Point;
 import dk.itu.map.structures.TernaryTree;
 import javafx.scene.paint.Color;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -122,6 +123,7 @@ public class TernaryTreeTest {
         address.write(testPath + "addressTest");
         TernaryTree newAddress = new TernaryTree();
         newAddress.read(testPath + "addressTest");
+        FileUtils.delete(new java.io.File(testPath + "addressTest"));
         //assertEquals(address, newAddress);
         assertTrue(address.equals(newAddress));
     }
