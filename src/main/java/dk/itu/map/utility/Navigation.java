@@ -3,11 +3,16 @@ package dk.itu.map.utility;
 import dk.itu.map.parser.GraphBuilder;
 import dk.itu.map.structures.Graph;
 import dk.itu.map.structures.IndexMinPQ;
+import dk.itu.map.structures.Point;
+import dk.itu.map.structures.Drawable;
 import dk.itu.map.structures.DrawableWay;
 import dk.itu.map.structures.ArrayLists.CoordArrayList;
 import dk.itu.map.structures.ArrayLists.IntArrayList;
+import javafx.scene.paint.Color;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Navigation {
     private final Graph graph;
@@ -18,6 +23,8 @@ public class Navigation {
     private final float[] timeTo;
     //This is 4 for car, 2 for bike and 1 for walk.
     private final int vehicleCode;
+
+    public final Set<Drawable> navigatedPoints;
 
     /**
      * Create an instance of a Navigation
@@ -30,6 +37,7 @@ public class Navigation {
         vertexTo = new int[graph.size()];
         distTo = new float[graph.size()];
         timeTo = new float[graph.size()];
+        navigatedPoints = new HashSet<>();
 
         for(int i = 0; i < graph.size(); i++) {
             distTo[i] = Float.MAX_VALUE;
@@ -45,18 +53,16 @@ public class Navigation {
      * @return true if a path is found, false otherwise
      */
     private boolean buildPaths(int startPoint, int endPoint) {
-        long counter = 0;
         queue = new IndexMinPQ<>(graph.size());
         queue.insert(startPoint, 0f);
         setDistTo(startPoint, startPoint, 0f, 0f);
 
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             int min = queue.delMin();
-            if(min == endPoint){
-                System.out.println("The counter reached: " + counter);
+            navigatedPoints.add(new Point(graph.getCoords(min)[1], graph.getCoords(min)[0], "navigationpoint", Color.PURPLE));
+            if (min == endPoint) {
                 return true;
             }
-            counter++;
             relax(min, endPoint);
         }
 
@@ -78,6 +84,7 @@ public class Navigation {
             int destination = graph.getDestination(edge);
 
             float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge) + findHeuristicDistance(vertex, graph.getCoords(endPoint));
+            // float newDistWeight = distTo[vertex] + graph.getDistanceWeight(edge);
 
             if((newDistWeight < distTo[destination]) && (vehicleCode == 2 || vehicleCode == 1)){
                 if(queue.contains(destination)) queue.decreaseKey(destination, newDistWeight);
@@ -87,6 +94,7 @@ public class Navigation {
 
             if(vehicleCode == 4){
                 float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge) + findHeuristicTime(vertex, graph.getCoords(endPoint));
+                // float newTimeWeight = timeTo[vertex] + graph.getTimeWeight(edge);
 
                 if((newTimeWeight < timeTo[destination])){
                     if(queue.contains(destination)) queue.decreaseKey(destination, newTimeWeight);
@@ -127,7 +135,8 @@ public class Navigation {
      * @param endCoords the end coordinates
      * @return the path
      */
-    public DrawableWay[] getPath(float[] startCoords, float[] endCoords){
+    public DrawableWay[] getPath(float[] startCoords, float[] endCoords) {
+        navigatedPoints.clear();
 
         int nearestStartPointID = graph.getNearestNeigherborID(new float[]{startCoords[0],startCoords[1]}, vehicleCode, graph);
         int nearestEndPointID = graph.getNearestNeigherborID(new float[]{endCoords[0],endCoords[1]}, vehicleCode, graph);
@@ -161,14 +170,20 @@ public class Navigation {
 
         return paths;
     }
+
     private float findHeuristicDistance(int vertex, float[] endCoords){
         float[] startCoords = graph.getCoords(vertex);
         float distance = GraphBuilder.distanceInKM(new float[]{startCoords[0], startCoords[1]}, new float[]{endCoords[0], endCoords[1]});
         return distance;
     }
+
     private float findHeuristicTime(int vertex, float[] endCoords){
         float[] startCoords = graph.getCoords(vertex);
         float distance = GraphBuilder.distanceInKM(new float[]{startCoords[0], startCoords[1]}, new float[]{endCoords[0], endCoords[1]});
         return distance/130;
+    }
+
+    public Set<Drawable> getNavigatedPoints() {
+        return navigatedPoints;
     }
 }

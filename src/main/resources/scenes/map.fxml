@@ -79,6 +79,7 @@
                 <Canvas fx:id="canvasLeisure" />
                 <Canvas fx:id="canvasAmenity" />
                 <Canvas fx:id="canvasHighway" />
+                <Canvas fx:id="canvasNavigationPaths" />
                 <Canvas fx:id="canvasNavigation" />
                 <Canvas fx:id="canvasPointOfInterest" />
                 <Canvas fx:id="canvasBuilding" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" onMouseReleased="#canvasReleased" onScroll="#canvasScroll" />

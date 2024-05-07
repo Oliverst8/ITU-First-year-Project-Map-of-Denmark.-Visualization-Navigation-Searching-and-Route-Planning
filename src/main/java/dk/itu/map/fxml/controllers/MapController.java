@@ -23,6 +23,8 @@ public class MapController {
     private MapModel model;
     private MapView view;
 
+    private Set<Drawable> navigatedPoints;
+
     /**
         Creates a new ChunkController
         @param model The model to be used
@@ -169,7 +171,7 @@ public class MapController {
     public void navigate(int vehicleCode) {
         Point startPoint = model.getStartPoint();
         Point endPoint = model.getEndPoint();
-        if(startPoint == null || endPoint == null){
+        if (startPoint == null || endPoint == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No way found");
             alert.setHeaderText("Start and end cant be connected");
@@ -179,7 +181,8 @@ public class MapController {
         }
         Navigation navigation = new Navigation(model.getGraph(), vehicleCode);
         DrawableWay[] path = navigation.getPath(startPoint.getCoords(), endPoint.getCoords());
-        if(path == null){
+        navigatedPoints = navigation.getNavigatedPoints();
+        if (path == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("No path found");
@@ -202,4 +205,9 @@ public class MapController {
     public List<TernaryTree.searchAddress> fillAddress(TernaryTree.searchAddress node, String currentText){
         return model.getAddress().fillAddress(new String[]{node.streetName, node.zip},node.node, currentText);
     }
+
+    public Set<Drawable> getNavigatedPoints() {
+        return navigatedPoints;
+    }
+
 }

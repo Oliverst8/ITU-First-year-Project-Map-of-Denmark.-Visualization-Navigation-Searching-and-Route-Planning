@@ -116,7 +116,7 @@ public class MapView {
      */
     @FXML
     public void initialize() {
-        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "leisure", "place", "pointOfInterest"};
+        mapLayers = new String[]{"landmass","building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "leisure", "place", "navigationPaths", "pointOfInterest"};
 
         canvas = new HashMap<>();
         for(String key : mapLayers) {
@@ -454,6 +454,11 @@ public class MapView {
         layers.put("pointOfInterest", pointOfInterests);
         layers.put("landmass", model.landLayer);
 
+        if (showNavigationOnMap) {
+            Set<Drawable> navigationPaths = controller.getNavigatedPoints();
+            layers.put("navigationPaths", navigationPaths);
+        }
+
         updateZoomAmount();
 
         for(int i = getZoomLevel(); i < 5; i++) {
@@ -464,7 +469,7 @@ public class MapView {
                     Drawable way = chunkLayerList.get(j);
 
                     switch (way.getPrimaryType()) {
-                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "pointOfInterest":
+                        case "building", "navigation", "highway", "amenity", "leisure", "aeroway", "landuse", "natural", "place", "navigationPaths", "pointOfInterest":
                             layers.get(way.getPrimaryType()).add(way);
                             break;
                     }
