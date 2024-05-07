@@ -72,7 +72,7 @@ public class HomeController {
     public void loadSavedMaps(MenuButton mapList, MenuButton deleteList) {
         File externalDirectoryPath = new File(App.DATA_PATH);
 
-        String[] internalMaps = new String[]{"Isle"};
+        String[] internalMaps = new String[]{"Denmark"};
         addMaps(mapList, internalMaps, "internal");
 
         String[] externalMapsList = externalDirectoryPath.list();
