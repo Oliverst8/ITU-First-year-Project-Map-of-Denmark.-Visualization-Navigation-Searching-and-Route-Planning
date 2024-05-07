@@ -164,6 +164,24 @@ public class OSMParser extends Thread {
                         }
 
                         case "way" -> {
+                            chunkGenerator.finishAddress();
+                            break whileLoop;
+                        }
+
+                        case "relation" -> {
+                            break whileLoop; //All relations are parsed in the first pass
+                        }
+                    }
+                }
+            }
+
+            whileLoop:
+            while (true) {
+                int tagKind = input.next();
+                if (tagKind == XMLStreamConstants.START_ELEMENT) {
+                    String type = input.getLocalName();
+                    switch (type) {
+                        case "way" -> {
                             long id = Long.parseLong(input.getAttributeValue(null, "id"));
                             createWay(input, nodes, id);
                         }
