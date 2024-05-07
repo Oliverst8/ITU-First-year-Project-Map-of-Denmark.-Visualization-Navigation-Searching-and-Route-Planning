@@ -191,7 +191,7 @@ public class MapView {
             startNavigationButton.setDisable(false);
             addMarkerButton.setStyle("-fx-border-color: transparent");
 
-            String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName + "-internal/" : App.DATA_PATH + App.mapName + "/";
+            String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName.substring(0, App.mapName.length()-1) + "-internal/" : App.DATA_PATH + App.mapName;
             File file = new File(path + "utilities/pointOfInterest.txt");
 
             if (!file.exists()) {
@@ -532,7 +532,7 @@ public class MapView {
     private Set<Drawable> getPointOfInterests() {
         Set<Drawable> pointOfInterests = new HashSet<>();
 
-        String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName + "-internal/" : App.DATA_PATH + App.mapName + "/";
+        String path = model.getMapType().equals("internal") ? App.DATA_PATH + App.mapName.substring(0, App.mapName.length()-1) + "-internal/" : App.DATA_PATH + App.mapName;
         File file = new File(path + "utilities/pointOfInterest.txt");
 
         if (!file.exists()) return pointOfInterests;
