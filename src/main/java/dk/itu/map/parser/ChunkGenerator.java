@@ -47,12 +47,6 @@ public class ChunkGenerator implements Runnable {
         graph = new GraphBuilder();
         this.hasMoreWork = false;
         this.rawWays = Collections.synchronizedList(new ArrayList<>(MIN_ARRAY_LENGTH));
-        this.chunkingThread = new Thread(this);
-        this.chunkingThread.start();
-        graphThread = new Thread(graph);
-        graphThread.start();
-        addressTreeThread = new Thread(address);
-        addressTreeThread.start();
 
         this.config = config;
 
@@ -62,6 +56,13 @@ public class ChunkGenerator implements Runnable {
 
         files = new File[config.layerCount][];
         createFiles(App.mapName);
+
+        this.chunkingThread = new Thread(this);
+        this.chunkingThread.start();
+        graphThread = new Thread(graph);
+        graphThread.start();
+        addressTreeThread = new Thread(address);
+        addressTreeThread.start();
     }
 
     /**
@@ -247,6 +248,13 @@ public class ChunkGenerator implements Runnable {
         }
 
         return zoomLevel;
+    }
+
+    /**
+     * Finish the address tree
+     */
+    public void finishAddress(){
+        address.finish();
     }
 
     /**
