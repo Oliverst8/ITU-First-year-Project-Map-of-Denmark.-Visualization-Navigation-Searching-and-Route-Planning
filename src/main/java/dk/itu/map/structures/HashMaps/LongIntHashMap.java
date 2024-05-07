@@ -92,7 +92,7 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
     public void put(long key, int value) {
         validateKey(key);
         validateValue(value);
-        if (total >= capacity * 0.75) resize();
+        if (total >= Math.floor(capacity * 0.75)) resize();
 
         int index = getIndex(key);
         int offset = 1;
@@ -145,11 +145,11 @@ public class LongIntHashMap extends PrimitiveHashMap implements WriteAble {
 
         while (keys[index] != key) {
             index = probe(index, offset);
-            if(keys[index] == DEFAULT_KEY_VALUE) return false;
+            if (keys[index] == DEFAULT_KEY_VALUE) return false;
             offset++;
         }
 
-        if(value[index] == REMOVED_VALUE) return false;
+        if (value[index] == REMOVED_VALUE) return false;
 
         return keys[index] == key;
     }
