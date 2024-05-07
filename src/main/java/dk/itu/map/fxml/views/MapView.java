@@ -96,6 +96,7 @@ public class MapView {
     private int vehicleCode = 4;
     private boolean setStartPoint = false, setEndPoint = false, setPointOfInterest = false;
     private boolean showGrid = false;
+    private boolean showNavigationOnMap = false;
 
     /**
      * Creates a new MapView
@@ -387,6 +388,10 @@ public class MapView {
     void toggleGrid() {
         showGrid = !showGrid;
         redraw();
+    }
+    @FXML
+    void toggleShowNavigation() {
+        showNavigationOnMap = !showNavigationOnMap;
     }
 
     /**

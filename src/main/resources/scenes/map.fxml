@@ -64,6 +64,7 @@
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#toggleGrid" text="Grid" />
                   <MenuItem mnemonicParsing="false" onAction="#debugPrintZoomLevel" text="Show zoomamount" />
+                  <MenuItem mnemonicParsing="false" onAction="#toggleShowNavigation" text="Show navigation roads" />
                </items>
             </Menu>
             </menus>
