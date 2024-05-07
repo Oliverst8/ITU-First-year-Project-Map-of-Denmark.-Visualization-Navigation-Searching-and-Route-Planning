@@ -49,7 +49,7 @@ public class MapController {
      * @param mapName The name of the map to be saved to
      */
     public void importMap(String osmFile, String mapName) {
-        App.mapName = mapName;
+        App.mapName = mapName + "/";
 
         model.chunkLoader = new ChunkLoader(model.getMapType());
         model.chunkLoader.setCallback(() -> {

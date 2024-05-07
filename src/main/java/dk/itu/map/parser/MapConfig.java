@@ -1,7 +1,6 @@
 package dk.itu.map.parser;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -137,7 +136,7 @@ public class MapConfig {
      */
     public void writeConfig() {
         try {
-            FileWriter writer = new FileWriter(App.mapName + "/config");
+            FileWriter writer = new FileWriter(App.DATA_PATH + App.mapName + "config");
             writer.write(
                 "minLat: " + minLat + "\n" +
                 "maxLat: " + maxLat + "\n" +
@@ -163,9 +162,9 @@ public class MapConfig {
     public InputStream locateFile(String filePath) throws FileNotFoundException {
         if (isInternal) {
             //return new File(getClass().getResource("/maps/" + App.mapName + "/" + filePath).getFile());
-            return getClass().getResourceAsStream("/maps/" + App.mapName + "/" + filePath);
+            return getClass().getResourceAsStream("/maps/" + App.mapName + filePath);
         } else {
-            return new FileInputStream(App.DATA_PATH + "/" + App.mapName + "/" + filePath);
+            return new FileInputStream(App.DATA_PATH + App.mapName + filePath);
 
         }
     }
